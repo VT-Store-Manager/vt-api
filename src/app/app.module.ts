@@ -1,3 +1,4 @@
+import { ClassValidatorExceptionFilter } from '@/common/filters/class-validator-exception.filter'
 import { HttpExceptionFilter } from '@/common/filters/http-exception.filter'
 import { MongoExceptionFilter } from '@/common/filters/mongo-exception.filter'
 import { TransformInterceptor } from '@/common/interceptors/transform.interceptor'
@@ -37,6 +38,10 @@ import { UserModule } from './user/user.module'
 		{
 			provide: APP_FILTER,
 			useClass: MongoExceptionFilter,
+		},
+		{
+			provide: APP_FILTER,
+			useClass: ClassValidatorExceptionFilter,
 		},
 		{
 			provide: APP_INTERCEPTOR,
