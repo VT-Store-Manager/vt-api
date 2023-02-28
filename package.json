@@ -27,6 +27,7 @@
 		"@nestjs/core": "^9.0.0",
 		"@nestjs/mongoose": "^9.2.1",
 		"@nestjs/platform-express": "^9.0.0",
+		"mongodb": "^5.1.0",
 		"mongoose": "^7.0.0",
 		"mongoose-delete": "^0.5.4",
 		"mongoose-lean-virtuals": "^0.9.1",

@@ -20,6 +20,7 @@ specifiers:
   eslint-plugin-prettier: ^4.0.0
   husky: ^8.0.3
   jest: 28.1.2
+  mongodb: ^5.1.0
   mongoose: ^7.0.0
   mongoose-delete: ^0.5.4
   mongoose-lean-virtuals: ^0.9.1
@@ -41,6 +42,7 @@ dependencies:
   '@nestjs/core': 9.3.9_q6agyr4hwia55oswpsa7zjxcpm
   '@nestjs/mongoose': 9.2.1_gp3ztdqcvtdckbo6lunyfvehvq
   '@nestjs/platform-express': 9.3.9_77foi4w27ghy47yutmnzv7krjy
+  mongodb: 5.1.0
   mongoose: 7.0.0
   mongoose-delete: 0.5.4_mongoose@7.0.0
   mongoose-lean-virtuals: 0.9.1_mongoose@7.0.0
