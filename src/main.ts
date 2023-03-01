@@ -1,4 +1,4 @@
-import * as compression from 'compression'
+import compression from 'compression'
 import morgan from 'morgan'
 
 import { AppModule } from '@/app/app.module'
@@ -32,7 +32,7 @@ async function bootstrap() {
 	const nodeEnv = configService.get<string>('nodeEnv')
 	await app.listen(port, () => {
 		if (!nodeEnv || nodeEnv === 'development') {
-			Logger.debug(`Server runs at http://localhost:${port}`, 'Server')
+			Logger.debug(`Server runs at http://localhost:${port}/api/v1`, 'Server')
 			Logger.debug(`OpenAPI viewed at http://localhost:${port}/api`, 'Swagger')
 		}
 	})
