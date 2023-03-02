@@ -2,6 +2,7 @@ import compression from 'compression'
 import morgan from 'morgan'
 
 import { AppModule } from '@/app/app.module'
+import AwsConfig from '@/config/aws'
 import SwaggerConfig from '@/config/swagger'
 import { Logger, ValidationPipe, VersioningType } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
@@ -27,6 +28,12 @@ async function bootstrap() {
 	})
 
 	SwaggerConfig(app)
+	AwsConfig(
+		configService.get<string>('aws.region'),
+		configService.get<string>('aws.accessKeyId'),
+		configService.get<string>('aws.secretAccessKey'),
+		configService.get<string>('aws.bucketName')
+	)
 
 	const port = configService.get<number>('port') || process.env.PORT || 8080
 	const nodeEnv = configService.get<string>('nodeEnv')
