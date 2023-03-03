@@ -18,7 +18,7 @@ export class MongoExceptionFilter implements ExceptionFilter {
 		const status = exception.httpCode ?? HttpStatus.BAD_REQUEST
 
 		response.status(status).json({
-			timestamp: new Date().toISOString(),
+			name: exception.name,
 			message: exception.message,
 		})
 	}
