@@ -10,6 +10,7 @@ import { MongooseModule, MongooseModuleOptions } from '@nestjs/mongoose'
 
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
+import { FileModule } from './file/file.module'
 import { UserModule } from './user/user.module'
 
 @Module({
@@ -28,6 +29,7 @@ import { UserModule } from './user/user.module'
 			load: [envConfiguration],
 			validationSchema: envValidationSchema,
 		}),
+		FileModule,
 	],
 	controllers: [AppController],
 	providers: [

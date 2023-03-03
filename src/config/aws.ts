@@ -21,8 +21,31 @@ export default (
 			Logger.debug('Connect to AWS SDK successful', 'AWS')
 		}
 	})
-
-	new S3().createBucket(
+	const s3 = new S3()
+	const editBucketCORS = () =>
+		s3.putBucketCors(
+			{
+				Bucket: bucketName,
+				CORSConfiguration: {
+					CORSRules: [
+						{
+							AllowedHeaders: ['*'],
+							AllowedMethods: ['PUT', 'POST', 'DELETE'],
+							AllowedOrigins: ['*'],
+						},
+						{
+							AllowedMethods: ['GET'],
+							AllowedOrigins: ['*'],
+						},
+					],
+				},
+			},
+			err => {
+				if (err) Logger.error(err + '\n' + err.stack, 'S3')
+				else Logger.debug(`Edit Bucket CORS succeed!`, 'S3')
+			}
+		)
+	s3.createBucket(
 		{
 			Bucket: bucketName,
 		},
@@ -32,6 +55,7 @@ export default (
 			} else {
 				Logger.debug('Bucket is created successful', 'S3')
 				Logger.debug('Bucket location: ' + _data.Location, 'S3')
+				editBucketCORS()
 			}
 		}
 	)

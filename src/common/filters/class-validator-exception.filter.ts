@@ -18,7 +18,6 @@ export class ClassValidatorExceptionFilter implements ExceptionFilter {
 		}
 
 		response.status(HttpStatus.BAD_REQUEST).json({
-			timestamp: new Date().toISOString(),
 			message: `Validation error${
 				exception.length > 1 ? 's' : ''
 			} in your request`,
