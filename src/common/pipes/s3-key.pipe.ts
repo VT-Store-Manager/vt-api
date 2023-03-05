@@ -9,7 +9,17 @@ export class S3KeyValidationPipe implements PipeTransform {
 		const { error } = Joi.string()
 			.pattern(new RegExp("^[a-zA-Z0-9!_.*'()-]+(/[a-zA-Z0-9!_.*'()-]+)*$"))
 			.validate(value)
-		if (!error) throw new ValidationError()
+		if (error) {
+			const validateErr = new ValidationError()
+
+			validateErr.property = _metadata.data
+			validateErr.value = value
+			validateErr.constraints = {
+				pattern: 'Value is not matched with key pattern',
+			}
+
+			throw validateErr
+		}
 		return value
 	}
 }

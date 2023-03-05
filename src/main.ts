@@ -2,7 +2,7 @@ import compression from 'compression'
 import morgan from 'morgan'
 
 import { AppModule } from '@/app/app.module'
-import AwsConfig from '@/config/aws'
+import awsS3Config from '@/config/aws-s3'
 import SwaggerConfig from '@/config/swagger'
 import { Logger, ValidationPipe, VersioningType } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
@@ -28,7 +28,7 @@ async function bootstrap() {
 	})
 
 	SwaggerConfig(app)
-	AwsConfig(
+	await awsS3Config(
 		configService.get<string>('aws.region'),
 		configService.get<string>('aws.accessKeyId'),
 		configService.get<string>('aws.secretAccessKey'),
