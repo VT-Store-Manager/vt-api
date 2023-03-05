@@ -1,21 +1,30 @@
-import { S3 } from 'aws-sdk'
 import { v4 as uuidv4 } from 'uuid'
-import { Injectable } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
 
 import { getFileExtension } from '@/common/helpers/file.helper'
+import {
+	DeleteObjectsCommand,
+	DeleteObjectsCommandInput,
+	GetObjectCommand,
+	GetObjectCommandInput,
+	PutObjectCommand,
+	PutObjectCommandInput,
+	S3Client,
+} from '@aws-sdk/client-s3'
+import { BadRequestException, Injectable } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 
 @Injectable()
 export class FileService {
-	private s3: S3
+	private s3: S3Client
 	private bucketName: string
 
 	constructor(private configService: ConfigService) {
-		this.s3 = new S3({
+		this.s3 = new S3Client({
 			credentials: {
 				accessKeyId: configService.get<string>('aws.accessKeyId'),
 				secretAccessKey: configService.get<string>('aws.secretAccessKey'),
 			},
+			region: configService.get<string>('aws.region'),
 		})
 		this.bucketName = this.configService.get<string>('aws.bucketName')
 	}
@@ -30,14 +39,19 @@ export class FileService {
 	 */
 	async upload(dataBuffer: Buffer, path: string[], filename: string) {
 		const ext = getFileExtension(filename)
+		const key = [...path, uuidv4() + ext].filter(s => s.length > 0).join('/')
 
-		const params: S3.PutObjectRequest = {
+		const params: PutObjectCommandInput = {
 			Bucket: this.bucketName,
-			Key: [...path, uuidv4() + ext].filter(s => s.length > 0).join('/'),
+			Key: key,
 			Body: dataBuffer,
 		}
-		const uploadResult = await this.s3.upload(params).promise()
-		return uploadResult
+		const command = new PutObjectCommand(params)
+		const uploadResult = await this.s3.send(command)
+		if (uploadResult.$metadata.httpStatusCode !== 200) {
+			throw new BadRequestException('Upload image failed')
+		}
+		return { key }
 	}
 
 	/**
@@ -57,18 +71,47 @@ export class FileService {
 	}
 
 	/**
+	 * It takes a buffer and a key, and uploads the buffer to the S3 bucket with the key
+	 * @param {Buffer} buffer - The buffer of the file you want to upload
+	 * @param {string} key - The key of the file you want to override.
+	 * @returns The result of the upload.
+	 */
+	async overrideFile(buffer: Buffer, key: string) {
+		const params: PutObjectCommandInput = {
+			Bucket: this.bucketName,
+			Key: key,
+			Body: buffer,
+		}
+		const command = new PutObjectCommand(params)
+		const overrideResult = await this.s3.send(command)
+
+		if (overrideResult.$metadata.httpStatusCode !== 200) {
+			throw new BadRequestException('Failed to upload object')
+		}
+		return { key }
+	}
+
+	/**
 	 * It deletes files from the database and S3
 	 * @param {Types.ObjectId[]} fileIds - The ids of the files to delete
 	 * @returns The deleteResult is an array of the results of the two promises.
 	 */
 	async delete(keys: string[]) {
-		const deleteResult = await this.s3.deleteObjects({
+		const params: DeleteObjectsCommandInput = {
 			Bucket: this.bucketName,
 			Delete: {
 				Objects: keys.map(key => ({ Key: key })),
 			},
-		})
-		return deleteResult
+		}
+
+		const command = new DeleteObjectsCommand(params)
+		const deleteResult = await this.s3.send(command)
+		if (deleteResult.$metadata.httpStatusCode !== 200)
+			throw new BadRequestException('Failed to delete objects')
+		return deleteResult.Deleted.map(deleted => ({
+			key: deleted.Key,
+			versionId: deleted.VersionId,
+		}))
 	}
 
 	/**
@@ -77,28 +120,16 @@ export class FileService {
 	 * @returns The getResult is being returned.
 	 */
 	async getFile(key: string) {
-		const params: S3.GetObjectRequest = {
+		const params: GetObjectCommandInput = {
 			Bucket: this.bucketName,
 			Key: key,
 		}
-		const getResult = await this.s3.getObject(params).promise()
-
-		return getResult
-	}
-
-	/**
-	 * It takes a buffer and a key, and uploads the buffer to the S3 bucket with the key
-	 * @param {Buffer} buffer - The buffer of the file you want to upload
-	 * @param {string} key - The key of the file you want to override.
-	 * @returns The result of the upload.
-	 */
-	async overrideFile(buffer: Buffer, key: string) {
-		const params: S3.PutObjectRequest = {
-			Bucket: this.bucketName,
-			Key: key,
-			Body: buffer,
+		const command = new GetObjectCommand(params)
+		const getResult = await this.s3.send(command)
+		if (getResult.$metadata.httpStatusCode !== 200) {
+			throw new BadRequestException('Failed to get object')
 		}
-		const overrideResult = await this.s3.upload(params).promise()
-		return overrideResult
+
+		return await getResult.Body.transformToByteArray()
 	}
 }
