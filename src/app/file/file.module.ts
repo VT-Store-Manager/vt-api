@@ -7,5 +7,6 @@ import { FileService } from './file.service'
 	imports: [],
 	controllers: [FileController],
 	providers: [FileService],
+	exports: [FileService],
 })
 export class FileModule {}
