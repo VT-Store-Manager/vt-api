@@ -25,14 +25,16 @@ export class ProductCategory {
 	@Prop({ type: Number, min: 1, default: 1 })
 	displayOrder?: number
 
-	@Prop({ type: Boolean, default: false })
-	disabled: boolean
-
+	deleted?: boolean
 	createdAt: Date
 	updatedAt: Date
+	deletedAt?: Date
 }
 
 export const ProductCategorySchema =
 	SchemaFactory.createForClass(ProductCategory)
 
-ProductCategorySchema.plugin(mongooseDelete, { deletedAt: true })
+ProductCategorySchema.plugin(mongooseDelete, {
+	deletedAt: true,
+	overrideMethods: 'all',
+})
