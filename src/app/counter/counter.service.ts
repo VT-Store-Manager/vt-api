@@ -23,9 +23,7 @@ export class CounterService {
 				],
 				session ? { session } : {}
 			)
-			console.log(createCounter)
 		} catch (error) {
-			console.log(error)
 			throw new MongoException(`Create counter ${collection} failed`)
 		}
 	}
@@ -34,14 +32,13 @@ export class CounterService {
 		try {
 			const counter = await this.counterModel
 				.findOneAndUpdate(
-					{ collection },
+					{ collectionName: collection },
 					{ $inc: { count: 1 } },
 					session ? { session } : {}
 				)
 				.exec()
 			return counter.count
 		} catch (error) {
-			console.log(error)
 			throw new MongoException(`Increment counter ${collection} failed`)
 		}
 	}

@@ -10,7 +10,9 @@ import { MongooseModule, MongooseModuleOptions } from '@nestjs/mongoose'
 
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
+import { CounterModule } from './counter/counter.module'
 import { FileModule } from './file/file.module'
+import { ProductCategoryModule } from './product-category/product-category.module'
 import { UserModule } from './user/user.module'
 
 @Module({
@@ -20,6 +22,7 @@ import { UserModule } from './user/user.module'
 				configService: ConfigService
 			): Promise<MongooseModuleOptions> => ({
 				uri: configService.get<string>('database.url'),
+				dbName: configService.get<string>('database.db'),
 			}),
 			inject: [ConfigService],
 		}),
@@ -30,6 +33,8 @@ import { UserModule } from './user/user.module'
 			validationSchema: envValidationSchema,
 		}),
 		FileModule,
+		CounterModule,
+		ProductCategoryModule,
 	],
 	controllers: [AppController],
 	providers: [

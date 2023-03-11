@@ -66,11 +66,13 @@ export class FileController {
 		@UploadedFile() file: Express.Multer.File,
 		@Body('key', S3KeyPipe) key: string
 	) {
+		await this.fileService.checkFile(key, true)
 		return await this.fileService.overrideFile(file.buffer, key)
 	}
 
 	@Get('render')
 	async render(@Query('key', S3KeyPipe) key: string, @Res() res: Response) {
+		await this.fileService.checkFile(key, true)
 		const fileBody = await this.fileService.getFile(key)
 		res.setHeader('Content-Type', 'image/png')
 		res.setHeader('Cache-Control', 'public, max-age=600')
@@ -81,6 +83,8 @@ export class FileController {
 	@Delete('delete')
 	@ApiResponse({ type: [UploadFileResponseDto] })
 	async delete(@Query('keys') keys: string[]) {
+		await Promise.all(keys.map(key => this.fileService.checkFile(key, true)))
+
 		return await this.fileService.delete(keys)
 	}
 }

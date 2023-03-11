@@ -36,5 +36,3 @@ lerna-debug.log*
 /data
 
 /.vscode/settings.json
-
-migrate.json

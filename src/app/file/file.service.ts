@@ -79,8 +79,6 @@ export class FileService {
 	 * @returns The result of the upload.
 	 */
 	async overrideFile(buffer: Buffer, key: string) {
-		await this.checkFile(key)
-
 		const params: PutObjectCommandInput = {
 			Bucket: this.bucketName,
 			Key: key,
@@ -101,8 +99,6 @@ export class FileService {
 	 * @returns The deleteResult is an array of the results of the two promises.
 	 */
 	async delete(keys: string[]) {
-		await Promise.all(keys.map(key => this.checkFile(key)))
-
 		const params: DeleteObjectsCommandInput = {
 			Bucket: this.bucketName,
 			Delete: {
@@ -126,8 +122,6 @@ export class FileService {
 	 * @returns The getResult is being returned.
 	 */
 	async getFile(key: string) {
-		await this.checkFile(key)
-
 		const params: GetObjectCommandInput = {
 			Bucket: this.bucketName,
 			Key: key,
@@ -146,7 +140,7 @@ export class FileService {
 	 * @param {string} key - The key of the file you want to check.
 	 * @returns A boolean value
 	 */
-	private async checkFile(key: string) {
+	async checkFile(key: string, throwError = false) {
 		try {
 			const params: HeadObjectCommandInput = {
 				Bucket: this.bucketName,
@@ -156,7 +150,8 @@ export class FileService {
 			await this.s3.send(command)
 			return true
 		} catch {
-			throw new NotFoundException('File not found')
+			if (throwError) throw new NotFoundException('File not found')
+			else return false
 		}
 	}
 }

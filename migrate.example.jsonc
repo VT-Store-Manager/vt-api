@@ -1,6 +1,0 @@
-// Assign values in objects, then rename this file to migrate.json
-{
-	"uri": "",
-	"collection": "migrations",
-	"autosync": false
-}
