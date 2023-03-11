@@ -1,4 +1,4 @@
-import { Request } from 'express'
+import { Request, Response } from 'express'
 import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
 
@@ -16,6 +16,7 @@ export class TransformInterceptor implements NestInterceptor {
 		next: CallHandler
 	): Observable<any> | Promise<Observable<any>> {
 		const requestMethod = context.switchToHttp().getRequest<Request>().method
+		const code = context.switchToHttp().getResponse<Response>().statusCode
 
 		if (['OPTIONS', 'HEAD', 'DELETE'].includes(requestMethod))
 			return next.handle()
@@ -23,15 +24,16 @@ export class TransformInterceptor implements NestInterceptor {
 		return next.handle().pipe(
 			map(data => {
 				if (typeof data === 'string') {
-					return { message: data }
+					return { code, message: data }
 				}
 				if (typeof data === 'object' && (data?.data || data?.message)) {
 					return {
+						code,
 						data: data?.data,
 						message: data?.message,
 					}
 				}
-				return { data }
+				return { code, data }
 			})
 		)
 	}

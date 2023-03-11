@@ -18,6 +18,7 @@ export class ClassValidatorExceptionFilter implements ExceptionFilter {
 		}
 
 		response.status(HttpStatus.BAD_REQUEST).json({
+			code: response.statusCode,
 			message: `Validation error${exception.length > 1 ? 's' : ''}`,
 			errors: exception.reduce((pre, cur) => {
 				return {
