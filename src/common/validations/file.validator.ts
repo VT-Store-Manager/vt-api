@@ -1,6 +1,7 @@
+import { BadRequestException } from '@nestjs/common'
 import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface'
 
-export default (size = 2): MulterOptions => ({
+export const ImageMulterOption = (size = 2): MulterOptions => ({
 	limits: {
 		fileSize: size * 1024 * 1024,
 	},
@@ -10,8 +11,7 @@ export default (size = 2): MulterOptions => ({
 		callback: (error: Error | null, acceptFile: boolean) => void
 	) {
 		if (!file.mimetype.includes('image')) {
-			req.fileValidationError = 'Only image file allowed'
-			return callback(null, false)
+			return callback(new BadRequestException('Only image file allowed'), false)
 		}
 		callback(null, true)
 	},

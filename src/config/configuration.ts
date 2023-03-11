@@ -6,6 +6,7 @@ export const envConfiguration = () => ({
 	port: parseInt(process.env.PORT, 10) || 8080,
 	database: {
 		url: process.env.MONGODB_URL,
+		db: process.env.MONGODB_DB,
 	},
 	aws: {
 		region: process.env.AWS_REGION,

@@ -6,11 +6,17 @@ import {
 	DeleteObjectsCommandInput,
 	GetObjectCommand,
 	GetObjectCommandInput,
+	HeadObjectCommand,
+	HeadObjectCommandInput,
 	PutObjectCommand,
 	PutObjectCommandInput,
 	S3Client,
 } from '@aws-sdk/client-s3'
-import { BadRequestException, Injectable } from '@nestjs/common'
+import {
+	BadRequestException,
+	Injectable,
+	NotFoundException,
+} from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 
 @Injectable()
@@ -29,18 +35,12 @@ export class FileService {
 		this.bucketName = this.configService.get<string>('aws.bucketName')
 	}
 
-	/**
-	 * It uploads a file to S3 and returns a PublicFile object
-	 * @param {Buffer} dataBuffer - The file data in a Buffer format.
-	 * @param {string[]} path - The path to the file. This is an array of strings, and each string is a
-	 * folder.
-	 * @param {string} filename - The name of the file that the user uploaded.
-	 * @returns The publicFile object is being returned.
-	 */
-	async upload(dataBuffer: Buffer, path: string[], filename: string) {
-		const ext = getFileExtension(filename)
-		const key = [...path, uuidv4() + ext].filter(s => s.length > 0).join('/')
+	createObjectKey(path: string[] = [], originalFilename: string) {
+		const ext = getFileExtension(originalFilename)
+		return [...path, uuidv4() + ext].filter(s => s.length > 0).join('/')
+	}
 
+	async upload(dataBuffer: Buffer, key: string) {
 		const params: PutObjectCommandInput = {
 			Bucket: this.bucketName,
 			Key: key,
@@ -61,10 +61,12 @@ export class FileService {
 	 * @param {string[]} path - string[]
 	 * @returns An array of public files
 	 */
-	async uploadMulti(files: Express.Multer.File[], path: string[]) {
-		/* A method to render the image. */
+	async uploadMulti(files: Express.Multer.File[], keys: string[]) {
+		if (files.length > keys.length) {
+			throw new Error('Number of keys must be equal to number of files')
+		}
 		const uploadResults = await Promise.all(
-			files.map(file => this.upload(file.buffer, path, file.originalname))
+			files.map((file, index) => this.upload(file.buffer, keys[index]))
 		)
 
 		return uploadResults
@@ -131,5 +133,25 @@ export class FileService {
 		}
 
 		return await getResult.Body.transformToByteArray()
+	}
+
+	/**
+	 * It checks if a file exists in the S3 bucket
+	 * @param {string} key - The key of the file you want to check.
+	 * @returns A boolean value
+	 */
+	async checkFile(key: string, throwError = false) {
+		try {
+			const params: HeadObjectCommandInput = {
+				Bucket: this.bucketName,
+				Key: key,
+			}
+			const command = new HeadObjectCommand(params)
+			await this.s3.send(command)
+			return true
+		} catch {
+			if (throwError) throw new NotFoundException('File not found')
+			else return false
+		}
 	}
 }

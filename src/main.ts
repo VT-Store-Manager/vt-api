@@ -12,6 +12,7 @@ async function bootstrap() {
 	const app = await NestFactory.create(AppModule)
 	const configService = app.get(ConfigService)
 
+	app.enableCors()
 	app.use(morgan('tiny'))
 	app.use(compression())
 
@@ -39,8 +40,11 @@ async function bootstrap() {
 	const nodeEnv = configService.get<string>('nodeEnv')
 	await app.listen(port, () => {
 		if (!nodeEnv || nodeEnv === 'development') {
-			Logger.debug(`Server runs at http://localhost:${port}/api/v1`, 'Server')
-			Logger.debug(`OpenAPI viewed at http://localhost:${port}/api`, 'Swagger')
+			Logger.debug(
+				`Nest application runs at http://localhost:${port}/api/v1`,
+				'NestApplication'
+			)
+			Logger.debug(`Swagger viewed at http://localhost:${port}/api`, 'OpenAPI')
 		}
 	})
 }
