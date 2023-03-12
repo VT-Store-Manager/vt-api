@@ -14,10 +14,10 @@ export class CounterService {
 
 	async create(collection: string, start = 1, session?: ClientSession) {
 		try {
-			const createCounter = await this.counterModel.create(
+			await this.counterModel.create(
 				[
 					{
-						collection,
+						collectionName: collection,
 						count: start,
 					},
 				],
@@ -39,6 +39,7 @@ export class CounterService {
 				.exec()
 			return counter.count
 		} catch (error) {
+			console.log(error)
 			throw new MongoException(`Increment counter ${collection} failed`)
 		}
 	}

@@ -13,6 +13,7 @@ import { AppService } from './app.service'
 import { CounterModule } from './counter/counter.module'
 import { FileModule } from './file/file.module'
 import { ProductCategoryModule } from './product-category/product-category.module'
+import { ProductOptionModule } from './product-option/product-option.module'
 import { UserModule } from './user/user.module'
 
 @Module({
@@ -35,6 +36,7 @@ import { UserModule } from './user/user.module'
 		FileModule,
 		CounterModule,
 		ProductCategoryModule,
+		ProductOptionModule,
 	],
 	controllers: [AppController],
 	providers: [

@@ -10,13 +10,20 @@ import {
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
 	catch(exception: HttpException, host: ArgumentsHost) {
-		const context = host.switchToHttp()
-		const response = context.getResponse<Response>()
+		const response = host.switchToHttp().getResponse<Response>()
 
-		response.status(exception.getStatus()).json({
-			code: response.statusCode,
-			error: exception.name,
-			message: exception.message,
-		})
+		if (exception['response']) {
+			response.status(exception['response'].statusCode).json({
+				statusCode: exception['response'].statusCode,
+				error: exception['response'].error,
+				message: exception['response'].message,
+			})
+		} else {
+			response.status(exception.getStatus()).json({
+				statusCode: response.statusCode,
+				error: exception.name,
+				message: exception.message,
+			})
+		}
 	}
 }

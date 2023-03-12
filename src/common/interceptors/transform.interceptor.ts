@@ -24,16 +24,16 @@ export class TransformInterceptor implements NestInterceptor {
 		return next.handle().pipe(
 			map(data => {
 				if (typeof data === 'string') {
-					return { code, message: data }
+					return { statusCode: code, message: data }
 				}
 				if (typeof data === 'object' && (data?.data || data?.message)) {
 					return {
-						code,
+						statusCode: code,
 						data: data?.data,
 						message: data?.message,
 					}
 				}
-				return { code, data }
+				return { statusCode: code, data }
 			})
 		)
 	}

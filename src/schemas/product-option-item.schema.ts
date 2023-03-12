@@ -14,6 +14,9 @@ export class ProductOptionItem {
 
 	@Prop({ type: Number, required: true, min: 0 })
 	cost: number
+
+	@Prop({ type: Boolean, default: false })
+	disabled: boolean
 }
 
 export const ProductOptionItemSchema =
