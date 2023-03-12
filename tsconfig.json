@@ -19,6 +19,7 @@
 		"resolveJsonModule": true,
 		"esModuleInterop": true,
 		"baseUrl": "./src",
+		"preserveSymlinks": true,
 		"paths": {
 			"@/*": ["./*"]
 		}
