@@ -26,8 +26,8 @@ export class MongoExceptionFilter implements ExceptionFilter {
 		}
 
 		response.status(status).json({
-			code: status,
-			name: exception.name,
+			statusCode: status,
+			error: exception.name,
 			message: exception.message,
 		})
 	}
