@@ -12,10 +12,10 @@ type MongoTransaction<T> = {
 export class MongoService {
 	constructor(@InjectConnection() private readonly connection: Connection) {}
 
-	async transaction<T = any, R = any>(
+	async transaction<T = any>(
 		args: MongoTransaction<T>
-	): Promise<{ result: R; err: any }> {
-		let result, err
+	): Promise<{ result: T; err: any }> {
+		let result: T, err
 		try {
 			const session = await this.connection.startSession()
 			session.startTransaction()
