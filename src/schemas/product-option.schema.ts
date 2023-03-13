@@ -29,21 +29,18 @@ export class ProductOption {
 		default: [0, 1],
 		validate: {
 			validator: (v: Array<number>) => {
-				return v.length === 2
+				return v.length === 2 && v[0] >= 0 && v[1] >= v[0]
 			},
 			message: 'Range of option must be matched with format [min, max]',
 		},
 	})
 	range: Array<number>
 
-	// @Prop({ type: Number, min: 1, default: 1 })
-	// maxSelect?: number
-
-	// @Prop({ type: Boolean, default: false })
-	// required: boolean
-
 	@Prop([{ type: ProductOptionItemSchema }])
 	items: ProductOptionItem[]
+
+	@Prop({ type: Boolean, default: false })
+	disabled: boolean
 
 	deleted: boolean
 	createdAt: Date

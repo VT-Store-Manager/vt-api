@@ -11,6 +11,7 @@ import { NewProductOptionDto } from './dto/new-product-option.dto'
 import { CounterService } from '../counter/counter.service'
 import { CreateProductOptionDto } from './dto/create-product-option.dto'
 import { optionItemKeyUid } from '@/common/helpers/key.helper'
+import { Status } from '@/common/constants'
 
 @Injectable()
 export class ProductOptionService {
@@ -29,7 +30,26 @@ export class ProductOptionService {
 				name: 1,
 				parent: 1,
 				range: 1,
-				deleted: 1,
+				items: 1,
+				status: {
+					$cond: {
+						if: { $eq: ['$deleted', true] },
+						then: Status.REMOVED,
+						else: {
+							$cond: {
+								if: { $eq: ['$disabled', true] },
+								then: Status.DISABLED,
+								else: Status.ACTIVE,
+							},
+						},
+					},
+				},
+			})
+			.project({
+				_id: 0,
+			})
+			.addFields({
+				applying: 0,
 			})
 			.exec()
 		return productOptions
