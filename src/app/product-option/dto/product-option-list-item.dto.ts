@@ -1,12 +1,15 @@
+import { Status } from '@/common/constants'
 import { ProductOption } from '@/schemas/product-option.schema'
 import { PickType } from '@nestjs/swagger'
 
 export class ProductOptionListItemDto extends PickType(ProductOption, [
 	'code',
 	'name',
+	'parent',
 	'range',
-	'deleted',
+	'items',
 ] as const) {
 	id: string
-	parent: string
+	applying: number
+	status: Status
 }
