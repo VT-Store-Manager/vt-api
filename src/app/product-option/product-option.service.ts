@@ -49,7 +49,7 @@ export class ProductOptionService {
 				_id: 0,
 			})
 			.addFields({
-				applying: 0,
+				used: 0,
 			})
 			.exec()
 		return productOptions
