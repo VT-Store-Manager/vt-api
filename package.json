@@ -29,6 +29,7 @@
 		"@nestjs/core": "^9.0.0",
 		"@nestjs/mongoose": "^9.2.1",
 		"@nestjs/platform-express": "^9.0.0",
+		"@nestjs/serve-static": "^3.0.1",
 		"@nestjs/swagger": "^6.2.1",
 		"@types/aws-sdk": "^2.7.0",
 		"aws-sdk": "^2.1326.0",

@@ -9,8 +9,8 @@ export type ProductDocument = Product & Document
 export class Product {
 	_id: Types.ObjectId
 
-	@Prop({ type: String, required: true, unique: true, index: 'text' })
-	code: string
+	@Prop({ type: Number, required: true, unique: true })
+	code: number
 
 	@Prop({ type: String, required: true, index: 'text' })
 	name: string
@@ -22,13 +22,13 @@ export class Product {
 	originalPrice: number
 
 	@Prop({ type: Types.ObjectId, ref: 'ProductCategory' })
-	category: Types.ObjectId
+	category: Types.ObjectId | string
 
 	@Prop({ type: String })
 	description: string
 
 	@Prop([{ type: Types.ObjectId, ref: 'ProductOption' }])
-	options: Types.ObjectId[]
+	options: Types.ObjectId[] | string[]
 
 	@Prop({ type: Boolean, default: false })
 	disabled: boolean

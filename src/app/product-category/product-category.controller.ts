@@ -1,3 +1,4 @@
+import { ApiSuccessResponse } from '@/common/decorators/api-sucess-response.decorator'
 import { ObjectIdPipe } from '@/common/pipes/object-id.pipe'
 import { MongoService } from '@/common/providers/mongo.service'
 import { ProductCategory } from '@/schemas/product-category.schema'
@@ -33,6 +34,7 @@ export class ProductCategoryController {
 	@Post('create')
 	@UseInterceptors(FileInterceptor('image'))
 	@ApiConsumes('multipart/form-data')
+	@ApiSuccessResponse(ProductCategory, 201)
 	async createProductCategory(
 		@UploadedFile() image: Express.Multer.File,
 		@Body() dto: CreateProductCategoryDto
@@ -53,12 +55,12 @@ export class ProductCategoryController {
 						),
 					])
 
-					return createResult[1][0]
+					return createResult[1]
 				},
 
 				errorCb: async _err => {
 					if (this.fileService.checkFile(objectKey))
-						this.fileService.delete([objectKey])
+						await this.fileService.delete([objectKey])
 				},
 			})
 		if (err) throw err
