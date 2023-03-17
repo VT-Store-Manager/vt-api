@@ -20,5 +20,6 @@ import { ProductCategoryService } from './product-category.service'
 	],
 	controllers: [ProductCategoryController],
 	providers: [ProductCategoryService, FileService, MongoService],
+	exports: [ProductCategoryService],
 })
 export class ProductCategoryModule {}

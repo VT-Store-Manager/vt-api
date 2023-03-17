@@ -1,3 +1,5 @@
+import { join } from 'path'
+
 import { ClassValidatorExceptionFilter } from '@/common/filters/class-validator-exception.filter'
 import { HttpExceptionFilter } from '@/common/filters/http-exception.filter'
 import { MongoExceptionFilter } from '@/common/filters/mongo-exception.filter'
@@ -7,6 +9,7 @@ import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core'
 import { MongooseModule, MongooseModuleOptions } from '@nestjs/mongoose'
+import { ServeStaticModule } from '@nestjs/serve-static'
 
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
@@ -15,6 +18,7 @@ import { FileModule } from './file/file.module'
 import { ProductCategoryModule } from './product-category/product-category.module'
 import { ProductOptionModule } from './product-option/product-option.module'
 import { UserModule } from './user/user.module'
+import { ProductModule } from './product/product.module'
 
 @Module({
 	imports: [
@@ -27,16 +31,24 @@ import { UserModule } from './user/user.module'
 			}),
 			inject: [ConfigService],
 		}),
-		UserModule,
 		ConfigModule.forRoot({
 			isGlobal: true,
 			load: [envConfiguration],
 			validationSchema: envValidationSchema,
 		}),
+		ServeStaticModule.forRoot({
+			rootPath: join(__dirname, '..', '..', '..', 'public'),
+			serveRoot: '/api/v1/public',
+			serveStaticOptions: {
+				cacheControl: true,
+			},
+		}),
+		UserModule,
 		FileModule,
 		CounterModule,
 		ProductCategoryModule,
 		ProductOptionModule,
+		ProductModule,
 	],
 	controllers: [AppController],
 	providers: [

@@ -19,5 +19,6 @@ import { ProductOptionService } from './product-option.service'
 	],
 	controllers: [ProductOptionController],
 	providers: [ProductOptionService, MongoService],
+	exports: [ProductOptionService],
 })
 export class ProductOptionModule {}
