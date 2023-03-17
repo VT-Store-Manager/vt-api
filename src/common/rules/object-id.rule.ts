@@ -13,6 +13,6 @@ export class ObjectIdRule implements ValidatorConstraintInterface {
 		return isObjectIdOrHexString(value)
 	}
 	defaultMessage?(): string {
-		return '$property must be an ObjectId string (24 characters hex)'
+		return '$property: $value must be an ObjectId string (24 characters hex)'
 	}
 }

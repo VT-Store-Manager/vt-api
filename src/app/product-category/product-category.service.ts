@@ -34,7 +34,7 @@ export class ProductCategoryService {
 			],
 			session ? { session } : {}
 		)
-		return category
+		return category[0]
 	}
 
 	async list() {

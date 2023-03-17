@@ -18,6 +18,7 @@ import { FileModule } from './file/file.module'
 import { ProductCategoryModule } from './product-category/product-category.module'
 import { ProductOptionModule } from './product-option/product-option.module'
 import { UserModule } from './user/user.module'
+import { ProductModule } from './product/product.module'
 
 @Module({
 	imports: [
@@ -47,6 +48,7 @@ import { UserModule } from './user/user.module'
 		CounterModule,
 		ProductCategoryModule,
 		ProductOptionModule,
+		ProductModule,
 	],
 	controllers: [AppController],
 	providers: [
