@@ -3,7 +3,7 @@
 	"data": [
 		{
 			"id": "P00",
-			"image": [
+			"images": [
 				"https://product.hstatic.net/1000075078/product/1672731413_tra-lai-thom_954edbce5b6a432daec712db3f0787e7.jpg"
 			],
 			"name": "Trà lài thơm",
@@ -15,7 +15,7 @@
 		},
 		{
 			"id": "P01",
-			"image": [
+			"images": [
 				"https://product.hstatic.net/1000075078/product/1672731735_cloudtea-thom-dua-da-xay_d6e42691cfe94bb2abab000c82765f3f.jpg"
 			],
 			"name": "CloudTea Thơm Dừa Đá Xay",
@@ -27,7 +27,7 @@
 		},
 		{
 			"id": "P02",
-			"image": [
+			"images": [
 				"https://product.hstatic.net/1000075078/product/1672731329_hi-tea-mang-cau_b0adef98aa7545d4bad8ee288bd1e76e.jpg"
 			],
 			"name": "Hi Tea Mãng Cầu",

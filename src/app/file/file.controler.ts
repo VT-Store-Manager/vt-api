@@ -75,7 +75,7 @@ export class FileController {
 		await this.fileService.checkFile(key, true)
 		const fileBody = await this.fileService.getFile(key)
 		res.setHeader('Content-Type', 'image/png')
-		res.setHeader('Cache-Control', 'public, max-age=600')
+		res.setHeader('Cache-Control', 'public, max-age=10000')
 		res.write(fileBody, 'binary')
 		res.end(null, 'binary')
 	}

@@ -5,17 +5,19 @@ import { Product } from '@/schemas/product.schema'
 import {
 	Body,
 	Controller,
+	Get,
 	Post,
 	UploadedFiles,
 	UseInterceptors,
 } from '@nestjs/common'
 import { FilesInterceptor } from '@nestjs/platform-express'
-import { ApiConsumes, ApiResponse, ApiTags } from '@nestjs/swagger'
+import { ApiConsumes, ApiTags } from '@nestjs/swagger'
 
 import { FileService } from '../file/file.service'
 import { ProductCategoryService } from '../product-category/product-category.service'
 import { ProductOptionService } from '../product-option/product-option.service'
 import { CreateProductDto } from './dto/create-product.dto'
+import { ResponseProductItemDto } from './dto/response-products.dto'
 import { ProductService } from './product.service'
 
 @Controller({
@@ -62,5 +64,11 @@ export class ProductController {
 		})
 		if (err) throw err
 		return result
+	}
+
+	@Get()
+	@ApiSuccessResponse(ResponseProductItemDto, 200, true)
+	async getProducts() {
+		return await this.productService.getAll()
 	}
 }
