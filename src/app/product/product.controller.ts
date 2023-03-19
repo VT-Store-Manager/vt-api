@@ -20,11 +20,11 @@ import { CreateProductDto } from './dto/create-product.dto'
 import { ResponseProductItemDto } from './dto/response-products.dto'
 import { ProductService } from './product.service'
 
+@ApiTags('product')
 @Controller({
 	path: 'product',
 	version: '1',
 })
-@ApiTags('product')
 export class ProductController {
 	constructor(
 		private readonly productService: ProductService,
