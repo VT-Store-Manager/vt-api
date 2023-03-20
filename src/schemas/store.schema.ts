@@ -85,15 +85,15 @@ export class Store {
 	})
 	address: Address
 
-	@Prop({ type: Boolean, required: true, default: false })
-	openedStatus: boolean
-
 	@Prop({
 		type: UnavailableKindsSchema,
 		_id: false,
 		default: { product: [], category: [], option: [] },
 	})
 	unavailableKinds: UnavailableKinds
+
+	@Prop({ type: Boolean, required: true, default: false })
+	openedStatus: boolean
 
 	@Prop({ type: Boolean, default: false })
 	disabled: boolean

@@ -1,4 +1,5 @@
 import { ApiSuccessResponse } from '@/common/decorators/api-sucess-response.decorator'
+import { ParseFile } from '@/common/pipes/parse-file.pipe'
 import { MongoService } from '@/common/providers/mongo.service'
 import { ImageMulterOption } from '@/common/validations/file.validator'
 import { Product } from '@/schemas/product.schema'
@@ -35,11 +36,11 @@ export class ProductController {
 	) {}
 
 	@Post('create')
-	@UseInterceptors(FilesInterceptor('images', 2, ImageMulterOption(2)))
+	@UseInterceptors(FilesInterceptor('images', 4, ImageMulterOption(2)))
 	@ApiConsumes('multipart/form-data')
 	@ApiSuccessResponse(Product, 201)
 	async createProduct(
-		@UploadedFiles() images: Express.Multer.File[],
+		@UploadedFiles(ParseFile) images: Express.Multer.File[],
 		@Body() dto: CreateProductDto
 	) {
 		const objectKeys = images.map(image =>
@@ -54,12 +55,10 @@ export class ProductController {
 				return createResult[1]
 			},
 			errorCb: async _err => {
-				console.log('Alo alo')
 				const existedKeys = await objectKeys.filter(
 					async key => await this.fileService.checkFile(key)
 				)
 				await this.fileService.delete(existedKeys)
-				console.log('Delete images sucessful')
 			},
 		})
 		if (err) throw err

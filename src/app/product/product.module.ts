@@ -19,5 +19,6 @@ import { ProductService } from './product.service'
 	],
 	controllers: [ProductController],
 	providers: [ProductService, FileService, MongoService],
+	exports: [ProductService],
 })
 export class ProductModule {}
