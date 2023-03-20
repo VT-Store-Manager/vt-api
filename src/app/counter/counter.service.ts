@@ -39,7 +39,6 @@ export class CounterService {
 				.exec()
 			return counter.count
 		} catch (error) {
-			console.log(error)
 			throw new MongoException(`Increment counter ${collection} failed`)
 		}
 	}

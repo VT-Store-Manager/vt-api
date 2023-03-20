@@ -1,5 +1,5 @@
 import { MongoService } from '@/common/providers/mongo.service'
-import { Product, ProductSchema } from '@/schemas/product.schema'
+import { Store, StoreSchema } from '@/schemas/store.schema'
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 
@@ -7,18 +7,19 @@ import { CounterModule } from '../counter/counter.module'
 import { FileService } from '../file/file.service'
 import { ProductCategoryModule } from '../product-category/product-category.module'
 import { ProductOptionModule } from '../product-option/product-option.module'
-import { ProductController } from './product.controller'
-import { ProductService } from './product.service'
+import { ProductModule } from '../product/product.module'
+import { StoreController } from './store.controller'
+import { StoreService } from './store.service'
 
 @Module({
 	imports: [
-		MongooseModule.forFeature([{ name: Product.name, schema: ProductSchema }]),
+		MongooseModule.forFeature([{ name: Store.name, schema: StoreSchema }]),
+		CounterModule,
+		ProductModule,
 		ProductCategoryModule,
 		ProductOptionModule,
-		CounterModule,
 	],
-	controllers: [ProductController],
-	providers: [ProductService, FileService, MongoService],
-	exports: [ProductService],
+	controllers: [StoreController],
+	providers: [StoreService, FileService, MongoService],
 })
-export class ProductModule {}
+export class StoreModule {}

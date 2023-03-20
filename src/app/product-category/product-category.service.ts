@@ -83,4 +83,15 @@ export class ProductCategoryService {
 			? 'Delete successful'
 			: 'Category is not found or is deleted'
 	}
+
+	async isExist(...listIds: string[]): Promise<string[]> {
+		const products = await this.productCategoryModel
+			.find({ _id: { $in: listIds } })
+			.select('_id')
+			.lean()
+			.exec()
+		return listIds.filter(
+			id => !products.some(product => id === product._id.toString())
+		)
+	}
 }
