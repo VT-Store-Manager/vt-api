@@ -25,7 +25,6 @@ export class MongoService {
 				await session.commitTransaction()
 			} catch (error) {
 				await session.abortTransaction()
-				console.log(error)
 				throw error
 			}
 

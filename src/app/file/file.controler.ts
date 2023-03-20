@@ -44,7 +44,9 @@ export class FileController {
 	}
 
 	@Post('upload-multi')
-	@UseInterceptors(FilesInterceptor('files', 6, ImageMulterOption()))
+	@UseInterceptors(
+		FilesInterceptor('files', undefined, ImageMulterOption(2, 6))
+	)
 	@ApiConsumes('multipart/form-data')
 	@ApiResponse({ type: [UploadFileResponseDto] })
 	async uploadMultiFiles(

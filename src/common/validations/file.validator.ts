@@ -1,9 +1,10 @@
 import { BadRequestException } from '@nestjs/common'
 import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface'
 
-export const ImageMulterOption = (size = 2): MulterOptions => ({
+export const ImageMulterOption = (size = 2, maxFile = 4): MulterOptions => ({
 	limits: {
 		fileSize: size * 1024 * 1024,
+		files: maxFile,
 	},
 	fileFilter(
 		req: any,

@@ -27,6 +27,7 @@ export class ProductService {
 		)
 		return product[0]
 	}
+
 	async getAll(): Promise<ResponseProductItemDto[]> {
 		const products = await this.productModel
 			.aggregate<ResponseProductItemDto>()
@@ -73,5 +74,16 @@ export class ProductService {
 			})
 			.exec()
 		return products
+	}
+
+	async isExist(...listIds: string[]): Promise<string[]> {
+		const products = await this.productModel
+			.find({ _id: { $in: listIds } })
+			.select('_id')
+			.lean()
+			.exec()
+		return listIds.filter(
+			id => !products.some(product => id === product._id.toString())
+		)
 	}
 }

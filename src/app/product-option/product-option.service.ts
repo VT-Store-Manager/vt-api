@@ -106,4 +106,15 @@ export class ProductOptionService {
 		)
 		return option[0]
 	}
+
+	async isExist(...listIds: string[]): Promise<string[]> {
+		const products = await this.productOptionModel
+			.find({ _id: { $in: listIds } })
+			.select('_id')
+			.lean()
+			.exec()
+		return listIds.filter(
+			id => !products.some(product => id === product._id.toString())
+		)
+	}
 }
