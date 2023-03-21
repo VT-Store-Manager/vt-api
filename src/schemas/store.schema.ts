@@ -46,13 +46,13 @@ export const AddressSchema = {
 	country: { type: String, required: true, index: 'text' },
 }
 
-export class UnavailableKinds {
+export class UnavailableGoods {
 	product: Array<Types.ObjectId | string>
 	category: Array<Types.ObjectId | string>
 	option: Array<Types.ObjectId | string>
 }
 
-export const UnavailableKindsSchema = {
+export const UnavailableGoodsSchema = {
 	product: { type: [Types.ObjectId], default: [], ref: 'Product' },
 	category: { type: [Types.ObjectId], default: [], ref: 'ProductCategory' },
 	option: { type: [Types.ObjectId], default: [], ref: 'ProductOption' },
@@ -86,11 +86,11 @@ export class Store {
 	address: Address
 
 	@Prop({
-		type: UnavailableKindsSchema,
+		type: UnavailableGoodsSchema,
 		_id: false,
 		default: { product: [], category: [], option: [] },
 	})
-	unavailableKinds: UnavailableKinds
+	unavailableGoods: UnavailableGoods
 
 	@Prop({ type: Boolean, required: true, default: false })
 	openedStatus: boolean

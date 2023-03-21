@@ -47,11 +47,11 @@ export class StoreController {
 		@Body() createDto: CreateStoreDto
 	) {
 		const notFoundList = await Promise.all([
-			this.productService.isExist(...createDto.unavailableKinds.product),
+			this.productService.isExist(...createDto.unavailableGoods.product),
 			this.productCategoryService.isExist(
-				...createDto.unavailableKinds.category
+				...createDto.unavailableGoods.category
 			),
-			this.productOptionService.isExist(...createDto.unavailableKinds.option),
+			this.productOptionService.isExist(...createDto.unavailableGoods.option),
 		])
 		if (notFoundList[0].length > 0) {
 			throw new BadRequestException(
