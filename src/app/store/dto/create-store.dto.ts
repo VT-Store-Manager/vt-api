@@ -15,7 +15,7 @@ import {
 	Address,
 	OpenTime,
 	Store,
-	UnavailableKinds,
+	UnavailableGoods,
 } from '@/schemas/store.schema'
 import { PickType } from '@nestjs/swagger'
 
@@ -51,7 +51,7 @@ class AddressValidator extends Address {
 	country: string
 }
 
-class UnavailableKindsValidator extends UnavailableKinds {
+class UnavailableGoodsValidator extends UnavailableGoods {
 	@IsArray()
 	@IsString({ each: true })
 	@Validate(ObjectIdRule, { each: true })
@@ -79,7 +79,7 @@ export class CreateStoreDto extends PickType(Store, [
 	'images',
 	'openTime',
 	'address',
-	'unavailableKinds',
+	'unavailableGoods',
 ] as const) {
 	@ApiPropertyMultiFiles()
 	images: any[]
@@ -97,6 +97,6 @@ export class CreateStoreDto extends PickType(Store, [
 	address: AddressValidator
 
 	@ValidateNested({ each: true })
-	@Type(() => UnavailableKindsValidator)
-	unavailableKinds: UnavailableKindsValidator
+	@Type(() => UnavailableGoodsValidator)
+	unavailableGoods: UnavailableGoodsValidator
 }
