@@ -7,7 +7,9 @@ import {
 	BadRequestException,
 	Body,
 	Controller,
+	Get,
 	Post,
+	Query,
 	UploadedFiles,
 	UseInterceptors,
 } from '@nestjs/common'
@@ -19,6 +21,8 @@ import { ProductCategoryService } from '../product-category/product-category.ser
 import { ProductOptionService } from '../product-option/product-option.service'
 import { ProductService } from '../product/product.service'
 import { CreateStoreDto } from './dto/create-store.dto'
+import { GetListStoreDto } from './dto/get-list-store.dto'
+import { ResponseStoreListDto } from './dto/response-store-item.dto'
 import { StoreService } from './store.service'
 
 @ApiTags('store')
@@ -94,5 +98,11 @@ export class StoreController {
 		if (err) throw err
 
 		return result
+	}
+
+	@Get('list')
+	@ApiSuccessResponse(ResponseStoreListDto, 200, true)
+	async getMetadataStorage(@Query() query: GetListStoreDto) {
+		return this.storeService.getList(query)
 	}
 }
