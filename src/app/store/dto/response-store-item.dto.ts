@@ -1,6 +1,7 @@
 import { Store } from '@/schemas/store.schema'
 import { PickType } from '@nestjs/swagger'
-export class ResponseStoreItemDto extends PickType(Store, [
+
+export class ResponseStoreItem extends PickType(Store, [
 	'images',
 	'name',
 	'address',
@@ -10,4 +11,9 @@ export class ResponseStoreItemDto extends PickType(Store, [
 	'deleted',
 ] as const) {
 	id: string
+}
+
+export class ResponseStoreListDto {
+	items: ResponseStoreItem[]
+	maxCount: number
 }

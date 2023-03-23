@@ -22,7 +22,7 @@ import { ProductOptionService } from '../product-option/product-option.service'
 import { ProductService } from '../product/product.service'
 import { CreateStoreDto } from './dto/create-store.dto'
 import { GetListStoreDto } from './dto/get-list-store.dto'
-import { ResponseStoreItemDto } from './dto/response-store-item.dto'
+import { ResponseStoreListDto } from './dto/response-store-item.dto'
 import { StoreService } from './store.service'
 
 @ApiTags('store')
@@ -101,7 +101,7 @@ export class StoreController {
 	}
 
 	@Get('list')
-	@ApiSuccessResponse(ResponseStoreItemDto, 200, true)
+	@ApiSuccessResponse(ResponseStoreListDto, 200, true)
 	async getMetadataStorage(@Query() query: GetListStoreDto) {
 		return this.storeService.getList(query)
 	}
