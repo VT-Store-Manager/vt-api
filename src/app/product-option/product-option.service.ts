@@ -18,6 +18,8 @@ import {
 	ProductOptionDetailDto,
 } from './dto/product-option-detail.dto'
 import { ProductOptionListItemDto } from './dto/product-option-list-item.dto'
+import { UpdateProductOptionDto } from './dto/update-product-option.dto'
+import { ProductOptionItem } from '@/schemas/product-option-item.schema'
 
 @Injectable()
 export class ProductOptionService {
@@ -95,7 +97,8 @@ export class ProductOptionService {
 				const parentOptionItem = parentItemMap.get(item.key)
 				return {
 					...parentOptionItem,
-					key: parentOptionItem.key + '-' + optionItemKeyUid(),
+					key: optionItemKeyUid(),
+					parentKey: parentOptionItem.key,
 					...(isNaN(item.cost) ? {} : { cost: item.cost }),
 				}
 			})
@@ -218,5 +221,111 @@ export class ProductOptionService {
 			})
 			.exec()
 		return applyingProducts
+	}
+
+	async update(
+		optionId: string,
+		updateInfo: UpdateProductOptionDto,
+		session?: ClientSession
+	) {
+		const productOption = await this.productOptionModel
+			.findById(optionId)
+			.orFail(new BadRequestException('Not found product option'))
+			.select('parent items')
+			.populate<{ parent: Pick<ProductOption, 'items'> }>({
+				path: 'parent',
+				select: 'items',
+			})
+			.lean()
+			.exec()
+
+		let items: ProductOptionItem[]
+		if (!updateInfo.isParentOption) {
+			if (!productOption.parent) {
+				throw new BadRequestException('Product option is not parent option')
+			}
+
+			const parentItemsMap = new Map(
+				productOption.parent.items.map(item => [item.key, item])
+			)
+
+			items = updateInfo.childrenItems.reduce((preRes, curItem) => {
+				let res = [...preRes]
+				let item: ProductOptionItem
+				let idx: number
+
+				switch (curItem.action) {
+					case 'delete':
+						res = preRes.filter(item => item.parentKey !== curItem.parentKey)
+						break
+					case 'add':
+						item = {
+							name: parentItemsMap.get(curItem.parentKey).name,
+							parentKey: curItem.parentKey,
+							key: optionItemKeyUid(),
+							cost: curItem.cost,
+							disabled: curItem.disabled,
+						}
+						res.push(item)
+						break
+					case 'update':
+						idx = res.findIndex(
+							item => item.parentKey.toString() === curItem.parentKey.toString()
+						)
+						if (typeof curItem.cost === 'number') {
+							res[idx].cost = curItem.cost
+						}
+						if (typeof curItem.disabled === 'boolean') {
+							res[idx].disabled = curItem.disabled
+						}
+						break
+				}
+				return res
+			}, productOption.items)
+		} else {
+			items = updateInfo.parentItems.reduce((preRes, curItem) => {
+				let res = [...preRes]
+				let item: ProductOptionItem
+				let idx: number
+
+				switch (curItem.action) {
+					case 'delete':
+						res = preRes.filter(item => item.key !== curItem.key)
+						break
+					case 'add':
+						item = {
+							key: optionItemKeyUid(),
+							name: curItem.name,
+							cost: curItem.cost,
+							disabled: curItem.disabled,
+						}
+						res.push(item)
+						break
+					case 'update':
+						idx = res.findIndex(
+							item => item.key.toString() === curItem.key.toString()
+						)
+						if (typeof curItem.name === 'string') {
+							res[idx].name = curItem.name
+						}
+						if (typeof curItem.cost === 'number') {
+							res[idx].cost = curItem.cost
+						}
+						break
+				}
+				return res
+			}, productOption.items)
+		}
+
+		const updateOptionResult = await this.productOptionModel.updateOne(
+			{ _id: optionId },
+			{
+				...updateInfo,
+				items,
+			},
+			{ session }
+		)
+
+		return updateOptionResult
 	}
 }
