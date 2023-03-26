@@ -1,0 +1,65 @@
+{
+	"statusCode": 200,
+	"data": {
+		"code": 1,
+		"name": "Size",
+		"range": [0, 3],
+		"items": [
+			{
+				"key": "yyltpp",
+				"name": "Small",
+				"cost": 0,
+				"disabled": false
+			},
+			{
+				"key": "lendhk",
+				"name": "Medium",
+				"cost": 6000,
+				"disabled": false
+			},
+			{
+				"key": "jvsjsc",
+				"name": "Large",
+				"cost": 10000,
+				"disabled": false
+			}
+		],
+		"deleted": false,
+		"deletedAt": null,
+		"disabled": false,
+		"createdAt": "2023-03-12T16:47:49.542Z",
+		"updatedAt": "2023-03-12T16:47:49.542Z",
+		"parent": null,
+		"children": [
+			{
+				"code": 2,
+				"name": "Size #1",
+				"disabled": false,
+				"id": "640e0abe599246561856e948"
+			},
+			{
+				"code": 9,
+				"name": "Size #2",
+				"disabled": false,
+				"id": "641dc4c41a3c62cad5bf14e2"
+			}
+		],
+		"applyingProducts": [
+			{
+				"code": 1,
+				"name": "Test test",
+				"disabled": false,
+				"deleted": false,
+				"id": "641363c28d5f3fef9f1ba034"
+			},
+			{
+				"code": 2,
+				"name": "Product #2",
+				"disabled": false,
+				"deleted": false,
+				"id": "641463936cd714963c704d18"
+			}
+		],
+		"boughtAmount": 0
+	}
+}

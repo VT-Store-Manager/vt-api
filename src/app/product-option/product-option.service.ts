@@ -1,23 +1,31 @@
-import { ClientSession, Model } from 'mongoose'
+import { ClientSession, Model, Types } from 'mongoose'
 
+import { Status } from '@/common/constants'
+import { optionItemKeyUid } from '@/common/helpers/key.helper'
 import {
 	ProductOption,
 	ProductOptionDocument,
 } from '@/schemas/product-option.schema'
-import { Injectable, BadRequestException } from '@nestjs/common'
+import { Product, ProductDocument } from '@/schemas/product.schema'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-import { ProductOptionListItemDto } from './dto/product-option-list-item.dto'
-import { NewProductOptionDto } from './dto/new-product-option.dto'
+
 import { CounterService } from '../counter/counter.service'
 import { CreateProductOptionDto } from './dto/create-product-option.dto'
-import { optionItemKeyUid } from '@/common/helpers/key.helper'
-import { Status } from '@/common/constants'
+import { NewProductOptionDto } from './dto/new-product-option.dto'
+import {
+	ApplyingProductInfo,
+	ProductOptionDetailDto,
+} from './dto/product-option-detail.dto'
+import { ProductOptionListItemDto } from './dto/product-option-list-item.dto'
 
 @Injectable()
 export class ProductOptionService {
 	constructor(
 		@InjectModel(ProductOption.name)
 		private readonly productOptionModel: Model<ProductOptionDocument>,
+		@InjectModel(Product.name)
+		private readonly productModel: Model<ProductDocument>,
 		private readonly counterService: CounterService
 	) {}
 
@@ -116,5 +124,99 @@ export class ProductOptionService {
 		return listIds.filter(
 			id => !products.some(product => id === product._id.toString())
 		)
+	}
+
+	async getDetail(id: string) {
+		const optionDetail = await this.productOptionModel
+			.aggregate<
+				Omit<ProductOptionDetailDto, 'applyingAmount' | 'boughtAmount'>
+			>()
+			.match({ _id: new Types.ObjectId(id) })
+			.lookup({
+				from: 'product_options',
+				localField: 'parent',
+				foreignField: '_id',
+				pipeline: [
+					{
+						$project: {
+							id: '$_id',
+							name: 1,
+							code: 1,
+							disabled: 1,
+							deleted: 1,
+						},
+					},
+					{
+						$project: {
+							_id: 0,
+						},
+					},
+				],
+				as: 'parent',
+			})
+			.unwind({
+				path: '$parent',
+				preserveNullAndEmptyArrays: true,
+			})
+			.lookup({
+				from: 'product_options',
+				localField: '_id',
+				foreignField: 'parent',
+				pipeline: [
+					{
+						$project: {
+							id: '$_id',
+							name: 1,
+							code: 1,
+							disabled: 1,
+						},
+					},
+					{
+						$project: {
+							_id: 0,
+						},
+					},
+				],
+				as: 'children',
+			})
+			.unwind({
+				path: '$children',
+				preserveNullAndEmptyArrays: true,
+			})
+			.group({
+				_id: '$_id',
+				code: { $first: '$code' },
+				name: { $first: '$name' },
+				range: { $first: '$range' },
+				items: { $first: '$items' },
+				deleted: { $first: '$deleted' },
+				deletedAt: { $first: '$deletedAt' },
+				disabled: { $first: '$disabled' },
+				createdAt: { $first: '$createdAt' },
+				updatedAt: { $first: '$updatedAt' },
+				parent: { $first: '$parent' },
+				children: { $push: '$children' },
+			})
+			.project({ _id: 0 })
+			.exec()
+		return optionDetail[0]
+	}
+
+	async getApplyingProduct(optionId: string) {
+		const applyingProducts = await this.productModel
+			.aggregate<ApplyingProductInfo>()
+			.match({ options: new Types.ObjectId(optionId) })
+			.project({
+				id: '$_id',
+				code: 1,
+				name: 1,
+				disabled: 1,
+				deleted: 1,
+			})
+			.project({
+				_id: 0,
+			})
+			.exec()
+		return applyingProducts
 	}
 }
