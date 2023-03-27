@@ -19,7 +19,7 @@ import { ProductCategoryModule } from './product-category/product-category.modul
 import { ProductOptionModule } from './product-option/product-option.module'
 import { ProductModule } from './product/product.module'
 import { StoreModule } from './store/store.module'
-import { UserModule } from './user/user.module'
+import { MemberModule } from './member/member.module'
 
 @Module({
 	imports: [
@@ -44,13 +44,13 @@ import { UserModule } from './user/user.module'
 				cacheControl: true,
 			},
 		}),
-		UserModule,
 		FileModule,
 		CounterModule,
 		ProductCategoryModule,
 		ProductOptionModule,
 		ProductModule,
 		StoreModule,
+		MemberModule,
 	],
 	controllers: [AppController],
 	providers: [

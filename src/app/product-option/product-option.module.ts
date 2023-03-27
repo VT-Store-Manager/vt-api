@@ -15,8 +15,8 @@ import { ProductOptionService } from './product-option.service'
 	imports: [
 		MongooseModule.forFeature([
 			{ name: ProductOption.name, schema: ProductOptionSchema },
+			{ name: Product.name, schema: ProductSchema },
 		]),
-		MongooseModule.forFeature([{ name: Product.name, schema: ProductSchema }]),
 		CounterModule,
 	],
 	controllers: [ProductOptionController],

@@ -5,21 +5,21 @@ import mongooseLeanVirtuals from 'mongoose-lean-virtuals'
 import { Gender } from '@/common/constants'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 
-export type UserVirtual = {
+export type MemberVirtual = {
 	fullName: string
 }
 
-export type UserDocument = User & Document & UserVirtual
+export type MemberDocument = Member & Document & MemberVirtual
 
 @Schema({ versionKey: false, timestamps: true })
-export class User {
+export class Member {
 	_id?: Types.ObjectId
 
 	@Prop({ type: String, required: true, unique: true })
-	email: string
+	mobile: string
 
 	@Prop({ type: String, required: true, unique: true })
-	mobile: string
+	email?: string
 
 	@Prop({ type: String })
 	avatar: string
@@ -36,21 +36,23 @@ export class User {
 	@Prop({ type: Date, required: true })
 	dob: Date
 
-	@Prop({ type: Date })
-	createdAt: Date
-
 	@Prop({ type: Date, default: Date.now(), expires: '3m' })
 	notVerified: Date
 
 	@Prop({ type: Number, default: Date.now() })
 	tokenValidTime: number
+
+	deleted: boolean
+	deletedAt?: Date
+	createdAt?: Date
+	updatedAt?: Date
 }
 
-export const UserSchema = SchemaFactory.createForClass(User)
+export const MemberSchema = SchemaFactory.createForClass(Member)
 
-UserSchema.plugin(mongooseDelete)
-UserSchema.plugin(mongooseLeanVirtuals)
+MemberSchema.plugin(mongooseDelete)
+MemberSchema.plugin(mongooseLeanVirtuals)
 
-UserSchema.virtual('fullName').get(function () {
+MemberSchema.virtual('fullName').get(function () {
 	return `${this.firstName} ${this.lastName}`
 })
