@@ -15,14 +15,14 @@ export type MemberDocument = Member & Document & MemberVirtual
 export class Member {
 	_id?: Types.ObjectId
 
-	@Prop({ type: String, required: true, unique: true })
+	@Prop({ type: String, required: true, unique: true, index: 1 })
 	mobile: string
 
-	@Prop({ type: String, required: true, unique: true })
+	@Prop({ type: String })
 	email?: string
 
 	@Prop({ type: String })
-	avatar: string
+	avatar?: string
 
 	@Prop({ type: String, required: true })
 	firstName: string
@@ -36,11 +36,11 @@ export class Member {
 	@Prop({ type: Date, required: true })
 	dob: Date
 
-	@Prop({ type: Date, default: Date.now(), expires: '3m' })
+	@Prop({ type: Date, default: Date.now(), expires: '2m' })
 	notVerified: Date
 
-	@Prop({ type: Number, default: Date.now() })
-	tokenValidTime: number
+	@Prop({ type: Date, default: Date.now() })
+	tokenValidTime: Date
 
 	deleted: boolean
 	deletedAt?: Date

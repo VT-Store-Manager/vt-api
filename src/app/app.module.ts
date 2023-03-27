@@ -20,6 +20,7 @@ import { ProductOptionModule } from './product-option/product-option.module'
 import { ProductModule } from './product/product.module'
 import { StoreModule } from './store/store.module'
 import { MemberModule } from './member/member.module'
+import { AuthModule } from './auth/auth.module'
 
 @Module({
 	imports: [
@@ -51,6 +52,7 @@ import { MemberModule } from './member/member.module'
 		ProductModule,
 		StoreModule,
 		MemberModule,
+		AuthModule,
 	],
 	controllers: [AppController],
 	providers: [

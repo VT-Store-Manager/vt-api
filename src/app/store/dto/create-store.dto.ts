@@ -1,6 +1,7 @@
 import { Type } from 'class-transformer'
 import {
 	IsArray,
+	IsMilitaryTime,
 	IsNotEmpty,
 	IsOptional,
 	IsString,
@@ -20,12 +21,10 @@ import {
 import { PickType } from '@nestjs/swagger'
 
 class OpenTimeValidator extends OpenTime {
-	@IsString()
-	@Validate(StoreOpenTimeRule)
+	@IsMilitaryTime()
 	start: string
 
-	@IsString()
-	@Validate(StoreOpenTimeRule)
+	@IsMilitaryTime()
 	end: string
 }
 
