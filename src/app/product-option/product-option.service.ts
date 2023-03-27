@@ -1,23 +1,33 @@
-import { ClientSession, Model } from 'mongoose'
+import { ClientSession, Model, Types } from 'mongoose'
 
+import { Status } from '@/common/constants'
+import { optionItemKeyUid } from '@/common/helpers/key.helper'
 import {
 	ProductOption,
 	ProductOptionDocument,
 } from '@/schemas/product-option.schema'
-import { Injectable, BadRequestException } from '@nestjs/common'
+import { Product, ProductDocument } from '@/schemas/product.schema'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-import { ProductOptionListItemDto } from './dto/product-option-list-item.dto'
-import { NewProductOptionDto } from './dto/new-product-option.dto'
+
 import { CounterService } from '../counter/counter.service'
 import { CreateProductOptionDto } from './dto/create-product-option.dto'
-import { optionItemKeyUid } from '@/common/helpers/key.helper'
-import { Status } from '@/common/constants'
+import { NewProductOptionDto } from './dto/new-product-option.dto'
+import {
+	ApplyingProductInfo,
+	ProductOptionDetailDto,
+} from './dto/product-option-detail.dto'
+import { ProductOptionListItemDto } from './dto/product-option-list-item.dto'
+import { UpdateProductOptionDto } from './dto/update-product-option.dto'
+import { ProductOptionItem } from '@/schemas/product-option-item.schema'
 
 @Injectable()
 export class ProductOptionService {
 	constructor(
 		@InjectModel(ProductOption.name)
 		private readonly productOptionModel: Model<ProductOptionDocument>,
+		@InjectModel(Product.name)
+		private readonly productModel: Model<ProductDocument>,
 		private readonly counterService: CounterService
 	) {}
 
@@ -87,7 +97,8 @@ export class ProductOptionService {
 				const parentOptionItem = parentItemMap.get(item.key)
 				return {
 					...parentOptionItem,
-					key: parentOptionItem.key + '-' + optionItemKeyUid(),
+					key: optionItemKeyUid(),
+					parentKey: parentOptionItem.key,
 					...(isNaN(item.cost) ? {} : { cost: item.cost }),
 				}
 			})
@@ -116,5 +127,205 @@ export class ProductOptionService {
 		return listIds.filter(
 			id => !products.some(product => id === product._id.toString())
 		)
+	}
+
+	async getDetail(id: string) {
+		const optionDetail = await this.productOptionModel
+			.aggregate<
+				Omit<ProductOptionDetailDto, 'applyingAmount' | 'boughtAmount'>
+			>()
+			.match({ _id: new Types.ObjectId(id) })
+			.lookup({
+				from: 'product_options',
+				localField: 'parent',
+				foreignField: '_id',
+				pipeline: [
+					{
+						$project: {
+							id: '$_id',
+							name: 1,
+							code: 1,
+							disabled: 1,
+							deleted: 1,
+						},
+					},
+					{
+						$project: {
+							_id: 0,
+						},
+					},
+				],
+				as: 'parent',
+			})
+			.unwind({
+				path: '$parent',
+				preserveNullAndEmptyArrays: true,
+			})
+			.lookup({
+				from: 'product_options',
+				localField: '_id',
+				foreignField: 'parent',
+				pipeline: [
+					{
+						$project: {
+							id: '$_id',
+							name: 1,
+							code: 1,
+							disabled: 1,
+						},
+					},
+					{
+						$project: {
+							_id: 0,
+						},
+					},
+				],
+				as: 'children',
+			})
+			.unwind({
+				path: '$children',
+				preserveNullAndEmptyArrays: true,
+			})
+			.group({
+				_id: '$_id',
+				code: { $first: '$code' },
+				name: { $first: '$name' },
+				range: { $first: '$range' },
+				items: { $first: '$items' },
+				deleted: { $first: '$deleted' },
+				deletedAt: { $first: '$deletedAt' },
+				disabled: { $first: '$disabled' },
+				createdAt: { $first: '$createdAt' },
+				updatedAt: { $first: '$updatedAt' },
+				parent: { $first: '$parent' },
+				children: { $push: '$children' },
+			})
+			.project({ _id: 0 })
+			.exec()
+		return optionDetail[0]
+	}
+
+	async getApplyingProduct(optionId: string) {
+		const applyingProducts = await this.productModel
+			.aggregate<ApplyingProductInfo>()
+			.match({ options: new Types.ObjectId(optionId) })
+			.project({
+				id: '$_id',
+				code: 1,
+				name: 1,
+				disabled: 1,
+				deleted: 1,
+			})
+			.project({
+				_id: 0,
+			})
+			.exec()
+		return applyingProducts
+	}
+
+	async update(
+		optionId: string,
+		updateInfo: UpdateProductOptionDto,
+		session?: ClientSession
+	) {
+		const productOption = await this.productOptionModel
+			.findById(optionId)
+			.orFail(new BadRequestException('Not found product option'))
+			.select('parent items')
+			.populate<{ parent: Pick<ProductOption, 'items'> }>({
+				path: 'parent',
+				select: 'items',
+			})
+			.lean()
+			.exec()
+
+		let items: ProductOptionItem[]
+		if (!updateInfo.isParentOption) {
+			if (!productOption.parent) {
+				throw new BadRequestException('Product option is not parent option')
+			}
+
+			const parentItemsMap = new Map(
+				productOption.parent.items.map(item => [item.key, item])
+			)
+
+			items = updateInfo.childrenItems.reduce((preRes, curItem) => {
+				let res = [...preRes]
+				let item: ProductOptionItem
+				let idx: number
+
+				switch (curItem.action) {
+					case 'delete':
+						res = preRes.filter(item => item.parentKey !== curItem.parentKey)
+						break
+					case 'add':
+						item = {
+							name: parentItemsMap.get(curItem.parentKey).name,
+							parentKey: curItem.parentKey,
+							key: optionItemKeyUid(),
+							cost: curItem.cost,
+							disabled: curItem.disabled,
+						}
+						res.push(item)
+						break
+					case 'update':
+						idx = res.findIndex(
+							item => item.parentKey.toString() === curItem.parentKey.toString()
+						)
+						if (typeof curItem.cost === 'number') {
+							res[idx].cost = curItem.cost
+						}
+						if (typeof curItem.disabled === 'boolean') {
+							res[idx].disabled = curItem.disabled
+						}
+						break
+				}
+				return res
+			}, productOption.items)
+		} else {
+			items = updateInfo.parentItems.reduce((preRes, curItem) => {
+				let res = [...preRes]
+				let item: ProductOptionItem
+				let idx: number
+
+				switch (curItem.action) {
+					case 'delete':
+						res = preRes.filter(item => item.key !== curItem.key)
+						break
+					case 'add':
+						item = {
+							key: optionItemKeyUid(),
+							name: curItem.name,
+							cost: curItem.cost,
+							disabled: curItem.disabled,
+						}
+						res.push(item)
+						break
+					case 'update':
+						idx = res.findIndex(
+							item => item.key.toString() === curItem.key.toString()
+						)
+						if (typeof curItem.name === 'string') {
+							res[idx].name = curItem.name
+						}
+						if (typeof curItem.cost === 'number') {
+							res[idx].cost = curItem.cost
+						}
+						break
+				}
+				return res
+			}, productOption.items)
+		}
+
+		const updateOptionResult = await this.productOptionModel.updateOne(
+			{ _id: optionId },
+			{
+				...updateInfo,
+				items,
+			},
+			{ session }
+		)
+
+		return updateOptionResult
 	}
 }

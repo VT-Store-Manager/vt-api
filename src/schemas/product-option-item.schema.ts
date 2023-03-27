@@ -9,6 +9,9 @@ export class ProductOptionItem {
 	@Prop({ type: String, unique: true, required: true })
 	key: string
 
+	@Prop({ type: String })
+	parentKey?: string
+
 	@Prop({ type: String, required: true })
 	name: string
 

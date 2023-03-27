@@ -3,6 +3,7 @@ import {
 	ProductOption,
 	ProductOptionSchema,
 } from '@/schemas/product-option.schema'
+import { Product, ProductSchema } from '@/schemas/product.schema'
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 
@@ -15,6 +16,7 @@ import { ProductOptionService } from './product-option.service'
 		MongooseModule.forFeature([
 			{ name: ProductOption.name, schema: ProductOptionSchema },
 		]),
+		MongooseModule.forFeature([{ name: Product.name, schema: ProductSchema }]),
 		CounterModule,
 	],
 	controllers: [ProductOptionController],

@@ -10,7 +10,7 @@ export class GetListStoreDto {
 
 	@IsNumber()
 	@Type(() => Number)
-	@Min(6)
+	@Min(1)
 	@IsOptional()
 	limit = 6
 }
