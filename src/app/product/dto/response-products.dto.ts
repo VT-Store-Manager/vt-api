@@ -11,7 +11,7 @@ class SaleVolumn {
 	month: number
 }
 
-export class ResponseProductItemDto extends PickType(Product, [
+export class ResponseProductItemDTO extends PickType(Product, [
 	'name',
 	'images',
 	'originalPrice',

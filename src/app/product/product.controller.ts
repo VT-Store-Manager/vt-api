@@ -17,8 +17,8 @@ import { ApiConsumes, ApiTags } from '@nestjs/swagger'
 import { FileService } from '../file/file.service'
 import { ProductCategoryService } from '../product-category/product-category.service'
 import { ProductOptionService } from '../product-option/product-option.service'
-import { CreateProductDto } from './dto/create-product.dto'
-import { ResponseProductItemDto } from './dto/response-products.dto'
+import { CreateProductDTO } from './dto/create-product.dto'
+import { ResponseProductItemDTO } from './dto/response-products.dto'
 import { ProductService } from './product.service'
 
 @ApiTags('product')
@@ -41,7 +41,7 @@ export class ProductController {
 	@ApiSuccessResponse(Product, 201)
 	async createProduct(
 		@UploadedFiles(ParseFile) images: Express.Multer.File[],
-		@Body() dto: CreateProductDto
+		@Body() dto: CreateProductDTO
 	) {
 		const objectKeys = images.map(image =>
 			this.fileService.createObjectKey(['product'], image.originalname)
@@ -66,7 +66,7 @@ export class ProductController {
 	}
 
 	@Get()
-	@ApiSuccessResponse(ResponseProductItemDto, 200, true)
+	@ApiSuccessResponse(ResponseProductItemDTO, 200, true)
 	async getProducts() {
 		return await this.productService.getAll()
 	}

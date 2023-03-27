@@ -5,11 +5,11 @@ import { MongoService } from '@/providers/mongo.service'
 import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
-import { CreateProductOptionDto } from './dto/create-product-option.dto'
-import { NewProductOptionDto } from './dto/new-product-option.dto'
-import { ProductOptionDetailDto } from './dto/product-option-detail.dto'
-import { ProductOptionListItemDto } from './dto/product-option-list-item.dto'
-import { UpdateProductOptionDto } from './dto/update-product-option.dto'
+import { CreateProductOptionDTO } from './dto/create-product-option.dto'
+import { NewProductOptionDTO } from './dto/new-product-option.dto'
+import { ProductOptionDetailDTO } from './dto/product-option-detail.dto'
+import { ProductOptionListItemDTO } from './dto/product-option-list-item.dto'
+import { UpdateProductOptionDTO } from './dto/update-product-option.dto'
 import { ProductOptionService } from './product-option.service'
 
 @ApiTags('product-option')
@@ -24,16 +24,16 @@ export class ProductOptionController {
 	) {}
 
 	@Get('list')
-	@ApiSuccessResponse(ProductOptionListItemDto, 200, true)
-	async getProductOptionList(): Promise<ProductOptionListItemDto[]> {
+	@ApiSuccessResponse(ProductOptionListItemDTO, 200, true)
+	async getProductOptionList(): Promise<ProductOptionListItemDTO[]> {
 		return this.productOptionService.getList()
 	}
 
 	@Post('create')
-	@ApiSuccessResponse(NewProductOptionDto, 201)
-	async createProductOption(@Body() body: CreateProductOptionDto) {
+	@ApiSuccessResponse(NewProductOptionDTO, 201)
+	async createProductOption(@Body() body: CreateProductOptionDTO) {
 		const { result, err } =
-			await this.mongoService.transaction<NewProductOptionDto>({
+			await this.mongoService.transaction<NewProductOptionDTO>({
 				transactionCb: async session => {
 					const newProductOption = await this.productOptionService.create(
 						body,
@@ -47,10 +47,10 @@ export class ProductOptionController {
 	}
 
 	@Get(':id/detail')
-	@ApiSuccessResponse(ProductOptionDetailDto)
+	@ApiSuccessResponse(ProductOptionDetailDTO)
 	async getProductOptionDetail(
 		@Param('id', ObjectIdPipe) id: string
-	): Promise<ProductOptionDetailDto> {
+	): Promise<ProductOptionDetailDTO> {
 		const [optionDetail, applyingProducts, boughtAmount] = await Promise.all([
 			this.productOptionService.getDetail(id),
 			this.productOptionService.getApplyingProduct(id),
@@ -66,7 +66,7 @@ export class ProductOptionController {
 	@Patch(':id/update')
 	async updateProductOption(
 		@Param('id', ObjectIdPipe) id: string,
-		@Body() dto: UpdateProductOptionDto
+		@Body() dto: UpdateProductOptionDTO
 	) {
 		clearUndefineOrNullField(dto)
 		const updateResult = await this.productOptionService.update(id, dto)

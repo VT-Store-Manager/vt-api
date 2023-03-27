@@ -1,3 +1,3 @@
 import { ProductOption } from '@/schemas/product-option.schema'
 
-export class NewProductOptionDto extends ProductOption {}
+export class NewProductOptionDTO extends ProductOption {}

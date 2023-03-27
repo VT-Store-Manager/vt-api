@@ -12,7 +12,7 @@ import { Gender } from '@/common/constants'
 import { Member } from '@/schemas/member.schema'
 import { PickType } from '@nestjs/swagger'
 
-export class RegisterMemberDto extends PickType(Member, [
+export class RegisterMemberDTO extends PickType(Member, [
 	'mobile',
 	'firstName',
 	'lastName',

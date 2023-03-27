@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer'
 import { IsNumber, IsOptional, Min } from 'class-validator'
 
-export class GetListStoreDto {
+export class GetListStoreDTO {
 	@IsNumber()
 	@Type(() => Number)
 	@Min(1)

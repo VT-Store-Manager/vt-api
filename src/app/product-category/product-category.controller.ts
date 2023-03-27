@@ -18,7 +18,7 @@ import { ApiConsumes, ApiTags } from '@nestjs/swagger'
 
 import { ParseFile } from '../../common/pipes/parse-file.pipe'
 import { FileService } from '../file/file.service'
-import { CreateProductCategoryDto } from './dto/create-product-category.dto'
+import { CreateProductCategoryDTO } from './dto/create-product-category.dto'
 import { ProductCategoryService } from './product-category.service'
 
 @ApiTags('product-category')
@@ -39,7 +39,7 @@ export class ProductCategoryController {
 	@ApiSuccessResponse(ProductCategory, 201)
 	async createProductCategory(
 		@UploadedFile(ParseFile) image: Express.Multer.File,
-		@Body() dto: CreateProductCategoryDto
+		@Body() dto: CreateProductCategoryDTO
 	) {
 		const objectKey = this.fileService.createObjectKey(
 			['product-category'],

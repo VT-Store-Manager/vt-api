@@ -13,7 +13,7 @@ export class ResponseStoreItem extends PickType(Store, [
 	id: string
 }
 
-export class ResponseStoreListDto {
+export class ResponseStoreListDTO {
 	items: ResponseStoreItem[]
 	maxCount: number
 }

@@ -1,6 +1,6 @@
 import { IsNumberString, IsPhoneNumber, Matches } from 'class-validator'
 
-export class VerifySmsOtpDto {
+export class VerifySmsOtpDTO {
 	@IsPhoneNumber()
 	mobile: string
 

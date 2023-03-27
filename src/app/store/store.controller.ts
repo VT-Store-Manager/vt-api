@@ -20,9 +20,9 @@ import { FileService } from '../file/file.service'
 import { ProductCategoryService } from '../product-category/product-category.service'
 import { ProductOptionService } from '../product-option/product-option.service'
 import { ProductService } from '../product/product.service'
-import { CreateStoreDto } from './dto/create-store.dto'
-import { GetListStoreDto } from './dto/get-list-store.dto'
-import { ResponseStoreListDto } from './dto/response-store-item.dto'
+import { CreateStoreDTO } from './dto/create-store.dto'
+import { GetListStoreDTO } from './dto/get-list-store.dto'
+import { ResponseStoreListDTO } from './dto/response-store-item.dto'
 import { StoreService } from './store.service'
 
 @ApiTags('store')
@@ -48,14 +48,14 @@ export class StoreController {
 	@ApiSuccessResponse(Store, 201)
 	async createStore(
 		@UploadedFiles(ParseFile) images: Express.Multer.File[],
-		@Body() createDto: CreateStoreDto
+		@Body() createDTO: CreateStoreDTO
 	) {
 		const notFoundList = await Promise.all([
-			this.productService.isExist(...createDto.unavailableGoods.product),
+			this.productService.isExist(...createDTO.unavailableGoods.product),
 			this.productCategoryService.isExist(
-				...createDto.unavailableGoods.category
+				...createDTO.unavailableGoods.category
 			),
-			this.productOptionService.isExist(...createDto.unavailableGoods.option),
+			this.productOptionService.isExist(...createDTO.unavailableGoods.option),
 		])
 		if (notFoundList[0].length > 0) {
 			throw new BadRequestException(
@@ -81,7 +81,7 @@ export class StoreController {
 				const createResult = await Promise.all([
 					this.fileService.uploadMulti(images, objectKeys),
 					this.storeService.create(
-						{ ...createDto, images: objectKeys },
+						{ ...createDTO, images: objectKeys },
 						session
 					),
 				])
@@ -101,8 +101,8 @@ export class StoreController {
 	}
 
 	@Get('list')
-	@ApiSuccessResponse(ResponseStoreListDto, 200, true)
-	async getMetadataStorage(@Query() query: GetListStoreDto) {
+	@ApiSuccessResponse(ResponseStoreListDTO, 200, true)
+	async getMetadataStorage(@Query() query: GetListStoreDTO) {
 		return this.storeService.getList(query)
 	}
 }

@@ -73,7 +73,7 @@ class UnavailableGoodsValidator extends UnavailableGoods {
 	option = [] as string[]
 }
 
-export class CreateStoreDto extends PickType(Store, [
+export class CreateStoreDTO extends PickType(Store, [
 	'name',
 	'images',
 	'openTime',

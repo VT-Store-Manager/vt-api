@@ -2,7 +2,7 @@ import { Status } from '@/common/constants'
 import { ProductOption } from '@/schemas/product-option.schema'
 import { PickType } from '@nestjs/swagger'
 
-export class ProductOptionListItemDto extends PickType(ProductOption, [
+export class ProductOptionListItemDTO extends PickType(ProductOption, [
 	'code',
 	'name',
 	'parent',

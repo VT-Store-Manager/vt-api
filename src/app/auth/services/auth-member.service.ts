@@ -4,7 +4,7 @@ import { Member, MemberDocument } from '@/schemas/member.schema'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 
-import { RegisterMemberDto } from '../dto/register-member.dto'
+import { RegisterMemberDTO } from '../dto/register-member.dto'
 
 @Injectable()
 export class AuthMemberService {
@@ -13,7 +13,7 @@ export class AuthMemberService {
 		private readonly memberModel: Model<MemberDocument>
 	) {}
 
-	async createTemporaryMember(dto: RegisterMemberDto, session?: ClientSession) {
+	async createTemporaryMember(dto: RegisterMemberDTO, session?: ClientSession) {
 		const member = await this.memberModel.create(
 			[
 				{

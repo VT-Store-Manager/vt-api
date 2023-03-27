@@ -1,10 +1,10 @@
 import { SmsService } from '@/providers/sms.service'
-import { NoDataResponseDto } from '@/types/http.swagger'
+import { NoDataResponseDTO } from '@/types/http.swagger'
 import { Body, Controller, Post } from '@nestjs/common'
 import { ApiResponse, ApiTags } from '@nestjs/swagger'
 
-import { RegisterMemberDto } from '../dto/register-member.dto'
-import { VerifySmsOtpDto } from '../dto/verify-sms-otp.dto'
+import { RegisterMemberDTO } from '../dto/register-member.dto'
+import { VerifySmsOtpDTO } from '../dto/verify-sms-otp.dto'
 import { AuthMemberService } from '../services/auth-member.service'
 
 @Controller({
@@ -19,8 +19,8 @@ export class AuthMemberController {
 	) {}
 
 	@Post('register')
-	@ApiResponse({ type: NoDataResponseDto })
-	async registerMember(@Body() dto: RegisterMemberDto) {
+	@ApiResponse({ type: NoDataResponseDTO })
+	async registerMember(@Body() dto: RegisterMemberDTO) {
 		const member = await this.authMemberService.createTemporaryMember(dto)
 		if (member) {
 			await this.smsService.initiatePhoneNumberVerification(dto.mobile)
@@ -29,7 +29,7 @@ export class AuthMemberController {
 	}
 
 	@Post('sms/verify')
-	async verifySmsOtp(@Body() dto: VerifySmsOtpDto) {
+	async verifySmsOtp(@Body() dto: VerifySmsOtpDTO) {
 		return await this.smsService.confirmPhoneNumber(dto.mobile, dto.code)
 	}
 }

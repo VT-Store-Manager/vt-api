@@ -1,7 +1,7 @@
 import { ApiPropertyMultiFiles } from '@/common/decorators/file-swagger.decorator'
 import { IsJSON } from 'class-validator'
 
-export class UploadMultiFileDto {
+export class UploadMultiFileDTO {
 	@ApiPropertyMultiFiles()
 	files: any[]
 
