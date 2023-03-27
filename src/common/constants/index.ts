@@ -6,6 +6,7 @@ export enum NodeEnv {
 export enum Gender {
 	FEMALE,
 	MALE,
+	OTHER,
 }
 
 export enum Status {

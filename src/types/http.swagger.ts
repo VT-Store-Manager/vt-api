@@ -32,3 +32,11 @@ export class SuccessResponseDto<T extends Record<string, any>> {
 	@ApiProperty()
 	data: T
 }
+
+export class NoDataResponseDto {
+	@ApiProperty({ default: 201 })
+	statusCode: number
+
+	@ApiProperty()
+	message: string
+}
