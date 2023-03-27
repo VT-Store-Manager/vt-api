@@ -8,6 +8,7 @@ import {
 	Body,
 	Controller,
 	Get,
+	InternalServerErrorException,
 	Post,
 	Query,
 	UploadedFiles,
@@ -76,26 +77,23 @@ export class StoreController {
 		const objectKeys = images.map(image =>
 			this.fileService.createObjectKey(['store'], image.originalname)
 		)
-		const { result, err } = await this.mongoService.transaction<Store>({
-			transactionCb: async session => {
-				const createResult = await Promise.all([
-					this.fileService.uploadMulti(images, objectKeys),
-					this.storeService.create(
-						{ ...createDTO, images: objectKeys },
-						session
-					),
-				])
-				return createResult[1]
-			},
-			errorCb: async _err => {
-				const existedKeys = await objectKeys.filter(
-					async key => await this.fileService.checkFile(key)
-				)
-				await this.fileService.delete(existedKeys)
-			},
+
+		let result: Store
+		const { error } = await this.mongoService.execTransaction(async session => {
+			const createResult = await Promise.all([
+				this.fileService.uploadMulti(images, objectKeys),
+				this.storeService.create({ ...createDTO, images: objectKeys }, session),
+			])
+			result = createResult[1]
 		})
 
-		if (err) throw err
+		if (error) {
+			const existedKeys = await objectKeys.filter(
+				async key => await this.fileService.checkFile(key)
+			)
+			await this.fileService.delete(existedKeys)
+			throw new InternalServerErrorException()
+		}
 
 		return result
 	}

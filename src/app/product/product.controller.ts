@@ -1,12 +1,13 @@
 import { ApiSuccessResponse } from '@/common/decorators/api-sucess-response.decorator'
 import { ParseFile } from '@/common/pipes/parse-file.pipe'
-import { MongoService } from '@/providers/mongo.service'
 import { ImageMulterOption } from '@/common/validations/file.validator'
+import { MongoService } from '@/providers/mongo.service'
 import { Product } from '@/schemas/product.schema'
 import {
 	Body,
 	Controller,
 	Get,
+	InternalServerErrorException,
 	Post,
 	UploadedFiles,
 	UseInterceptors,
@@ -46,22 +47,21 @@ export class ProductController {
 		const objectKeys = images.map(image =>
 			this.fileService.createObjectKey(['product'], image.originalname)
 		)
-		const { result, err } = await this.mongoService.transaction<Product>({
-			transactionCb: async session => {
-				const createResult = await Promise.all([
-					this.fileService.uploadMulti(images, objectKeys),
-					this.productService.create({ ...dto, images: objectKeys }, session),
-				])
-				return createResult[1]
-			},
-			errorCb: async _err => {
-				const existedKeys = await objectKeys.filter(
-					async key => await this.fileService.checkFile(key)
-				)
-				await this.fileService.delete(existedKeys)
-			},
+		let result: Product
+		const { error } = await this.mongoService.execTransaction(async session => {
+			const createResult = await Promise.all([
+				this.fileService.uploadMulti(images, objectKeys),
+				this.productService.create({ ...dto, images: objectKeys }, session),
+			])
+			result = createResult[1]
 		})
-		if (err) throw err
+		if (error) {
+			const existedKeys = await objectKeys.filter(
+				async key => await this.fileService.checkFile(key)
+			)
+			await this.fileService.delete(existedKeys)
+			throw new InternalServerErrorException(error)
+		}
 		return result
 	}
 

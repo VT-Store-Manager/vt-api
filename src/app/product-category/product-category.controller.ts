@@ -7,6 +7,7 @@ import {
 	Body,
 	Controller,
 	Get,
+	InternalServerErrorException,
 	Param,
 	Patch,
 	Post,
@@ -46,26 +47,24 @@ export class ProductCategoryController {
 			image.originalname
 		)
 
-		const { result, err } =
-			await this.mongoService.transaction<ProductCategory>({
-				transactionCb: async session => {
-					const createResult = await Promise.all([
-						this.fileService.upload(image.buffer, objectKey),
-						this.productCategoryService.create(
-							{ ...dto, image: objectKey },
-							session
-						),
-					])
+		let result: ProductCategory
+		const { error } = await this.mongoService.execTransaction(async session => {
+			const createResult = await Promise.all([
+				this.fileService.upload(image.buffer, objectKey),
+				this.productCategoryService.create(
+					{ ...dto, image: objectKey },
+					session
+				),
+			])
 
-					return createResult[1]
-				},
+			result = createResult[1]
+		})
+		if (error) {
+			if (this.fileService.checkFile(objectKey))
+				console.log(await this.fileService.delete([objectKey]))
+			throw new InternalServerErrorException(error)
+		}
 
-				errorCb: async _err => {
-					if (this.fileService.checkFile(objectKey))
-						await this.fileService.delete([objectKey])
-				},
-			})
-		if (err) throw err
 		return result
 	}
 

@@ -2,7 +2,15 @@ import { ApiSuccessResponse } from '@/common/decorators/api-sucess-response.deco
 import { clearUndefineOrNullField } from '@/common/helpers/body.helper'
 import { ObjectIdPipe } from '@/common/pipes/object-id.pipe'
 import { MongoService } from '@/providers/mongo.service'
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common'
+import {
+	Body,
+	Controller,
+	Get,
+	InternalServerErrorException,
+	Param,
+	Patch,
+	Post,
+} from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
 import { CreateProductOptionDTO } from './dto/create-product-option.dto'
@@ -32,17 +40,16 @@ export class ProductOptionController {
 	@Post('create')
 	@ApiSuccessResponse(NewProductOptionDTO, 201)
 	async createProductOption(@Body() body: CreateProductOptionDTO) {
-		const { result, err } =
-			await this.mongoService.transaction<NewProductOptionDTO>({
-				transactionCb: async session => {
-					const newProductOption = await this.productOptionService.create(
-						body,
-						session
-					)
-					return newProductOption
-				},
-			})
-		if (err) throw err
+		let result: NewProductOptionDTO
+		const { error } = await this.mongoService.execTransaction(async session => {
+			const newProductOption = await this.productOptionService.create(
+				body,
+				session
+			)
+			result = newProductOption
+		})
+		if (error) throw new InternalServerErrorException()
+
 		return result
 	}
 
