@@ -46,6 +46,7 @@
 		"rxjs": "^7.2.0",
 		"short-unique-id": "^4.4.4",
 		"ts-migrate-mongoose": "^2.4.13",
+		"twilio": "^4.9.0",
 		"uuid": "^9.0.0"
 	},
 	"devDependencies": {

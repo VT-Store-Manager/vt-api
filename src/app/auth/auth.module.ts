@@ -1,3 +1,4 @@
+import { SmsService } from '@/providers/sms.service'
 import { Member, MemberSchema } from '@/schemas/member.schema'
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
@@ -10,6 +11,6 @@ import { AuthMemberService } from './services/auth-member.service'
 		MongooseModule.forFeature([{ name: Member.name, schema: MemberSchema }]),
 	],
 	controllers: [AuthMemberController],
-	providers: [AuthMemberService],
+	providers: [AuthMemberService, SmsService],
 })
 export class AuthModule {}

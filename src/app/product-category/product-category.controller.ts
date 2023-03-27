@@ -1,6 +1,6 @@
 import { ApiSuccessResponse } from '@/common/decorators/api-sucess-response.decorator'
 import { ObjectIdPipe } from '@/common/pipes/object-id.pipe'
-import { MongoService } from '@/common/providers/mongo.service'
+import { MongoService } from '@/providers/mongo.service'
 import { ImageMulterOption } from '@/common/validations/file.validator'
 import { ProductCategory } from '@/schemas/product-category.schema'
 import {

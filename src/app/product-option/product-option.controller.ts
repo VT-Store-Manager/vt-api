@@ -1,7 +1,7 @@
 import { ApiSuccessResponse } from '@/common/decorators/api-sucess-response.decorator'
 import { clearUndefineOrNullField } from '@/common/helpers/body.helper'
 import { ObjectIdPipe } from '@/common/pipes/object-id.pipe'
-import { MongoService } from '@/common/providers/mongo.service'
+import { MongoService } from '@/providers/mongo.service'
 import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 

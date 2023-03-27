@@ -1,4 +1,4 @@
-import { MongoService } from '@/common/providers/mongo.service'
+import { MongoService } from '@/providers/mongo.service'
 import { Store, StoreSchema } from '@/schemas/store.schema'
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'

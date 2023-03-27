@@ -1,4 +1,4 @@
-import { MongoService } from '@/common/providers/mongo.service'
+import { MongoService } from '@/providers/mongo.service'
 import {
 	ProductOption,
 	ProductOptionSchema,
