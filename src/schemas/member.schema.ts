@@ -39,9 +39,6 @@ export class Member {
 	@Prop({ type: Date, default: Date.now(), expires: '2m' })
 	notVerified: Date
 
-	@Prop({ type: Number, default: true })
-	pendingVerified: number
-
 	@Prop({ type: Date, default: Date.now() })
 	tokenValidTime: Date
 

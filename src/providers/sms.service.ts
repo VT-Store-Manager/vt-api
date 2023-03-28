@@ -22,12 +22,10 @@ export class SmsService {
 	}
 
 	async confirmPhoneNumber(phoneNumber: string, verificationCode: string) {
-		const serviceSid = this.configService.get('TWILIO_VERIFICATION_SERVICE_SID')
-
 		const result = await this.twilioClient.verify.v2
-			.services(serviceSid)
+			.services(this.serviceSid)
 			.verificationChecks.create({ to: phoneNumber, code: verificationCode })
-		console.log(result)
+
 		if (!result.valid || result.status !== 'approved') {
 			throw new BadRequestException('Wrong code provided')
 		}

@@ -4,6 +4,7 @@ import { Body, Controller, Post } from '@nestjs/common'
 import { ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import { RegisterMemberDTO } from '../dto/register-member.dto'
+import { LoginDTO } from '../dto/login.dto'
 import { VerifySmsOtpDTO } from '../dto/verify-sms-otp.dto'
 import { AuthMemberService } from '../services/auth-member.service'
 
@@ -18,18 +19,28 @@ export class AuthMemberController {
 		private readonly smsService: SmsService
 	) {}
 
+	@Post('login')
+	async sendVerification(@Body() { mobile }: LoginDTO) {
+		await this.authMemberService.checkAccount(mobile)
+		await this.smsService.initiatePhoneNumberVerification(mobile)
+		return true
+	}
+
 	@Post('register')
 	@ApiResponse({ type: NoDataResponseDTO })
 	async registerMember(@Body() dto: RegisterMemberDTO) {
 		const member = await this.authMemberService.createTemporaryMember(dto)
-		if (member) {
-			await this.smsService.initiatePhoneNumberVerification(dto.mobile)
-		}
+
+		if (!member) return false
+
+		await this.smsService.initiatePhoneNumberVerification(dto.mobile)
 		return true
 	}
 
-	@Post('sms/verify')
+	@Post('sms-verify')
 	async verifySmsOtp(@Body() dto: VerifySmsOtpDTO) {
-		return await this.smsService.confirmPhoneNumber(dto.mobile, dto.code)
+		await this.smsService.confirmPhoneNumber(dto.mobile, dto.code)
+		const jwtPayload = await this.authMemberService.getJwtPayload(dto.mobile)
+		return jwtPayload
 	}
 }
