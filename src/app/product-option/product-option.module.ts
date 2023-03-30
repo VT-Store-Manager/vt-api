@@ -1,4 +1,4 @@
-import { MongoService } from '@/providers/mongo.service'
+import { MongoSessionService } from '@/providers/mongo/session.service'
 import {
 	ProductOption,
 	ProductOptionSchema,
@@ -20,7 +20,7 @@ import { ProductOptionService } from './product-option.service'
 		CounterModule,
 	],
 	controllers: [ProductOptionController],
-	providers: [ProductOptionService, MongoService],
+	providers: [ProductOptionService, MongoSessionService],
 	exports: [ProductOptionService],
 })
 export class ProductOptionModule {}

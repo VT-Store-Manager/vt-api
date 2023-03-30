@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable, Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { Twilio } from 'twilio'
 
@@ -22,13 +22,18 @@ export class SmsService {
 	}
 
 	async confirmPhoneNumber(phoneNumber: string, verificationCode: string) {
-		const result = await this.twilioClient.verify.v2
-			.services(this.serviceSid)
-			.verificationChecks.create({ to: phoneNumber, code: verificationCode })
+		try {
+			const result = await this.twilioClient.verify.v2
+				.services(this.serviceSid)
+				.verificationChecks.create({ to: phoneNumber, code: verificationCode })
 
-		if (!result.valid || result.status !== 'approved') {
+			if (!result.valid || result.status !== 'approved') {
+				throw new BadRequestException('Wrong code provided')
+			}
+			return true
+		} catch (error) {
+			Logger.error(error)
 			throw new BadRequestException('Wrong code provided')
 		}
-		return true
 	}
 }

@@ -1,11 +1,15 @@
 import { ClientSession, Model } from 'mongoose'
 
 import { Member, MemberDocument } from '@/schemas/member.schema'
-import { BadRequestException, Injectable } from '@nestjs/common'
+import {
+	BadRequestException,
+	Injectable,
+	UnauthorizedException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 
 import { RegisterMemberDTO } from '../dto/register-member.dto'
-import { UserRole } from '@/common/constants'
+import { Types } from 'mongoose'
 
 @Injectable()
 export class AuthMemberService {
@@ -42,23 +46,47 @@ export class AuthMemberService {
 		return !!member
 	}
 
-	async getJwtPayload(mobile: string) {
+	async getJwtPayloadByMobile(mobile: string, session?: ClientSession) {
 		const member = await this.memberModel
 			.findOneAndUpdate(
 				{ mobile },
-				{ $unset: { notVerified: 0 }, $set: { tokenValidTime: new Date() } }
+				{ $unset: { notVerified: 0 } },
+				session ? { session } : {}
 			)
 			.orFail(new BadRequestException('Account not found'))
-			.select('firstName lastName gender dob')
+			.select('firstName lastName')
 			.lean()
 			.exec()
-		return {
-			id: member._id.toString(),
-			role: UserRole.MEMBER,
-			firstName: member.firstName,
-			lastName: member.lastName,
-			gender: member.gender,
-			dob: member.dob,
-		}
+		return member
+	}
+
+	async updateTokenValidTime(uid: string, session?: ClientSession) {
+		const updateResult = await this.memberModel.updateOne(
+			{ _id: new Types.ObjectId(uid) },
+			{
+				tokenValidTime: new Date(),
+			},
+			session ? { session } : {}
+		)
+		return updateResult
+	}
+
+	async getTokenValidTime(id: string) {
+		const member = await this.memberModel
+			.findById(id)
+			.orFail(new UnauthorizedException('User not found'))
+			.select('tokenValidTime')
+			.lean()
+			.exec()
+		return member.tokenValidTime
+	}
+
+	async getJwtPayload(uid: string) {
+		const member = await this.memberModel
+			.findById(uid)
+			.orFail(new UnauthorizedException('User not found'))
+			.lean()
+			.exec()
+		return member
 	}
 }

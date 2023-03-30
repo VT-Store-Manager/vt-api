@@ -1,6 +1,6 @@
 import { ApiSuccessResponse } from '@/common/decorators/api-sucess-response.decorator'
 import { ParseFile } from '@/common/pipes/parse-file.pipe'
-import { MongoService } from '@/providers/mongo.service'
+import { MongoSessionService } from '@/providers/mongo/session.service'
 import { ImageMulterOption } from '@/common/validations/file.validator'
 import { Store } from '@/schemas/store.schema'
 import {
@@ -35,7 +35,7 @@ export class StoreController {
 	constructor(
 		private readonly storeService: StoreService,
 		private readonly fileService: FileService,
-		private readonly mongoService: MongoService,
+		private readonly mongoSessionService: MongoSessionService,
 		private readonly productService: ProductService,
 		private readonly productCategoryService: ProductCategoryService,
 		private readonly productOptionService: ProductOptionService
@@ -79,13 +79,18 @@ export class StoreController {
 		)
 
 		let result: Store
-		const { error } = await this.mongoService.execTransaction(async session => {
-			const createResult = await Promise.all([
-				this.fileService.uploadMulti(images, objectKeys),
-				this.storeService.create({ ...createDTO, images: objectKeys }, session),
-			])
-			result = createResult[1]
-		})
+		const { error } = await this.mongoSessionService.execTransaction(
+			async session => {
+				const createResult = await Promise.all([
+					this.fileService.uploadMulti(images, objectKeys),
+					this.storeService.create(
+						{ ...createDTO, images: objectKeys },
+						session
+					),
+				])
+				result = createResult[1]
+			}
+		)
 
 		if (error) {
 			const existedKeys = await objectKeys.filter(

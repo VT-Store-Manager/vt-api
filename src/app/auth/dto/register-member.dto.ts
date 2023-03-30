@@ -33,6 +33,7 @@ export class RegisterMemberDTO extends PickType(Member, [
 	lastName: string
 
 	@IsEnum(Gender)
+	@Type(() => Number)
 	gender: Gender
 
 	@Type(() => Number)

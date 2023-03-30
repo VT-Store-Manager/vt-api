@@ -1,7 +1,7 @@
 import { ApiSuccessResponse } from '@/common/decorators/api-sucess-response.decorator'
 import { ParseFile } from '@/common/pipes/parse-file.pipe'
 import { ImageMulterOption } from '@/common/validations/file.validator'
-import { MongoService } from '@/providers/mongo.service'
+import { MongoSessionService } from '@/providers/mongo/session.service'
 import { Product } from '@/schemas/product.schema'
 import {
 	Body,
@@ -33,7 +33,7 @@ export class ProductController {
 		private readonly productCategoryService: ProductCategoryService,
 		private readonly productOptionService: ProductOptionService,
 		private readonly fileService: FileService,
-		private readonly mongoService: MongoService
+		private readonly mongoSessionService: MongoSessionService
 	) {}
 
 	@Post('create')
@@ -48,13 +48,15 @@ export class ProductController {
 			this.fileService.createObjectKey(['product'], image.originalname)
 		)
 		let result: Product
-		const { error } = await this.mongoService.execTransaction(async session => {
-			const createResult = await Promise.all([
-				this.fileService.uploadMulti(images, objectKeys),
-				this.productService.create({ ...dto, images: objectKeys }, session),
-			])
-			result = createResult[1]
-		})
+		const { error } = await this.mongoSessionService.execTransaction(
+			async session => {
+				const createResult = await Promise.all([
+					this.fileService.uploadMulti(images, objectKeys),
+					this.productService.create({ ...dto, images: objectKeys }, session),
+				])
+				result = createResult[1]
+			}
+		)
 		if (error) {
 			const existedKeys = await objectKeys.filter(
 				async key => await this.fileService.checkFile(key)

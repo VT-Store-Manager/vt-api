@@ -1,7 +1,7 @@
 import { ApiSuccessResponse } from '@/common/decorators/api-sucess-response.decorator'
 import { clearUndefineOrNullField } from '@/common/helpers/body.helper'
 import { ObjectIdPipe } from '@/common/pipes/object-id.pipe'
-import { MongoService } from '@/providers/mongo.service'
+import { MongoSessionService } from '@/providers/mongo/session.service'
 import {
 	Body,
 	Controller,
@@ -28,7 +28,7 @@ import { ProductOptionService } from './product-option.service'
 export class ProductOptionController {
 	constructor(
 		private readonly productOptionService: ProductOptionService,
-		private readonly mongoService: MongoService
+		private readonly mongoSessionService: MongoSessionService
 	) {}
 
 	@Get('list')
@@ -41,13 +41,15 @@ export class ProductOptionController {
 	@ApiSuccessResponse(NewProductOptionDTO, 201)
 	async createProductOption(@Body() body: CreateProductOptionDTO) {
 		let result: NewProductOptionDTO
-		const { error } = await this.mongoService.execTransaction(async session => {
-			const newProductOption = await this.productOptionService.create(
-				body,
-				session
-			)
-			result = newProductOption
-		})
+		const { error } = await this.mongoSessionService.execTransaction(
+			async session => {
+				const newProductOption = await this.productOptionService.create(
+					body,
+					session
+				)
+				result = newProductOption
+			}
+		)
 		if (error) throw new InternalServerErrorException()
 
 		return result

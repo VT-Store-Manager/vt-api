@@ -1,4 +1,4 @@
-import { MongoService } from '@/providers/mongo.service'
+import { MongoSessionService } from '@/providers/mongo/session.service'
 import { Product, ProductSchema } from '@/schemas/product.schema'
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
@@ -18,7 +18,7 @@ import { ProductService } from './product.service'
 		CounterModule,
 	],
 	controllers: [ProductController],
-	providers: [ProductService, FileService, MongoService],
+	providers: [ProductService, FileService, MongoSessionService],
 	exports: [ProductService],
 })
 export class ProductModule {}

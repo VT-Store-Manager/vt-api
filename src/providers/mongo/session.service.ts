@@ -1,10 +1,10 @@
-import { Injectable, Logger } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { InjectConnection } from '@nestjs/mongoose'
 import { ClientSession, Connection } from 'mongoose'
 import { Document } from 'mongodb'
 
 @Injectable()
-export class MongoService {
+export class MongoSessionService {
 	constructor(@InjectConnection() private readonly connection: Connection) {}
 
 	async execTransaction<T = any>(
@@ -22,13 +22,12 @@ export class MongoService {
 
 			return {
 				result: result,
-				error: result === undefined,
+				error: null,
 			}
 		} catch (error) {
-			Logger.error(error)
 			return {
 				result: undefined,
-				error: true,
+				error: error,
 			}
 		}
 	}

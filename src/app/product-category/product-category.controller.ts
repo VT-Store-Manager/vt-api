@@ -1,6 +1,6 @@
 import { ApiSuccessResponse } from '@/common/decorators/api-sucess-response.decorator'
 import { ObjectIdPipe } from '@/common/pipes/object-id.pipe'
-import { MongoService } from '@/providers/mongo.service'
+import { MongoSessionService } from '@/providers/mongo/session.service'
 import { ImageMulterOption } from '@/common/validations/file.validator'
 import { ProductCategory } from '@/schemas/product-category.schema'
 import {
@@ -31,7 +31,7 @@ export class ProductCategoryController {
 	constructor(
 		private readonly productCategoryService: ProductCategoryService,
 		private readonly fileService: FileService,
-		private readonly mongoService: MongoService
+		private readonly MongoSessionService: MongoSessionService
 	) {}
 
 	@Post('create')
@@ -48,17 +48,19 @@ export class ProductCategoryController {
 		)
 
 		let result: ProductCategory
-		const { error } = await this.mongoService.execTransaction(async session => {
-			const createResult = await Promise.all([
-				this.fileService.upload(image.buffer, objectKey),
-				this.productCategoryService.create(
-					{ ...dto, image: objectKey },
-					session
-				),
-			])
+		const { error } = await this.MongoSessionService.execTransaction(
+			async session => {
+				const createResult = await Promise.all([
+					this.fileService.upload(image.buffer, objectKey),
+					this.productCategoryService.create(
+						{ ...dto, image: objectKey },
+						session
+					),
+				])
 
-			result = createResult[1]
-		})
+				result = createResult[1]
+			}
+		)
 		if (error) {
 			if (this.fileService.checkFile(objectKey))
 				console.log(await this.fileService.delete([objectKey]))
