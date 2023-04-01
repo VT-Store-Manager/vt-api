@@ -19,8 +19,8 @@ import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express'
 import { ApiBody, ApiConsumes, ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import { FileService } from './file.service'
-import { UploadFileResponseDto, UploadFileDto } from './dto/upload-file.dto'
-import { UploadMultiFileDto } from './dto/upload-multi-file.dto'
+import { UploadFileResponseDTO, UploadFileDTO } from './dto/upload-file.dto'
+import { UploadMultiFileDTO } from './dto/upload-multi-file.dto'
 import { FormDataPipe } from '@/common/pipes/form-data.pipe'
 
 @ApiTags('file')
@@ -34,10 +34,10 @@ export class FileController {
 	@Post('upload')
 	@UseInterceptors(FileInterceptor('file', ImageMulterOption()))
 	@ApiConsumes('multipart/form-data')
-	@ApiResponse({ type: UploadFileResponseDto })
+	@ApiResponse({ type: UploadFileResponseDTO })
 	async uploadFile(
 		@UploadedFile() file: Express.Multer.File,
-		@Body(FormDataPipe<UploadFileDto>) dto: UploadFileDto
+		@Body(FormDataPipe<UploadFileDTO>) dto: UploadFileDTO
 	) {
 		const key = this.fileService.createObjectKey(dto.path, file.originalname)
 		return await this.fileService.upload(file.buffer, key)
@@ -48,10 +48,10 @@ export class FileController {
 		FilesInterceptor('files', undefined, ImageMulterOption(2, 6))
 	)
 	@ApiConsumes('multipart/form-data')
-	@ApiResponse({ type: [UploadFileResponseDto] })
+	@ApiResponse({ type: [UploadFileResponseDTO] })
 	async uploadMultiFiles(
 		@UploadedFiles() files: Express.Multer.File[],
-		@Body(FormDataPipe<UploadMultiFileDto>) dto: UploadMultiFileDto
+		@Body(FormDataPipe<UploadMultiFileDTO>) dto: UploadMultiFileDTO
 	) {
 		const keys = files.map(file =>
 			this.fileService.createObjectKey(dto.path, file.originalname)
@@ -62,8 +62,8 @@ export class FileController {
 	@Put('override')
 	@UseInterceptors(FileInterceptor('file', ImageMulterOption()))
 	@ApiConsumes('multipart/form-data')
-	@ApiBody({ type: UploadFileDto })
-	@ApiResponse({ type: UploadFileResponseDto })
+	@ApiBody({ type: UploadFileDTO })
+	@ApiResponse({ type: UploadFileResponseDTO })
 	async override(
 		@UploadedFile() file: Express.Multer.File,
 		@Body('key', S3KeyPipe) key: string
@@ -83,7 +83,7 @@ export class FileController {
 	}
 
 	@Delete('delete')
-	@ApiResponse({ type: [UploadFileResponseDto] })
+	@ApiResponse({ type: [UploadFileResponseDTO] })
 	async delete(@Query('keys') keys: string[]) {
 		await Promise.all(keys.map(key => this.fileService.checkFile(key, true)))
 

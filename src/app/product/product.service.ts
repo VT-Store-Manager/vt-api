@@ -3,9 +3,9 @@ import { ClientSession, Model } from 'mongoose'
 import { Product, ProductDocument } from '@/schemas/product.schema'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-import { CreateProductDto } from './dto/create-product.dto'
+import { CreateProductDTO } from './dto/create-product.dto'
 import { CounterService } from '../counter/counter.service'
-import { ResponseProductItemDto } from './dto/response-products.dto'
+import { ResponseProductItemDTO } from './dto/response-products.dto'
 import { Status } from '@/common/constants'
 
 @Injectable()
@@ -17,7 +17,7 @@ export class ProductService {
 	) {}
 
 	async create(
-		createdData: CreateProductDto,
+		createdData: CreateProductDTO,
 		session?: ClientSession
 	): Promise<Product> {
 		const counter = await this.counterService.next('products', session)
@@ -28,9 +28,9 @@ export class ProductService {
 		return product[0]
 	}
 
-	async getAll(): Promise<ResponseProductItemDto[]> {
+	async getAll(): Promise<ResponseProductItemDTO[]> {
 		const products = await this.productModel
-			.aggregate<ResponseProductItemDto>()
+			.aggregate<ResponseProductItemDTO>()
 			.lookup({
 				from: 'product_categories',
 				localField: 'category',

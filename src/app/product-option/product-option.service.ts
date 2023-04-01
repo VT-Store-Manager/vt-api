@@ -11,14 +11,14 @@ import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 
 import { CounterService } from '../counter/counter.service'
-import { CreateProductOptionDto } from './dto/create-product-option.dto'
-import { NewProductOptionDto } from './dto/new-product-option.dto'
+import { CreateProductOptionDTO } from './dto/create-product-option.dto'
+import { NewProductOptionDTO } from './dto/new-product-option.dto'
 import {
 	ApplyingProductInfo,
-	ProductOptionDetailDto,
+	ProductOptionDetailDTO,
 } from './dto/product-option-detail.dto'
-import { ProductOptionListItemDto } from './dto/product-option-list-item.dto'
-import { UpdateProductOptionDto } from './dto/update-product-option.dto'
+import { ProductOptionListItemDTO } from './dto/product-option-list-item.dto'
+import { UpdateProductOptionDTO } from './dto/update-product-option.dto'
 import { ProductOptionItem } from '@/schemas/product-option-item.schema'
 
 @Injectable()
@@ -31,9 +31,9 @@ export class ProductOptionService {
 		private readonly counterService: CounterService
 	) {}
 
-	async getList(): Promise<ProductOptionListItemDto[]> {
+	async getList(): Promise<ProductOptionListItemDTO[]> {
 		const productOptions = await this.productOptionModel
-			.aggregate<ProductOptionListItemDto>([])
+			.aggregate<ProductOptionListItemDTO>([])
 			.project({
 				id: '$_id',
 				code: 1,
@@ -66,9 +66,9 @@ export class ProductOptionService {
 	}
 
 	async create(
-		data: CreateProductOptionDto,
+		data: CreateProductOptionDTO,
 		session?: ClientSession
-	): Promise<NewProductOptionDto> {
+	): Promise<NewProductOptionDTO> {
 		const counter = await this.counterService.next('product_options', session)
 
 		const createData: Partial<
@@ -132,7 +132,7 @@ export class ProductOptionService {
 	async getDetail(id: string) {
 		const optionDetail = await this.productOptionModel
 			.aggregate<
-				Omit<ProductOptionDetailDto, 'applyingAmount' | 'boughtAmount'>
+				Omit<ProductOptionDetailDTO, 'applyingAmount' | 'boughtAmount'>
 			>()
 			.match({ _id: new Types.ObjectId(id) })
 			.lookup({
@@ -225,7 +225,7 @@ export class ProductOptionService {
 
 	async update(
 		optionId: string,
-		updateInfo: UpdateProductOptionDto,
+		updateInfo: UpdateProductOptionDTO,
 		session?: ClientSession
 	) {
 		const productOption = await this.productOptionModel

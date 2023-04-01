@@ -13,7 +13,7 @@ import { Type } from 'class-transformer'
 import { IntersectionType, PickType, PartialType } from '@nestjs/swagger'
 import { Product } from '@/schemas/product.schema'
 
-export class CreateProductDto extends IntersectionType(
+export class CreateProductDTO extends IntersectionType(
 	PickType(Product, [
 		'name',
 		'images',

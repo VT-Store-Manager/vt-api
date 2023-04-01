@@ -5,11 +5,11 @@ import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 
 import { CounterService } from '../counter/counter.service'
-import { CreateStoreDto } from './dto/create-store.dto'
-import { GetListStoreDto } from './dto/get-list-store.dto'
+import { CreateStoreDTO } from './dto/create-store.dto'
+import { GetListStoreDTO } from './dto/get-list-store.dto'
 import {
 	ResponseStoreItem,
-	ResponseStoreListDto,
+	ResponseStoreListDTO,
 } from './dto/response-store-item.dto'
 
 @Injectable()
@@ -19,7 +19,7 @@ export class StoreService {
 		private readonly counterService: CounterService
 	) {}
 
-	async create(data: CreateStoreDto, session?: ClientSession): Promise<Store> {
+	async create(data: CreateStoreDTO, session?: ClientSession): Promise<Store> {
 		const counter = await this.counterService.next('stores', session)
 		const store = await this.storeModel.create(
 			[{ code: counter, ...data }],
@@ -28,7 +28,7 @@ export class StoreService {
 		return store[0]
 	}
 
-	async getList(query: GetListStoreDto): Promise<ResponseStoreListDto> {
+	async getList(query: GetListStoreDTO): Promise<ResponseStoreListDTO> {
 		const [items, maxCount] = await Promise.all([
 			this.storeModel
 				.aggregate<ResponseStoreItem>()

@@ -20,7 +20,7 @@ export class ProductOptionShortInfo extends PickType(ProductOption, [
 	id: string
 }
 
-export class ProductOptionDetailDto extends PickType(ProductOption, [
+export class ProductOptionDetailDTO extends PickType(ProductOption, [
 	'code',
 	'name',
 	'range',

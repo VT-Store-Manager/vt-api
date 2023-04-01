@@ -1,15 +1,23 @@
 import { ApiSuccessResponse } from '@/common/decorators/api-sucess-response.decorator'
 import { clearUndefineOrNullField } from '@/common/helpers/body.helper'
 import { ObjectIdPipe } from '@/common/pipes/object-id.pipe'
-import { MongoService } from '@/common/providers/mongo.service'
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common'
+import { MongoSessionService } from '@/providers/mongo/session.service'
+import {
+	Body,
+	Controller,
+	Get,
+	InternalServerErrorException,
+	Param,
+	Patch,
+	Post,
+} from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
-import { CreateProductOptionDto } from './dto/create-product-option.dto'
-import { NewProductOptionDto } from './dto/new-product-option.dto'
-import { ProductOptionDetailDto } from './dto/product-option-detail.dto'
-import { ProductOptionListItemDto } from './dto/product-option-list-item.dto'
-import { UpdateProductOptionDto } from './dto/update-product-option.dto'
+import { CreateProductOptionDTO } from './dto/create-product-option.dto'
+import { NewProductOptionDTO } from './dto/new-product-option.dto'
+import { ProductOptionDetailDTO } from './dto/product-option-detail.dto'
+import { ProductOptionListItemDTO } from './dto/product-option-list-item.dto'
+import { UpdateProductOptionDTO } from './dto/update-product-option.dto'
 import { ProductOptionService } from './product-option.service'
 
 @ApiTags('product-option')
@@ -20,37 +28,38 @@ import { ProductOptionService } from './product-option.service'
 export class ProductOptionController {
 	constructor(
 		private readonly productOptionService: ProductOptionService,
-		private readonly mongoService: MongoService
+		private readonly mongoSessionService: MongoSessionService
 	) {}
 
 	@Get('list')
-	@ApiSuccessResponse(ProductOptionListItemDto, 200, true)
-	async getProductOptionList(): Promise<ProductOptionListItemDto[]> {
+	@ApiSuccessResponse(ProductOptionListItemDTO, 200, true)
+	async getProductOptionList(): Promise<ProductOptionListItemDTO[]> {
 		return this.productOptionService.getList()
 	}
 
 	@Post('create')
-	@ApiSuccessResponse(NewProductOptionDto, 201)
-	async createProductOption(@Body() body: CreateProductOptionDto) {
-		const { result, err } =
-			await this.mongoService.transaction<NewProductOptionDto>({
-				transactionCb: async session => {
-					const newProductOption = await this.productOptionService.create(
-						body,
-						session
-					)
-					return newProductOption
-				},
-			})
-		if (err) throw err
+	@ApiSuccessResponse(NewProductOptionDTO, 201)
+	async createProductOption(@Body() body: CreateProductOptionDTO) {
+		let result: NewProductOptionDTO
+		const { error } = await this.mongoSessionService.execTransaction(
+			async session => {
+				const newProductOption = await this.productOptionService.create(
+					body,
+					session
+				)
+				result = newProductOption
+			}
+		)
+		if (error) throw new InternalServerErrorException()
+
 		return result
 	}
 
 	@Get(':id/detail')
-	@ApiSuccessResponse(ProductOptionDetailDto)
+	@ApiSuccessResponse(ProductOptionDetailDTO)
 	async getProductOptionDetail(
 		@Param('id', ObjectIdPipe) id: string
-	): Promise<ProductOptionDetailDto> {
+	): Promise<ProductOptionDetailDTO> {
 		const [optionDetail, applyingProducts, boughtAmount] = await Promise.all([
 			this.productOptionService.getDetail(id),
 			this.productOptionService.getApplyingProduct(id),
@@ -66,7 +75,7 @@ export class ProductOptionController {
 	@Patch(':id/update')
 	async updateProductOption(
 		@Param('id', ObjectIdPipe) id: string,
-		@Body() dto: UpdateProductOptionDto
+		@Body() dto: UpdateProductOptionDTO
 	) {
 		clearUndefineOrNullField(dto)
 		const updateResult = await this.productOptionService.update(id, dto)

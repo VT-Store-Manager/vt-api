@@ -5,21 +5,21 @@ import {
 	ApiExtraModels,
 } from '@nestjs/swagger'
 import {
-	CommonErrorResponseDto,
-	ValidationErrorResponseDto,
+	CommonErrorResponseDTO,
+	ValidationErrorResponseDTO,
 } from '@/types/http.swagger'
 
 @Controller({ version: '1' })
-@ApiExtraModels(CommonErrorResponseDto, ValidationErrorResponseDto)
+@ApiExtraModels(CommonErrorResponseDTO, ValidationErrorResponseDTO)
 @ApiBadRequestResponse({
 	schema: {
 		oneOf: [
 			{
-				$ref: getSchemaPath(CommonErrorResponseDto),
+				$ref: getSchemaPath(CommonErrorResponseDTO),
 				description: 'Common error',
 			},
 			{
-				$ref: getSchemaPath(ValidationErrorResponseDto),
+				$ref: getSchemaPath(ValidationErrorResponseDTO),
 				description: 'Validation data error',
 			},
 		],

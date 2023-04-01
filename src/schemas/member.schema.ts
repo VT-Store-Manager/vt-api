@@ -36,7 +36,7 @@ export class Member {
 	@Prop({ type: Date, required: true })
 	dob: Date
 
-	@Prop({ type: Date, default: Date.now(), expires: '2m' })
+	@Prop({ type: Date, default: Date.now(), expires: '1m' })
 	notVerified: Date
 
 	@Prop({ type: Date, default: Date.now() })

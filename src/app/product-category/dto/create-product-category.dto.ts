@@ -1,7 +1,7 @@
 import { ApiPropertyFile } from '@/common/decorators/file-swagger.decorator'
 import { IsString, MaxLength, MinLength } from 'class-validator'
 
-export class CreateProductCategoryDto {
+export class CreateProductCategoryDTO {
 	@ApiPropertyFile()
 	image?: any
 
