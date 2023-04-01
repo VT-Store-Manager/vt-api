@@ -14,6 +14,17 @@ export const envConfiguration = () => ({
 		secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
 		bucketName: process.env.AWS_PUBLIC_BUCKET_NAME,
 	},
+	twilio: {
+		accountSid: process.env.TWILIO_ACCOUNT_SID,
+		authToken: process.env.TWILIO_AUTH_TOKEN,
+		serviceSid: process.env.TWILIO_VERIFICATION_SERVICE_SID,
+	},
+	jwt: {
+		accessTokenSecret: process.env.ACCESS_TOKEN_SECRET_KEY,
+		refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET_KEY,
+		accessTokenExpiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN,
+		refreshTokenExpiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN,
+	},
 })
 
 export const envValidationSchema = Joi.object({
@@ -23,4 +34,5 @@ export const envValidationSchema = Joi.object({
 	AWS_ACCESS_KEY_ID: Joi.string().required(),
 	AWS_SECRET_ACCESS_KEY: Joi.string().required(),
 	AWS_PUBLIC_BUCKET_NAME: Joi.string().required(),
+	//TODO: Validate twilio, jwt
 })

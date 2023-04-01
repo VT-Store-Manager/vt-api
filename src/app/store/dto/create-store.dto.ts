@@ -11,7 +11,6 @@ import {
 
 import { ApiPropertyMultiFiles } from '@/common/decorators/file-swagger.decorator'
 import { ObjectIdRule } from '@/common/rules/object-id.rule'
-import { StoreOpenTimeRule } from '@/common/rules/store-open-time.rule'
 import {
 	Address,
 	OpenTime,
@@ -73,7 +72,7 @@ class UnavailableGoodsValidator extends UnavailableGoods {
 	option = [] as string[]
 }
 
-export class CreateStoreDto extends PickType(Store, [
+export class CreateStoreDTO extends PickType(Store, [
 	'name',
 	'images',
 	'openTime',

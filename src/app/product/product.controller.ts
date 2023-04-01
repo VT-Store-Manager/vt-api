@@ -1,12 +1,13 @@
 import { ApiSuccessResponse } from '@/common/decorators/api-sucess-response.decorator'
 import { ParseFile } from '@/common/pipes/parse-file.pipe'
-import { MongoService } from '@/common/providers/mongo.service'
 import { ImageMulterOption } from '@/common/validations/file.validator'
+import { MongoSessionService } from '@/providers/mongo/session.service'
 import { Product } from '@/schemas/product.schema'
 import {
 	Body,
 	Controller,
 	Get,
+	InternalServerErrorException,
 	Post,
 	UploadedFiles,
 	UseInterceptors,
@@ -17,8 +18,8 @@ import { ApiConsumes, ApiTags } from '@nestjs/swagger'
 import { FileService } from '../file/file.service'
 import { ProductCategoryService } from '../product-category/product-category.service'
 import { ProductOptionService } from '../product-option/product-option.service'
-import { CreateProductDto } from './dto/create-product.dto'
-import { ResponseProductItemDto } from './dto/response-products.dto'
+import { CreateProductDTO } from './dto/create-product.dto'
+import { ResponseProductItemDTO } from './dto/response-products.dto'
 import { ProductService } from './product.service'
 
 @ApiTags('product')
@@ -32,7 +33,7 @@ export class ProductController {
 		private readonly productCategoryService: ProductCategoryService,
 		private readonly productOptionService: ProductOptionService,
 		private readonly fileService: FileService,
-		private readonly mongoService: MongoService
+		private readonly mongoSessionService: MongoSessionService
 	) {}
 
 	@Post('create')
@@ -41,32 +42,33 @@ export class ProductController {
 	@ApiSuccessResponse(Product, 201)
 	async createProduct(
 		@UploadedFiles(ParseFile) images: Express.Multer.File[],
-		@Body() dto: CreateProductDto
+		@Body() dto: CreateProductDTO
 	) {
 		const objectKeys = images.map(image =>
 			this.fileService.createObjectKey(['product'], image.originalname)
 		)
-		const { result, err } = await this.mongoService.transaction<Product>({
-			transactionCb: async session => {
+		let result: Product
+		const { error } = await this.mongoSessionService.execTransaction(
+			async session => {
 				const createResult = await Promise.all([
 					this.fileService.uploadMulti(images, objectKeys),
 					this.productService.create({ ...dto, images: objectKeys }, session),
 				])
-				return createResult[1]
-			},
-			errorCb: async _err => {
-				const existedKeys = await objectKeys.filter(
-					async key => await this.fileService.checkFile(key)
-				)
-				await this.fileService.delete(existedKeys)
-			},
-		})
-		if (err) throw err
+				result = createResult[1]
+			}
+		)
+		if (error) {
+			const existedKeys = await objectKeys.filter(
+				async key => await this.fileService.checkFile(key)
+			)
+			await this.fileService.delete(existedKeys)
+			throw new InternalServerErrorException(error)
+		}
 		return result
 	}
 
 	@Get()
-	@ApiSuccessResponse(ResponseProductItemDto, 200, true)
+	@ApiSuccessResponse(ResponseProductItemDTO, 200, true)
 	async getProducts() {
 		return await this.productService.getAll()
 	}

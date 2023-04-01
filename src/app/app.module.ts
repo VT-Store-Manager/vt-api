@@ -37,6 +37,7 @@ import { AuthModule } from './auth/auth.module'
 			isGlobal: true,
 			load: [envConfiguration],
 			validationSchema: envValidationSchema,
+			cache: true,
 		}),
 		ServeStaticModule.forRoot({
 			rootPath: join(__dirname, '..', '..', '..', 'public'),

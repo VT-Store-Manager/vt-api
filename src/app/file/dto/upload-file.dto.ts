@@ -1,7 +1,7 @@
 import { ApiPropertyFile } from '@/common/decorators/file-swagger.decorator'
 import { IsJSON } from 'class-validator'
 
-export class UploadFileDto {
+export class UploadFileDTO {
 	@ApiPropertyFile()
 	file?: any
 
@@ -9,6 +9,6 @@ export class UploadFileDto {
 	path: Array<string>
 }
 
-export class UploadFileResponseDto {
+export class UploadFileResponseDTO {
 	key: string
 }

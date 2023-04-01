@@ -1,4 +1,4 @@
-import { MongoService } from '@/common/providers/mongo.service'
+import { MongoSessionService } from '@/providers/mongo/session.service'
 import {
 	ProductCategory,
 	ProductCategorySchema,
@@ -19,7 +19,7 @@ import { ProductCategoryService } from './product-category.service'
 		CounterModule,
 	],
 	controllers: [ProductCategoryController],
-	providers: [ProductCategoryService, FileService, MongoService],
+	providers: [ProductCategoryService, FileService, MongoSessionService],
 	exports: [ProductCategoryService],
 })
 export class ProductCategoryModule {}

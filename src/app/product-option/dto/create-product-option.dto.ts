@@ -18,7 +18,7 @@ import { ProductOptionItem } from '@/schemas/product-option-item.schema'
 import { ProductOption } from '@/schemas/product-option.schema'
 import { IntersectionType, PartialType, PickType } from '@nestjs/swagger'
 
-export class CreateProductOptionDto extends IntersectionType(
+export class CreateProductOptionDTO extends IntersectionType(
 	PartialType(PickType(ProductOption, ['name', 'parent'] as const)),
 	PickType(ProductOption, ['range'] as const)
 ) {

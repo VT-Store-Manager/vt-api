@@ -1,6 +1,6 @@
 import { ApiSuccessResponse } from '@/common/decorators/api-sucess-response.decorator'
 import { ParseFile } from '@/common/pipes/parse-file.pipe'
-import { MongoService } from '@/common/providers/mongo.service'
+import { MongoSessionService } from '@/providers/mongo/session.service'
 import { ImageMulterOption } from '@/common/validations/file.validator'
 import { Store } from '@/schemas/store.schema'
 import {
@@ -8,6 +8,7 @@ import {
 	Body,
 	Controller,
 	Get,
+	InternalServerErrorException,
 	Post,
 	Query,
 	UploadedFiles,
@@ -20,9 +21,9 @@ import { FileService } from '../file/file.service'
 import { ProductCategoryService } from '../product-category/product-category.service'
 import { ProductOptionService } from '../product-option/product-option.service'
 import { ProductService } from '../product/product.service'
-import { CreateStoreDto } from './dto/create-store.dto'
-import { GetListStoreDto } from './dto/get-list-store.dto'
-import { ResponseStoreListDto } from './dto/response-store-item.dto'
+import { CreateStoreDTO } from './dto/create-store.dto'
+import { GetListStoreDTO } from './dto/get-list-store.dto'
+import { ResponseStoreListDTO } from './dto/response-store-item.dto'
 import { StoreService } from './store.service'
 
 @ApiTags('store')
@@ -34,7 +35,7 @@ export class StoreController {
 	constructor(
 		private readonly storeService: StoreService,
 		private readonly fileService: FileService,
-		private readonly mongoService: MongoService,
+		private readonly mongoSessionService: MongoSessionService,
 		private readonly productService: ProductService,
 		private readonly productCategoryService: ProductCategoryService,
 		private readonly productOptionService: ProductOptionService
@@ -48,14 +49,14 @@ export class StoreController {
 	@ApiSuccessResponse(Store, 201)
 	async createStore(
 		@UploadedFiles(ParseFile) images: Express.Multer.File[],
-		@Body() createDto: CreateStoreDto
+		@Body() createDTO: CreateStoreDTO
 	) {
 		const notFoundList = await Promise.all([
-			this.productService.isExist(...createDto.unavailableGoods.product),
+			this.productService.isExist(...createDTO.unavailableGoods.product),
 			this.productCategoryService.isExist(
-				...createDto.unavailableGoods.category
+				...createDTO.unavailableGoods.category
 			),
-			this.productOptionService.isExist(...createDto.unavailableGoods.option),
+			this.productOptionService.isExist(...createDTO.unavailableGoods.option),
 		])
 		if (notFoundList[0].length > 0) {
 			throw new BadRequestException(
@@ -76,33 +77,35 @@ export class StoreController {
 		const objectKeys = images.map(image =>
 			this.fileService.createObjectKey(['store'], image.originalname)
 		)
-		const { result, err } = await this.mongoService.transaction<Store>({
-			transactionCb: async session => {
+
+		let result: Store
+		const { error } = await this.mongoSessionService.execTransaction(
+			async session => {
 				const createResult = await Promise.all([
 					this.fileService.uploadMulti(images, objectKeys),
 					this.storeService.create(
-						{ ...createDto, images: objectKeys },
+						{ ...createDTO, images: objectKeys },
 						session
 					),
 				])
-				return createResult[1]
-			},
-			errorCb: async _err => {
-				const existedKeys = await objectKeys.filter(
-					async key => await this.fileService.checkFile(key)
-				)
-				await this.fileService.delete(existedKeys)
-			},
-		})
+				result = createResult[1]
+			}
+		)
 
-		if (err) throw err
+		if (error) {
+			const existedKeys = await objectKeys.filter(
+				async key => await this.fileService.checkFile(key)
+			)
+			await this.fileService.delete(existedKeys)
+			throw new InternalServerErrorException()
+		}
 
 		return result
 	}
 
 	@Get('list')
-	@ApiSuccessResponse(ResponseStoreListDto, 200, true)
-	async getMetadataStorage(@Query() query: GetListStoreDto) {
+	@ApiSuccessResponse(ResponseStoreListDTO, 200, true)
+	async getMetadataStorage(@Query() query: GetListStoreDTO) {
 		return this.storeService.getList(query)
 	}
 }

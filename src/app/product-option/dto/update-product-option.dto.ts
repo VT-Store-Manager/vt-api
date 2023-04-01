@@ -18,11 +18,11 @@ import {
 
 import { OptionRangeRule } from '@/common/rules/option-range.rule'
 
-export class UpdateProductOptionDto {
+export class UpdateProductOptionDTO {
 	@IsBoolean()
 	isParentOption: boolean
 
-	@ValidateIf((o: UpdateProductOptionDto) => o.isParentOption)
+	@ValidateIf((o: UpdateProductOptionDTO) => o.isParentOption)
 	@IsString()
 	@IsNotEmpty()
 	@IsOptional()
@@ -36,13 +36,13 @@ export class UpdateProductOptionDto {
 	@Validate(OptionRangeRule)
 	range?: number[]
 
-	@ValidateIf((o: UpdateProductOptionDto) => o.isParentOption)
+	@ValidateIf((o: UpdateProductOptionDTO) => o.isParentOption)
 	@IsArray()
 	@Type(() => ParentOptionItems)
 	@ValidateNested({ each: true })
 	parentItems?: ParentOptionItems[]
 
-	@ValidateIf((o: UpdateProductOptionDto) => !o.isParentOption)
+	@ValidateIf((o: UpdateProductOptionDTO) => !o.isParentOption)
 	@IsArray()
 	@Type(() => ChildOptionItems)
 	@ValidateNested({ each: true })
