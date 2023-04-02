@@ -42,6 +42,9 @@ export class Member {
 	@Prop({ type: Date, default: Date.now() })
 	tokenValidTime: Date
 
+	@Prop({ type: [Types.ObjectId], default: [] })
+	favorites: Types.ObjectId[]
+
 	deleted: boolean
 	deletedAt?: Date
 	createdAt?: Date

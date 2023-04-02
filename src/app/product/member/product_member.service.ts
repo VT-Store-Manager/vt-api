@@ -1,16 +1,19 @@
-import { Model } from 'mongoose'
+import { Model, Types } from 'mongoose'
 
 import { Product, ProductDocument } from '@/schemas/product.schema'
-import { Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 
-import { ShortProductItemDTO } from './dto/response-short-product-item.dto'
+import { DetailProductDTO, ShortProductItemDTO } from './dto/response.dto'
+import { Member, MemberDocument } from '@/schemas/member.schema'
 
 @Injectable()
 export class ProductMemberService {
 	constructor(
 		@InjectModel(Product.name)
-		private readonly productModel: Model<ProductDocument>
+		private readonly productModel: Model<ProductDocument>,
+		@InjectModel(Member.name)
+		private readonly memberModel: Model<MemberDocument>
 	) {}
 
 	async getShortInfoAllProduct() {
@@ -28,7 +31,38 @@ export class ProductMemberService {
 			.exec()
 	}
 
-	// async getFullInfoOfProduct() {
+	async getDetailProduct(
+		memberId: string,
+		productId: string
+	): Promise<DetailProductDTO> {
+		const [memberData, productData] = await Promise.all([
+			this.memberModel.findById(memberId).select('favorites').lean().exec(),
+			this.productModel
+				.aggregate<Omit<DetailProductDTO, 'isFavorite'>>()
+				.match({ _id: new Types.ObjectId(productId) })
+				.project({
+					id: '$_id',
+					name: 1,
+					mainImage: { $first: '$images' },
+					price: '$originalPrice',
+					description: 1,
+					images: '$images',
+				})
+				.project({
+					_id: 0,
+				})
+				.exec(),
+		])
 
-	// }
+		if (!productData.length) throw new BadRequestException('Product not found')
+
+		const isFavorite = memberData.favorites.some(
+			id => id.toString() === productId
+		)
+
+		return {
+			...productData[0],
+			isFavorite,
+		}
+	}
 }
