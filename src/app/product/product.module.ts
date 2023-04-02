@@ -1,4 +1,5 @@
 import { MongoSessionService } from '@/providers/mongo/session.service'
+import { Member, MemberSchema } from '@/schemas/member.schema'
 import { Product, ProductSchema } from '@/schemas/product.schema'
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
@@ -14,7 +15,10 @@ import { ProductMemberService } from './member/product_member.service'
 
 @Module({
 	imports: [
-		MongooseModule.forFeature([{ name: Product.name, schema: ProductSchema }]),
+		MongooseModule.forFeature([
+			{ name: Product.name, schema: ProductSchema },
+			{ name: Member.name, schema: MemberSchema },
+		]),
 		ProductCategoryModule,
 		ProductOptionModule,
 		CounterModule,

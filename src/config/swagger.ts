@@ -3,6 +3,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 
 export default (app: INestApplication) => {
 	const config = new DocumentBuilder()
+		.addBearerAuth()
 		.setTitle('VT Store API')
 		.setDescription('VT Store API description')
 		.setVersion('1.0')
