@@ -1,3 +1,4 @@
+import { Connection } from 'mongoose'
 import { join } from 'path'
 
 import { ClassValidatorExceptionFilter } from '@/common/filters/class-validator-exception.filter'
@@ -5,20 +6,22 @@ import { HttpExceptionFilter } from '@/common/filters/http-exception.filter'
 import { MongoExceptionFilter } from '@/common/filters/mongo-exception.filter'
 import { TransformInterceptor } from '@/common/interceptors/transform.interceptor'
 import { envConfiguration, envValidationSchema } from '@/config/configuration'
-import { Module } from '@nestjs/common'
+import { Logger, Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core'
-import { MongooseModule, MongooseModuleOptions } from '@nestjs/mongoose'
+import {
+	InjectConnection,
+	MongooseModule,
+	MongooseModuleOptions,
+} from '@nestjs/mongoose'
 import { ServeStaticModule } from '@nestjs/serve-static'
 
-import { AppController } from './app.controller'
-import { AppService } from './app.service'
 import { AuthModule } from './auth/auth.module'
 import { CounterModule } from './counter/counter.module'
 import { FileModule } from './file/file.module'
 import { MemberModule } from './member/member.module'
 import { ProductCategoryModule } from './product-category/product-category.module'
-import { ProductOptionModule } from './product-option/product-option.module'
+import { ProductOptionModule } from './product-option/admin-app/product-option.module'
 import { ProductModule } from './product/product.module'
 import { StoreModule } from './store/store.module'
 
@@ -55,9 +58,8 @@ import { StoreModule } from './store/store.module'
 		MemberModule,
 		AuthModule,
 	],
-	controllers: [AppController],
+	controllers: [],
 	providers: [
-		AppService,
 		{
 			provide: APP_FILTER,
 			useClass: HttpExceptionFilter,
@@ -76,4 +78,25 @@ import { StoreModule } from './store/store.module'
 		},
 	],
 })
-export class AppModule {}
+export class AppModule {
+	constructor(@InjectConnection() private readonly connection: Connection) {
+		const connectedLog = () => {
+			Logger.debug('Database connected', 'MongoDBServer')
+		}
+		switch (this.connection.readyState) {
+			case 0:
+				this.connection.once('connection', connectedLog)
+				break
+			case 1:
+				connectedLog()
+				break
+			case 2:
+				Logger.debug('Database is connecting...', 'MongoDBServer')
+				this.connection.once('connection', connectedLog)
+				break
+			case 3:
+				Logger.debug('Database is disconnecting...', 'MongoDBServer')
+				break
+		}
+	}
+}

@@ -10,15 +10,15 @@ import { LoginDTO } from '../dto/login.dto'
 import { RegisterMemberDTO } from '../dto/register-member.dto'
 import { TokenDto } from '../dto/token.dto'
 import { VerifySmsOtpDTO } from '../dto/verify-sms-otp.dto'
-import { AuthMemberService } from '../services/auth-member.service'
+import { AuthMemberService } from './auth-member.service'
 import { SmsService } from '../services/sms.service'
 import { TokenService } from '../services/token.service'
 
 @Controller({
-	path: 'auth/member',
+	path: 'member/auth',
 	version: '1',
 })
-@ApiTags('auth/member')
+@ApiTags('member-app > auth')
 export class AuthMemberController {
 	constructor(
 		private readonly authMemberService: AuthMemberService,

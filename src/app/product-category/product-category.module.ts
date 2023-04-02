@@ -10,8 +10,8 @@ import { Store, StoreSchema } from '@/schemas/store.schema'
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 
-import { ProductCategoryController } from './admin-app/product-category.controller'
-import { ProductCategoryService } from './admin-app/product-category.service'
+import { ProductCategoryAdminController } from './admin-app/product-category_admin.controller'
+import { ProductCategoryAdminService } from './admin-app/product-category_admin.service'
 import { ProductCategoryMemberController } from './member-app/product-category_member.controller'
 import { ProductCategoryMemberService } from './member-app/product-category_member.service'
 
@@ -24,13 +24,16 @@ import { ProductCategoryMemberService } from './member-app/product-category_memb
 		]),
 		CounterModule,
 	],
-	controllers: [ProductCategoryController, ProductCategoryMemberController],
+	controllers: [
+		ProductCategoryAdminController,
+		ProductCategoryMemberController,
+	],
 	providers: [
-		ProductCategoryService,
+		ProductCategoryAdminService,
 		ProductCategoryMemberService,
 		FileService,
 		MongoSessionService,
 	],
-	exports: [ProductCategoryService],
+	exports: [ProductCategoryAdminService],
 })
 export class ProductCategoryModule {}

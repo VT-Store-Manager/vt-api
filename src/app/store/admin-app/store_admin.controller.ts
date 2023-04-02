@@ -1,3 +1,7 @@
+import { FileService } from '@/app/file/file.service'
+import { ProductCategoryAdminService } from '@/app/product-category/admin-app/product-category_admin.service'
+import { ProductOptionAdminService } from '@/app/product-option/admin-app/product-option.service'
+import { ProductAdminService } from '@/app/product/admin-app/product_admin.service'
 import { ApiSuccessResponse } from '@/common/decorators/api-sucess-response.decorator'
 import { ParseFile } from '@/common/pipes/parse-file.pipe'
 import { ImageMulterOption } from '@/common/validations/file.validator'
@@ -17,28 +21,24 @@ import {
 import { FilesInterceptor } from '@nestjs/platform-express'
 import { ApiConsumes, ApiTags } from '@nestjs/swagger'
 
-import { FileService } from '../file/file.service'
-import { ProductCategoryService } from '../product-category/admin-app/product-category.service'
-import { ProductOptionService } from '../product-option/product-option.service'
-import { ProductService } from '../product/admin-app/product.service'
 import { CreateStoreDTO } from './dto/create-store.dto'
 import { GetListStoreDTO } from './dto/get-list-store.dto'
 import { ResponseStoreListDTO } from './dto/response-store-item.dto'
-import { StoreService } from './store.service'
+import { StoreAdminService } from './store_admin.service'
 
-@ApiTags('store')
+@ApiTags('admin-app > store')
 @Controller({
-	path: 'store',
+	path: 'admin/store',
 	version: '1',
 })
-export class StoreController {
+export class StoreAdminController {
 	constructor(
-		private readonly storeService: StoreService,
+		private readonly storeService: StoreAdminService,
 		private readonly fileService: FileService,
 		private readonly mongoSessionService: MongoSessionService,
-		private readonly productService: ProductService,
-		private readonly productCategoryService: ProductCategoryService,
-		private readonly productOptionService: ProductOptionService
+		private readonly productService: ProductAdminService,
+		private readonly productCategoryService: ProductCategoryAdminService,
+		private readonly productOptionService: ProductOptionAdminService
 	) {}
 
 	@Post('create')

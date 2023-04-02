@@ -7,7 +7,7 @@ import { ConfigService } from '@nestjs/config'
 import { PassportStrategy } from '@nestjs/passport'
 
 import { TokenService } from '../services/token.service'
-import { AuthMemberService } from '../services/auth-member.service'
+import { AuthMemberService } from '../member-app/auth-member.service'
 
 @Injectable()
 export class JwtRefreshStrategy extends PassportStrategy(

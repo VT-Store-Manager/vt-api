@@ -1,7 +1,9 @@
 import { ClientSession, Model, Types } from 'mongoose'
 
+import { CounterService } from '@/app/counter/counter.service'
 import { Status } from '@/common/constants'
 import { optionItemKeyUid } from '@/common/helpers/key.helper'
+import { ProductOptionItem } from '@/schemas/product-option-item.schema'
 import {
 	ProductOption,
 	ProductOptionDocument,
@@ -10,7 +12,6 @@ import { Product, ProductDocument } from '@/schemas/product.schema'
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 
-import { CounterService } from '../counter/counter.service'
 import { CreateProductOptionDTO } from './dto/create-product-option.dto'
 import { NewProductOptionDTO } from './dto/new-product-option.dto'
 import {
@@ -19,10 +20,9 @@ import {
 } from './dto/product-option-detail.dto'
 import { ProductOptionListItemDTO } from './dto/product-option-list-item.dto'
 import { UpdateProductOptionDTO } from './dto/update-product-option.dto'
-import { ProductOptionItem } from '@/schemas/product-option-item.schema'
 
 @Injectable()
-export class ProductOptionService {
+export class ProductOptionAdminService {
 	constructor(
 		@InjectModel(ProductOption.name)
 		private readonly productOptionModel: Model<ProductOptionDocument>,

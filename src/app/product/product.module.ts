@@ -7,9 +7,9 @@ import { MongooseModule } from '@nestjs/mongoose'
 import { CounterModule } from '../counter/counter.module'
 import { FileService } from '../file/file.service'
 import { ProductCategoryModule } from '../product-category/product-category.module'
-import { ProductOptionModule } from '../product-option/product-option.module'
-import { ProductController } from './admin-app/product.controller'
-import { ProductService } from './admin-app/product.service'
+import { ProductOptionModule } from '../product-option/admin-app/product-option.module'
+import { ProductAdminController } from './admin-app/product_admin.controller'
+import { ProductAdminService } from './admin-app/product_admin.service'
 import { ProductMemberController } from './member-app/product_member.controller'
 import { ProductMemberService } from './member-app/product_member.service'
 
@@ -23,13 +23,13 @@ import { ProductMemberService } from './member-app/product_member.service'
 		ProductOptionModule,
 		CounterModule,
 	],
-	controllers: [ProductController, ProductMemberController],
+	controllers: [ProductAdminController, ProductMemberController],
 	providers: [
-		ProductService,
+		ProductAdminService,
 		ProductMemberService,
 		FileService,
 		MongoSessionService,
 	],
-	exports: [ProductService],
+	exports: [ProductAdminService],
 })
 export class ProductModule {}
