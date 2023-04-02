@@ -9,7 +9,10 @@ import { ApiTags } from '@nestjs/swagger'
 import { DetailProductDTO, ShortProductItemDTO } from './dto/response.dto'
 import { ProductMemberService } from './product_member.service'
 
-@Controller('member/product')
+@Controller({
+	path: 'member/product',
+	version: '1',
+})
 @ApiTags('member-app > product')
 export class ProductMemberController {
 	constructor(private readonly productMemberService: ProductMemberService) {}
