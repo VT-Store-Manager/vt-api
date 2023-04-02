@@ -1,5 +1,5 @@
 import { FileService } from '@/app/file/file.service'
-import { ProductCategoryService } from '@/app/product-category/product-category.service'
+import { ProductCategoryService } from '@/app/product-category/admin-app/product-category.service'
 import { ProductOptionService } from '@/app/product-option/product-option.service'
 import { ApiSuccessResponse } from '@/common/decorators/api-sucess-response.decorator'
 import { ParseFile } from '@/common/pipes/parse-file.pipe'

@@ -1,3 +1,5 @@
+import { CounterModule } from '@/app/counter/counter.module'
+import { FileService } from '@/app/file/file.service'
 import { MongoSessionService } from '@/providers/mongo/session.service'
 import {
 	ProductCategory,
@@ -6,10 +8,8 @@ import {
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 
-import { CounterModule } from '../counter/counter.module'
-import { FileService } from '../file/file.service'
-import { ProductCategoryController } from './product-category.controller'
-import { ProductCategoryService } from './product-category.service'
+import { ProductCategoryController } from './admin-app/product-category.controller'
+import { ProductCategoryService } from './admin-app/product-category.service'
 
 @Module({
 	imports: [
