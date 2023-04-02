@@ -13,6 +13,8 @@ import { VerifySmsOtpDTO } from '../dto/verify-sms-otp.dto'
 import { AuthMemberService } from './auth-member.service'
 import { SmsService } from '../services/sms.service'
 import { TokenService } from '../services/token.service'
+import { ApiSuccessResponse } from '@/common/decorators/api-sucess-response.decorator'
+import { TokenDTO } from '../dto/response.dto'
 
 @Controller({
 	path: 'member/auth',
@@ -46,6 +48,7 @@ export class AuthMemberController {
 	}
 
 	@Post('sms-verify')
+	@ApiSuccessResponse(TokenDTO)
 	async verifySmsOtp(@Body() dto: VerifySmsOtpDTO) {
 		let tokens: TokenDto
 		const { error } = await this.mongoSessionService.execTransaction(
