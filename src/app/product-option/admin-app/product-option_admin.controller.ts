@@ -18,7 +18,7 @@ import { NewProductOptionDTO } from './dto/new-product-option.dto'
 import { ProductOptionDetailDTO } from './dto/product-option-detail.dto'
 import { ProductOptionListItemDTO } from './dto/product-option-list-item.dto'
 import { UpdateProductOptionDTO } from './dto/update-product-option.dto'
-import { ProductOptionAdminService } from './product-option.service'
+import { ProductOptionAdminService } from './product-option_admin.service'
 
 @ApiTags('admin-app > product-option')
 @Controller({

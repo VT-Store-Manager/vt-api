@@ -21,7 +21,7 @@ import { CounterModule } from './counter/counter.module'
 import { FileModule } from './file/file.module'
 import { MemberModule } from './member/member.module'
 import { ProductCategoryModule } from './product-category/product-category.module'
-import { ProductOptionModule } from './product-option/admin-app/product-option.module'
+import { ProductOptionModule } from './product-option/product-option.module'
 import { ProductModule } from './product/product.module'
 import { StoreModule } from './store/store.module'
 
