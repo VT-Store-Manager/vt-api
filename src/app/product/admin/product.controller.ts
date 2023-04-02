@@ -1,3 +1,6 @@
+import { FileService } from '@/app/file/file.service'
+import { ProductCategoryService } from '@/app/product-category/product-category.service'
+import { ProductOptionService } from '@/app/product-option/product-option.service'
 import { ApiSuccessResponse } from '@/common/decorators/api-sucess-response.decorator'
 import { ParseFile } from '@/common/pipes/parse-file.pipe'
 import { ImageMulterOption } from '@/common/validations/file.validator'
@@ -15,9 +18,6 @@ import {
 import { FilesInterceptor } from '@nestjs/platform-express'
 import { ApiConsumes, ApiTags } from '@nestjs/swagger'
 
-import { FileService } from '../file/file.service'
-import { ProductCategoryService } from '../product-category/product-category.service'
-import { ProductOptionService } from '../product-option/product-option.service'
 import { CreateProductDTO } from './dto/create-product.dto'
 import { ResponseProductItemDTO } from './dto/response-products.dto'
 import { ProductService } from './product.service'

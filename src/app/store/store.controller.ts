@@ -1,7 +1,7 @@
 import { ApiSuccessResponse } from '@/common/decorators/api-sucess-response.decorator'
 import { ParseFile } from '@/common/pipes/parse-file.pipe'
-import { MongoSessionService } from '@/providers/mongo/session.service'
 import { ImageMulterOption } from '@/common/validations/file.validator'
+import { MongoSessionService } from '@/providers/mongo/session.service'
 import { Store } from '@/schemas/store.schema'
 import {
 	BadRequestException,
@@ -20,7 +20,7 @@ import { ApiConsumes, ApiTags } from '@nestjs/swagger'
 import { FileService } from '../file/file.service'
 import { ProductCategoryService } from '../product-category/product-category.service'
 import { ProductOptionService } from '../product-option/product-option.service'
-import { ProductService } from '../product/product.service'
+import { ProductService } from '../product/admin/product.service'
 import { CreateStoreDTO } from './dto/create-store.dto'
 import { GetListStoreDTO } from './dto/get-list-store.dto'
 import { ResponseStoreListDTO } from './dto/response-store-item.dto'
