@@ -1,6 +1,6 @@
 import { FileService } from '@/app/file/file.service'
-import { ProductCategoryService } from '@/app/product-category/admin-app/product-category.service'
-import { ProductOptionService } from '@/app/product-option/product-option.service'
+import { ProductCategoryAdminService } from '@/app/product-category/admin-app/product-category_admin.service'
+import { ProductOptionAdminService } from '@/app/product-option/admin-app/product-option.service'
 import { ApiSuccessResponse } from '@/common/decorators/api-sucess-response.decorator'
 import { ParseFile } from '@/common/pipes/parse-file.pipe'
 import { ImageMulterOption } from '@/common/validations/file.validator'
@@ -20,18 +20,18 @@ import { ApiConsumes, ApiTags } from '@nestjs/swagger'
 
 import { CreateProductDTO } from './dto/create-product.dto'
 import { ResponseProductItemDTO } from './dto/response-products.dto'
-import { ProductService } from './product.service'
+import { ProductAdminService } from './product_admin.service'
 
-@ApiTags('product')
+@ApiTags('admin-app > product')
 @Controller({
-	path: 'product',
+	path: 'admin/product',
 	version: '1',
 })
-export class ProductController {
+export class ProductAdminController {
 	constructor(
-		private readonly productService: ProductService,
-		private readonly productCategoryService: ProductCategoryService,
-		private readonly productOptionService: ProductOptionService,
+		private readonly productService: ProductAdminService,
+		private readonly productCategoryService: ProductCategoryAdminService,
+		private readonly productOptionService: ProductOptionAdminService,
 		private readonly fileService: FileService,
 		private readonly mongoSessionService: MongoSessionService
 	) {}

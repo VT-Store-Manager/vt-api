@@ -20,16 +20,16 @@ import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiConsumes, ApiTags } from '@nestjs/swagger'
 
 import { CreateProductCategoryDTO } from './dto/create-product-category.dto'
-import { ProductCategoryService } from './product-category.service'
+import { ProductCategoryAdminService } from './product-category_admin.service'
 
-@ApiTags('product-category')
+@ApiTags('admin-app > product-category')
 @Controller({
-	path: 'product-category',
+	path: 'admin/product-category',
 	version: '1',
 })
-export class ProductCategoryController {
+export class ProductCategoryAdminController {
 	constructor(
-		private readonly productCategoryService: ProductCategoryService,
+		private readonly productCategoryService: ProductCategoryAdminService,
 		private readonly fileService: FileService,
 		private readonly mongoSessionService: MongoSessionService
 	) {}

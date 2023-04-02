@@ -1,3 +1,4 @@
+import { CounterModule } from '@/app/counter/counter.module'
 import { MongoSessionService } from '@/providers/mongo/session.service'
 import {
 	ProductOption,
@@ -7,9 +8,8 @@ import { Product, ProductSchema } from '@/schemas/product.schema'
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 
-import { CounterModule } from '../counter/counter.module'
-import { ProductOptionController } from './product-option.controller'
-import { ProductOptionService } from './product-option.service'
+import { ProductOptionAdminController } from './product-option.controller'
+import { ProductOptionAdminService } from './product-option.service'
 
 @Module({
 	imports: [
@@ -19,8 +19,8 @@ import { ProductOptionService } from './product-option.service'
 		]),
 		CounterModule,
 	],
-	controllers: [ProductOptionController],
-	providers: [ProductOptionService, MongoSessionService],
-	exports: [ProductOptionService],
+	controllers: [ProductOptionAdminController],
+	providers: [ProductOptionAdminService, MongoSessionService],
+	exports: [ProductOptionAdminService],
 })
 export class ProductOptionModule {}

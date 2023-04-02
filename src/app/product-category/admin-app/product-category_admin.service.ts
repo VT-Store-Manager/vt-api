@@ -12,7 +12,7 @@ import { InjectModel } from '@nestjs/mongoose'
 type CreateProductCategoryModel = Pick<ProductCategory, 'image' | 'name'>
 
 @Injectable()
-export class ProductCategoryService {
+export class ProductCategoryAdminService {
 	constructor(
 		@InjectModel(ProductCategory.name)
 		private readonly productCategoryModel: Model<ProductCategoryDocument>,

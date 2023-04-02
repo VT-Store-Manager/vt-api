@@ -1,10 +1,10 @@
 import { ClientSession, Model } from 'mongoose'
 
+import { CounterService } from '@/app/counter/counter.service'
 import { Store, StoreDocument } from '@/schemas/store.schema'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 
-import { CounterService } from '../counter/counter.service'
 import { CreateStoreDTO } from './dto/create-store.dto'
 import { GetListStoreDTO } from './dto/get-list-store.dto'
 import {
@@ -13,7 +13,7 @@ import {
 } from './dto/response-store-item.dto'
 
 @Injectable()
-export class StoreService {
+export class StoreAdminService {
 	constructor(
 		@InjectModel(Store.name) private readonly storeModel: Model<StoreDocument>,
 		private readonly counterService: CounterService

@@ -6,7 +6,7 @@ import { ForbiddenException, Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { PassportStrategy } from '@nestjs/passport'
 
-import { AuthMemberService } from '../services/auth-member.service'
+import { AuthMemberService } from '../member-app/auth-member.service'
 import { TokenService } from '../services/token.service'
 import { MongoSessionService } from '@/providers/mongo/session.service'
 
