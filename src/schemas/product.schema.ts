@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer'
 import { Document, Types } from 'mongoose'
 import mongooseDelete from 'mongoose-delete'
 
@@ -7,6 +8,7 @@ export type ProductDocument = Product & Document
 
 @Schema({ versionKey: false, timestamps: true })
 export class Product {
+	@Exclude()
 	_id: Types.ObjectId
 
 	@Prop({ type: Number, required: true, unique: true })

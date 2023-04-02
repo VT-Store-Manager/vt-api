@@ -1,12 +1,13 @@
 import { ClientSession, Model } from 'mongoose'
 
+import { CounterService } from '@/app/counter/counter.service'
+import { Status } from '@/common/constants'
 import { Product, ProductDocument } from '@/schemas/product.schema'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
+
 import { CreateProductDTO } from './dto/create-product.dto'
-import { CounterService } from '../counter/counter.service'
 import { ResponseProductItemDTO } from './dto/response-products.dto'
-import { Status } from '@/common/constants'
 
 @Injectable()
 export class ProductService {
