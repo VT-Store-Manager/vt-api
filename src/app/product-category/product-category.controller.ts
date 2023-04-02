@@ -31,7 +31,7 @@ export class ProductCategoryController {
 	constructor(
 		private readonly productCategoryService: ProductCategoryService,
 		private readonly fileService: FileService,
-		private readonly MongoSessionService: MongoSessionService
+		private readonly mongoSessionService: MongoSessionService
 	) {}
 
 	@Post('create')
@@ -48,7 +48,7 @@ export class ProductCategoryController {
 		)
 
 		let result: ProductCategory
-		const { error } = await this.MongoSessionService.execTransaction(
+		const { error } = await this.mongoSessionService.execTransaction(
 			async session => {
 				const createResult = await Promise.all([
 					this.fileService.upload(image.buffer, objectKey),
