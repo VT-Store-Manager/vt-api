@@ -1,13 +1,13 @@
 import { ClientSession, Model } from 'mongoose'
 
+import { CounterService } from '@/app/counter/counter.service'
+import { Status } from '@/common/constants'
 import {
 	ProductCategory,
 	ProductCategoryDocument,
 } from '@/schemas/product-category.schema'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-import { Status } from '@/common/constants'
-import { CounterService } from '../counter/counter.service'
 
 type CreateProductCategoryModel = Pick<ProductCategory, 'image' | 'name'>
 

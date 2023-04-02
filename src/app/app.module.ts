@@ -13,14 +13,14 @@ import { ServeStaticModule } from '@nestjs/serve-static'
 
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
+import { AuthModule } from './auth/auth.module'
 import { CounterModule } from './counter/counter.module'
 import { FileModule } from './file/file.module'
+import { MemberModule } from './member/member.module'
 import { ProductCategoryModule } from './product-category/product-category.module'
 import { ProductOptionModule } from './product-option/product-option.module'
 import { ProductModule } from './product/product.module'
 import { StoreModule } from './store/store.module'
-import { MemberModule } from './member/member.module'
-import { AuthModule } from './auth/auth.module'
 
 @Module({
 	imports: [

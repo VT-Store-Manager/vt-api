@@ -1,7 +1,9 @@
+import { FileService } from '@/app/file/file.service'
 import { ApiSuccessResponse } from '@/common/decorators/api-sucess-response.decorator'
 import { ObjectIdPipe } from '@/common/pipes/object-id.pipe'
-import { MongoSessionService } from '@/providers/mongo/session.service'
+import { ParseFile } from '@/common/pipes/parse-file.pipe'
 import { ImageMulterOption } from '@/common/validations/file.validator'
+import { MongoSessionService } from '@/providers/mongo/session.service'
 import { ProductCategory } from '@/schemas/product-category.schema'
 import {
 	Body,
@@ -17,8 +19,6 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiConsumes, ApiTags } from '@nestjs/swagger'
 
-import { ParseFile } from '../../common/pipes/parse-file.pipe'
-import { FileService } from '../file/file.service'
 import { CreateProductCategoryDTO } from './dto/create-product-category.dto'
 import { ProductCategoryService } from './product-category.service'
 

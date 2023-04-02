@@ -8,10 +8,10 @@ import { CounterModule } from '../counter/counter.module'
 import { FileService } from '../file/file.service'
 import { ProductCategoryModule } from '../product-category/product-category.module'
 import { ProductOptionModule } from '../product-option/product-option.module'
-import { ProductController } from './admin/product.controller'
-import { ProductService } from './admin/product.service'
-import { ProductMemberController } from './member/product_member.controller'
-import { ProductMemberService } from './member/product_member.service'
+import { ProductController } from './admin-app/product.controller'
+import { ProductService } from './admin-app/product.service'
+import { ProductMemberController } from './member-app/product_member.controller'
+import { ProductMemberService } from './member-app/product_member.service'
 
 @Module({
 	imports: [
