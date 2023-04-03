@@ -20,3 +20,25 @@ export enum UserRole {
 	ADMIN = 'admin',
 	SALESPERSON = 'salesperson',
 }
+
+export enum SettingType {
+	GENERAL = 'general',
+	ADMIN_APP = 'admin_app',
+	SALE_APP = 'sale_app',
+	MEMBER_APP = 'member_app',
+}
+
+export enum ContactType {
+	PHONE_NUMBER = 'phone_number',
+	EMAIL = 'email',
+	WEBSITE = 'website',
+	OTHER = 'other',
+}
+
+export enum OrderStatus {
+	PENDING = 'pending',
+	PROCESSING = 'processing',
+	DELIVERY = 'delivery',
+	CANCELLED = 'cancelled',
+	DONE = 'done',
+}

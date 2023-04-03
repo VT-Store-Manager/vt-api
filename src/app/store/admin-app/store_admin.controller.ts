@@ -1,6 +1,6 @@
 import { FileService } from '@/app/file/file.service'
 import { ProductCategoryAdminService } from '@/app/product-category/admin-app/product-category_admin.service'
-import { ProductOptionAdminService } from '@/app/product-option/admin-app/product-option.service'
+import { ProductOptionAdminService } from '@/app/product-option/admin-app/product-option_admin.service'
 import { ProductAdminService } from '@/app/product/admin-app/product_admin.service'
 import { ApiSuccessResponse } from '@/common/decorators/api-sucess-response.decorator'
 import { ParseFile } from '@/common/pipes/parse-file.pipe'
