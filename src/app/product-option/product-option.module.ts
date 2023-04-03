@@ -8,8 +8,10 @@ import { Product, ProductSchema } from '@/schemas/product.schema'
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 
-import { ProductOptionAdminController } from './product-option.controller'
-import { ProductOptionAdminService } from './product-option.service'
+import { ProductOptionAdminController } from './admin-app/product-option_admin.controller'
+import { ProductOptionAdminService } from './admin-app/product-option_admin.service'
+import { ProductOptionMemberController } from './member-app/product-option_member.controller'
+import { ProductOptionMemberService } from './member-app/product-option_member.service'
 
 @Module({
 	imports: [
@@ -19,8 +21,12 @@ import { ProductOptionAdminService } from './product-option.service'
 		]),
 		CounterModule,
 	],
-	controllers: [ProductOptionAdminController],
-	providers: [ProductOptionAdminService, MongoSessionService],
+	controllers: [ProductOptionAdminController, ProductOptionMemberController],
+	providers: [
+		ProductOptionAdminService,
+		ProductOptionMemberService,
+		MongoSessionService,
+	],
 	exports: [ProductOptionAdminService],
 })
 export class ProductOptionModule {}

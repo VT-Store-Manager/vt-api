@@ -4,7 +4,10 @@ import mongooseLeanVirtuals from 'mongoose-lean-virtuals'
 
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 
-export type StoreDocument = Store & Document
+export type StoreDocument = Store &
+	Document & {
+		fullAddress: string
+	}
 
 export class OpenTime {
 	start: string

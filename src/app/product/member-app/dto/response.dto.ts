@@ -13,4 +13,5 @@ export class DetailProductDTO {
 	description: string
 	isFavorite: boolean
 	price: number
+	optionIDs: string[]
 }
