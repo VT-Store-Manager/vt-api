@@ -1,4 +1,8 @@
+import { SettingType } from '@/common/constants'
 import { MongoSessionService } from '@/providers/mongo/session.service'
+import { SettingGeneralSchema } from '@/schemas/setting-general.schema'
+import { SettingMemberAppSchema } from '@/schemas/setting-member-app.schema'
+import { Setting, SettingSchema } from '@/schemas/setting.schema'
 import { Store, StoreSchema } from '@/schemas/store.schema'
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
@@ -15,7 +19,23 @@ import { StoreMemberService } from './member-app/store_member.service'
 
 @Module({
 	imports: [
-		MongooseModule.forFeature([{ name: Store.name, schema: StoreSchema }]),
+		MongooseModule.forFeature([
+			{ name: Store.name, schema: StoreSchema },
+			{
+				name: Setting.name,
+				schema: SettingSchema,
+				discriminators: [
+					{
+						name: SettingType.GENERAL,
+						schema: SettingGeneralSchema,
+					},
+					{
+						name: SettingType.MEMBER_APP,
+						schema: SettingMemberAppSchema,
+					},
+				],
+			},
+		]),
 		CounterModule,
 		ProductModule,
 		ProductCategoryModule,
