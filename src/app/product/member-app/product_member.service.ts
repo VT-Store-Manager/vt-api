@@ -86,4 +86,19 @@ export class ProductMemberService {
 			isFavorite,
 		}
 	}
+
+	async getSuggestionList(memberId: string, limit: number) {
+		const products = await this.productModel
+			.aggregate<ShortProductItemDTO>()
+			.project({
+				id: '$_id',
+				name: 1,
+				mainImage: { $first: '$images' },
+				price: '$originalPrice',
+				_id: false,
+			})
+			.sample(limit)
+			.exec()
+		return products
+	}
 }
