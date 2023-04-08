@@ -54,7 +54,7 @@ export class AuthMemberService {
 				session ? { session } : {}
 			)
 			.orFail(new BadRequestException('Account not found'))
-			.select('firstName lastName')
+			.select('_id')
 			.lean()
 			.exec()
 		return member

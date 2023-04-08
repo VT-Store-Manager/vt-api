@@ -1,17 +1,10 @@
 import { ClientSession, Model } from 'mongoose'
 
-import { UserRole } from '@/common/constants'
-import { Member } from '@/schemas/member.schema'
 import {
 	RefreshToken,
 	RefreshTokenDocument,
 } from '@/schemas/refresh-token.schema'
-import {
-	AccessTokenPayload,
-	JwtTokenPayload,
-	RefreshTokenPayload,
-	TokenSubject,
-} from '@/types/token.jwt'
+import { TokenPayload } from '@/types/token.jwt'
 import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { JwtService, JwtSignOptions } from '@nestjs/jwt'
@@ -32,10 +25,11 @@ export class TokenService {
 		})
 	}
 
-	private async delete(tokenValue: string, session?: ClientSession) {
-		return await this.refreshTokenModel
-			.deleteOne({ value: tokenValue }, session ? { session } : {})
+	private async deleteAllRefreshToken(uid: string, session?: ClientSession) {
+		const deleteResult = await this.refreshTokenModel
+			.deleteMany({ uid }, session ? { session } : {})
 			.exec()
+		return deleteResult.deletedCount
 	}
 
 	private async disable(tokenValue: string, session?: ClientSession) {
@@ -48,36 +42,25 @@ export class TokenService {
 			.exec()
 	}
 
-	async signMemberToken(member: Member, session?: ClientSession) {
-		const accessTokenpPayload: AccessTokenPayload = {
-			uid: member._id.toString(),
-			role: UserRole.MEMBER,
-			firstName: member.firstName,
-			lastName: member.lastName,
-		}
-
-		const refreshTokenPayload: RefreshTokenPayload = {
-			uid: member._id.toString(),
-			role: UserRole.MEMBER,
-		}
-
+	async signMemberToken(payload: TokenPayload, session?: ClientSession) {
+		const { sub, ...payloadWithoutSubject } = payload
 		const tokens = {
-			access_token: this.jwtService.sign(accessTokenpPayload, {
+			access_token: this.jwtService.sign(payloadWithoutSubject, {
 				secret: this.configService.get<string>('jwt.accessTokenSecret'),
 				expiresIn: this.configService.get<string>('jwt.accessTokenExpiresIn'),
-				subject: TokenSubject.ACCESS,
+				subject: sub,
 			} as JwtSignOptions),
-			refresh_token: this.jwtService.sign(refreshTokenPayload, {
+			refresh_token: this.jwtService.sign(payloadWithoutSubject, {
 				secret: this.configService.get<string>('jwt.refreshTokenSecret'),
 				expiresIn: this.configService.get<string>('jwt.refreshTokenExpiresIn'),
-				subject: TokenSubject.REFRESH,
+				subject: sub,
 			} as JwtSignOptions),
 		}
 
 		await this.refreshTokenModel.create(
 			[
 				{
-					uid: member._id.toString(),
+					uid: sub,
 					value: tokens.refresh_token,
 				},
 			],
@@ -86,14 +69,7 @@ export class TokenService {
 		return tokens
 	}
 
-	async deleteAllRefreshToken(uid: string, session?: ClientSession) {
-		const deleteResult = await this.refreshTokenModel
-			.deleteMany({ uid }, session ? { session } : {})
-			.exec()
-		return deleteResult.deletedCount
-	}
-
-	async getRefreshToken(payload: JwtTokenPayload): Promise<RefreshToken> {
+	async getRefreshToken(payload: TokenPayload): Promise<RefreshToken> {
 		return await this.refreshTokenModel
 			.findOne({ value: this.resignToken(payload) })
 			.orFail(new UnauthorizedException('Refresh token not found'))
