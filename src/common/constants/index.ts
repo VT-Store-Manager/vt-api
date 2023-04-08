@@ -15,7 +15,7 @@ export enum Status {
 	REMOVED = 'removed',
 }
 
-export enum UserRole {
+export enum Role {
 	MEMBER = 'member',
 	ADMIN = 'admin',
 	SALESPERSON = 'salesperson',

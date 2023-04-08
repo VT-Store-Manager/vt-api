@@ -1,6 +1,8 @@
+import { Role } from '@/common/constants'
+import { ApiSuccessResponse } from '@/common/decorators/api-sucess-response.decorator'
 import { MongoSessionService } from '@/providers/mongo/session.service'
 import { NoDataResponseDTO } from '@/types/http.swagger'
-import { AccessTokenPayload, RefreshTokenPayload } from '@/types/token.jwt'
+import { TokenPayload } from '@/types/token.jwt'
 import { Body, Controller, Get, Post } from '@nestjs/common'
 import { ApiResponse, ApiTags } from '@nestjs/swagger'
 
@@ -8,13 +10,12 @@ import { CurrentUser } from '../decorators/current-user.decorator'
 import { JwtAccess, JwtRefresh } from '../decorators/jwt.decorator'
 import { LoginDTO } from '../dto/login.dto'
 import { RegisterMemberDTO } from '../dto/register-member.dto'
+import { TokenDTO } from '../dto/response.dto'
 import { TokenDto } from '../dto/token.dto'
 import { VerifySmsOtpDTO } from '../dto/verify-sms-otp.dto'
-import { AuthMemberService } from './auth-member.service'
 import { SmsService } from '../services/sms.service'
 import { TokenService } from '../services/token.service'
-import { ApiSuccessResponse } from '@/common/decorators/api-sucess-response.decorator'
-import { TokenDTO } from '../dto/response.dto'
+import { AuthMemberService } from './auth-member.service'
 
 @Controller({
 	path: 'member/auth',
@@ -57,7 +58,7 @@ export class AuthMemberController {
 					await this.authMemberService.getJwtPayloadByMobile(dto.mobile)
 				await this.smsService.confirmPhoneNumber(dto.mobile, dto.code)
 				tokens = await this.tokenService.signMemberToken(
-					jwtPayloadData,
+					{ role: Role.MEMBER, sub: jwtPayloadData._id.toString() },
 					session
 				)
 			}
@@ -67,15 +68,14 @@ export class AuthMemberController {
 	}
 
 	@Post('refresh')
-	@JwtRefresh()
-	async refreshToken(@CurrentUser() user: RefreshTokenPayload) {
-		const member = await this.authMemberService.getJwtPayload(user.uid)
-		return await this.tokenService.signMemberToken(member)
+	@JwtRefresh(Role.MEMBER)
+	async refreshToken(@CurrentUser() user: TokenPayload) {
+		return await this.tokenService.signMemberToken(user)
 	}
 
 	@Get('whoiam')
 	@JwtAccess()
-	async whoIAm(@CurrentUser() user: AccessTokenPayload) {
+	async whoIAm(@CurrentUser() user: TokenPayload) {
 		return user
 	}
 }

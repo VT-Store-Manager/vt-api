@@ -1,14 +1,12 @@
 import { ExtractJwt, Strategy } from 'passport-jwt'
 
-import { UserRole } from '@/common/constants'
-import { JwtTokenPayload, TokenSubject } from '@/types/token.jwt'
+import { Role } from '@/common/constants'
 import { ForbiddenException, Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { PassportStrategy } from '@nestjs/passport'
 
 import { AuthMemberService } from '../member-app/auth-member.service'
-import { TokenService } from '../services/token.service'
-import { MongoSessionService } from '@/providers/mongo/session.service'
+import { TokenPayload } from '@/types/token.jwt'
 
 @Injectable()
 export class JwtAccessStrategy extends PassportStrategy(
@@ -17,22 +15,20 @@ export class JwtAccessStrategy extends PassportStrategy(
 ) {
 	constructor(
 		private readonly configService: ConfigService,
-		private readonly tokenService: TokenService,
-		private readonly authMemberService: AuthMemberService,
-		private readonly mongoSessionService: MongoSessionService
+		private readonly authMemberService: AuthMemberService
 	) {
 		super({
 			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
 			ignoreExpiration: false,
 			secretOrKey: configService.get<string>('jwt.accessTokenSecret'),
-			jsonWebTokenOptions: { subject: TokenSubject.ACCESS },
 		})
 	}
 
-	async validate(payload: JwtTokenPayload) {
-		if (payload.role === UserRole.MEMBER) {
+	async validate(payload: TokenPayload) {
+		console.log('Validating')
+		if (payload.role === Role.MEMBER) {
 			const validTime = await this.authMemberService.getTokenValidTime(
-				payload.uid
+				payload.sub
 			)
 			if (validTime.getTime() > payload.iat * 1000) {
 				throw new ForbiddenException('Detected an abnormal login')
