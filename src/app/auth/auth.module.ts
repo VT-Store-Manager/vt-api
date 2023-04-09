@@ -1,5 +1,8 @@
 import { MongoSessionService } from '@/providers/mongo/session.service'
+import { MemberData, MemberDataSchema } from '@/schemas/member-data.schema'
+import { MemberRank, MemberRankSchema } from '@/schemas/member-rank.schema'
 import { Member, MemberSchema } from '@/schemas/member.schema'
+import { Rank, RankSchema } from '@/schemas/rank.schema'
 import {
 	RefreshToken,
 	RefreshTokenSchema,
@@ -20,6 +23,9 @@ import { JwtRefreshStrategy } from './strategies/jwt-refresh.strategy'
 		MongooseModule.forFeature([
 			{ name: Member.name, schema: MemberSchema },
 			{ name: RefreshToken.name, schema: RefreshTokenSchema },
+			{ name: MemberData.name, schema: MemberDataSchema },
+			{ name: MemberRank.name, schema: MemberRankSchema },
+			{ name: Rank.name, schema: RankSchema },
 		]),
 		JwtModule.register({}),
 	],

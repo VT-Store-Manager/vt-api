@@ -25,6 +25,10 @@ export const envConfiguration = () => ({
 		accessTokenExpiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN,
 		refreshTokenExpiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN,
 	},
+	flag: {
+		disableSMS:
+			process.env.DISABLE_SMS === 'true' || +process.env.DISABLE_SMS === 1,
+	},
 })
 
 export const envValidationSchema = Joi.object({
@@ -34,5 +38,18 @@ export const envValidationSchema = Joi.object({
 	AWS_ACCESS_KEY_ID: Joi.string().required(),
 	AWS_SECRET_ACCESS_KEY: Joi.string().required(),
 	AWS_PUBLIC_BUCKET_NAME: Joi.string().required(),
-	//TODO: Validate twilio, jwt
+	TWILIO_ACCOUNT_SID: Joi.string().token().required(),
+	TWILIO_AUTH_TOKEN: Joi.string().token().required(),
+	TWILIO_VERIFICATION_SERVICE_SID: Joi.string().token().required(),
+	ACCESS_TOKEN_SECRET_KEY: Joi.string().token().required(),
+	ACCESS_TOKEN_EXPIRES_IN: Joi.string()
+		.pattern(/^\d(m|d)$/)
+		.required(),
+	REFRESH_TOKEN_SECRET_KEY: Joi.string().token().required(),
+	REFRESH_TOKEN_EXPIRES_IN: Joi.string()
+		.pattern(/^\d(m|d)$/)
+		.required(),
+	DISABLE_SMS: Joi.string()
+		.allow('true', 'false', true, false, '0', '1', 0, 1)
+		.default(false),
 })

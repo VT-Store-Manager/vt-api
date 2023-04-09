@@ -4,6 +4,7 @@ import { MongoSessionService } from '@/providers/mongo/session.service'
 import { NoDataResponseDTO } from '@/types/http.swagger'
 import { TokenPayload } from '@/types/token.jwt'
 import { Body, Controller, Get, Post } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import { ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import { CurrentUser } from '../decorators/current-user.decorator'
@@ -23,17 +24,24 @@ import { AuthMemberService } from './auth-member.service'
 })
 @ApiTags('member-app > auth')
 export class AuthMemberController {
+	private disableSMS: boolean
 	constructor(
 		private readonly authMemberService: AuthMemberService,
+		private readonly configService: ConfigService,
 		private readonly smsService: SmsService,
 		private readonly tokenService: TokenService,
 		private readonly mongoSessionService: MongoSessionService
-	) {}
+	) {
+		this.disableSMS = this.configService.get<boolean>('flag.disableSMS')
+		console.log(this.disableSMS)
+	}
 
 	@Post('login')
 	async sendVerification(@Body() { mobile }: LoginDTO) {
 		await this.authMemberService.checkAccount(mobile)
-		await this.smsService.initiatePhoneNumberVerification(mobile)
+		if (!this.disableSMS) {
+			await this.smsService.initiatePhoneNumberVerification(mobile)
+		}
 		return true
 	}
 
@@ -43,8 +51,9 @@ export class AuthMemberController {
 		const member = await this.authMemberService.createTemporaryMember(dto)
 
 		if (!member) return false
-
-		await this.smsService.initiatePhoneNumberVerification(dto.mobile)
+		if (!this.disableSMS) {
+			await this.smsService.initiatePhoneNumberVerification(dto.mobile)
+		}
 		return true
 	}
 
@@ -54,11 +63,14 @@ export class AuthMemberController {
 		let tokens: TokenDto
 		const { error } = await this.mongoSessionService.execTransaction(
 			async session => {
-				const jwtPayloadData =
-					await this.authMemberService.getJwtPayloadByMobile(dto.mobile)
-				await this.smsService.confirmPhoneNumber(dto.mobile, dto.code)
+				const [memberId, _] = await Promise.all([
+					this.authMemberService.initMemberData(dto.mobile, session),
+					this.disableSMS
+						? null
+						: this.smsService.confirmPhoneNumber(dto.mobile, dto.code),
+				])
 				tokens = await this.tokenService.signMemberToken(
-					{ role: Role.MEMBER, sub: jwtPayloadData._id.toString() },
+					{ role: Role.MEMBER, sub: memberId },
 					session
 				)
 			}

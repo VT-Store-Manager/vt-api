@@ -30,7 +30,7 @@ export class JwtAccessStrategy extends PassportStrategy(
 				payload.sub
 			)
 			if (validTime.getTime() > payload.iat * 1000) {
-				throw new ForbiddenException('Detected an abnormal login')
+				throw new ForbiddenException('Detected an abnormal action or data')
 			}
 			return payload
 		} else {
