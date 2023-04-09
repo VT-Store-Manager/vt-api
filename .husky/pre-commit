@@ -2,7 +2,11 @@
 . "$(dirname -- "$0")/_/husky.sh"
 
 if [ -f .env ]; then
-  export $(echo $(cat .env | sed 's/#.*//g'| xargs) | envsubst)
+	export $(echo $(cat .env | sed 's/#.*//g' | xargs) | envsubst)
 fi
-echo $DISABLE_HUSKY
-pnpm lint
+
+if [ $DISABLE_HUSKY == 1 ] || [ $DISABLE_HUSKY == true ]; then
+	echo -e "\nHusky is disabled!\n"
+else
+	pnpm lint
+fi

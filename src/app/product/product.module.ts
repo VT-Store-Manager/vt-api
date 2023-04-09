@@ -1,4 +1,5 @@
 import { MongoSessionService } from '@/providers/mongo/session.service'
+import { MemberData, MemberDataSchema } from '@/schemas/member-data.schema'
 import { Member, MemberSchema } from '@/schemas/member.schema'
 import { Product, ProductSchema } from '@/schemas/product.schema'
 import { Store, StoreSchema } from '@/schemas/store.schema'
@@ -20,6 +21,7 @@ import { ProductMemberService } from './member-app/product_member.service'
 			{ name: Product.name, schema: ProductSchema },
 			{ name: Member.name, schema: MemberSchema },
 			{ name: Store.name, schema: StoreSchema },
+			{ name: MemberData.name, schema: MemberDataSchema },
 		]),
 		ProductCategoryModule,
 		ProductOptionModule,
