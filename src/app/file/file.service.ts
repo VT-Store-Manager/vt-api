@@ -40,14 +40,21 @@ export class FileService {
 		return [...path, uuidv4() + ext].filter(s => s.length > 0).join('/')
 	}
 
-	async upload(dataBuffer: Buffer, key: string) {
+	async upload(
+		dataBuffer: Buffer,
+		key: string,
+		abortController?: AbortController
+	) {
 		const params: PutObjectCommandInput = {
 			Bucket: this.bucketName,
 			Key: key,
 			Body: dataBuffer,
 		}
 		const command = new PutObjectCommand(params)
-		const uploadResult = await this.s3.send(command)
+		const uploadResult = await this.s3.send(
+			command,
+			abortController ? { abortSignal: abortController.signal } : {}
+		)
 		if (uploadResult.$metadata.httpStatusCode !== 200) {
 			throw new BadRequestException('Upload image failed')
 		}
@@ -61,12 +68,18 @@ export class FileService {
 	 * @param {string[]} path - string[]
 	 * @returns An array of public files
 	 */
-	async uploadMulti(files: Express.Multer.File[], keys: string[]) {
+	async uploadMulti(
+		files: Express.Multer.File[],
+		keys: string[],
+		abortController?: AbortController
+	) {
 		if (files.length > keys.length) {
 			throw new Error('Number of keys must be equal to number of files')
 		}
 		const uploadResults = await Promise.all(
-			files.map((file, index) => this.upload(file.buffer, keys[index]))
+			files.map((file, index) =>
+				this.upload(file.buffer, keys[index], abortController)
+			)
 		)
 
 		return uploadResults
@@ -78,14 +91,21 @@ export class FileService {
 	 * @param {string} key - The key of the file you want to override.
 	 * @returns The result of the upload.
 	 */
-	async overrideFile(buffer: Buffer, key: string) {
+	async overrideFile(
+		buffer: Buffer,
+		key: string,
+		abortController?: AbortController
+	) {
 		const params: PutObjectCommandInput = {
 			Bucket: this.bucketName,
 			Key: key,
 			Body: buffer,
 		}
 		const command = new PutObjectCommand(params)
-		const overrideResult = await this.s3.send(command)
+		const overrideResult = await this.s3.send(
+			command,
+			abortController ? { abortSignal: abortController.signal } : {}
+		)
 
 		if (overrideResult.$metadata.httpStatusCode !== 200) {
 			throw new BadRequestException('Failed to upload object')
@@ -98,7 +118,7 @@ export class FileService {
 	 * @param {Types.ObjectId[]} fileIds - The ids of the files to delete
 	 * @returns The deleteResult is an array of the results of the two promises.
 	 */
-	async delete(keys: string[]) {
+	async delete(keys: string[], abortController?: AbortController) {
 		const params: DeleteObjectsCommandInput = {
 			Bucket: this.bucketName,
 			Delete: {
@@ -107,7 +127,10 @@ export class FileService {
 		}
 
 		const command = new DeleteObjectsCommand(params)
-		const deleteResult = await this.s3.send(command)
+		const deleteResult = await this.s3.send(
+			command,
+			abortController ? { abortSignal: abortController.signal } : {}
+		)
 		if (deleteResult.$metadata.httpStatusCode !== 200)
 			throw new BadRequestException('Failed to delete objects')
 		return deleteResult.Deleted.map(deleted => ({

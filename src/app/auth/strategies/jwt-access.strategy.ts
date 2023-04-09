@@ -25,7 +25,6 @@ export class JwtAccessStrategy extends PassportStrategy(
 	}
 
 	async validate(payload: TokenPayload) {
-		console.log('Validating')
 		if (payload.role === Role.MEMBER) {
 			const validTime = await this.authMemberService.getTokenValidTime(
 				payload.sub
