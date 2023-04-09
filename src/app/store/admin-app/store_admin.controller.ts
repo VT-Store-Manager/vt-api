@@ -79,10 +79,11 @@ export class StoreAdminController {
 		)
 
 		let result: Store
+		const abortController = new AbortController()
 		const { error } = await this.mongoSessionService.execTransaction(
 			async session => {
 				const createResult = await Promise.all([
-					this.fileService.uploadMulti(images, objectKeys),
+					this.fileService.uploadMulti(images, objectKeys, abortController),
 					this.storeService.create(
 						{ ...createDTO, images: objectKeys },
 						session
@@ -93,10 +94,8 @@ export class StoreAdminController {
 		)
 
 		if (error) {
-			const existedKeys = await objectKeys.filter(
-				async key => await this.fileService.checkFile(key)
-			)
-			await this.fileService.delete(existedKeys)
+			abortController.abort()
+			this.fileService.delete(objectKeys)
 			throw new InternalServerErrorException()
 		}
 

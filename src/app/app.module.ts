@@ -23,6 +23,7 @@ import { MemberModule } from './member/member.module'
 import { ProductCategoryModule } from './product-category/product-category.module'
 import { ProductOptionModule } from './product-option/product-option.module'
 import { ProductModule } from './product/product.module'
+import { RankModule } from './rank/rank.module'
 import { StoreModule } from './store/store.module'
 
 @Module({
@@ -57,6 +58,7 @@ import { StoreModule } from './store/store.module'
 		StoreModule,
 		MemberModule,
 		AuthModule,
+		RankModule,
 	],
 	controllers: [],
 	providers: [

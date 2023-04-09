@@ -9,7 +9,7 @@ export class MongoSessionService {
 
 	async execTransaction<T = any>(
 		fn: (session: ClientSession) => Promise<T>
-	): Promise<{ result: Document; error: boolean }> {
+	): Promise<{ result: Document; error: boolean | Error }> {
 		try {
 			const session = await this.connection.startSession()
 

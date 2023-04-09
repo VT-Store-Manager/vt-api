@@ -40,7 +40,13 @@ export class FileController {
 		@Body(FormDataPipe<UploadFileDTO>) dto: UploadFileDTO
 	) {
 		const key = this.fileService.createObjectKey(dto.path, file.originalname)
-		return await this.fileService.upload(file.buffer, key)
+		const abortController = new AbortController()
+		try {
+			return await this.fileService.upload(file.buffer, key, abortController)
+		} catch (error) {
+			abortController.abort()
+			throw error
+		}
 	}
 
 	@Post('upload-multi')
@@ -56,7 +62,13 @@ export class FileController {
 		const keys = files.map(file =>
 			this.fileService.createObjectKey(dto.path, file.originalname)
 		)
-		return await this.fileService.uploadMulti(files, keys)
+		const abortController = new AbortController()
+		try {
+			return await this.fileService.uploadMulti(files, keys, abortController)
+		} catch (error) {
+			abortController.abort()
+			throw error
+		}
 	}
 
 	@Put('override')
@@ -69,7 +81,17 @@ export class FileController {
 		@Body('key', S3KeyPipe) key: string
 	) {
 		await this.fileService.checkFile(key, true)
-		return await this.fileService.overrideFile(file.buffer, key)
+		const abortControler = new AbortController()
+		try {
+			return await this.fileService.overrideFile(
+				file.buffer,
+				key,
+				abortControler
+			)
+		} catch (error) {
+			abortControler.abort()
+			throw error
+		}
 	}
 
 	@Get('render')
@@ -87,6 +109,23 @@ export class FileController {
 	async delete(@Query('keys') keys: string[]) {
 		await Promise.all(keys.map(key => this.fileService.checkFile(key, true)))
 
-		return await this.fileService.delete(keys)
+		const abortControler = new AbortController()
+		try {
+			return await this.fileService.delete(keys)
+		} catch (error) {
+			abortControler.abort()
+			throw error
+		}
+	}
+
+	@Get('check')
+	async checkExist(@Query('keys') keys: string[]) {
+		const result = await Promise.all(
+			keys.map(key => this.fileService.checkFile(key))
+		)
+
+		return result.reduce((res, exist, index) => {
+			return Object.assign(res, { [keys[index]]: exist })
+		}, {})
 	}
 }
