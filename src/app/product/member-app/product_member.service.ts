@@ -1,20 +1,20 @@
 import { Model, Types } from 'mongoose'
 
+import { MemberData, MemberDataDocument } from '@/schemas/member-data.schema'
 import { Product, ProductDocument } from '@/schemas/product.schema'
+import { Store, StoreDocument } from '@/schemas/store.schema'
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 
 import { DetailProductDTO, ShortProductItemDTO } from './dto/response.dto'
-import { Member, MemberDocument } from '@/schemas/member.schema'
-import { Store, StoreDocument } from '@/schemas/store.schema'
 
 @Injectable()
 export class ProductMemberService {
 	constructor(
 		@InjectModel(Product.name)
 		private readonly productModel: Model<ProductDocument>,
-		@InjectModel(Member.name)
-		private readonly memberModel: Model<MemberDocument>,
+		@InjectModel(MemberData.name)
+		private readonly memberDataModel: Model<MemberDataDocument>,
 		@InjectModel(Store.name)
 		private readonly storeModel: Model<StoreDocument>
 	) {}
@@ -40,7 +40,11 @@ export class ProductMemberService {
 		storeId?: string
 	): Promise<DetailProductDTO> {
 		const [memberData, productData, storeData] = await Promise.all([
-			this.memberModel.findById(memberId).select('favorites').lean().exec(),
+			this.memberDataModel
+				.findOne({ member: new Types.ObjectId(memberId) })
+				.select('favorites')
+				.lean()
+				.exec(),
 			this.productModel
 				.aggregate<Omit<DetailProductDTO, 'isFavorite'>>()
 				.match({ _id: new Types.ObjectId(productId) })

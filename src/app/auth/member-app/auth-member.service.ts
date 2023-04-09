@@ -1,6 +1,9 @@
-import { ClientSession, Model } from 'mongoose'
+import { ClientSession, Model, Types } from 'mongoose'
 
+import { MemberData, MemberDataDocument } from '@/schemas/member-data.schema'
+import { MemberRank, MemberRankDocument } from '@/schemas/member-rank.schema'
 import { Member, MemberDocument } from '@/schemas/member.schema'
+import { Rank, RankDocument } from '@/schemas/rank.schema'
 import {
 	BadRequestException,
 	Injectable,
@@ -9,13 +12,18 @@ import {
 import { InjectModel } from '@nestjs/mongoose'
 
 import { RegisterMemberDTO } from '../dto/register-member.dto'
-import { Types } from 'mongoose'
 
 @Injectable()
 export class AuthMemberService {
 	constructor(
 		@InjectModel(Member.name)
-		private readonly memberModel: Model<MemberDocument>
+		private readonly memberModel: Model<MemberDocument>,
+		@InjectModel(Rank.name)
+		private readonly rankModel: Model<RankDocument>,
+		@InjectModel(MemberData.name)
+		private readonly memberDataModel: Model<MemberDataDocument>,
+		@InjectModel(MemberRank.name)
+		private readonly memberRankModel: Model<MemberRankDocument>
 	) {}
 
 	async createTemporaryMember(dto: RegisterMemberDTO, session?: ClientSession) {
@@ -46,18 +54,55 @@ export class AuthMemberService {
 		return !!member
 	}
 
-	async getJwtPayloadByMobile(mobile: string, session?: ClientSession) {
-		const member = await this.memberModel
-			.findOneAndUpdate(
-				{ mobile },
-				{ $unset: { notVerified: 0 } },
-				session ? { session } : {}
-			)
-			.orFail(new BadRequestException('Account not found'))
-			.select('_id')
-			.lean()
-			.exec()
-		return member
+	async initMemberData(
+		mobile: string,
+		session?: ClientSession
+	): Promise<string> {
+		const [member, rank] = await Promise.all([
+			this.memberModel
+				.findOne({ mobile })
+				.orFail(new BadRequestException('Account not found'))
+				.select('_id notVerified')
+				.lean()
+				.exec(),
+			this.rankModel.findOne().sort('rank').lean().exec(),
+		])
+
+		const [checkMemberData, checkMemberRank] = await Promise.all([
+			this.memberDataModel.countDocuments({ member: member._id }).exec(),
+			this.memberRankModel.count({ member: member._id }).exec(),
+		])
+
+		await Promise.all([
+			!member.notVerified
+				? undefined
+				: this.memberModel
+						.updateOne(
+							{ _id: member._id },
+							{ $unset: { notVerified: 0 } },
+							session ? { session } : {}
+						)
+						.exec(),
+			checkMemberData
+				? undefined
+				: this.memberDataModel.create<MemberData>(
+						[{ member: member._id }],
+						session ? { session } : {}
+				  ),
+			checkMemberRank
+				? undefined
+				: this.memberRankModel.create<MemberRank>(
+						[
+							{
+								member: member._id,
+								rank: rank._id,
+							},
+						],
+						session ? { session } : {}
+				  ),
+		])
+
+		return member._id.toString()
 	}
 
 	async updateTokenValidTime(uid: string, session?: ClientSession) {

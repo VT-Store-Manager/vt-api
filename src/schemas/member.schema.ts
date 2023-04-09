@@ -36,14 +36,11 @@ export class Member {
 	@Prop({ type: Date, required: true })
 	dob: Date
 
-	@Prop({ type: Date, default: Date.now(), expires: '1m' })
+	@Prop({ type: Date, default: Date.now(), expires: '5m' })
 	notVerified: Date
 
 	@Prop({ type: Date, default: Date.now() })
 	tokenValidTime: Date
-
-	@Prop({ type: [Types.ObjectId], default: [] })
-	favorites: Types.ObjectId[]
 
 	deleted: boolean
 	deletedAt?: Date
