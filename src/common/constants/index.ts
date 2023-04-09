@@ -1,3 +1,9 @@
+// Variables
+export const RANK_MESSAGE_SPLIT = '|'
+export const IS_ZERO_POINT_MESSAGE = 'Chưa tích điểm.'
+export const DEFAULT_POINT_NAME = 'BEAN'
+
+// Enums
 export enum NodeEnv {
 	PRODUCTION = 'production',
 	DEVELOPMENT = 'development',
