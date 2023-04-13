@@ -6,7 +6,6 @@ import { Rank } from '@/schemas/rank.schema'
 import {
 	Body,
 	Controller,
-	Get,
 	InternalServerErrorException,
 	Post,
 	UploadedFiles,

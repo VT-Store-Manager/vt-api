@@ -1,18 +1,17 @@
 import { Role } from '@/common/constants'
 import { ApiSuccessResponse } from '@/common/decorators/api-sucess-response.decorator'
 import { MongoSessionService } from '@/providers/mongo/session.service'
-import { NoDataResponseDTO } from '@/types/http.swagger'
-import { TokenPayload } from '@/types/token.jwt'
+import { BooleanResponseDTO } from '@/types/http.swagger'
+import { TokenPayload } from '@/types/token.dto'
 import { Body, Controller, Get, Post } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { ApiResponse, ApiTags } from '@nestjs/swagger'
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import { CurrentUser } from '../decorators/current-user.decorator'
 import { JwtAccess, JwtRefresh } from '../decorators/jwt.decorator'
 import { LoginDTO } from '../dto/login.dto'
 import { RegisterMemberDTO } from '../dto/register-member.dto'
 import { TokenDTO } from '../dto/response.dto'
-import { TokenDto } from '../dto/token.dto'
 import { VerifySmsOtpDTO } from '../dto/verify-sms-otp.dto'
 import { SmsService } from '../services/sms.service'
 import { TokenService } from '../services/token.service'
@@ -37,6 +36,8 @@ export class AuthMemberController {
 	}
 
 	@Post('login')
+	@ApiOperation({ summary: 'Get OTP by phone number' })
+	@ApiResponse({ type: BooleanResponseDTO, status: 201 })
 	async sendVerification(@Body() { mobile }: LoginDTO) {
 		await this.authMemberService.checkAccount(mobile)
 		if (!this.disableSMS) {
@@ -46,7 +47,11 @@ export class AuthMemberController {
 	}
 
 	@Post('register')
-	@ApiResponse({ type: NoDataResponseDTO })
+	@ApiResponse({ type: BooleanResponseDTO, status: 201 })
+	@ApiOperation({
+		summary:
+			'Register temporary account and get OTP to verify. Temporary account will destroy after 10 min',
+	})
 	async registerMember(@Body() dto: RegisterMemberDTO) {
 		const member = await this.authMemberService.createTemporaryMember(dto)
 
@@ -58,9 +63,10 @@ export class AuthMemberController {
 	}
 
 	@Post('sms-verify')
-	@ApiSuccessResponse(TokenDTO)
+	@ApiSuccessResponse(TokenDTO, 201)
+	@ApiOperation({ summary: 'Verify OTP and get tokens' })
 	async verifySmsOtp(@Body() dto: VerifySmsOtpDTO) {
-		let tokens: TokenDto
+		let tokens: TokenDTO
 		const { error } = await this.mongoSessionService.execTransaction(
 			async session => {
 				const [memberId, _] = await Promise.all([
@@ -81,12 +87,16 @@ export class AuthMemberController {
 
 	@Post('refresh')
 	@JwtRefresh(Role.MEMBER)
+	@ApiOperation({ summary: 'Get new access token and refresh token' })
+	@ApiSuccessResponse(TokenDTO, 201)
 	async refreshToken(@CurrentUser() user: TokenPayload) {
 		return await this.tokenService.signMemberToken(user)
 	}
 
 	@Get('whoiam')
 	@JwtAccess()
+	@ApiOperation({ summary: 'Test authenticating with token' })
+	@ApiSuccessResponse(TokenPayload)
 	async whoIAm(@CurrentUser() user: TokenPayload) {
 		return user
 	}

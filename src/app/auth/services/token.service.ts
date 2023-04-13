@@ -4,7 +4,7 @@ import {
 	RefreshToken,
 	RefreshTokenDocument,
 } from '@/schemas/refresh-token.schema'
-import { TokenPayload } from '@/types/token.jwt'
+import { TokenPayload } from '@/types/token.dto'
 import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { JwtService, JwtSignOptions } from '@nestjs/jwt'
