@@ -7,7 +7,7 @@ export class VerifySmsOtpDTO {
 		description:
 			'Phone number of account - must have Country code (Vietnam code is +84)',
 	})
-	mobile: string
+	phone: string
 
 	@IsNumberString()
 	@Matches(/^[0-9]{6}$/)

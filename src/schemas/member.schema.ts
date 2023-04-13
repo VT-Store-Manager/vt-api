@@ -16,7 +16,7 @@ export class Member {
 	_id?: Types.ObjectId
 
 	@Prop({ type: String, required: true, unique: true, index: 1 })
-	mobile: string
+	phone: string
 
 	@Prop({ type: String })
 	email?: string

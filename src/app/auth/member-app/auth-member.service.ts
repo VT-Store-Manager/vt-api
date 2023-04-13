@@ -30,7 +30,7 @@ export class AuthMemberService {
 		const member = await this.memberModel.create(
 			[
 				{
-					mobile: dto.mobile,
+					phone: dto.phone,
 					firstName: dto.firstName,
 					lastName: dto.lastName,
 					gender: dto.gender,
@@ -42,9 +42,9 @@ export class AuthMemberService {
 		return member[0]
 	}
 
-	async checkAccount(mobile: string) {
+	async checkAccount(phone: string) {
 		const member = await this.memberModel
-			.findOne({ mobile })
+			.findOne({ phone })
 			.orFail(new BadRequestException('The account does not exist'))
 			.select('deleted')
 			.lean()
@@ -55,12 +55,12 @@ export class AuthMemberService {
 	}
 
 	async initMemberData(
-		mobile: string,
+		phone: string,
 		session?: ClientSession
 	): Promise<string> {
 		const [member, rank] = await Promise.all([
 			this.memberModel
-				.findOne({ mobile })
+				.findOne({ phone })
 				.orFail(new BadRequestException('Account not found'))
 				.select('_id notVerified')
 				.lean()

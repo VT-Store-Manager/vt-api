@@ -6,7 +6,7 @@ export type RefreshTokenDocument = Document & RefreshToken
 @Schema({
 	versionKey: false,
 	timestamps: { createdAt: true },
-	collection: 'refresh_tokens',
+	collection: 'refreshTokens',
 })
 export class RefreshToken {
 	@Prop({ type: Types.ObjectId })
