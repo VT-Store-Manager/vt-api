@@ -95,6 +95,7 @@ export class AuthMemberService {
 						[
 							{
 								member: member._id,
+								code: 'M' + Math.floor(Date.now() / 1000),
 								rank: rank._id,
 							},
 						],
