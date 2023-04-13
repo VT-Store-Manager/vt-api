@@ -1,7 +1,7 @@
 import { Request } from 'express'
 
 import { createParamDecorator, ExecutionContext } from '@nestjs/common'
-import { TokenPayload } from '@/types/token.jwt'
+import { TokenPayload } from '@/types/token.dto'
 
 export const CurrentUser = createParamDecorator(
 	(data: unknown, context: ExecutionContext) => {
