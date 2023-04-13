@@ -33,6 +33,12 @@ export class TransformInterceptor implements NestInterceptor {
 						message: data?.message,
 					}
 				}
+				if (typeof data === 'boolean') {
+					return {
+						statusCode: code,
+						success: data,
+					}
+				}
 				return { statusCode: code, data }
 			})
 		)
