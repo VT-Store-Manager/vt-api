@@ -40,3 +40,11 @@ export class NoDataResponseDTO {
 	@ApiProperty()
 	message: string
 }
+
+export class BooleanResponseDTO {
+	@ApiProperty({ default: 201 })
+	statusCode: number
+
+	@ApiProperty()
+	success: boolean
+}

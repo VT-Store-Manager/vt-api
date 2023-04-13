@@ -1,7 +1,7 @@
 import { Request } from 'express'
 
 import { Role } from '@/common/constants'
-import { TokenPayload } from '@/types/token.jwt'
+import { TokenPayload } from '@/types/token.dto'
 import {
 	CanActivate,
 	ExecutionContext,

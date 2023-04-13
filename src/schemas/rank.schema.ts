@@ -12,7 +12,7 @@ export class RankAppearance {
 
 @Schema({ versionKey: false, timestamps: true })
 export class Rank {
-	_id: Types.ObjectId
+	_id?: Types.ObjectId
 
 	@Prop({ type: String, required: true })
 	name: string
@@ -36,6 +36,12 @@ export class Rank {
 
 	@Prop({ type: Number, required: true, min: 1, default: 1 })
 	coefficientPoint: number
+
+	@Prop({ type: String, default: '' })
+	message?: string
+
+	createdAt?: Date
+	updatedAt?: Date
 }
 
 export const RankSchema = SchemaFactory.createForClass(Rank)
