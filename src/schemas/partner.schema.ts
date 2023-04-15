@@ -1,10 +1,11 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-import { Types, Document } from 'mongoose'
+import { Document, Types } from 'mongoose'
 
-export type BrandDocument = Brand & Document
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
+
+export type PartnerDocument = Partner & Document
 
 @Schema({ versionKey: false, timestamps: true })
-export class Brand {
+export class Partner {
 	_id?: Types.ObjectId
 
 	@Prop({ type: String, required: true })
@@ -17,4 +18,4 @@ export class Brand {
 	updatedAt?: Date
 }
 
-export const BrandSchema = SchemaFactory.createForClass(Brand)
+export const PartnerSchema = SchemaFactory.createForClass(Partner)

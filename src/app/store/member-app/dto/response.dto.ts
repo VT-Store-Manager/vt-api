@@ -1,21 +1,22 @@
-import { Address } from '@/schemas/store.schema'
-
 export class ShortStoreItemDTO {
 	id: string
 	name: string
-	mainImage: string
-	fullAddress: string
+	image: string
+	address: string
 	distance: number
+	brandName?: string
+	isFavorite: boolean
 }
 
 export class StoreDetailDTO {
 	id: string
-	mainImage: string
+	openTime: string
+	phone: string
+	lat?: number
+	lng?: number
 	images: string[]
-	dailyTime: string
-	address: Address
-	fullAddress: string
-	contact: string
-	brandName: string
-	distance: number
+	mapImage?: string
+	unavailableProducts: string[]
+	unavailableCategories: string[]
+	unavailableOptions: string[]
 }

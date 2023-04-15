@@ -12,7 +12,10 @@ export class MemberData {
 	member: Types.ObjectId | string
 
 	@Prop({ type: [Types.ObjectId], default: [] })
-	favorites?: Array<Types.ObjectId | string>
+	favoriteProducts?: Array<Types.ObjectId | string>
+
+	@Prop({ type: [Types.ObjectId], default: [] })
+	favoriteStores?: Array<Types.ObjectId | string>
 
 	createdAt?: Date
 	updatedAt?: Date

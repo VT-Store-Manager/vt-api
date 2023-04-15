@@ -1,10 +1,15 @@
-import { ProductOption } from '@/schemas/product-option.schema'
-import { PickType } from '@nestjs/swagger'
-
-export class GetAllProductOptionDTO extends PickType(ProductOption, [
-	'name',
-	'range',
-	'items',
-] as const) {
+export class ProductItemDTO {
 	id: string
+	name: string
+	cost: number
+	disable: boolean
+}
+
+export class GetAllProductOptionDTO {
+	id: string
+	name: string
+	minSelected: number
+	maxSelected: number
+	default: string[]
+	optionItemIds: ProductItemDTO[]
 }

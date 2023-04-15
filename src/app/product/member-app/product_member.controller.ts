@@ -8,7 +8,11 @@ import { Controller, Get, Param, Query } from '@nestjs/common'
 import { ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger'
 
 import { GetProductSuggestionDTO } from './dto/get-product-suggestion.dto'
-import { DetailProductDTO, ShortProductItemDTO } from './dto/response.dto'
+import {
+	DetailProductDTO,
+	ProductListItemDTO,
+	ProductSuggestionDTO,
+} from './dto/response.dto'
 import { ProductMemberService } from './product_member.service'
 
 @Controller({
@@ -19,15 +23,15 @@ import { ProductMemberService } from './product_member.service'
 export class ProductMemberController {
 	constructor(private readonly productMemberService: ProductMemberService) {}
 
-	@Get('all-in-short')
-	@ApiSuccessResponse(ShortProductItemDTO, 200, true)
-	async getAllProductInShort() {
-		return await this.productMemberService.getShortInfoAllProduct()
+	@Get('all')
+	@ApiSuccessResponse(ProductListItemDTO, 200, true)
+	async getAllProducts() {
+		return await this.productMemberService.getAllProducts()
 	}
 
 	@Get('suggestion')
 	@JwtAccess(Role.MEMBER)
-	@ApiSuccessResponse(ShortProductItemDTO, 200, true)
+	@ApiSuccessResponse(ProductSuggestionDTO)
 	@ApiQuery({
 		name: 'limit',
 		required: false,

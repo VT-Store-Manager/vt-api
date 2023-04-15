@@ -1,6 +1,8 @@
-import { Model } from 'mongoose'
+import { Model, Types } from 'mongoose'
 
 import { SettingType } from '@/common/constants'
+import { getImagePath } from '@/common/helpers/file.helper'
+import { MemberData, MemberDataDocument } from '@/schemas/member-data.schema'
 import { SettingGeneralDocument } from '@/schemas/setting-general.schema'
 import { Store, StoreDocument } from '@/schemas/store.schema'
 import { BadRequestException, Injectable } from '@nestjs/common'
@@ -12,30 +14,56 @@ import { ShortStoreItemDTO, StoreDetailDTO } from './dto/response.dto'
 export class StoreMemberService {
 	constructor(
 		@InjectModel(Store.name) private readonly storeModel: Model<StoreDocument>,
+		@InjectModel(MemberData.name)
+		private readonly memberDataModel: Model<MemberDataDocument>,
 		@InjectModel(SettingType.GENERAL)
 		private readonly settingGeneralModel: Model<SettingGeneralDocument>
 	) {}
 
-	async getAllStoresInShort(): Promise<ShortStoreItemDTO[]> {
-		const stores = await this.storeModel
-			.find({
-				disabled: false,
-				deleted: false,
-			})
-			.select({
-				name: true,
-				images: true,
-				address: true,
-			})
-			.lean({ virtuals: true })
-			.exec()
-		return stores.map(store => ({
-			id: store._id.toString(),
-			name: store.name,
-			mainImage: store.images[0],
-			fullAddress: store.fullAddress,
-			distance: +(Math.random() * 20).toFixed(1),
-		}))
+	async getAllStoresInShort(memberId?: string): Promise<ShortStoreItemDTO[]> {
+		const [stores, memberData] = await Promise.all([
+			this.storeModel
+				.find({
+					disabled: false,
+					deleted: false,
+				})
+				.select({
+					name: true,
+					images: true,
+					address: true,
+				})
+				.lean({ virtuals: true })
+				.exec(),
+			memberId
+				? this.memberDataModel
+						.findOne({ member: new Types.ObjectId(memberId) })
+						.select('favoriteStores')
+						.lean()
+						.exec()
+				: null,
+		])
+		if (memberData) {
+			return stores.map(store => ({
+				id: store._id.toString(),
+				name: store.name,
+				image: getImagePath(store.images[0]),
+				address: store.fullAddress,
+				distance: +(Math.random() * 20).toFixed(1),
+				isFavorite:
+					memberData.favoriteStores.findIndex(
+						id => id.toString() === store._id.toString()
+					) > -1,
+			}))
+		} else {
+			return stores.map(store => ({
+				id: store._id.toString(),
+				name: store.name,
+				image: getImagePath(store.images[0]),
+				address: store.fullAddress,
+				distance: +(Math.random() * 20).toFixed(1),
+				isFavorite: false,
+			}))
+		}
 	}
 
 	async getStoreDetail(storeId: string): Promise<StoreDetailDTO> {
@@ -50,6 +78,7 @@ export class StoreMemberService {
 					mainImage: { $first: '$images' },
 					address: true,
 					openTime: true,
+					unavailableGoods: true,
 				})
 				.lean({ virtuals: true })
 				.exec(),
@@ -59,16 +88,15 @@ export class StoreMemberService {
 				.lean()
 				.exec(),
 		])
+		console.log(storeData)
 		return {
 			id: storeData.id.toString(),
-			mainImage: storeData['mainImage'],
-			images: storeData.images,
-			dailyTime: `${storeData.openTime.start} - ${storeData.openTime.end}`,
-			address: storeData.address,
-			fullAddress: storeData.fullAddress,
-			contact: settingData.storeContact,
-			brandName: settingData.brand.name,
-			distance: +(Math.random() * 20).toFixed(1),
+			openTime: `${storeData.openTime.start} - ${storeData.openTime.end}`,
+			phone: settingData.storeContact,
+			images: storeData.images.map(image => getImagePath(image)),
+			unavailableProducts: storeData.unavailableGoods.product as string[],
+			unavailableCategories: storeData.unavailableGoods.category as string[],
+			unavailableOptions: storeData.unavailableGoods.option as string[],
 		}
 	}
 }

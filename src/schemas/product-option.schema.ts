@@ -1,4 +1,5 @@
 import { Document, Types } from 'mongoose'
+import mongooseDelete from 'mongoose-delete'
 
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 
@@ -6,8 +7,6 @@ import {
 	ProductOptionItem,
 	ProductOptionItemSchema,
 } from './product-option-item.schema'
-
-import mongooseDelete from 'mongoose-delete'
 
 export type ProductOptionDocument = Document & ProductOption
 
@@ -35,6 +34,9 @@ export class ProductOption {
 		},
 	})
 	range: Array<number>
+
+	@Prop({ type: [String], default: [] })
+	defaultSelect: string[]
 
 	@Prop([{ type: ProductOptionItemSchema }])
 	items: ProductOptionItem[]

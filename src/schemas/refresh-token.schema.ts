@@ -1,5 +1,6 @@
-import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose'
-import { Types, Document } from 'mongoose'
+import { Document, Types } from 'mongoose'
+
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 
 export type RefreshTokenDocument = Document & RefreshToken
 
@@ -27,7 +28,7 @@ export class RefreshToken {
 
 	@Prop({
 		type: Date,
-		expires: '7d',
+		expires: '30d',
 		required: true,
 		default: Date.now(),
 	})

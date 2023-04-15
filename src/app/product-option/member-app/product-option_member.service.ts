@@ -1,10 +1,12 @@
+import { Model } from 'mongoose'
+
 import {
 	ProductOption,
 	ProductOptionDocument,
 } from '@/schemas/product-option.schema'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-import { Model } from 'mongoose'
+
 import { GetAllProductOptionDTO } from './dto/response.dto'
 
 @Injectable()
@@ -44,13 +46,21 @@ export class ProductOptionMemberService {
 						name: {
 							$ifNull: ['$parent.name', '$name'],
 						},
-						range: true,
-						items: true,
-					},
-				},
-				{
-					$project: {
-						'items.parentKey': false,
+						minSelected: { $first: '$range' },
+						maxSelected: { $arrayElemAt: ['$range', 1] },
+						default: '$defaultSelect',
+						items: {
+							$map: {
+								input: '$items',
+								as: 'item',
+								in: {
+									id: '$$item.key',
+									name: '$$item.name',
+									cost: '$$item.cost',
+									disable: '$$item.disabled',
+								},
+							},
+						},
 					},
 				},
 			])

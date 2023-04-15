@@ -26,7 +26,7 @@ export class SuccessResponseDTO<T extends Record<string, any>> {
 	@ApiProperty({ default: 200 })
 	statusCode: number
 
-	@ApiProperty()
+	@ApiProperty({ example: 'Successful' })
 	message: string
 
 	@ApiProperty()
