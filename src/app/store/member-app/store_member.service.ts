@@ -99,4 +99,29 @@ export class StoreMemberService {
 			unavailableOptions: storeData.unavailableGoods.option as string[],
 		}
 	}
+
+	async toggleFavoriteStore(memberId: string, storeId: string) {
+		const memberData = await this.memberDataModel
+			.findOne({ member: new Types.ObjectId(memberId) })
+			.select('favoriteStores')
+			.lean()
+			.exec()
+
+		const updateResult = await this.memberDataModel.updateOne(
+			{
+				member: new Types.ObjectId(memberId),
+			},
+			memberData.favoriteStores.findIndex(id => id.toString() === storeId) ===
+				-1
+				? {
+						$push: { favoriteStores: new Types.ObjectId(storeId) },
+				  }
+				: {
+						$pull: { favoriteStores: new Types.ObjectId(storeId) },
+				  }
+		)
+
+		console.log(memberData, updateResult)
+		return updateResult.modifiedCount === 1
+	}
 }

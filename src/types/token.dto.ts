@@ -14,3 +14,5 @@ export class TokenPayload {
 	@ApiProperty({ description: 'Expire at' })
 	exp?: number
 }
+
+export class UserPayload extends TokenPayload {}

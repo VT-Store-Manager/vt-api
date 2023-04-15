@@ -112,4 +112,41 @@ export class ProductMemberService {
 			products: products.map(product => product._id.toString()),
 		}
 	}
+
+	async toggleFavoriteProduct(memberId: string, productId: string) {
+		const memberData = await this.memberDataModel
+			.findOne({ member: new Types.ObjectId(memberId) })
+			.select('favoriteProducts')
+			.lean()
+			.exec()
+
+		const updateResult = await this.memberDataModel.updateOne(
+			{
+				member: new Types.ObjectId(memberId),
+			},
+			memberData.favoriteProducts.findIndex(
+				id => id.toString() === productId
+			) === -1
+				? {
+						$push: { favoriteProducts: new Types.ObjectId(productId) },
+				  }
+				: {
+						$pull: { favoriteProducts: new Types.ObjectId(productId) },
+				  }
+		)
+
+		console.log(memberData, updateResult)
+		return updateResult.modifiedCount === 1
+	}
+
+	async getAllFavorites(memberId: string) {
+		const memberData = await this.memberDataModel
+			.findOne({ member: new Types.ObjectId(memberId) })
+			.select('favoriteProducts')
+			.lean()
+			.exec()
+		return {
+			products: memberData.favoriteProducts,
+		}
+	}
 }

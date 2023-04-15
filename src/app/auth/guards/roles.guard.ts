@@ -1,7 +1,7 @@
 import { Request } from 'express'
 
 import { Role } from '@/common/constants'
-import { TokenPayload } from '@/types/token.dto'
+import { UserPayload } from '@/types/token.dto'
 import {
 	CanActivate,
 	ExecutionContext,
@@ -31,7 +31,7 @@ export class RolesGuard implements CanActivate {
 
 		const { user } = context
 			.switchToHttp()
-			.getRequest<Request & { user: TokenPayload }>()
+			.getRequest<Request & { user: UserPayload }>()
 
 		if (!user) {
 			if (isOptionalJwt) {

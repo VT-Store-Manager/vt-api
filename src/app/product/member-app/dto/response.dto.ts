@@ -26,6 +26,6 @@ export class ProductListItemDTO {
 	description: string
 }
 
-export class ProductSuggestionDTO {
+export class ProductListIdDTO {
 	products: string[]
 }
