@@ -2,7 +2,7 @@ import { Role } from '@/common/constants'
 import { ApiSuccessResponse } from '@/common/decorators/api-sucess-response.decorator'
 import { MongoSessionService } from '@/providers/mongo/session.service'
 import { BooleanResponseDTO } from '@/types/http.swagger'
-import { TokenPayload } from '@/types/token.dto'
+import { UserPayload } from '@/types/token.dto'
 import { Body, Controller, Get, Post } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
@@ -89,15 +89,15 @@ export class AuthMemberController {
 	@JwtRefresh(Role.MEMBER)
 	@ApiOperation({ summary: 'Get new access token and refresh token' })
 	@ApiSuccessResponse(TokenDTO, 201)
-	async refreshToken(@CurrentUser() user: TokenPayload) {
+	async refreshToken(@CurrentUser() user: UserPayload) {
 		return await this.tokenService.signMemberToken(user)
 	}
 
 	@Get('whoiam')
 	@JwtAccess()
 	@ApiOperation({ summary: 'Test authenticating with token' })
-	@ApiSuccessResponse(TokenPayload)
-	async whoIAm(@CurrentUser() user: TokenPayload) {
+	@ApiSuccessResponse(UserPayload)
+	async whoIAm(@CurrentUser() user: UserPayload) {
 		return user
 	}
 }
