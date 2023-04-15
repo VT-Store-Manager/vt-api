@@ -8,5 +8,8 @@ fi
 if [ $DISABLE_HUSKY == 1 ] || [ $DISABLE_HUSKY == true ]; then
 	echo -e "\nHusky is disabled!\n"
 else
+	echo -e "\n========== Husky Hook =========\n"
+	echo -e "ESlint fixing..."
 	pnpm lint
+	echo -e "===============================\n"
 fi
