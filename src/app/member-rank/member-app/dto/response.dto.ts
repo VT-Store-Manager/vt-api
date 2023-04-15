@@ -1,10 +1,14 @@
 export class MemberRankCardDTO {
 	id: string
 	name: string
-	scores: number
-	rankName: string
+	code: string
+	point: number
+	currentRankPoint: number
+	currentRankName: string
+	nextRankPoint: number | null
 	nextRankName: string | null
-	background: string
-	nextRank: number | null
-	status: string
+	backgroundImage: string
+	description: string
+	color: number
+	fee: number
 }

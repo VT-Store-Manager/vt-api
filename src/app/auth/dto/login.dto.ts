@@ -4,5 +4,5 @@ import { IsPhoneNumber } from 'class-validator'
 export class LoginDTO {
 	@IsPhoneNumber()
 	@ApiProperty({ description: 'Phone number of account' })
-	mobile: string
+	phone: string
 }

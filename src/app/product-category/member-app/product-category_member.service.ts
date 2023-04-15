@@ -1,3 +1,6 @@
+import { Model, Types } from 'mongoose'
+
+import { getImagePath } from '@/common/helpers/file.helper'
 import {
 	ProductCategory,
 	ProductCategoryDocument,
@@ -6,7 +9,7 @@ import { Product, ProductDocument } from '@/schemas/product.schema'
 import { Store, StoreDocument } from '@/schemas/store.schema'
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-import { Model, Types } from 'mongoose'
+
 import { ProductCategoryDTO } from './dto/response.dto'
 
 @Injectable()
@@ -47,7 +50,7 @@ export class ProductCategoryMemberService {
 			})
 			.group({
 				_id: '$category',
-				productIDs: { $push: '$_id' },
+				productIds: { $push: '$_id' },
 			})
 			.lookup({
 				from: 'product_categories',
@@ -62,10 +65,13 @@ export class ProductCategoryMemberService {
 				id: '$_id',
 				name: '$category.name',
 				image: '$category.image',
-				productIDs: 1,
+				productIds: 1,
 				_id: 0,
 			})
 			.exec()
-		return products
+		return products.map(product => {
+			product.image = getImagePath(product.image)
+			return product
+		})
 	}
 }

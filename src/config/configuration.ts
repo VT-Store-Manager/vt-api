@@ -1,5 +1,6 @@
-import { NodeEnv } from '@/common/constants'
 import * as Joi from 'joi'
+
+import { NodeEnv } from '@/common/constants'
 
 export const envConfiguration = () => ({
 	nodeEnv: process.env.NODE_ENV ?? NodeEnv.DEVELOPMENT,
@@ -43,11 +44,11 @@ export const envValidationSchema = Joi.object({
 	TWILIO_VERIFICATION_SERVICE_SID: Joi.string().token().required(),
 	ACCESS_TOKEN_SECRET_KEY: Joi.string().token().required(),
 	ACCESS_TOKEN_EXPIRES_IN: Joi.string()
-		.pattern(/^\d(m|d)$/)
+		.pattern(/^\d+(m|d)$/)
 		.required(),
 	REFRESH_TOKEN_SECRET_KEY: Joi.string().token().required(),
 	REFRESH_TOKEN_EXPIRES_IN: Joi.string()
-		.pattern(/^\d(m|d)$/)
+		.pattern(/^\d+(m|d)$/)
 		.required(),
 	DISABLE_SMS: Joi.string()
 		.allow('true', 'false', true, false, '0', '1', 0, 1)

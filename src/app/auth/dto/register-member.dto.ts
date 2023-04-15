@@ -13,7 +13,7 @@ import { Member } from '@/schemas/member.schema'
 import { ApiProperty, PickType } from '@nestjs/swagger'
 
 export class RegisterMemberDTO extends PickType(Member, [
-	'mobile',
+	'phone',
 	'firstName',
 	'lastName',
 	'gender',
@@ -21,7 +21,7 @@ export class RegisterMemberDTO extends PickType(Member, [
 	@IsMobilePhone()
 	@IsNotEmpty()
 	@ApiProperty({ description: 'Phone number, unique' })
-	mobile: string
+	phone: string
 
 	@IsString()
 	@IsNotEmpty()

@@ -40,6 +40,9 @@ export class Rank {
 	@Prop({ type: String, default: '' })
 	message?: string
 
+	@Prop({ type: Number, default: 0 })
+	deliveryFee?: number
+
 	createdAt?: Date
 	updatedAt?: Date
 }

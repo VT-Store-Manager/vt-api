@@ -38,10 +38,10 @@ export class AuthMemberController {
 	@Post('login')
 	@ApiOperation({ summary: 'Get OTP by phone number' })
 	@ApiResponse({ type: BooleanResponseDTO, status: 201 })
-	async sendVerification(@Body() { mobile }: LoginDTO) {
-		await this.authMemberService.checkAccount(mobile)
+	async sendVerification(@Body() { phone }: LoginDTO) {
+		await this.authMemberService.checkAccount(phone)
 		if (!this.disableSMS) {
-			await this.smsService.initiatePhoneNumberVerification(mobile)
+			await this.smsService.initiatePhoneNumberVerification(phone)
 		}
 		return true
 	}
@@ -57,7 +57,7 @@ export class AuthMemberController {
 
 		if (!member) return false
 		if (!this.disableSMS) {
-			await this.smsService.initiatePhoneNumberVerification(dto.mobile)
+			await this.smsService.initiatePhoneNumberVerification(dto.phone)
 		}
 		return true
 	}
@@ -70,10 +70,10 @@ export class AuthMemberController {
 		const { error } = await this.mongoSessionService.execTransaction(
 			async session => {
 				const [memberId, _] = await Promise.all([
-					this.authMemberService.initMemberData(dto.mobile, session),
+					this.authMemberService.initMemberData(dto.phone, session),
 					this.disableSMS
 						? null
-						: this.smsService.confirmPhoneNumber(dto.mobile, dto.code),
+						: this.smsService.confirmPhoneNumber(dto.phone, dto.code),
 				])
 				tokens = await this.tokenService.signMemberToken(
 					{ role: Role.MEMBER, sub: memberId },

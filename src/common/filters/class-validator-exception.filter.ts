@@ -20,15 +20,17 @@ export class ClassValidatorExceptionFilter implements ExceptionFilter {
 		response.status(HttpStatus.BAD_REQUEST).json({
 			statusCode: response.statusCode,
 			error: `Validation error${exception.length > 1 ? 's' : ''}`,
-			message: exception.reduce((res, cur) => {
-				const constraints = Object.values(cur.constraints).map(
-					constraintValue =>
-						constraintValue
-							.replace('$property', cur.property)
-							.replace('$value', cur.value)
-				)
-				return [...res, ...constraints]
-			}, []),
+			message: exception
+				.reduce((res, cur) => {
+					const constraints = Object.values(cur.constraints).map(
+						constraintValue =>
+							constraintValue
+								.replace('$property', cur.property)
+								.replace('$value', cur.value)
+					)
+					return [...res, ...constraints]
+				}, [])
+				.join(' | '),
 		})
 	}
 }

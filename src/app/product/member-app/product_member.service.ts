@@ -1,12 +1,13 @@
 import { Model, Types } from 'mongoose'
 
+import { getImagePath } from '@/common/helpers/file.helper'
 import { MemberData, MemberDataDocument } from '@/schemas/member-data.schema'
 import { Product, ProductDocument } from '@/schemas/product.schema'
 import { Store, StoreDocument } from '@/schemas/store.schema'
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 
-import { DetailProductDTO, ShortProductItemDTO } from './dto/response.dto'
+import { DetailProductDTO, ProductListItemDTO } from './dto/response.dto'
 
 @Injectable()
 export class ProductMemberService {
@@ -19,19 +20,27 @@ export class ProductMemberService {
 		private readonly storeModel: Model<StoreDocument>
 	) {}
 
-	async getShortInfoAllProduct() {
-		return await this.productModel
-			.aggregate<ShortProductItemDTO>()
+	async getAllProducts() {
+		const allProducts = await this.productModel
+			.aggregate<ProductListItemDTO>()
 			.project({
 				id: '$_id',
-				name: 1,
-				mainImage: { $first: '$images' },
-				price: '$originalPrice',
+				name: true,
+				cost: '$originalPrice',
+				image: { $first: '$images' },
+				images: true,
+				optionIds: '$options',
+				description: true,
 			})
 			.project({
 				_id: 0,
 			})
 			.exec()
+		return allProducts.map(product => {
+			product.image = getImagePath(product.image)
+			product.images = product.images.map(image => getImagePath(image))
+			return product
+		})
 	}
 
 	async getDetailProduct(
@@ -42,7 +51,7 @@ export class ProductMemberService {
 		const [memberData, productData, storeData] = await Promise.all([
 			this.memberDataModel
 				.findOne({ member: new Types.ObjectId(memberId) })
-				.select('favorites')
+				.select('favoriteProducts')
 				.lean()
 				.exec(),
 			this.productModel
@@ -81,7 +90,7 @@ export class ProductMemberService {
 			)
 		}
 
-		const isFavorite = memberData.favorites.some(
+		const isFavorite = memberData.favoriteProducts.some(
 			id => id.toString() === productId
 		)
 
@@ -93,16 +102,14 @@ export class ProductMemberService {
 
 	async getSuggestionList(memberId: string, limit: number) {
 		const products = await this.productModel
-			.aggregate<ShortProductItemDTO>()
+			.aggregate<Pick<Product, '_id'>>()
 			.project({
-				id: '$_id',
-				name: 1,
-				mainImage: { $first: '$images' },
-				price: '$originalPrice',
-				_id: false,
+				_id: true,
 			})
 			.sample(limit)
 			.exec()
-		return products
+		return {
+			products: products.map(product => product._id.toString()),
+		}
 	}
 }
