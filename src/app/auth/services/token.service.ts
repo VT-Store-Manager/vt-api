@@ -45,12 +45,12 @@ export class TokenService {
 	async signMemberToken(payload: TokenPayload, session?: ClientSession) {
 		const { sub, exp: _, ...payloadWithoutSubject } = payload
 		const tokens = {
-			access_token: this.jwtService.sign(payloadWithoutSubject, {
+			accessToken: this.jwtService.sign(payloadWithoutSubject, {
 				secret: this.configService.get<string>('jwt.accessTokenSecret'),
 				expiresIn: this.configService.get<string>('jwt.accessTokenExpiresIn'),
 				subject: sub,
 			} as JwtSignOptions),
-			refresh_token: this.jwtService.sign(payloadWithoutSubject, {
+			refreshToken: this.jwtService.sign(payloadWithoutSubject, {
 				secret: this.configService.get<string>('jwt.refreshTokenSecret'),
 				expiresIn: this.configService.get<string>('jwt.refreshTokenExpiresIn'),
 				subject: sub,
@@ -61,7 +61,7 @@ export class TokenService {
 			[
 				{
 					uid: sub,
-					value: tokens.refresh_token,
+					value: tokens.refreshToken,
 				},
 			],
 			session ? { session } : {}

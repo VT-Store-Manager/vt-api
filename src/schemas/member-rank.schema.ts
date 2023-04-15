@@ -17,6 +17,9 @@ export class MemberRank {
 	})
 	member: Types.ObjectId | string
 
+	@Prop({ type: String, unique: true, required: true })
+	code: string
+
 	@Prop({ type: Types.ObjectId, required: true, ref: 'Rank' })
 	rank: Types.ObjectId | string
 

@@ -11,6 +11,7 @@ import {
 	IS_ZERO_POINT_MESSAGE,
 	RANK_MESSAGE_SPLIT,
 } from '@/common/constants'
+import { colorHexToInt } from '@/common/helpers/color.helper'
 
 @Injectable()
 export class MemberRankMemberService {
@@ -53,10 +54,11 @@ export class MemberRankMemberService {
 			this.memberRankModel
 				.findOne({ member: new Types.ObjectId(memberId) })
 				.populate<{ rank: Rank }>('rank')
-				.select('rank usedPoint expiredPoint currentPoint')
+				.select('rank usedPoint expiredPoint currentPoint deliveryFee')
 				.lean({ virtuals: true })
 				.exec(),
 		])
+		console.log(memberRank)
 		if (!memberRank.rank) {
 			throw new InternalServerErrorException('Member rank data error')
 		}
@@ -83,12 +85,16 @@ export class MemberRankMemberService {
 		return {
 			id: member._id.toString(),
 			name: member.fullName,
-			scores: memberRank.totalPoint,
-			rankName: memberRank.rank.name,
+			code: memberRank.code,
+			point: memberRank.totalPoint,
+			currentRankPoint: memberRank.rank.minPoint,
+			currentRankName: memberRank.rank.name,
+			nextRankPoint: nextRank ? nextRank.minPoint : null,
 			nextRankName: nextRank ? nextRank.name : null,
-			background: memberRank.rank.appearance.background,
-			nextRank: nextRank ? nextRank.minPoint : null,
-			status: rankMessage,
+			backgroundImage: memberRank.rank.appearance.background,
+			description: rankMessage,
+			color: colorHexToInt(memberRank.rank.appearance.color),
+			fee: memberRank.rank.deliveryFee ?? 0,
 		}
 	}
 }

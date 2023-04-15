@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 
-import { ROLES_KEY } from '../decorators/jwt.decorator'
+import { JWT_OPTIONAL, ROLES_KEY } from '../decorators/jwt.decorator'
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -21,6 +21,10 @@ export class RolesGuard implements CanActivate {
 			context.getHandler(),
 			context.getClass(),
 		])
+		const isOptionalJwt = this.reflector.getAllAndOverride<boolean>(
+			JWT_OPTIONAL,
+			[context.getHandler(), context.getClass()]
+		)
 		if (!requiredRoles) {
 			return true
 		}
@@ -28,6 +32,13 @@ export class RolesGuard implements CanActivate {
 		const { user } = context
 			.switchToHttp()
 			.getRequest<Request & { user: TokenPayload }>()
+
+		if (!user) {
+			if (isOptionalJwt) {
+				return true
+			}
+			throw new UnauthorizedException('Token is invalid')
+		}
 
 		return requiredRoles.some(role => {
 			if (Array.isArray(user.role)) {

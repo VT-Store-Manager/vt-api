@@ -17,7 +17,7 @@ export class MemberRankMemberController {
 		private readonly memberRankMemberService: MemberRankMemberService
 	) {}
 
-	@Get()
+	@Get('card')
 	@JwtAccess(Role.MEMBER)
 	async getMemberCard(@CurrentUser() user: TokenPayload) {
 		return await this.memberRankMemberService.getMemberRankCard(user.sub)

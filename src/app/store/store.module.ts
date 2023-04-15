@@ -1,5 +1,6 @@
 import { SettingType } from '@/common/constants'
 import { MongoSessionService } from '@/providers/mongo/session.service'
+import { MemberData, MemberDataSchema } from '@/schemas/member-data.schema'
 import { SettingGeneralSchema } from '@/schemas/setting-general.schema'
 import { SettingMemberAppSchema } from '@/schemas/setting-member-app.schema'
 import { Setting, SettingSchema } from '@/schemas/setting.schema'
@@ -21,6 +22,7 @@ import { StoreMemberService } from './member-app/store_member.service'
 	imports: [
 		MongooseModule.forFeature([
 			{ name: Store.name, schema: StoreSchema },
+			{ name: MemberData.name, schema: MemberDataSchema },
 			{
 				name: Setting.name,
 				schema: SettingSchema,

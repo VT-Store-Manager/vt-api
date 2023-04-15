@@ -39,7 +39,11 @@ export class TransformInterceptor implements NestInterceptor {
 						success: data,
 					}
 				}
-				return { statusCode: code, data }
+				return {
+					statusCode: code,
+					message: code.toString().startsWith('2') ? 'Successful' : 'Failed',
+					data,
+				}
 			})
 		)
 	}
