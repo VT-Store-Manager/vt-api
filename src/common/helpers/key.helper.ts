@@ -1,6 +1,7 @@
 import ShortUniqueId from 'short-unique-id'
 
-const optionItemKeyUid = new ShortUniqueId({ length: 6 })
+export const optionItemKeyLength = 6
+const optionItemKeyUid = new ShortUniqueId({ length: optionItemKeyLength })
 optionItemKeyUid.setDictionary('alpha_lower')
 
 const s3KeyUid = new ShortUniqueId({ length: 8 })
