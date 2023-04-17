@@ -135,7 +135,6 @@ export class ProductMemberService {
 				  }
 		)
 
-		console.log(memberData, updateResult)
 		return updateResult.modifiedCount === 1
 	}
 

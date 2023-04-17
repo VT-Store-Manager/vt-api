@@ -1,10 +1,11 @@
 import { optionItemKeyLength } from '@/common/helpers/key.helper'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
+import { Types } from 'mongoose'
 
 @Schema({ versionKey: false, _id: false })
 export class OfferTarget {
-	@Prop({ type: String })
-	id?: string
+	@Prop({ type: Types.ObjectId })
+	id?: string | Types.ObjectId
 
 	@Prop({
 		type: [String],
@@ -31,8 +32,6 @@ export class OfferTarget {
 	salePrice: number
 }
 const OfferTargetSchema = SchemaFactory.createForClass(OfferTarget)
-
-// ==========================
 
 @Schema({ versionKey: false, _id: false })
 export class VoucherDiscount {

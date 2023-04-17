@@ -23,7 +23,7 @@ export class Voucher {
 	title: string
 
 	@Prop({ type: String })
-	image: string
+	image?: string
 
 	@Prop({
 		type: String,
@@ -52,7 +52,10 @@ export class Voucher {
 	@Prop({ type: VoucherConditionSchema, default: () => ({}) })
 	condition: VoucherCondition
 
-	@Prop({ type: Boolean, default: false })
+	@Prop({ type: String })
+	slider?: string
+
+	@Prop({ type: Boolean, default: true })
 	disabled: boolean
 
 	@Prop({ type: Boolean, default: false })

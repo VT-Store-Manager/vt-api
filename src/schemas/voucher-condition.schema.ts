@@ -43,8 +43,8 @@ export class VoucherCondition {
 	minPrice?: number
 
 	@Prop({
-		type: String,
-		enum: Object.values(ShippingMethod),
+		type: Number,
+		enum: Object.values(ShippingMethod).filter(e => !isNaN(+e)),
 		default: ShippingMethod.NONE,
 	})
 	shippingMethod: ShippingMethod

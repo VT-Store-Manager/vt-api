@@ -32,7 +32,6 @@ export class AuthMemberController {
 		private readonly mongoSessionService: MongoSessionService
 	) {
 		this.disableSMS = this.configService.get<boolean>('flag.disableSMS')
-		console.log(this.disableSMS)
 	}
 
 	@Post('login')
