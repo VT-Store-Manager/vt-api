@@ -48,3 +48,10 @@ export enum OrderStatus {
 	CANCELLED = 'cancelled',
 	DONE = 'done',
 }
+
+export enum ShippingMethod {
+	IN_STORE,
+	PICK_UP,
+	DELIVERY,
+	NONE = -1,
+}

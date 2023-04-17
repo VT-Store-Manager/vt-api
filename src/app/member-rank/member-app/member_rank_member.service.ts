@@ -58,7 +58,7 @@ export class MemberRankMemberService {
 				.lean({ virtuals: true })
 				.exec(),
 		])
-		console.log(memberRank)
+
 		if (!memberRank.rank) {
 			throw new InternalServerErrorException('Member rank data error')
 		}

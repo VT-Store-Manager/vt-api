@@ -24,7 +24,7 @@ module.exports = {
 		'prettier/prettier': ['error', prettierConfig],
 
 		// Common
-		// 'no-unused-vars': 'off',
+		'no-console': 'warn',
 		'no-useless-escape': 'off',
 		'no-irregular-whitespace': 'off',
 
