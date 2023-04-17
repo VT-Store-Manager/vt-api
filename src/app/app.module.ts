@@ -26,6 +26,7 @@ import { ProductOptionModule } from './product-option/product-option.module'
 import { ProductModule } from './product/product.module'
 import { RankModule } from './rank/rank.module'
 import { StoreModule } from './store/store.module'
+import { VoucherModule } from './voucher/voucher.module'
 
 @Module({
 	imports: [
@@ -61,6 +62,7 @@ import { StoreModule } from './store/store.module'
 		AuthModule,
 		RankModule,
 		MemberRankModule,
+		VoucherModule,
 	],
 	controllers: [],
 	providers: [

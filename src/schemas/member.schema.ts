@@ -30,7 +30,11 @@ export class Member {
 	@Prop({ type: String, required: true })
 	lastName: string
 
-	@Prop({ type: String, enum: Object.values(Gender), required: true })
+	@Prop({
+		type: String,
+		enum: Object.values(Gender).filter(e => !isNaN(+e)),
+		required: true,
+	})
 	gender: Gender
 
 	@Prop({ type: Date, required: true })

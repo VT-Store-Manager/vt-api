@@ -88,7 +88,7 @@ export class StoreMemberService {
 				.lean()
 				.exec(),
 		])
-		console.log(storeData)
+
 		return {
 			id: storeData.id.toString(),
 			openTime: `${storeData.openTime.start} - ${storeData.openTime.end}`,
@@ -121,7 +121,6 @@ export class StoreMemberService {
 				  }
 		)
 
-		console.log(memberData, updateResult)
 		return updateResult.modifiedCount === 1
 	}
 }

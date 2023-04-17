@@ -65,7 +65,7 @@ export class ProductCategoryAdminController {
 		if (error) {
 			abortController.abort()
 			this.fileService.delete([objectKey])
-			throw new InternalServerErrorException(error)
+			throw new InternalServerErrorException(error.message)
 		}
 
 		return result

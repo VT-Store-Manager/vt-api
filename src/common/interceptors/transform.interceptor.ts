@@ -18,8 +18,7 @@ export class TransformInterceptor implements NestInterceptor {
 		const requestMethod = context.switchToHttp().getRequest<Request>().method
 		const code = context.switchToHttp().getResponse<Response>().statusCode
 
-		if (['OPTIONS', 'HEAD', 'DELETE'].includes(requestMethod))
-			return next.handle()
+		if (['OPTIONS', 'HEAD'].includes(requestMethod)) return next.handle()
 
 		return next.handle().pipe(
 			map(data => {
