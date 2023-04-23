@@ -39,12 +39,12 @@ export class UpdateVoucherInfoDTO extends PartialType(
 
 	@IsOptional()
 	@IsNumber()
-	@Min(new Date(2000, 0, 1).getTime())
+	@Min(new Date(2023, 0, 1).getTime())
 	activeStartTime?: number
 
 	@IsOptional()
 	@IsNumber()
-	@Min(new Date(2000, 0, 1).getTime())
+	@Min(new Date(2023, 0, 1).getTime())
 	@Validate(FinishTimeRule)
 	activeFinishTime?: number
 }

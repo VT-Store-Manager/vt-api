@@ -10,11 +10,11 @@ import { Injectable } from '@nestjs/common'
 @Injectable()
 export class FinishTimeRule implements ValidatorConstraintInterface {
 	validate(value: number, { object }: ValidationArguments): boolean {
-		if (value < new Date(2000, 0, 1).getTime()) return false
+		if (value < new Date(2023, 0, 1).getTime()) return false
 		return value > object['activeStartTime']
 	}
 
 	defaultMessage(): string {
-		return 'Finish time must be greater than UNIX time of 2000/01/01 and greater than start time value'
+		return 'Finish time must be greater than UNIX time of 2023/01/01 and greater than start time value'
 	}
 }

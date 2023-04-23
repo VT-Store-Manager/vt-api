@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsOptional, IsString, Matches } from 'class-validator'
+import {
+	IsMongoId,
+	IsNotEmpty,
+	IsOptional,
+	IsString,
+	Matches,
+} from 'class-validator'
 
 export class CreateVoucherDTO {
 	@IsString()
@@ -12,4 +18,9 @@ export class CreateVoucherDTO {
 	@IsOptional()
 	@IsString()
 	description?: string = ''
+
+	@IsOptional()
+	@IsString()
+	@IsMongoId()
+	partner?: string
 }

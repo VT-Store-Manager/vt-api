@@ -20,6 +20,7 @@ import { AuthModule } from './auth/auth.module'
 import { CounterModule } from './counter/counter.module'
 import { FileModule } from './file/file.module'
 import { MemberRankModule } from './member-rank/member-rank.module'
+import { MemberVoucherModule } from './member-voucher/member-voucher.module'
 import { MemberModule } from './member/member.module'
 import { ProductCategoryModule } from './product-category/product-category.module'
 import { ProductOptionModule } from './product-option/product-option.module'
@@ -63,6 +64,7 @@ import { VoucherModule } from './voucher/voucher.module'
 		RankModule,
 		MemberRankModule,
 		VoucherModule,
+		MemberVoucherModule,
 	],
 	controllers: [],
 	providers: [
