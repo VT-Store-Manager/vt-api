@@ -1,6 +1,5 @@
 import { Types } from 'mongoose'
 import mongooseDelete from 'mongoose-delete'
-import mongooseLeanVirtuals from 'mongoose-lean-virtuals'
 
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 
@@ -73,4 +72,3 @@ export class Voucher {
 export const VoucherSchema = SchemaFactory.createForClass(Voucher)
 
 VoucherSchema.plugin(mongooseDelete, { deletedAt: true, deletedBy: true })
-VoucherSchema.plugin(mongooseLeanVirtuals)
