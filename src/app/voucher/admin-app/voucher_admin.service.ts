@@ -29,13 +29,7 @@ export class VoucherAdminService {
 
 	async create(data: CreateVoucherDTO, session?: ClientSession) {
 		const [voucher] = await this.voucherModel.create(
-			[
-				{
-					title: data.title,
-					code: data.code,
-					description: data.description,
-				},
-			],
+			[{ ...data }],
 			session ? { session } : {}
 		)
 		return voucher

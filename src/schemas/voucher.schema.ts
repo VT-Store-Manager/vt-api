@@ -34,6 +34,9 @@ export class Voucher {
 	})
 	code: string
 
+	@Prop({ type: Types.ObjectId, ref: 'Partner' })
+	partner?: Types.ObjectId
+
 	@Prop({ type: String, default: '' })
 	description: string
 
