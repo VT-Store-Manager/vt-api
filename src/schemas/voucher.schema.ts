@@ -45,7 +45,14 @@ export class Voucher {
 	@Prop({ type: Date })
 	activeStartTime?: Date
 
-	@Prop({ type: Date })
+	@Prop({
+		type: Date,
+		validate: {
+			validator: function (value: Date) {
+				return (this as Voucher).activeStartTime < value
+			},
+		},
+	})
 	activeFinishTime?: Date
 
 	@Prop({ type: VoucherDiscountSchema, default: () => ({}) })

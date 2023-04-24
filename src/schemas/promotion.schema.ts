@@ -20,30 +20,61 @@ export class Promotion {
 	@Prop({ type: String, default: '' })
 	description: string
 
-	@Prop({ type: Types.ObjectId, ref: 'Voucher', required: true })
+	@Prop({ type: String })
+	image?: string
+
+	@Prop({
+		type: Types.ObjectId,
+		ref: 'Voucher',
+		required: true,
+		set: v => {
+			if (typeof v === 'string') return new Types.ObjectId(v)
+			return v
+		},
+	})
 	voucher: Types.ObjectId | string
 
 	@Prop({ type: Number, min: 0, required: true })
 	cost: number
 
-	@Prop({ type: Date, default: new Date(), required: true })
-	startTime: Date
+	@Prop({
+		type: Date,
+		default: new Date(),
+		required: true,
+		validate: {
+			validator: function (value: any) {
+				return value instanceof Date || typeof value === 'number'
+			},
+		},
+		set: (v: Date | number) => {
+			if (typeof v === 'number') return new Date(v)
+			return v
+		},
+	})
+	startTime: Date | number
 
 	@Prop({
 		type: Date,
 		validate: {
-			validator: function (value: Date) {
-				return (this as Promotion).startTime < value
+			validator: function (value: any) {
+				if (value instanceof Date || typeof value === 'number') {
+					return (this as Promotion).startTime < value
+				}
+				return false
 			},
 		},
+		set: (v: Date | number) => {
+			if (typeof v === 'number') return new Date(v)
+			return v
+		},
 	})
-	endTime?: Date
+	finishTime?: Date | number
 
 	@Prop({ type: [Types.ObjectId], ref: 'MemberRank', default: () => [] })
-	posibleTarget: Array<Types.ObjectId | string>
+	possibleTarget: Array<Types.ObjectId | string>
 
-	@Prop({ type: PromotionLimitationSchema })
-	limitation: PromotionLimitation
+	@Prop({ type: [PromotionLimitationSchema] })
+	limitation: PromotionLimitation[]
 
 	@Prop({ type: Boolean, default: false })
 	disabled: boolean
