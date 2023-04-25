@@ -32,7 +32,9 @@ export class PromotionAdminService {
 				.exec(),
 			this.memberRankModel
 				.find({
-					rank: { $in: data.possibleTarget.map(id => new Types.ObjectId(id)) },
+					rank: {
+						$in: data.possibleTarget.map(id => new Types.ObjectId(id)),
+					},
 				})
 				.count()
 				.exec(),

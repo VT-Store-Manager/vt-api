@@ -1,6 +1,7 @@
 import { FileService } from '@/app/file/file.service'
 import { ImageMulterOption } from '@/common/validations/file.validator'
 import { MongoSessionService } from '@/providers/mongo/session.service'
+import { BooleanResponseDTO } from '@/types/http.swagger'
 import {
 	Body,
 	Controller,
@@ -10,7 +11,7 @@ import {
 	UseInterceptors,
 } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
-import { ApiConsumes, ApiTags } from '@nestjs/swagger'
+import { ApiConsumes, ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import { CreatePromotionDTO } from './dto/create-promotion.dto'
 import { PromotionAdminService } from './promotion_admin.service'
@@ -30,6 +31,7 @@ export class PromotionAdminController {
 	@Post('create')
 	@UseInterceptors(FileInterceptor('image', ImageMulterOption(2, 1)))
 	@ApiConsumes('multipart/form-data')
+	@ApiResponse({ type: BooleanResponseDTO })
 	async createPromotion(
 		@UploadedFile() image: Express.Multer.File,
 		@Body() body: CreatePromotionDTO

@@ -3,6 +3,7 @@ import mongooseDelete from 'mongoose-delete'
 
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 
+import { ShortPartner, ShortPartnerSchema } from './partner.schema'
 import {
 	VoucherCondition,
 	VoucherConditionSchema,
@@ -79,3 +80,23 @@ export class Voucher {
 export const VoucherSchema = SchemaFactory.createForClass(Voucher)
 
 VoucherSchema.plugin(mongooseDelete, { deletedAt: true, deletedBy: true })
+
+@Schema({ versionKey: false, _id: false })
+export class ShortVoucher {
+	@Prop({ type: Types.ObjectId })
+	_id: Types.ObjectId
+
+	@Prop({ type: String, required: true })
+	title: string
+
+	@Prop({ type: String, required: true })
+	code: string
+
+	@Prop({ type: String })
+	image?: string
+
+	@Prop({ type: ShortPartnerSchema })
+	partner?: ShortPartner
+}
+
+export const ShortVoucherSchema = SchemaFactory.createForClass(ShortVoucher)

@@ -1,5 +1,6 @@
 import { Model, Types } from 'mongoose'
 
+import { getImagePath } from '@/common/helpers/file.helper'
 import {
 	MemberVoucher,
 	MemberVoucherDocument,
@@ -80,6 +81,12 @@ export class MemberVoucherMemberService {
 			])
 			.exec()
 
-		return availableVouchers
+		return availableVouchers.map(voucher => ({
+			...voucher,
+			...(voucher.image ? { image: getImagePath(voucher.image) } : {}),
+			...(voucher.sliderImage
+				? { sliderImage: getImagePath(voucher.sliderImage) }
+				: {}),
+		}))
 	}
 }

@@ -1,19 +1,17 @@
 import { Type } from 'class-transformer'
 import {
 	IsArray,
+	IsBoolean,
 	IsMongoId,
 	IsNumber,
 	IsOptional,
-	IsPositive,
 	IsString,
 	Min,
 	MinLength,
 	Validate,
-	ValidateNested,
 } from 'class-validator'
 
 import { FinishTimeRule } from '@/common/rules/finish-time.rule'
-import { PromotionLimitation } from '@/schemas/promotion-limitation.schema'
 import { Promotion } from '@/schemas/promotion.schema'
 import { IntersectionType, PartialType, PickType } from '@nestjs/swagger'
 import { ApiPropertyFile } from '@/common/decorators/file-swagger.decorator'
@@ -26,7 +24,7 @@ export class CreatePromotionDTO extends IntersectionType(
 			'startTime',
 			'finishTime',
 			'possibleTarget',
-			'limitation',
+			'isFeatured',
 		] as const)
 	)
 ) {
@@ -41,6 +39,10 @@ export class CreatePromotionDTO extends IntersectionType(
 	@Type(() => Number)
 	@Min(0)
 	cost: number
+
+	@IsOptional()
+	@IsMongoId()
+	partner: string
 
 	@IsOptional()
 	@ApiPropertyFile()
@@ -60,25 +62,14 @@ export class CreatePromotionDTO extends IntersectionType(
 	@Type(() => Number)
 	@IsNumber()
 	@Validate(FinishTimeRule)
-	finishTime?: number
+	finishTime: number
 
 	@IsArray()
 	@IsMongoId({ each: true })
 	possibleTarget?: string[] = []
 
 	@IsOptional()
-	@IsArray()
-	@Type(() => PromotionLimitationDTO)
-	@ValidateNested({ each: true })
-	limitation?: PromotionLimitationDTO[] = []
-}
-
-export class PromotionLimitationDTO extends PromotionLimitation {
-	@IsMongoId({ each: true })
-	target: string[]
-
-	@IsOptional()
-	@Type(() => Number)
-	@IsPositive()
-	maxExchange?: number
+	@IsBoolean()
+	@Type(() => Boolean)
+	isFeatured?: boolean = false
 }
