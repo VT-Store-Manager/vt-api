@@ -25,6 +25,8 @@ import { MemberModule } from './member/member.module'
 import { ProductCategoryModule } from './product-category/product-category.module'
 import { ProductOptionModule } from './product-option/product-option.module'
 import { ProductModule } from './product/product.module'
+import { PromotionCategoryModule } from './promotion-category/promotion-category.module'
+import { PromotionModule } from './promotion/promotion.module'
 import { RankModule } from './rank/rank.module'
 import { StoreModule } from './store/store.module'
 import { VoucherModule } from './voucher/voucher.module'
@@ -65,6 +67,8 @@ import { VoucherModule } from './voucher/voucher.module'
 		MemberRankModule,
 		VoucherModule,
 		MemberVoucherModule,
+		PromotionModule,
+		PromotionCategoryModule,
 	],
 	controllers: [],
 	providers: [

@@ -7,7 +7,7 @@ import { AssignVoucherDTO } from './dto/create-member-voucher.dto'
 import { MemberVoucherAdminService } from './member-voucher_admin.service'
 import { difference } from 'lodash'
 import { CreateMemberVoucherDTO } from './dto/response.dto'
-import { ApiSuccessResponse } from '@/common/decorators/api-sucess-response.decorator'
+import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
 
 @Controller({
 	path: 'admin/member-voucher',
