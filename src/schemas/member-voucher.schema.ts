@@ -17,7 +17,15 @@ export class MemberVoucher {
 	@Prop({ type: Date, required: true })
 	startTime: Date
 
-	@Prop({ type: Date, index: { expireAfterSeconds: 0, index: true } })
+	@Prop({
+		type: Date,
+		index: { expireAfterSeconds: 0, index: true },
+		validate: {
+			validator: function (value: Date) {
+				return (this as MemberVoucher).startTime < value
+			},
+		},
+	})
 	finishTime?: Date
 
 	createdAt?: Date

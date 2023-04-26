@@ -11,7 +11,9 @@ import { Injectable } from '@nestjs/common'
 export class FinishTimeRule implements ValidatorConstraintInterface {
 	validate(value: number, { object }: ValidationArguments): boolean {
 		if (value < new Date(2023, 0, 1).getTime()) return false
-		return value > object['activeStartTime']
+		const startTime: number =
+			object['activeStartTime'] ?? object['startTime'] ?? Date.now()
+		return value > startTime
 	}
 
 	defaultMessage(): string {

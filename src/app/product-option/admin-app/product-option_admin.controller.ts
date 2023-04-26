@@ -1,4 +1,4 @@
-import { ApiSuccessResponse } from '@/common/decorators/api-sucess-response.decorator'
+import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
 import { clearUndefineOrNullField } from '@/common/helpers/body.helper'
 import { ObjectIdPipe } from '@/common/pipes/object-id.pipe'
 import { MongoSessionService } from '@/providers/mongo/session.service'
