@@ -17,7 +17,7 @@ import { IntersectionType, PartialType, PickType } from '@nestjs/swagger'
 import { ApiPropertyFile } from '@/common/decorators/file-swagger.decorator'
 
 export class CreatePromotionDTO extends IntersectionType(
-	PickType(Promotion, ['title', 'voucher', 'cost'] as const),
+	PickType(Promotion, ['category', 'title', 'voucher', 'cost'] as const),
 	PartialType(
 		PickType(Promotion, [
 			'description',
@@ -28,6 +28,9 @@ export class CreatePromotionDTO extends IntersectionType(
 		] as const)
 	)
 ) {
+	@IsMongoId()
+	category: string
+
 	@IsString()
 	@MinLength(3)
 	title: string

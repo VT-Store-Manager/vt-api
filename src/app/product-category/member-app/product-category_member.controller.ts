@@ -1,4 +1,4 @@
-import { ApiSuccessResponse } from '@/common/decorators/api-sucess-response.decorator'
+import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
 import { Controller, Get, Query } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { GetProductCategoryDTO } from './dto/get-product-category.dto'

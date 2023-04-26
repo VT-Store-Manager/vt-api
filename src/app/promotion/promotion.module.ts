@@ -1,8 +1,4 @@
 import { MongoSessionService } from '@/providers/mongo/session.service'
-import {
-	MemberPromotionHistory,
-	MemberPromotionHistorySchema,
-} from '@/schemas/member-promotion-history.schema'
 import { MemberRank, MemberRankSchema } from '@/schemas/member-rank.schema'
 import { Promotion, PromotionSchema } from '@/schemas/promotion.schema'
 import { Voucher, VoucherSchema } from '@/schemas/voucher.schema'
@@ -21,10 +17,6 @@ import { PromotionMemberService } from './member-app/promotion_member.service'
 			{ name: Promotion.name, schema: PromotionSchema },
 			{ name: Voucher.name, schema: VoucherSchema },
 			{ name: MemberRank.name, schema: MemberRankSchema },
-			{
-				name: MemberPromotionHistory.name,
-				schema: MemberPromotionHistorySchema,
-			},
 		]),
 	],
 	controllers: [PromotionAdminController, PromotionMemberController],

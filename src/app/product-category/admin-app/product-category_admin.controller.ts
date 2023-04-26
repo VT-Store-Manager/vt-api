@@ -1,5 +1,5 @@
 import { FileService } from '@/app/file/file.service'
-import { ApiSuccessResponse } from '@/common/decorators/api-sucess-response.decorator'
+import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
 import { ObjectIdPipe } from '@/common/pipes/object-id.pipe'
 import { ParseFile } from '@/common/pipes/parse-file.pipe'
 import { ImageMulterOption } from '@/common/validations/file.validator'

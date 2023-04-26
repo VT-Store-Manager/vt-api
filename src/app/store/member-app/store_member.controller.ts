@@ -4,7 +4,7 @@ import {
 	JwtAccessOptional,
 } from '@/app/auth/decorators/jwt.decorator'
 import { Role } from '@/common/constants'
-import { ApiSuccessResponse } from '@/common/decorators/api-sucess-response.decorator'
+import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
 import { ObjectIdPipe } from '@/common/pipes/object-id.pipe'
 import { BooleanResponseDTO } from '@/types/http.swagger'
 import { UserPayload } from '@/types/token.dto'
