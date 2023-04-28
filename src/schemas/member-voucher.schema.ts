@@ -25,8 +25,9 @@ export class MemberVoucher {
 				return (this as MemberVoucher).startTime < value
 			},
 		},
+		required: true,
 	})
-	finishTime?: Date
+	finishTime: Date
 
 	createdAt?: Date
 	updatedAt?: Date

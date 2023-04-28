@@ -47,7 +47,7 @@ export class VoucherCondition {
 		enum: Object.values(ShippingMethod).filter(e => !isNaN(+e)),
 		default: ShippingMethod.NONE,
 	})
-	shippingMethod: ShippingMethod
+	shippingMethod?: ShippingMethod
 
 	@Prop({
 		type: [ConditionInclusionSchema],
@@ -63,7 +63,7 @@ export class VoucherCondition {
 			message: 'Condition of inclusion is invalid',
 		},
 	})
-	inclusion: ConditionInclusion[]
+	inclusion?: ConditionInclusion[]
 }
 
 export const VoucherConditionSchema =

@@ -1,4 +1,5 @@
 import { MongoSessionService } from '@/providers/mongo/session.service'
+import { MemberRank, MemberRankSchema } from '@/schemas/member-rank.schema'
 import {
 	ProductOption,
 	ProductOptionSchema,
@@ -26,6 +27,10 @@ import { VoucherMemberService } from './member-app/voucher_member.service'
 				name: ProductOption.name,
 				schema: ProductOptionSchema,
 			},
+			{
+				name: MemberRank.name,
+				schema: MemberRankSchema,
+			},
 		]),
 	],
 	controllers: [VoucherAdminController, VoucherMemberController],
@@ -35,5 +40,6 @@ import { VoucherMemberService } from './member-app/voucher_member.service'
 		FileService,
 		MongoSessionService,
 	],
+	exports: [VoucherMemberService],
 })
 export class VoucherModule {}

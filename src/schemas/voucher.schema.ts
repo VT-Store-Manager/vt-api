@@ -40,7 +40,7 @@ export class Voucher {
 	@Prop({ type: String, default: '' })
 	description: string
 
-	@Prop({ type: Number, default: 0 })
+	@Prop({ type: Number, default: 24 * 30 })
 	expireHour: number
 
 	@Prop({ type: Date })
@@ -56,10 +56,10 @@ export class Voucher {
 	})
 	activeFinishTime?: Date
 
-	@Prop({ type: VoucherDiscountSchema, default: () => ({}) })
+	@Prop({ type: () => VoucherDiscountSchema, default: () => ({}) })
 	discount: VoucherDiscount
 
-	@Prop({ type: VoucherConditionSchema, default: () => ({}) })
+	@Prop({ type: () => VoucherConditionSchema, default: () => ({}) })
 	condition: VoucherCondition
 
 	@Prop({ type: String })
