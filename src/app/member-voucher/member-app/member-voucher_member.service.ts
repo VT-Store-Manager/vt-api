@@ -39,10 +39,10 @@ export class MemberVoucherMemberService {
 					$match: {
 						'voucher.disabled': false,
 						'voucher.deleted': false,
+						member: new Types.ObjectId(memberId),
+						startTime: { $lte: now },
+						finishTime: { $gt: now },
 						$and: [
-							{ member: new Types.ObjectId(memberId) },
-							{ startTime: { $lte: now } },
-							{ finishTime: { $gt: now } },
 							{
 								$or: [
 									{ 'voucher.activeStartTime': null },

@@ -25,7 +25,7 @@ export class UpdateVoucherDiscountDTO extends PartialType(VoucherDiscount) {
 	@IsOptional()
 	@Type(() => Boolean)
 	@IsBoolean()
-	freeship?: boolean
+	freeShip?: boolean
 
 	@IsOptional()
 	@Type(() => Number)
@@ -70,7 +70,12 @@ export class OfferTargetDTO extends OfferTarget {
 		),
 		{ each: true }
 	)
-	options?: string[]
+	options?: string[] = []
+
+	@IsOptional()
+	@IsString()
+	@Matches(/[1-9]\+[1-9]/)
+	buyAndGet?: string
 
 	@IsOptional()
 	@Type(() => Number)

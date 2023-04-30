@@ -48,13 +48,13 @@ export class ProductOptionMemberService {
 						},
 						minSelected: { $first: '$range' },
 						maxSelected: { $arrayElemAt: ['$range', 1] },
-						default: '$defaultSelect',
-						items: {
+						defaultSelect: '$defaultSelect',
+						optionItems: {
 							$map: {
 								input: '$items',
 								as: 'item',
 								in: {
-									id: '$$item.key',
+									id: { $ifNull: ['$$item.parentKey', '$$item.key'] },
 									name: '$$item.name',
 									cost: '$$item.cost',
 									disable: '$$item.disabled',
