@@ -2,6 +2,7 @@ import {
 	IsArray,
 	IsNotEmpty,
 	IsNumber,
+	IsOptional,
 	IsString,
 	Min,
 	Validate,
@@ -43,10 +44,11 @@ export class CreateProductDTO extends IntersectionType(
 	@IsString()
 	description?: string
 
+	@IsOptional()
 	@IsArray()
 	@IsString({ each: true })
 	@Validate(ObjectIdRule, { each: true })
 	@IsNotEmpty({ each: true })
 	@Type(() => Array<string>)
-	options: Array<string>
+	options: Array<string> = []
 }

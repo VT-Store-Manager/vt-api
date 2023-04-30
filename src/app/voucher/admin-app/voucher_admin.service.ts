@@ -61,7 +61,7 @@ export class VoucherAdminService {
 
 	async getDetail(voucherId: string, select = '') {
 		return await this.voucherModel
-			.findById(voucherId)
+			.findById(new Types.ObjectId(voucherId))
 			.orFail(new BadRequestException('Voucher not found'))
 			.select(select)
 			.lean()

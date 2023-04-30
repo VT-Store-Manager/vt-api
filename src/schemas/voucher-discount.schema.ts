@@ -25,6 +25,17 @@ export class OfferTarget {
 	})
 	options?: string[]
 
+	@Prop({
+		type: String,
+		validate: {
+			validator: (v: string) => {
+				return /[1-9]\+[1-9]/.test(v)
+			},
+			message: 'Buy and get must match with format n+m',
+		},
+	})
+	buyAndGet?: string
+
 	@Prop({ type: Number, default: 0 })
 	quantity?: number
 
@@ -36,12 +47,12 @@ const OfferTargetSchema = SchemaFactory.createForClass(OfferTarget)
 @Schema({ versionKey: false, _id: false })
 export class VoucherDiscount {
 	@Prop({ type: Number, default: -1 })
-	maxDiscount: number
+	maxDiscount?: number
 
 	@Prop({ type: Boolean, default: false })
-	freeship?: boolean
+	freeShip?: boolean
 
-	@Prop({ type: Number, default: -1 })
+	@Prop({ type: Number, default: -1, max: 100 })
 	percentage?: number
 
 	@Prop({ type: Number, default: -1 })
@@ -54,7 +65,7 @@ export class VoucherDiscount {
 	offerAny?: number
 
 	@Prop({
-		type: [OfferTargetSchema],
+		type: () => [OfferTargetSchema],
 		default: [],
 		_id: false,
 		validate: {

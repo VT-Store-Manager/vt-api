@@ -22,6 +22,7 @@ import { FileModule } from './file/file.module'
 import { MemberRankModule } from './member-rank/member-rank.module'
 import { MemberVoucherModule } from './member-voucher/member-voucher.module'
 import { MemberModule } from './member/member.module'
+import { OrderModule } from './order/order.module'
 import { ProductCategoryModule } from './product-category/product-category.module'
 import { ProductOptionModule } from './product-option/product-option.module'
 import { ProductModule } from './product/product.module'
@@ -69,6 +70,7 @@ import { VoucherModule } from './voucher/voucher.module'
 		MemberVoucherModule,
 		PromotionModule,
 		PromotionCategoryModule,
+		OrderModule,
 	],
 	controllers: [],
 	providers: [

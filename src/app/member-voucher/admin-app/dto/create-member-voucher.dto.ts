@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer'
 import {
 	IsArray,
 	IsMongoId,
@@ -18,6 +19,7 @@ export class AssignVoucherDTO {
 
 	@IsOptional()
 	@IsPositive()
+	@Type(() => Number)
 	@Min(new Date(2023, 0, 1).getTime())
 	startTime?: number = Date.now()
 }

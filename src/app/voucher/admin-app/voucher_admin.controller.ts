@@ -1,7 +1,5 @@
 import { CurrentUser } from '@/app/auth/decorators/current-user.decorator'
-import { JwtAccess } from '@/app/auth/decorators/jwt.decorator'
 import { FileService } from '@/app/file/file.service'
-import { Role } from '@/common/constants'
 import { ObjectIdPipe } from '@/common/pipes/object-id.pipe'
 import { NotEmptyObjectPipe } from '@/common/pipes/object.pipe'
 import { ParseFile } from '@/common/pipes/parse-file.pipe'
@@ -26,6 +24,7 @@ import { ApiConsumes, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { CreateVoucherDTO } from './dto/create-voucher.dto'
 import { UpdateVoucherConditionDTO } from './dto/update-voucher-condition.dto'
 import { UpdateVoucherDiscountDTO } from './dto/update-voucher-discount.dto'
+import { UpdateVoucherImageDTO } from './dto/update-voucher-image.dto'
 import { UpdateVoucherInfoDTO } from './dto/update-voucher-info.dto'
 import { VoucherAdminService } from './voucher_admin.service'
 
@@ -34,7 +33,8 @@ import { VoucherAdminService } from './voucher_admin.service'
 	version: '1',
 })
 @ApiTags('admin-app > voucher')
-@JwtAccess(Role.ADMIN)
+// TODO: Turn on authen admin
+// @JwtAccess(Role.ADMIN)
 export class VoucherAdminController {
 	constructor(
 		private readonly voucherAdminService: VoucherAdminService,
@@ -64,7 +64,8 @@ export class VoucherAdminController {
 	@ApiResponse({ type: BooleanResponseDTO, status: 200 })
 	async updateVoucherImage(
 		@UploadedFile(ParseFile) image: Express.Multer.File,
-		@Param('id', ObjectIdPipe) voucherId: string
+		@Param('id', ObjectIdPipe) voucherId: string,
+		@Body() Body: UpdateVoucherImageDTO
 	) {
 		const voucher = await this.voucherAdminService.getDetail(voucherId, 'image')
 
@@ -119,7 +120,7 @@ export class VoucherAdminController {
 		@Param('id', ObjectIdPipe) voucherId: string,
 		@Body(NotEmptyObjectPipe) body: UpdateVoucherConditionDTO
 	) {
-		return { voucherId, body }
+		return await this.voucherAdminService.updateCondition(voucherId, body)
 	}
 
 	@Patch(':id/slider')
