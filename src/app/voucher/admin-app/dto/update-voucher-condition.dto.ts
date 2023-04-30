@@ -59,7 +59,7 @@ export class ConditionInclusionDTO extends ConditionInclusion {
 		),
 		{ each: true }
 	)
-	options?: string[]
+	options?: string[] = []
 
 	@IsOptional()
 	@Type(() => Number)

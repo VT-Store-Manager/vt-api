@@ -30,6 +30,7 @@ type ShortProductValidationData = {
 		_id: string
 		range: [number, number]
 		items: {
+			parentKey: string
 			key: string
 			cost: number
 			disabled: boolean
@@ -153,6 +154,7 @@ export class OrderMemberService {
 								},
 								range: true,
 								items: {
+									parentKey: true,
 									key: true,
 									cost: true,
 									disabled: true,
@@ -252,7 +254,7 @@ export class OrderMemberService {
 					optionalOptionPrice = 0
 				product.options.forEach(option => {
 					const selectedKeys = intersection(
-						option.items.map(item => item.key),
+						option.items.map(item => item.parentKey),
 						validateProduct.options
 					)
 					if (selectedKeys.length < option.range[0]) {

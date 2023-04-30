@@ -10,6 +10,6 @@ export class GetAllProductOptionDTO {
 	name: string
 	minSelected: number
 	maxSelected: number
-	default: string[]
-	optionItemIds: ProductItemDTO[]
+	defaultSelect: string[]
+	optionItems: ProductItemDTO[]
 }

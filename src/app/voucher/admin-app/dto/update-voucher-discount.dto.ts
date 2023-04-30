@@ -70,7 +70,7 @@ export class OfferTargetDTO extends OfferTarget {
 		),
 		{ each: true }
 	)
-	options?: string[]
+	options?: string[] = []
 
 	@IsOptional()
 	@IsString()

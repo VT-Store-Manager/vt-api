@@ -14,7 +14,7 @@ export class ProductOptionMemberController {
 		private readonly productOptionMemberService: ProductOptionMemberService
 	) {}
 
-	@Get()
+	@Get('all')
 	@ApiSuccessResponse(GetAllProductOptionDTO, 200, true)
 	async getAllProductOption() {
 		return await this.productOptionMemberService.getAllProductOptions()

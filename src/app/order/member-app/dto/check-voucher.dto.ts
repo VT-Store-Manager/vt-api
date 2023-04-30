@@ -35,7 +35,7 @@ export class ShortProductInCartDTO {
 
 	@IsString({ each: true })
 	@Matches(/[a-z]{6}/, { each: true })
-	options: string[]
+	options: string[] = []
 
 	@IsPositive()
 	amount: number

@@ -41,10 +41,7 @@ export class VoucherMemberService {
 		private readonly memberRankModel: Model<MemberRankDocument>
 	) {}
 
-	validateVoucherWithCart(
-		condition: VoucherCondition,
-		cart: ValidatedCart
-	): boolean | { error: Error } {
+	validateVoucherWithCart(condition: VoucherCondition, cart: ValidatedCart) {
 		// Validate min quantity
 		if (isNumber(condition.minQuantity)) {
 			const totalQuantity = cart.products.reduce(
@@ -115,6 +112,12 @@ export class VoucherMemberService {
 						})
 					})
 				})
+				if (matchProducts.length === 0) {
+					error = new Error(
+						`Cart product is not matched with voucher's condition`
+					)
+					return !detail.required
+				}
 
 				// Check quantity
 				if (isNumber(detail.quantity)) {
@@ -140,11 +143,15 @@ export class VoucherMemberService {
 
 			if (!isValid) return { error }
 			if (validOptionalInclusionCount === 0 && numberOfOptionalInclusion > 0) {
-				return { error: new Error(`Cart does not contain the right product`) }
+				return {
+					error: new Error(
+						`Cart product is not matched with voucher's condition`
+					),
+				}
 			}
 		}
 
-		return true
+		return { error: null }
 	}
 
 	async applyVoucherToCart(
@@ -153,7 +160,10 @@ export class VoucherMemberService {
 		discount: VoucherDiscount,
 		cart: ValidatedCart
 	): Promise<ApplyVoucherResult> {
-		this.validateVoucherWithCart(condition, cart)
+		const { error } = this.validateVoucherWithCart(condition, cart)
+		if (error) {
+			throw new BadRequestException(error.message)
+		}
 
 		const memberRank = await this.memberRankModel
 			.findOne({

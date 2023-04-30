@@ -13,7 +13,7 @@ import { OrderMemberService } from './order_member.service'
 	path: 'member/cart',
 	version: '1',
 })
-@ApiTags('member-app > cart')
+@ApiTags('member-app > order')
 export class OrderMemberController {
 	constructor(private readonly orderService: OrderMemberService) {}
 
@@ -44,6 +44,7 @@ export class OrderMemberController {
 			products: applyVoucherResult.products.map(product => ({
 				id: product.id,
 				cost: (product.mainPrice + product.extraPrice) * product.quantity,
+				discount: product.discountPrice,
 			})),
 		}
 	}

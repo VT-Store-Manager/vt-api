@@ -23,7 +23,11 @@ export class Product {
 	@Prop({ type: Number, required: true, min: 0 })
 	originalPrice: number
 
-	@Prop({ type: Types.ObjectId, ref: 'ProductCategory' })
+	@Prop({
+		type: Types.ObjectId,
+		ref: 'ProductCategory',
+		set: v => new Types.ObjectId(v),
+	})
 	category: Types.ObjectId | string
 
 	@Prop({ type: String })
