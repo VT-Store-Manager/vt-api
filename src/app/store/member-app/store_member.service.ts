@@ -1,14 +1,13 @@
 import { Model, Types } from 'mongoose'
 
-import { SettingType } from '@/common/constants'
 import { getImagePath } from '@/common/helpers/file.helper'
 import { MemberData, MemberDataDocument } from '@/schemas/member-data.schema'
-import { SettingGeneralDocument } from '@/schemas/setting-general.schema'
 import { Store, StoreDocument } from '@/schemas/store.schema'
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 
 import { ShortStoreItemDTO, StoreDetailDTO } from './dto/response.dto'
+import { SettingGeneralService } from '@/app/setting/services/setting-general.service'
 
 @Injectable()
 export class StoreMemberService {
@@ -16,8 +15,7 @@ export class StoreMemberService {
 		@InjectModel(Store.name) private readonly storeModel: Model<StoreDocument>,
 		@InjectModel(MemberData.name)
 		private readonly memberDataModel: Model<MemberDataDocument>,
-		@InjectModel(SettingType.GENERAL)
-		private readonly settingGeneralModel: Model<SettingGeneralDocument>
+		private readonly settingGeneralService: SettingGeneralService
 	) {}
 
 	async getAllStoresInShort(memberId?: string): Promise<ShortStoreItemDTO[]> {
@@ -82,11 +80,7 @@ export class StoreMemberService {
 				})
 				.lean({ virtuals: true })
 				.exec(),
-			this.settingGeneralModel
-				.findOne({})
-				.select('storeContact brand')
-				.lean()
-				.exec(),
+			this.settingGeneralService.getData({ storeContact: 1, brand: 1 }),
 		])
 
 		return {

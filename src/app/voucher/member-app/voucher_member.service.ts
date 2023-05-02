@@ -21,10 +21,11 @@ export type ValidatedCart = {
 		options: string[]
 	}>
 }
-type ApplyVoucherResult = {
+export type ApplyVoucherResult = {
 	products: {
 		id: string
 		category: string
+		options: string[]
 		quantity: number
 		mainPrice: number
 		extraPrice: number
@@ -178,6 +179,7 @@ export class VoucherMemberService {
 			products: cart.products.map(product => ({
 				id: product.id,
 				category: product.category,
+				options: product.options,
 				quantity: product.quantity,
 				mainPrice: product.price + product.requiredOptionPrice,
 				extraPrice: product.optionalOptionPrice,
