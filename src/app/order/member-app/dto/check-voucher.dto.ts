@@ -5,6 +5,7 @@ import {
 	IsEnum,
 	IsMongoId,
 	IsNumber,
+	IsOptional,
 	IsPositive,
 	IsString,
 	Matches,
@@ -14,6 +15,10 @@ import {
 import { ShippingMethod } from '@/common/constants'
 
 export class CheckVoucherDTO {
+	@IsOptional()
+	@IsMongoId()
+	storeId?: string
+
 	@IsMongoId()
 	voucherId: string
 

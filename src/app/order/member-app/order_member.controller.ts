@@ -1,11 +1,13 @@
 import { CurrentUser } from '@/app/auth/decorators/current-user.decorator'
 import { JwtAccess } from '@/app/auth/decorators/jwt.decorator'
 import { Role } from '@/common/constants'
+import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
 import { UserPayload } from '@/types/token.dto'
 import { Body, Controller, Post } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
 import { CheckVoucherDTO } from './dto/check-voucher.dto'
+import { CreateOrderDTO } from './dto/create-order.dto'
 import { GetProductPriceApplyingVoucherDTO } from './dto/response.dto'
 import { OrderMemberService } from './order_member.service'
 
@@ -23,7 +25,7 @@ export class OrderMemberController {
 		@CurrentUser() user: UserPayload,
 		@Body() body: CheckVoucherDTO
 	): Promise<GetProductPriceApplyingVoucherDTO> {
-		const applyVoucherResult = await this.orderService.checkVoucher(
+		const applyVoucherResult = await this.orderService.validateVoucher(
 			user.sub,
 			body
 		)
@@ -47,5 +49,19 @@ export class OrderMemberController {
 				discount: product.discountPrice,
 			})),
 		}
+	}
+
+	@Post('create')
+	@JwtAccess(Role.MEMBER)
+	@ApiSuccessResponse(CreateOrderDTO)
+	async createOrder(
+		@CurrentUser() user: UserPayload,
+		@Body() body: CreateOrderDTO
+	) {
+		const createdOrder = await this.orderService.createMemberOrder(
+			user.sub,
+			body
+		)
+		return { id: createdOrder._id }
 	}
 }

@@ -5,7 +5,11 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 
 export type SettingDocument = Setting & Document
 
-@Schema({ versionKey: false, discriminatorKey: 'type' })
+@Schema({
+	versionKey: false,
+	discriminatorKey: 'type',
+	timestamps: { createdAt: false, updatedAt: true },
+})
 export class Setting {
 	@Prop({
 		type: String,

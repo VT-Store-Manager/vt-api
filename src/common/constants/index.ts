@@ -28,10 +28,10 @@ export enum Role {
 }
 
 export enum SettingType {
-	GENERAL = 'general',
-	ADMIN_APP = 'admin_app',
-	SALE_APP = 'sale_app',
-	MEMBER_APP = 'member_app',
+	GENERAL = 'setting_general',
+	ADMIN_APP = 'setting_admin_app',
+	SALE_APP = 'setting_sale_app',
+	MEMBER_APP = 'setting_member_app',
 }
 
 export enum ContactType {
@@ -54,4 +54,27 @@ export enum ShippingMethod {
 	PICK_UP,
 	DELIVERY,
 	NONE = -1,
+}
+
+export enum PaymentType {
+	CAST,
+	MOMO,
+}
+
+export enum OrderBuyer {
+	CUSTOMER = 'order_customer',
+	MEMBER = 'order_member',
+}
+
+export enum StoreCriterion {
+	SERVICE,
+	PRODUCT,
+	APPLICATION,
+	SPACE,
+}
+
+export enum OrderState {
+	PROCESSING,
+	DONE,
+	CANCELED,
 }

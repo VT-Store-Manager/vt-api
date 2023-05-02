@@ -20,9 +20,11 @@ export const bookingOrderStatusSchema = {
 	description: { type: String },
 }
 
-@Schema({ versionKey: false })
+@Schema({
+	versionKey: false,
+})
 export class SettingMemberApp {
-	type: SettingType.MEMBER_APP
+	type: SettingType
 
 	@Prop({ type: String })
 	appName: string

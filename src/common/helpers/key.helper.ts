@@ -7,4 +7,7 @@ optionItemKeyUid.setDictionary('alpha_lower')
 const s3KeyUid = new ShortUniqueId({ length: 8 })
 s3KeyUid.setDictionary('number')
 
-export { optionItemKeyUid, s3KeyUid }
+const orderKeyUid = new ShortUniqueId({ length: 8 })
+orderKeyUid.setDictionary('alphanum_upper')
+
+export { optionItemKeyUid, s3KeyUid, orderKeyUid }

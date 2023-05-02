@@ -31,6 +31,7 @@ import { PromotionModule } from './promotion/promotion.module'
 import { RankModule } from './rank/rank.module'
 import { StoreModule } from './store/store.module'
 import { VoucherModule } from './voucher/voucher.module'
+import { SettingModule } from './setting/setting.module'
 
 @Module({
 	imports: [
@@ -71,6 +72,7 @@ import { VoucherModule } from './voucher/voucher.module'
 		PromotionModule,
 		PromotionCategoryModule,
 		OrderModule,
+		SettingModule,
 	],
 	controllers: [],
 	providers: [
