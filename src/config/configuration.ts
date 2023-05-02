@@ -1,6 +1,5 @@
-import * as Joi from 'joi'
-
 import { NodeEnv } from '@/common/constants'
+import Joi from '@/common/validations/joi.validator'
 
 export const envConfiguration = () => ({
 	nodeEnv: process.env.NODE_ENV ?? NodeEnv.DEVELOPMENT,
