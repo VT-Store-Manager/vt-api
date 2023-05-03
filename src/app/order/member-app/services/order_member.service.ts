@@ -7,13 +7,14 @@ import {
 	ValidatedCart,
 	VoucherMemberService,
 } from '@/app/voucher/member-app/voucher_member.service'
-import { OrderBuyer, PaymentType } from '@/common/constants'
+import { OrderBuyer, OrderState, PaymentType } from '@/common/constants'
 import { MemberRank, MemberRankDocument } from '@/schemas/member-rank.schema'
 import {
 	MemberVoucher,
 	MemberVoucherDocument,
 } from '@/schemas/member-voucher.schema'
 import { OrderInfoMember } from '@/schemas/order-info-member.schema'
+import { OrderInfoReview } from '@/schemas/order-info-review.schema'
 import { OrderInfoStore } from '@/schemas/order-info-store.schema'
 import { OrderInfoVoucher } from '@/schemas/order-info-voucher.schema'
 import { OrderMember, OrderMemberDocument } from '@/schemas/order-member.schema'
@@ -36,6 +37,7 @@ import {
 	ShortProductInCartDTO,
 } from '../dto/check-voucher.dto'
 import { CreateOrderDTO } from '../dto/create-order.dto'
+import { ReviewOrderDTO } from '../dto/review-order.dto'
 
 type ShortProductValidationData = {
 	_id: string
@@ -986,5 +988,56 @@ export class OrderMemberService {
 		}
 
 		return accumulatedPoint
+	}
+
+	async createOrderReview(
+		memberId: string,
+		orderId: string,
+		data: ReviewOrderDTO,
+		session?: ClientSession
+	) {
+		const orders = await this.orderMemberModel
+			.aggregate<Pick<OrderMember, 'state' | 'review'>>([
+				{
+					$match: {
+						_id: new Types.ObjectId(orderId),
+						'member.id': new Types.ObjectId(memberId),
+					},
+				},
+				{
+					$project: {
+						state: true,
+						review: true,
+					},
+				},
+			])
+			.exec()
+
+		if (!orders || orders.length === 0) {
+			throw new BadRequestException('Order not found')
+		}
+		if (orders[0].state !== OrderState.DONE) {
+			throw new BadRequestException(
+				`Order with state ${orders[0].state} cannot be reviewed`
+			)
+		}
+		if (orders[0].review && orders[0].review.rate) {
+			throw new BadRequestException('Order have already reviewed')
+		}
+
+		const orderReview: OrderInfoReview = {
+			rate: data.rate,
+			content: data.review,
+		}
+
+		const updateResult = await this.orderMemberModel.updateOne(
+			{ _id: new Types.ObjectId(orderId) },
+			{
+				review: orderReview,
+			},
+			session ? { session } : {}
+		)
+
+		return updateResult.modifiedCount === 1
 	}
 }
