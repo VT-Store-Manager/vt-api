@@ -29,3 +29,8 @@ export class OrderCartItemDTO {
 	time: number
 	rate?: number
 }
+
+export class OrderStateItemDTO {
+	id: string
+	name: string
+}
