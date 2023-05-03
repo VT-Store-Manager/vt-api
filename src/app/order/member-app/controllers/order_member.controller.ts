@@ -6,10 +6,10 @@ import { UserPayload } from '@/types/token.dto'
 import { Body, Controller, Post } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
-import { CheckVoucherDTO } from './dto/check-voucher.dto'
-import { CreateOrderDTO } from './dto/create-order.dto'
-import { GetProductPriceApplyingVoucherDTO } from './dto/response.dto'
-import { OrderMemberService } from './order_member.service'
+import { CheckVoucherDTO } from '../dto/check-voucher.dto'
+import { CreateOrderDTO } from '../dto/create-order.dto'
+import { GetProductPriceApplyingVoucherDTO } from '../dto/response.dto'
+import { OrderMemberService } from '../services/order_member.service'
 
 @Controller({
 	path: 'member/cart',

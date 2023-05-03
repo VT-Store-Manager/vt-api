@@ -20,8 +20,10 @@ import { MongooseModule } from '@nestjs/mongoose'
 
 import { SettingModule } from '../setting/setting.module'
 import { VoucherModule } from '../voucher/voucher.module'
-import { OrderMemberController } from './member-app/order_member.controller'
-import { OrderMemberService } from './member-app/order_member.service'
+import { OrderStateMemberController } from './member-app/controllers/order-state_member.controller'
+import { OrderMemberController } from './member-app/controllers/order_member.controller'
+import { OrderStateMemberService } from './member-app/services/order-state_member.service'
+import { OrderMemberService } from './member-app/services/order_member.service'
 
 @Module({
 	imports: [
@@ -45,7 +47,7 @@ import { OrderMemberService } from './member-app/order_member.service'
 		VoucherModule,
 		SettingModule,
 	],
-	controllers: [OrderMemberController],
-	providers: [OrderMemberService],
+	controllers: [OrderMemberController, OrderStateMemberController],
+	providers: [OrderMemberService, OrderStateMemberService],
 })
 export class OrderModule {}
