@@ -74,7 +74,7 @@ export enum StoreCriterion {
 }
 
 export enum OrderState {
-	PROCESSING,
-	DONE,
-	CANCELED,
+	PROCESSING = 'processing',
+	DONE = 'done',
+	CANCELED = 'canceled',
 }
