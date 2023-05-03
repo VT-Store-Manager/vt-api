@@ -33,7 +33,13 @@ export class Product {
 	@Prop({ type: String })
 	description: string
 
-	@Prop([{ type: Types.ObjectId, ref: 'ProductOption' }])
+	@Prop([
+		{
+			type: Types.ObjectId,
+			ref: 'ProductOption',
+			set: (v: string) => new Types.ObjectId(v.toString()),
+		},
+	])
 	options: Types.ObjectId[] | string[]
 
 	@Prop({ type: Boolean, default: false })

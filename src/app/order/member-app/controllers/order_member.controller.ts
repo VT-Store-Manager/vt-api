@@ -5,12 +5,15 @@ import { ApiSuccessResponse } from '@/common/decorators/api-success-response.dec
 import { ObjectIdPipe } from '@/common/pipes/object-id.pipe'
 import { BooleanResponseDTO } from '@/types/http.swagger'
 import { UserPayload } from '@/types/token.dto'
-import { Body, Controller, Param, Post } from '@nestjs/common'
+import { Body, Controller, Get, Param, Post } from '@nestjs/common'
 import { ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import { CheckVoucherDTO } from '../dto/check-voucher.dto'
 import { CreateOrderDTO } from '../dto/create-order.dto'
-import { GetProductPriceApplyingVoucherDTO } from '../dto/response.dto'
+import {
+	GetOrderDetailDTO,
+	GetProductPriceApplyingVoucherDTO,
+} from '../dto/response.dto'
 import { ReviewOrderDTO } from '../dto/review-order.dto'
 import { OrderMemberService } from '../services/order_member.service'
 
@@ -77,5 +80,15 @@ export class OrderMemberController {
 		@Body() body: ReviewOrderDTO
 	) {
 		return await this.orderService.createOrderReview(user.sub, orderId, body)
+	}
+
+	@Get(':orderId')
+	@JwtAccess(Role.MEMBER)
+	@ApiSuccessResponse(GetOrderDetailDTO)
+	async getCartDetail(
+		@CurrentUser() { sub: userId }: UserPayload,
+		@Param('orderId', ObjectIdPipe) orderId: string
+	) {
+		return await this.orderService.getOrderDetail(userId, orderId)
 	}
 }
