@@ -8,7 +8,7 @@ import { Controller, Get, Param, Query } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
 import { GetOrderByStateDTO } from '../dto/get-order-by-state.dto'
-import { OrderByStateResultDTO } from '../dto/response.dto'
+import { OrderByStateResultDTO, OrderStateItemDTO } from '../dto/response.dto'
 import { OrderStateMemberService } from '../services/order-state_member.service'
 
 @Controller({
@@ -18,6 +18,12 @@ import { OrderStateMemberService } from '../services/order-state_member.service'
 @ApiTags('member-app > order-state')
 export class OrderStateMemberController {
 	constructor(private readonly orderStateService: OrderStateMemberService) {}
+
+	@Get('all')
+	@ApiSuccessResponse(OrderStateItemDTO, 200, true)
+	getAllOrderState() {
+		return this.orderStateService.getAllOrderStates()
+	}
 
 	@Get(':state')
 	@JwtAccess(Role.MEMBER)

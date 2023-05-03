@@ -7,7 +7,11 @@ import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 
 import { GetOrderByStateDTO } from '../dto/get-order-by-state.dto'
-import { OrderByStateResultDTO, OrderCartItemDTO } from '../dto/response.dto'
+import {
+	OrderByStateResultDTO,
+	OrderCartItemDTO,
+	OrderStateItemDTO,
+} from '../dto/response.dto'
 
 @Injectable()
 export class OrderStateMemberService {
@@ -96,5 +100,22 @@ export class OrderStateMemberService {
 				rate: order.rate,
 			})),
 		}
+	}
+
+	getAllOrderStates(): OrderStateItemDTO[] {
+		return [
+			{
+				id: OrderState.PROCESSING,
+				name: 'Đang thực hiện',
+			},
+			{
+				id: OrderState.DONE,
+				name: 'Đã hoàn tất',
+			},
+			{
+				id: OrderState.CANCELED,
+				name: 'Đã hủy',
+			},
+		]
 	}
 }
