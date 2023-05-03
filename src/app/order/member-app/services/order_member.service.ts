@@ -8,7 +8,6 @@ import {
 	VoucherMemberService,
 } from '@/app/voucher/member-app/voucher_member.service'
 import { OrderBuyer, PaymentType } from '@/common/constants'
-import { MemberData, MemberDataDocument } from '@/schemas/member-data.schema'
 import { MemberRank, MemberRankDocument } from '@/schemas/member-rank.schema'
 import {
 	MemberVoucher,
@@ -32,8 +31,11 @@ import { ArrElement } from '@/types'
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 
-import { CheckVoucherDTO, ShortProductInCartDTO } from './dto/check-voucher.dto'
-import { CreateOrderDTO } from './dto/create-order.dto'
+import {
+	CheckVoucherDTO,
+	ShortProductInCartDTO,
+} from '../dto/check-voucher.dto'
+import { CreateOrderDTO } from '../dto/create-order.dto'
 
 type ShortProductValidationData = {
 	_id: string
@@ -90,8 +92,6 @@ export class OrderMemberService {
 		private readonly memberVoucherModel: Model<MemberVoucherDocument>,
 		@InjectModel(MemberRank.name)
 		private readonly memberRankModel: Model<MemberRankDocument>,
-		@InjectModel(MemberData.name)
-		private readonly memberDataModel: Model<MemberDataDocument>,
 		@InjectModel(Product.name)
 		private readonly productModel: Model<ProductDocument>,
 		@InjectModel(Store.name)

@@ -106,12 +106,8 @@ export class Order {
 	paidAmount?: number
 
 	@Prop({
-		type: Number,
-		enum: {
-			values: Object.values(OrderState).filter(v => isNumber(v)),
-			message:
-				'Order state must be 0 (Processing) or 1 (Done) or 2 (Cancelled)',
-		},
+		type: String,
+		enum: Object.values(OrderState),
 		default: OrderState.PROCESSING,
 	})
 	state?: OrderState = OrderState.PROCESSING
