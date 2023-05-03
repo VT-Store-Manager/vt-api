@@ -404,6 +404,9 @@ export class OrderMemberService {
 		}
 
 		const result = {
+			dtoProductMap: new Map(
+				data.products.map(product => [product.id, product])
+			),
 			store: storeData[0],
 			productMap: new Map(
 				products.map(product => [product._id.toString(), product])
@@ -696,6 +699,7 @@ export class OrderMemberService {
 		session?: ClientSession
 	) {
 		const {
+			dtoProductMap,
 			store,
 			productMap,
 			optionKeyMap,
@@ -710,19 +714,52 @@ export class OrderMemberService {
 			'items' | 'deliveryDiscount' | 'deliveryPrice' | 'totalProductPrice'
 		> = data.voucherId
 			? {
-					items: (validatedProducts as ApplyVoucherResult).products.map(
-						product => ({
-							productId: product.id,
-							category: product.category,
-							options: product.options,
-							quantity: product.quantity,
-							unitPrice: product.mainPrice + product.extraPrice,
-							unitSalePrice: product.discountPrice,
-							name: productMap.get(product.id).name,
-							note: product.options
-								.map(key => optionKeyMap.get(key).item.name)
-								.join(', '),
-						})
+					items: (validatedProducts as ApplyVoucherResult).products.reduce(
+						(res, product) => {
+							const commonData = {
+								productId: product.id,
+								category: product.category,
+								options: product.options,
+								unitPrice: product.mainPrice + product.extraPrice,
+								name: productMap.get(product.id).name,
+								note: [
+									dtoProductMap.get(product.id).note,
+									...product.options.map(
+										key => optionKeyMap.get(key).item.name
+									),
+								]
+									.filter(opt => !!opt)
+									.join(', '),
+							}
+							if (
+								!product.discountQuantity ||
+								product.discountQuantity === product.quantity
+							) {
+								return [
+									...res,
+									{
+										...commonData,
+										quantity: product.quantity,
+										unitSalePrice: product.discountPrice,
+									},
+								]
+							} else {
+								return [
+									...res,
+									{
+										...commonData,
+										quantity: product.discountQuantity,
+										unitSalePrice: product.discountPrice,
+									},
+									{
+										...commonData,
+										quantity: product.quantity,
+										unitSalePrice: 0,
+									},
+								]
+							}
+						},
+						[]
 					),
 					totalProductPrice: (
 						validatedProducts as ApplyVoucherResult
@@ -750,9 +787,11 @@ export class OrderMemberService {
 							product.requiredOptionPrice +
 							product.optionalOptionPrice,
 						name: productMap.get(product.id).name,
-						note: product.options
-							.map(key => optionKeyMap.get(key)?.item.name)
-							.join(', '),
+						note:
+							dtoProductMap.get(product.id).note +
+							product.options
+								.map(key => optionKeyMap.get(key)?.item.name)
+								.join(', '),
 					})),
 					totalProductPrice: (validatedProducts as ValidatedProduct[]).reduce(
 						(res, product) =>
@@ -778,6 +817,12 @@ export class OrderMemberService {
 				memberRank,
 				memberAppSetting.point
 			),
+			receiver: {
+				name: data.receiver || memberRank.member.name,
+				phone: data.phone || memberRank.member.phone,
+				address: data.addressName || store.address,
+				timer: data.receivingTime ? new Date(data.receivingTime) : undefined,
+			},
 		}
 
 		const createdOrder = await this.orderMemberModel.create(

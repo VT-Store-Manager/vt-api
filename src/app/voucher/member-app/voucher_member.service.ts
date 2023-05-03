@@ -1,13 +1,13 @@
+import { isNumber, sortBy } from 'lodash'
 import { Model, Types } from 'mongoose'
 
-import { BadRequestException, Injectable } from '@nestjs/common'
-import { InjectModel } from '@nestjs/mongoose'
-import { VoucherCondition } from '@/schemas/voucher-condition.schema'
 import { ShippingMethod } from '@/common/constants'
-import { isNumber, sortBy } from 'lodash'
-import { VoucherDiscount } from '@/schemas/voucher-discount.schema'
 import { MemberRank, MemberRankDocument } from '@/schemas/member-rank.schema'
 import { Rank } from '@/schemas/rank.schema'
+import { VoucherCondition } from '@/schemas/voucher-condition.schema'
+import { VoucherDiscount } from '@/schemas/voucher-discount.schema'
+import { BadRequestException, Injectable } from '@nestjs/common'
+import { InjectModel } from '@nestjs/mongoose'
 
 export type ValidatedCart = {
 	shippingMethod: ShippingMethod
@@ -30,6 +30,7 @@ export type ApplyVoucherResult = {
 		mainPrice: number
 		extraPrice: number
 		discountPrice: number
+		discountQuantity: number
 	}[]
 	deliveryPrice: number
 	deliverySalePrice: number
@@ -184,6 +185,7 @@ export class VoucherMemberService {
 				mainPrice: product.price + product.requiredOptionPrice,
 				extraPrice: product.optionalOptionPrice,
 				discountPrice: 0,
+				discountQuantity: 0,
 			})),
 			deliveryPrice: memberRank.rank.deliveryFee,
 			deliverySalePrice: 0,
@@ -247,11 +249,28 @@ export class VoucherMemberService {
 						count > 0 && i < matchProducts.length;
 						++i
 					) {
-						result.products[matchProducts[i].index].discountPrice =
-							Math.min(count, matchProducts[i].quantity) *
+						const discountQuantity = Math.min(count, matchProducts[i].quantity)
+						const discountAmount =
+							discountQuantity *
 							(matchProducts[i].price +
 								matchProducts[i].requiredOptionPrice -
 								target.salePrice)
+						if (
+							discountAmount >
+							result.products[matchProducts[i].index].discountPrice
+						) {
+							result.products[matchProducts[i].index].discountPrice =
+								discountAmount
+							result.products[matchProducts[i].index].discountQuantity =
+								discountQuantity
+						}
+						result.products[matchProducts[i].index].discountPrice = Math.max(
+							result.products[matchProducts[i].index].discountPrice,
+							discountQuantity *
+								(matchProducts[i].price +
+									matchProducts[i].requiredOptionPrice -
+									target.salePrice)
+						)
 						count = Math.max(0, count - matchProducts[i].quantity)
 					}
 				}
