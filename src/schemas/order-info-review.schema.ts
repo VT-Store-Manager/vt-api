@@ -6,7 +6,7 @@ import { Types } from 'mongoose'
 @Schema({ versionKey: false })
 export class OrderInfoReview {
 	@Prop({ type: Types.ObjectId })
-	_id: Types.ObjectId
+	_id?: Types.ObjectId
 
 	@Prop({
 		type: Number,

@@ -2,13 +2,16 @@ import { CurrentUser } from '@/app/auth/decorators/current-user.decorator'
 import { JwtAccess } from '@/app/auth/decorators/jwt.decorator'
 import { Role } from '@/common/constants'
 import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
+import { ObjectIdPipe } from '@/common/pipes/object-id.pipe'
+import { BooleanResponseDTO } from '@/types/http.swagger'
 import { UserPayload } from '@/types/token.dto'
-import { Body, Controller, Post } from '@nestjs/common'
-import { ApiTags } from '@nestjs/swagger'
+import { Body, Controller, Param, Post } from '@nestjs/common'
+import { ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import { CheckVoucherDTO } from '../dto/check-voucher.dto'
 import { CreateOrderDTO } from '../dto/create-order.dto'
 import { GetProductPriceApplyingVoucherDTO } from '../dto/response.dto'
+import { ReviewOrderDTO } from '../dto/review-order.dto'
 import { OrderMemberService } from '../services/order_member.service'
 
 @Controller({
@@ -63,5 +66,16 @@ export class OrderMemberController {
 			body
 		)
 		return { id: createdOrder._id }
+	}
+
+	@Post(':orderId/review')
+	@JwtAccess(Role.MEMBER)
+	@ApiResponse({ type: BooleanResponseDTO, status: 201 })
+	async reviewOrder(
+		@CurrentUser() user: UserPayload,
+		@Param('orderId', ObjectIdPipe) orderId: string,
+		@Body() body: ReviewOrderDTO
+	) {
+		return await this.orderService.createOrderReview(user.sub, orderId, body)
 	}
 }
