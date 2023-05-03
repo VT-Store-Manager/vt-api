@@ -69,7 +69,7 @@ export class VoucherMemberService {
 			if (totalRequiredPrice < condition.minPrice) {
 				return {
 					error: new Error(
-						`Total product price must be greater or equal to ${condition.minPrice}`
+						`Total product price must be greater or equal to ${condition.minPrice} to use this voucher`
 					),
 				}
 			}
@@ -84,7 +84,7 @@ export class VoucherMemberService {
 			if (condition.shippingMethod !== cart.shippingMethod)
 				return {
 					error: new Error(
-						`Shipping method must be ${condition.shippingMethod}`
+						`Shipping method must be ${condition.shippingMethod} to use this voucher`
 					),
 				}
 		}

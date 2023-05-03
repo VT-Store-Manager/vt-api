@@ -1,4 +1,4 @@
-import { intersection, sortBy } from 'lodash'
+import { intersection, sortBy, uniq } from 'lodash'
 import { ClientSession, Model, Types } from 'mongoose'
 
 import { SettingMemberAppService } from '@/app/setting/services/setting-member-app.service'
@@ -38,6 +38,7 @@ import {
 } from '../dto/check-voucher.dto'
 import { CreateOrderDTO } from '../dto/create-order.dto'
 import { ReviewOrderDTO } from '../dto/review-order.dto'
+import { GetOrderDetailDTO } from '../dto/response.dto'
 
 type ShortProductValidationData = {
 	_id: string
@@ -212,9 +213,7 @@ export class OrderMemberService {
 								$toString: '$category',
 							},
 							options: {
-								_id: {
-									$toString: '$_id',
-								},
+								_id: true,
 								range: true,
 								items: {
 									parentKey: true,
@@ -484,9 +483,7 @@ export class OrderMemberService {
 									$toString: '$category',
 								},
 								options: {
-									_id: {
-										$toString: '$_id',
-									},
+									_id: true,
 									range: true,
 									items: {
 										parentKey: true,
@@ -763,16 +760,16 @@ export class OrderMemberService {
 						},
 						[]
 					),
-					totalProductPrice: (
-						validatedProducts as ApplyVoucherResult
-					).products.reduce(
-						(res, product) =>
-							res +
-							product.mainPrice +
-							product.extraPrice -
-							product.discountPrice,
-						0
-					),
+					totalProductPrice:
+						(validatedProducts as ApplyVoucherResult).totalDiscount ||
+						(validatedProducts as ApplyVoucherResult).products.reduce(
+							(res, product) =>
+								res +
+								product.mainPrice +
+								product.extraPrice -
+								product.discountPrice,
+							0
+						),
 					deliveryPrice: (validatedProducts as ApplyVoucherResult)
 						.deliveryPrice,
 					deliveryDiscount: (validatedProducts as ApplyVoucherResult)
@@ -805,6 +802,11 @@ export class OrderMemberService {
 					),
 					deliveryPrice: memberRank.rank.deliveryFee,
 			  }
+		const voucherDiscountAmount = memberVoucher.voucher
+			? (validatedProducts as ApplyVoucherResult).deliverySalePrice +
+			  (validatedProducts as ApplyVoucherResult).totalDiscount
+			: 0
+		memberVoucher.voucher.discountPrice = voucherDiscountAmount
 
 		const orderData: OrderMember = {
 			type: data.categoryId,
@@ -870,12 +872,16 @@ export class OrderMemberService {
 				)
 				if (selectedKeys.length < option.range[0]) {
 					throw new BadRequestException(
-						`Option ${option._id} must contain more than ${option.range[0]} item`
+						`Option ${option._id.toString()} must contain more than ${
+							option.range[0]
+						} item`
 					)
 				}
 				if (selectedKeys.length > option.range[1]) {
 					throw new BadRequestException(
-						`Option ${option._id} must contain less than ${option.range[1]} item`
+						`Option ${option._id.toString()} must contain less than ${
+							option.range[1]
+						} item`
 					)
 				}
 
@@ -1039,5 +1045,85 @@ export class OrderMemberService {
 		)
 
 		return updateResult.modifiedCount === 1
+	}
+
+	async getOrderDetail(memberId: string, orderId: string) {
+		const orders = await this.orderMemberModel
+			.aggregate<GetOrderDetailDTO & { itemNames: string[] }>([
+				{
+					$match: {
+						_id: new Types.ObjectId(orderId),
+						'member.id': new Types.ObjectId(memberId),
+					},
+				},
+				{
+					$project: {
+						id: '$_id',
+						_id: false,
+						code: true,
+						name: '',
+						itemNames: {
+							$map: {
+								input: '$items',
+								as: 'item',
+								in: '$$item.name',
+							},
+						},
+						categoryId: '$type',
+						fee: {
+							$subtract: ['$deliveryPrice', '$deliveryDiscount'],
+						},
+						cost: '$totalProductPrice',
+						payType: '$payment',
+						time: '$createdAt',
+						phone: '$receiver.phone',
+						receiver: '$receiver.name',
+						voucherId: '$voucher.id',
+						voucherDiscount: '$voucher.discountPrice',
+						voucherName: '$voucher.title',
+						addressName: '$receiver.address',
+						products: {
+							$map: {
+								input: '$items',
+								as: 'item',
+								in: {
+									id: '$$item.productId',
+									name: '$$item.name',
+									cost: {
+										$subtract: ['$$item.unitPrice', '$$item.unitSalePrice'],
+									},
+									amount: '$$item.quantity',
+									note: '$$item.note',
+								},
+							},
+						},
+						'review.rate': '$review.rate',
+						'review.review': '$review.content',
+						point: '$point',
+					},
+				},
+			])
+			.exec()
+
+		if (!orders || orders.length === 0) {
+			throw new BadRequestException('Order not found')
+		}
+
+		const order = orders[0]
+		order.name = (() => {
+			const nameSet = uniq(order.itemNames)
+			if (nameSet.length < 3) {
+				return nameSet.slice(0, 2).join(', ')
+			} else {
+				return `${nameSet.slice(0, 2).join(', ')} +${
+					nameSet.length - 2
+				} sản phẩm khác`
+			}
+		})()
+		order.time = new Date(order.time).getTime()
+
+		delete order.itemNames
+
+		return order
 	}
 }
