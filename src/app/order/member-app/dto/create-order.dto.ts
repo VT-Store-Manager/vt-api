@@ -28,12 +28,14 @@ export class CreateOrderDTO {
 	@IsEnum(PaymentType)
 	payType: PaymentType
 
+	@IsOptional()
 	@IsPhoneNumber()
-	phone: string
+	phone?: string
 
+	@IsOptional()
 	@IsString()
 	@IsNotEmpty()
-	receiver: string
+	receiver?: string
 
 	@IsOptional()
 	@IsMongoId()

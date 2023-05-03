@@ -10,6 +10,10 @@ import {
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 
 import { OrderInfoItem, OrderInfoItemSchema } from './order-info-item.schema'
+import {
+	OrderInfoReceiver,
+	OrderInfoReceiverSchema,
+} from './order-info-receiver.schema'
 import { OrderInfoStore, OrderInfoStoreSchema } from './order-info-store.schema'
 
 export type OrderDocument = Order & Document
@@ -54,6 +58,9 @@ export class Order {
 		required: true,
 	})
 	buyer: string
+
+	@Prop({ type: OrderInfoReceiverSchema })
+	receiver?: OrderInfoReceiver
 
 	@Prop({ type: OrderInfoStoreSchema, required: true, _id: false })
 	store: OrderInfoStore

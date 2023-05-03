@@ -44,4 +44,8 @@ export class ShortProductInCartDTO {
 
 	@IsPositive()
 	amount: number
+
+	@IsOptional()
+	@IsString()
+	note?: string = ''
 }
