@@ -6,7 +6,10 @@ import { UserPayload } from '@/types/token.dto'
 import { Controller, Get } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
-import { AvailableMemberVoucherDTO } from '../admin-app/dto/response.dto'
+import {
+	AvailableMemberVoucherDTO,
+	UsedMemberVoucherDTO,
+} from './dto/response.dto'
 import { MemberVoucherMemberService } from './member-voucher_member.service'
 
 @Controller({
@@ -26,5 +29,12 @@ export class MemberVoucherMemberController {
 		return await this.memberVoucherMemberService.getMemberAvailableVoucher(
 			user.sub
 		)
+	}
+
+	@Get('used')
+	@JwtAccess(Role.MEMBER)
+	@ApiSuccessResponse(UsedMemberVoucherDTO, 200, true)
+	async getUsedVoucherList(@CurrentUser() { sub: userId }: UserPayload) {
+		return await this.memberVoucherMemberService.getMemberUsedVoucher(userId)
 	}
 }

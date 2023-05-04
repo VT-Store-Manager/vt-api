@@ -22,7 +22,8 @@ export const PartnerSchema = SchemaFactory.createForClass(Partner)
 
 @Schema({ versionKey: false, _id: false })
 export class ShortPartner {
-	_id?: Types.ObjectId
+	@Prop({ type: Types.ObjectId, ref: 'Partner' })
+	id?: Types.ObjectId
 
 	@Prop({ type: String, required: true })
 	name: string

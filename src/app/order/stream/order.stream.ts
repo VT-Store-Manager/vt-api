@@ -304,12 +304,37 @@ export class OrderStream {
 							},
 						},
 						{
+							$lookup: {
+								from: 'partners',
+								localField: 'voucher.partner',
+								foreignField: '_id',
+								as: 'partner',
+								pipeline: [
+									{
+										$project: {
+											id: '$_id',
+											_id: false,
+											name: true,
+											image: true,
+										},
+									},
+								],
+							},
+						},
+						{
+							$unwind: {
+								path: '$partner',
+								preserveNullAndEmptyArrays: true,
+							},
+						},
+						{
 							$project: {
 								_id: false,
 								title: { $ifNull: ['$voucher.title', 'Unknown'] },
 								image: '$voucher.image',
 								code: { $ifNull: ['$voucher.code', 'Unknown'] },
 								description: { $ifNull: ['$voucher.description', 'Unknown'] },
+								partner: '$partner',
 								startTime: '$startTime',
 								finishTime: '$finishTime',
 							},
