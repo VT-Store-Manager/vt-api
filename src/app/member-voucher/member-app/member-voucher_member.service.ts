@@ -2,19 +2,31 @@ import { Model, Types } from 'mongoose'
 
 import { getImagePath } from '@/common/helpers/file.helper'
 import {
+	MemberVoucherHistory,
+	MemberVoucherHistoryDocument,
+} from '@/schemas/member-voucher-history.schema'
+import {
 	MemberVoucher,
 	MemberVoucherDocument,
 } from '@/schemas/member-voucher.schema'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 
-import { AvailableMemberVoucherDTO } from '../admin-app/dto/response.dto'
+import {
+	AvailableMemberVoucherDTO,
+	UsedMemberVoucherDTO,
+} from './dto/response.dto'
+import { SettingGeneralService } from '@/app/setting/services/setting-general.service'
+import { SettingGeneral } from '@/schemas/setting-general.schema'
 
 @Injectable()
 export class MemberVoucherMemberService {
 	constructor(
 		@InjectModel(MemberVoucher.name)
-		private readonly memberVoucherModel: Model<MemberVoucherDocument>
+		private readonly memberVoucherModel: Model<MemberVoucherDocument>,
+		@InjectModel(MemberVoucherHistory.name)
+		private readonly memberVoucherHistoryModel: Model<MemberVoucherHistoryDocument>,
+		private readonly settingGeneralService: SettingGeneralService
 	) {}
 
 	async getMemberAvailableVoucher(memberId: string) {
@@ -88,6 +100,52 @@ export class MemberVoucherMemberService {
 			...(voucher.sliderImage
 				? { sliderImage: getImagePath(voucher.sliderImage) }
 				: {}),
+		}))
+	}
+
+	async getMemberUsedVoucher(
+		memberId: string
+	): Promise<UsedMemberVoucherDTO[]> {
+		const [generalSetting, usedVouchers] = await Promise.all([
+			this.settingGeneralService.getData<Pick<SettingGeneral, 'brand'>>({
+				brand: true,
+			}),
+			this.memberVoucherHistoryModel
+				.aggregate<UsedMemberVoucherDTO>([
+					{
+						$match: {
+							member: new Types.ObjectId(memberId),
+						},
+					},
+					{
+						$project: {
+							id: '$_id',
+							_id: false,
+							code: '$voucherData.code',
+							name: '$voucherData.title',
+							image: '$voucherData.image',
+							partner: '$partner.name',
+							usedAt: '$usedAt',
+							from: '$voucherData.startTime',
+							to: '$voucherData.finishTime',
+							description: '$voucher.description',
+						},
+					},
+					{
+						$sort: {
+							usedAt: -1,
+						},
+					},
+				])
+				.exec(),
+		])
+		return usedVouchers.map(voucher => ({
+			...voucher,
+			...(voucher.partner
+				? {}
+				: {
+						partner: generalSetting.brand.name,
+				  }),
 		}))
 	}
 }

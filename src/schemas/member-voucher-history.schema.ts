@@ -1,6 +1,7 @@
 import { Document, Types } from 'mongoose'
 
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
+import { ShortPartner, ShortPartnerSchema } from './partner.schema'
 
 export type MemberVoucherHistoryDocument = MemberVoucherHistory & Document
 
@@ -14,6 +15,9 @@ export class ShortVoucherData {
 
 	@Prop({ type: String, required: true })
 	code: string
+
+	@Prop({ type: ShortPartnerSchema })
+	partner?: ShortPartner
 
 	@Prop({ type: String })
 	description: string
