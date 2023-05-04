@@ -29,6 +29,9 @@ export class MemberVoucher {
 	})
 	finishTime: Date
 
+	@Prop({ type: Boolean, default: false })
+	disabled?: boolean
+
 	createdAt?: Date
 	updatedAt?: Date
 }
