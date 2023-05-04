@@ -334,9 +334,13 @@ export class OrderMemberService {
 				.exec(),
 			data.voucherId
 				? this.memberVoucherModel
-						.aggregate<{
-							voucher: OrderInfoVoucher
-						}>([
+						.aggregate<
+							{
+								voucher: OrderInfoVoucher
+							} & {
+								disabled: boolean
+							}
+						>([
 							{
 								$match: {
 									member: new Types.ObjectId(memberId),
@@ -371,6 +375,7 @@ export class OrderMemberService {
 									_id: false,
 									member: true,
 									voucher: true,
+									disabled: true,
 								},
 							},
 							{
@@ -404,6 +409,9 @@ export class OrderMemberService {
 			throw new BadRequestException(`Voucher ${data.voucherId} not found`)
 		}
 
+		if (memberVoucher[0].disabled) {
+			throw new BadRequestException(`Voucher ${data.voucherId} is disabled now`)
+		}
 		const result = {
 			dtoProductMap: new Map(
 				data.products.map(product => [product.id, product])
@@ -802,11 +810,12 @@ export class OrderMemberService {
 					),
 					deliveryPrice: memberRank.rank.deliveryFee,
 			  }
-		const voucherDiscountAmount = memberVoucher.voucher
+		const voucherDiscountAmount = memberVoucher?.voucher
 			? (validatedProducts as ApplyVoucherResult).deliverySalePrice +
 			  (validatedProducts as ApplyVoucherResult).totalDiscount
 			: 0
-		memberVoucher.voucher.discountPrice = voucherDiscountAmount
+		memberVoucher?.voucher &&
+			(memberVoucher.voucher.discountPrice = voucherDiscountAmount)
 
 		const orderData: OrderMember = {
 			type: data.categoryId,
@@ -867,7 +876,7 @@ export class OrderMemberService {
 				optionalOptionPrice = 0
 			product.options.forEach(option => {
 				const selectedKeys = intersection(
-					option.items.map(item => item.parentKey),
+					option.items.map(item => item.parentKey || item.key),
 					validateProduct.options
 				)
 				if (selectedKeys.length < option.range[0]) {

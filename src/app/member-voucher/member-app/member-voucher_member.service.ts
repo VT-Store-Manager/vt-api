@@ -42,6 +42,7 @@ export class MemberVoucherMemberService {
 						member: new Types.ObjectId(memberId),
 						startTime: { $lte: now },
 						finishTime: { $gt: now },
+						disabled: false,
 						$and: [
 							{
 								$or: [
