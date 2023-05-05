@@ -23,15 +23,16 @@ import { MemberRankModule } from './member-rank/member-rank.module'
 import { MemberVoucherModule } from './member-voucher/member-voucher.module'
 import { MemberModule } from './member/member.module'
 import { OrderModule } from './order/order.module'
+import { PartnerModule } from './partner/partner.module'
 import { ProductCategoryModule } from './product-category/product-category.module'
 import { ProductOptionModule } from './product-option/product-option.module'
 import { ProductModule } from './product/product.module'
 import { PromotionCategoryModule } from './promotion-category/promotion-category.module'
 import { PromotionModule } from './promotion/promotion.module'
 import { RankModule } from './rank/rank.module'
+import { SettingModule } from './setting/setting.module'
 import { StoreModule } from './store/store.module'
 import { VoucherModule } from './voucher/voucher.module'
-import { SettingModule } from './setting/setting.module'
 
 @Module({
 	imports: [
@@ -73,6 +74,7 @@ import { SettingModule } from './setting/setting.module'
 		PromotionCategoryModule,
 		OrderModule,
 		SettingModule,
+		PartnerModule,
 	],
 	controllers: [],
 	providers: [
