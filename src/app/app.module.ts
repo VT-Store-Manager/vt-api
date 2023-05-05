@@ -19,6 +19,7 @@ import { ServeStaticModule } from '@nestjs/serve-static'
 import { AuthModule } from './auth/auth.module'
 import { CounterModule } from './counter/counter.module'
 import { FileModule } from './file/file.module'
+import { MemberDataModule } from './member-data/member-data.module'
 import { MemberRankModule } from './member-rank/member-rank.module'
 import { MemberVoucherModule } from './member-voucher/member-voucher.module'
 import { MemberModule } from './member/member.module'
@@ -75,6 +76,7 @@ import { VoucherModule } from './voucher/voucher.module'
 		OrderModule,
 		SettingModule,
 		PartnerModule,
+		MemberDataModule,
 	],
 	controllers: [],
 	providers: [
