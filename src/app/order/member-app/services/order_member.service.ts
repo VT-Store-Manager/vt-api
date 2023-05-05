@@ -409,7 +409,7 @@ export class OrderMemberService {
 			throw new BadRequestException(`Voucher ${data.voucherId} not found`)
 		}
 
-		if (memberVoucher[0].disabled) {
+		if (memberVoucher && memberVoucher[0].disabled) {
 			throw new BadRequestException(`Voucher ${data.voucherId} is disabled now`)
 		}
 		const result = {

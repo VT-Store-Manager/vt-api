@@ -84,7 +84,7 @@ VoucherSchema.plugin(mongooseDelete, { deletedAt: true, deletedBy: true })
 @Schema({ versionKey: false, _id: false })
 export class ShortVoucher {
 	@Prop({ type: Types.ObjectId })
-	_id: Types.ObjectId
+	id: Types.ObjectId
 
 	@Prop({ type: String, required: true })
 	title: string
