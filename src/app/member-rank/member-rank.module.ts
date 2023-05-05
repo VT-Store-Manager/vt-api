@@ -6,6 +6,7 @@ import { MongooseModule } from '@nestjs/mongoose'
 
 import { MemberRankMemberController } from './member-app/member-rank_member.controller'
 import { MemberRankMemberService } from './member-app/member_rank_member.service'
+import { MemberRankStream } from './stream/member-rank.stream'
 
 @Module({
 	imports: [
@@ -16,7 +17,7 @@ import { MemberRankMemberService } from './member-app/member_rank_member.service
 		]),
 	],
 	controllers: [MemberRankMemberController],
-	providers: [MemberRankMemberService],
+	providers: [MemberRankMemberService, MemberRankStream],
 	exports: [],
 })
 export class MemberRankModule {}

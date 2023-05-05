@@ -20,7 +20,6 @@ import {
 } from '@/schemas/member-voucher.schema'
 import { OrderMember, OrderMemberDocument } from '@/schemas/order-member.schema'
 import { Order, OrderDocument } from '@/schemas/order.schema'
-import { Rank } from '@/schemas/rank.schema'
 import { Injectable, Logger } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 
@@ -141,85 +140,6 @@ export class OrderStream {
 		)
 			return
 
-		const memberRankData = await this.memberRankModel
-			.aggregate<{
-				nextRank?: Pick<Rank, '_id' | 'minPoint'>
-				totalPoint: number
-			}>([
-				{
-					$match: {
-						member: preData.member.id,
-					},
-				},
-				{
-					$lookup: {
-						from: 'ranks',
-						localField: 'rank',
-						foreignField: '_id',
-						as: 'rank',
-						pipeline: [
-							{
-								$project: {
-									rank: true,
-									minPoint: true,
-								},
-							},
-						],
-					},
-				},
-				{
-					$unwind: {
-						path: '$rank',
-					},
-				},
-				{
-					$addFields: {
-						nextRank: {
-							$sum: ['$rank.rank', 1],
-						},
-					},
-				},
-				{
-					$lookup: {
-						from: 'ranks',
-						localField: 'nextRank',
-						foreignField: 'rank',
-						as: 'nextRank',
-						pipeline: [
-							{
-								$project: {
-									minPoint: true,
-								},
-							},
-						],
-					},
-				},
-				{
-					$unwind: {
-						path: '$nextRank',
-						preserveNullAndEmptyArrays: true,
-					},
-				},
-				{
-					$project: {
-						nextRank: true,
-						totalPoint: {
-							$sum: ['$currentPoint', '$usedPoint', '$expiredPoint'],
-						},
-					},
-				},
-			])
-			.exec()
-
-		if (memberRankData?.length < 1) {
-			Logger.error(
-				`Rank of member ${preData.member.id} not found`,
-				'OrderUpdateTrigger'
-			)
-			return
-		}
-		const memberRank = memberRankData[0]
-
 		try {
 			await this.memberRankModel
 				.updateOne(
@@ -228,18 +148,12 @@ export class OrderStream {
 					},
 					{
 						$inc: { currentPoint: preData.point },
-						...(memberRank?.nextRank &&
-						memberRank.totalPoint + preData.point >=
-							memberRank.nextRank.minPoint
-							? {
-									rank: memberRank.nextRank._id,
-							  }
-							: {}),
 					}
 				)
 				.exec()
 			Logger.verbose(
-				`Member ${preData.member.id} is added ${preData.point} points`
+				`Member ${preData.member.id}: Add ${preData.point} points`,
+				'AddMemberPointTrigger'
 			)
 		} catch (error) {
 			Logger.error(error?.message || error, 'AddMemberPointTrigger')
