@@ -1,14 +1,25 @@
 import { CurrentUser } from '@/app/auth/decorators/current-user.decorator'
 import { JwtAccess } from '@/app/auth/decorators/jwt.decorator'
 import { SettingMemberAppService } from '@/app/setting/services/setting-member-app.service'
-import { Role } from '@/common/constants'
+import { DEFAULT_MAX_CART_TEMPLATE, Role } from '@/common/constants'
 import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
 import { NotEmptyObjectPipe } from '@/common/pipes/object.pipe'
 import { SettingMemberApp } from '@/schemas/setting-member-app.schema'
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common'
+import { BooleanResponseDTO } from '@/types/http.swagger'
+import {
+	BadRequestException,
+	Body,
+	Controller,
+	Get,
+	Param,
+	Patch,
+	Post,
+	Put,
+} from '@nestjs/common'
 import { ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import { CartTemplateMemberService } from './cart-template_member.service'
+import { ArrangeCartTemplateDTO } from './dto/arrange-cart-template.dto'
 import { CreateCartTemplateDTO } from './dto/create-cart-template.dto'
 import { EditCartTemplateDTO } from './dto/edit-cart-template.dto'
 import {
@@ -35,6 +46,18 @@ export class CartTemplateMemberController {
 		@CurrentUser('sub') memberId: string,
 		@Body() body: CreateCartTemplateDTO
 	) {
+		const [{ limit }, countCartTemplates] = await Promise.all([
+			this.settingMemberAppService.getData<Pick<SettingMemberApp, 'limit'>>({
+				limit: true,
+			}),
+			this.cartTemplateService.count(memberId),
+		])
+		const maxAmount = limit.cartTemplate || DEFAULT_MAX_CART_TEMPLATE
+		if (countCartTemplates >= maxAmount) {
+			throw new BadRequestException(
+				`Reached max amount of cart template (${maxAmount} items)`
+			)
+		}
 		const template = await this.cartTemplateService.create(memberId, body)
 		return { id: template._id }
 	}
@@ -52,7 +75,8 @@ export class CartTemplateMemberController {
 			await this.cartTemplateService.getAll(memberId),
 		])
 
-		const limit = memberAppSetting.limit.cartTemplate ?? 10
+		const limit =
+			memberAppSetting.limit.cartTemplate ?? DEFAULT_MAX_CART_TEMPLATE
 		return {
 			limit,
 			cartTemplate: cartTemplates,
@@ -60,7 +84,7 @@ export class CartTemplateMemberController {
 	}
 
 	@Put(':templateId')
-	@JwtAccess()
+	@JwtAccess(Role.MEMBER)
 	@ApiResponse({ type: EditCartTemplateResultDTO, status: 200 })
 	async editCartTemplate(
 		@CurrentUser('sub') memberId: string,
@@ -68,5 +92,15 @@ export class CartTemplateMemberController {
 		@Body(NotEmptyObjectPipe) body: EditCartTemplateDTO
 	) {
 		return await this.cartTemplateService.edit(memberId, templateId, body)
+	}
+
+	@Patch('arrange')
+	@JwtAccess(Role.MEMBER)
+	@ApiResponse({ type: BooleanResponseDTO, status: 200 })
+	async arrangeCartTemplate(
+		@CurrentUser('sub') memberId: string,
+		@Body() body: ArrangeCartTemplateDTO
+	) {
+		return await this.cartTemplateService.arrange(memberId, body)
 	}
 }
