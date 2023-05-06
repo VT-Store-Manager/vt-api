@@ -4,8 +4,14 @@ import { optionItemKeyLength } from '@/common/helpers/key.helper'
 
 export type CartTemplateDocument = Document & CartTemplate
 
+@Schema({ versionKey: false, _id: false })
 export class CartProduct {
-	@Prop({ type: Types.ObjectId, required: true, ref: 'Product' })
+	@Prop({
+		type: Types.ObjectId,
+		required: true,
+		ref: 'Product',
+		set: (v: string) => new Types.ObjectId(v),
+	})
 	id: Types.ObjectId | string
 
 	@Prop({

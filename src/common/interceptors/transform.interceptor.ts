@@ -40,6 +40,7 @@ export class TransformInterceptor implements NestInterceptor {
 				}
 				return {
 					statusCode: code,
+					success: true,
 					message: code.toString().startsWith('2') ? 'Successful' : 'Failed',
 					data,
 				}

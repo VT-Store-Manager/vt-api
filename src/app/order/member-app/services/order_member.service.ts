@@ -879,6 +879,9 @@ export class OrderMemberService {
 					option.items.map(item => item.parentKey || item.key),
 					validateProduct.options
 				)
+				if (option.disabled || option.deleted) {
+					return
+				}
 				if (selectedKeys.length < option.range[0]) {
 					throw new BadRequestException(
 						`Option ${option._id.toString()} must contain more than ${
@@ -894,15 +897,7 @@ export class OrderMemberService {
 					)
 				}
 
-				const selectedKeysData = selectedKeys.map(key => {
-					const keyData = optionKeyMap.get(key)
-					if (keyData.disabled || keyData.deleted) {
-						throw new BadRequestException(
-							`Product option ${key} is disabled or deleted`
-						)
-					}
-					return keyData
-				})
+				const selectedKeysData = selectedKeys.map(key => optionKeyMap.get(key))
 
 				sortBy(selectedKeysData, keyData => keyData.item.cost)
 				requiredOptionPrice += selectedKeysData
