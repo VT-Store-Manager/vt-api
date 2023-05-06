@@ -2,7 +2,6 @@ import { CurrentUser } from '@/app/auth/decorators/current-user.decorator'
 import { JwtAccess } from '@/app/auth/decorators/jwt.decorator'
 import { Role } from '@/common/constants'
 import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
-import { UserPayload } from '@/types/token.dto'
 import { Controller, Get, Query } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
@@ -24,9 +23,9 @@ export class MemberDataMemberController {
 	@JwtAccess(Role.MEMBER)
 	@ApiSuccessResponse(PointHistoryResultDTO)
 	async getPointHistory(
-		@CurrentUser() { sub: userId }: UserPayload,
+		@CurrentUser('sub') memberId: string,
 		@Query() query: GetPointHistoryDTO
 	) {
-		return await this.memberDataMemberService.getPointHistory(userId, query)
+		return await this.memberDataMemberService.getPointHistory(memberId, query)
 	}
 }

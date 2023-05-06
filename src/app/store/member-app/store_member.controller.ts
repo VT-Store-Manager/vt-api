@@ -7,7 +7,6 @@ import { Role } from '@/common/constants'
 import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
 import { ObjectIdPipe } from '@/common/pipes/object-id.pipe'
 import { BooleanResponseDTO } from '@/types/http.swagger'
-import { UserPayload } from '@/types/token.dto'
 import { Controller, Get, Param, Patch } from '@nestjs/common'
 import { ApiResponse, ApiTags } from '@nestjs/swagger'
 
@@ -25,9 +24,9 @@ export class StoreMemberController {
 	@Get('short')
 	@JwtAccessOptional(Role.MEMBER)
 	@ApiSuccessResponse(ShortStoreItemDTO, 200, true)
-	async getAllStoreInShort(@CurrentUser() user: UserPayload) {
+	async getAllStoreInShort(@CurrentUser('sub') memberId: string) {
 		return await this.storeMemberService.getAllStoresInShort(
-			user ? user.sub : undefined
+			memberId ?? undefined
 		)
 	}
 
@@ -35,10 +34,10 @@ export class StoreMemberController {
 	@JwtAccess(Role.MEMBER)
 	@ApiResponse({ type: BooleanResponseDTO })
 	async changeFavoriteProduct(
-		@CurrentUser() user: UserPayload,
+		@CurrentUser('sub') memberId: string,
 		@Param('id') storeId: string
 	) {
-		return await this.storeMemberService.toggleFavoriteStore(user.sub, storeId)
+		return await this.storeMemberService.toggleFavoriteStore(memberId, storeId)
 	}
 
 	@Get(':id')

@@ -17,3 +17,8 @@ export class CartTemplateItemDTO extends PickType(CartTemplate, [
 ] as const) {
 	id: string
 }
+
+export class EditCartTemplateResultDTO extends PickType(CartTemplate, [
+	'name',
+	'products',
+] as const) {}
