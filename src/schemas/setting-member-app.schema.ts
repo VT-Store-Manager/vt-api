@@ -118,6 +118,16 @@ export class SettingMemberApp {
 		pickupStatus: Array<BookingOrderStatus>
 		onPremiseStatus: Array<BookingOrderStatus>
 	}
+
+	@Prop({
+		type: {
+			cartTemplate: { type: Number, default: 10 },
+		},
+		default: () => ({}),
+	})
+	limit: {
+		cartTemplate: number
+	}
 }
 
 export const SettingMemberAppSchema =

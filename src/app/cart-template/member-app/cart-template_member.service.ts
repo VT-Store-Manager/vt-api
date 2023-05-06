@@ -11,6 +11,7 @@ import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 
 import { CreateCartTemplateDTO } from './dto/create-cart-template.dto'
+import { CartTemplateItemDTO } from './dto/response.dto'
 
 @Injectable()
 export class CartTemplateMemberService {
@@ -34,6 +35,33 @@ export class CartTemplateMemberService {
 		})
 
 		return createdResult
+	}
+
+	async getAll(memberId: string): Promise<CartTemplateItemDTO[]> {
+		return await this.cartTemplateModel
+			.aggregate<CartTemplateItemDTO>([
+				{
+					$match: {
+						member: new Types.ObjectId(memberId),
+					},
+				},
+				{
+					$sort: {
+						index: 1,
+						createdAt: -1,
+					},
+				},
+				{
+					$project: {
+						id: '$_id',
+						_id: false,
+						name: true,
+						index: true,
+						products: true,
+					},
+				},
+			])
+			.exec()
 	}
 
 	private async validateProducts(
