@@ -1,3 +1,4 @@
+import { MongoSessionService } from '@/providers/mongo/session.service'
 import {
 	CartTemplate,
 	CartTemplateSchema,
@@ -19,6 +20,6 @@ import { CartTemplateMemberService } from './member-app/cart-template_member.ser
 		SettingModule,
 	],
 	controllers: [CartTemplateMemberController],
-	providers: [CartTemplateMemberService],
+	providers: [CartTemplateMemberService, MongoSessionService],
 })
 export class CartTemplateModule {}
