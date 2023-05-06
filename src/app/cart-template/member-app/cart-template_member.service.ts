@@ -1,18 +1,24 @@
 import { intersection } from 'lodash'
 import { Model, Types } from 'mongoose'
 
+import { MongoSessionService } from '@/providers/mongo/session.service'
 import {
 	CartTemplate,
 	CartTemplateDocument,
 } from '@/schemas/cart-template.schema'
 import { ProductOption } from '@/schemas/product-option.schema'
 import { Product, ProductDocument } from '@/schemas/product.schema'
-import { BadRequestException, Injectable } from '@nestjs/common'
+import {
+	BadRequestException,
+	Injectable,
+	InternalServerErrorException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 
+import { ArrangeCartTemplateDTO } from './dto/arrange-cart-template.dto'
 import { CreateCartTemplateDTO } from './dto/create-cart-template.dto'
-import { CartTemplateItemDTO } from './dto/response.dto'
 import { EditCartTemplateDTO } from './dto/edit-cart-template.dto'
+import { CartTemplateItemDTO } from './dto/response.dto'
 
 @Injectable()
 export class CartTemplateMemberService {
@@ -20,8 +26,15 @@ export class CartTemplateMemberService {
 		@InjectModel(CartTemplate.name)
 		private readonly cartTemplateModel: Model<CartTemplateDocument>,
 		@InjectModel(Product.name)
-		private readonly productModel: Model<ProductDocument>
+		private readonly productModel: Model<ProductDocument>,
+		private readonly mongoSessionService: MongoSessionService
 	) {}
+
+	async count(memberId: string) {
+		return await this.cartTemplateModel
+			.countDocuments({ member: new Types.ObjectId(memberId) })
+			.exec()
+	}
 
 	async create(memberId: string, data: CreateCartTemplateDTO) {
 		await this.validateProducts(data.products)
@@ -70,6 +83,10 @@ export class CartTemplateMemberService {
 			if (!data[key]) delete data[key]
 		})
 
+		if (data.products) {
+			await this.validateProducts(data.products)
+		}
+
 		const updatedTemplate = await this.cartTemplateModel
 			.findOneAndUpdate(
 				{
@@ -94,6 +111,66 @@ export class CartTemplateMemberService {
 			.exec()
 
 		return updatedTemplate
+	}
+
+	async arrange(memberId: string, body: ArrangeCartTemplateDTO) {
+		const [existTemplate, count] = await Promise.all([
+			this.cartTemplateModel
+				.aggregate<Pick<CartTemplate, '_id'>>([
+					{
+						$match: {
+							_id: { $in: body.newOrder.map(id => new Types.ObjectId(id)) },
+						},
+					},
+					{
+						$project: {
+							_id: true,
+						},
+					},
+				])
+				.exec(),
+			this.count(memberId),
+		])
+
+		if (existTemplate.length < count) {
+			throw new BadRequestException('New order size is incorrect')
+		}
+		const listExistId = existTemplate.map(template => template._id.toString())
+		body.newOrder = body.newOrder.filter(id => listExistId.includes(id))
+
+		const { error } = await this.mongoSessionService.execTransaction(
+			async session => {
+				const results = await Promise.all(
+					body.newOrder.map((id, index) => {
+						return this.cartTemplateModel
+							.updateOne(
+								{ _id: new Types.ObjectId(id) },
+								{ index },
+								{ session }
+							)
+							.exec()
+					})
+				)
+				const failedList: string[] = []
+				results.forEach((result, index) => {
+					if (result.matchedCount === 0) {
+						failedList.push(body.newOrder[index])
+					}
+				})
+				if (failedList.length) {
+					throw new Error(
+						`Updating index of template${
+							failedList.length > 1 ? 's' : ''
+						} ${failedList.join(', ')} went wrong in server`
+					)
+				}
+			}
+		)
+
+		if (error) {
+			throw new InternalServerErrorException(error.message)
+		}
+		return true
 	}
 
 	private async validateProducts(
