@@ -10,6 +10,7 @@ import {
 	BadRequestException,
 	Body,
 	Controller,
+	Delete,
 	Get,
 	Param,
 	Patch,
@@ -85,7 +86,7 @@ export class CartTemplateMemberController {
 
 	@Put(':templateId')
 	@JwtAccess(Role.MEMBER)
-	@ApiResponse({ type: EditCartTemplateResultDTO, status: 200 })
+	@ApiSuccessResponse(EditCartTemplateResultDTO)
 	async editCartTemplate(
 		@CurrentUser('sub') memberId: string,
 		@Param('templateId') templateId: string,
@@ -102,5 +103,15 @@ export class CartTemplateMemberController {
 		@Body() body: ArrangeCartTemplateDTO
 	) {
 		return await this.cartTemplateService.arrange(memberId, body)
+	}
+
+	@Delete(':templateId')
+	@JwtAccess(Role.MEMBER)
+	@ApiResponse({ type: BooleanResponseDTO, status: 200 })
+	async deleteCartTemplate(
+		@CurrentUser('sub') memberId: string,
+		@Param('templateId') templateId: string
+	) {
+		return await this.cartTemplateService.delete(memberId, templateId)
 	}
 }
