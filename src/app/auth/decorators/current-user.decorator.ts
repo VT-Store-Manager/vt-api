@@ -4,7 +4,7 @@ import { UserPayload } from '@/types/token.dto'
 import { createParamDecorator, ExecutionContext } from '@nestjs/common'
 
 export const CurrentUser = createParamDecorator(
-	(data: string, context: ExecutionContext) => {
+	(data: keyof UserPayload, context: ExecutionContext) => {
 		const request = context.switchToHttp().getRequest<Request>()
 
 		return data

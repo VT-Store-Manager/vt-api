@@ -2,7 +2,6 @@ import { CurrentUser } from '@/app/auth/decorators/current-user.decorator'
 import { JwtAccess } from '@/app/auth/decorators/jwt.decorator'
 import { Role } from '@/common/constants'
 import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
-import { UserPayload } from '@/types/token.dto'
 import { Controller, Get } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
@@ -25,16 +24,16 @@ export class MemberVoucherMemberController {
 	@Get('available')
 	@JwtAccess(Role.MEMBER)
 	@ApiSuccessResponse(AvailableMemberVoucherDTO, 200, true)
-	async getAvailableVoucherList(@CurrentUser() user: UserPayload) {
+	async getAvailableVoucherList(@CurrentUser('sub') memberId: string) {
 		return await this.memberVoucherMemberService.getMemberAvailableVoucher(
-			user.sub
+			memberId
 		)
 	}
 
 	@Get('used')
 	@JwtAccess(Role.MEMBER)
 	@ApiSuccessResponse(UsedMemberVoucherDTO, 200, true)
-	async getUsedVoucherList(@CurrentUser() { sub: userId }: UserPayload) {
-		return await this.memberVoucherMemberService.getMemberUsedVoucher(userId)
+	async getUsedVoucherList(@CurrentUser('sub') memberId: string) {
+		return await this.memberVoucherMemberService.getMemberUsedVoucher(memberId)
 	}
 }

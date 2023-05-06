@@ -3,7 +3,6 @@ import { JwtAccess } from '@/app/auth/decorators/jwt.decorator'
 import { OrderState, Role } from '@/common/constants'
 import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
 import { EnumPipe } from '@/common/pipes/enum.pipe'
-import { UserPayload } from '@/types/token.dto'
 import { Controller, Get, Param, Query } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
@@ -29,10 +28,10 @@ export class OrderStateMemberController {
 	@JwtAccess(Role.MEMBER)
 	@ApiSuccessResponse(OrderByStateResultDTO)
 	async getOrdersByState(
-		@CurrentUser() user: UserPayload,
+		@CurrentUser('sub') memberId: string,
 		@Param('state', new EnumPipe(OrderState)) state: OrderState,
 		@Query() query: GetOrderByStateDTO
 	) {
-		return await this.orderStateService.getOrderByState(user.sub, state, query)
+		return await this.orderStateService.getOrderByState(memberId, state, query)
 	}
 }

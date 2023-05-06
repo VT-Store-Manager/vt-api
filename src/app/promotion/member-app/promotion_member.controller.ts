@@ -5,7 +5,6 @@ import { ApiSuccessResponse } from '@/common/decorators/api-success-response.dec
 import { ObjectIdPipe } from '@/common/pipes/object-id.pipe'
 import { MongoSessionService } from '@/providers/mongo/session.service'
 import { BooleanResponseDTO } from '@/types/http.swagger'
-import { UserPayload } from '@/types/token.dto'
 import {
 	Controller,
 	Get,
@@ -32,21 +31,21 @@ export class PromotionMemberController {
 	@Get('all')
 	@JwtAccess(Role.MEMBER)
 	@ApiSuccessResponse(PromotionItemDTO, 200, true)
-	async getAllPromotion(@CurrentUser() member: UserPayload) {
-		return await this.promotionMemberService.getAll(member.sub)
+	async getAllPromotion(@CurrentUser('sub') memberId: string) {
+		return await this.promotionMemberService.getAll(memberId)
 	}
 
 	@Post(':promotionId/exchange')
 	@JwtAccess(Role.MEMBER)
 	@ApiResponse({ type: BooleanResponseDTO, status: 201 })
 	async exchangeVoucher(
-		@CurrentUser() { sub: userId }: UserPayload,
+		@CurrentUser('sub') memberId: string,
 		@Param('promotionId', ObjectIdPipe) promotionId: string
 	) {
 		const { error } = await this.mongoSessionService.execTransaction(
 			async session => {
 				await this.promotionMemberService.exchangeVoucher(
-					userId,
+					memberId,
 					promotionId,
 					session
 				)

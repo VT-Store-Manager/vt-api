@@ -1,7 +1,6 @@
 import { CurrentUser } from '@/app/auth/decorators/current-user.decorator'
 import { JwtAccess } from '@/app/auth/decorators/jwt.decorator'
 import { Role } from '@/common/constants'
-import { UserPayload } from '@/types/token.dto'
 import { Controller, Get } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
@@ -19,7 +18,7 @@ export class MemberRankMemberController {
 
 	@Get('card')
 	@JwtAccess(Role.MEMBER)
-	async getMemberCard(@CurrentUser() user: UserPayload) {
-		return await this.memberRankMemberService.getMemberRankCard(user.sub)
+	async getMemberCard(@CurrentUser('sub') memberId: string) {
+		return await this.memberRankMemberService.getMemberRankCard(memberId)
 	}
 }

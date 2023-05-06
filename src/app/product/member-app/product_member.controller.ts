@@ -4,7 +4,6 @@ import { Role } from '@/common/constants'
 import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
 import { ObjectIdPipe } from '@/common/pipes/object-id.pipe'
 import { BooleanResponseDTO } from '@/types/http.swagger'
-import { UserPayload } from '@/types/token.dto'
 import { Controller, Get, Param, Patch, Query } from '@nestjs/common'
 import { ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger'
 
@@ -40,11 +39,11 @@ export class ProductMemberController {
 		description: 'Max amount of suggestion',
 	})
 	async getProductSuggestionList(
-		@CurrentUser() user: UserPayload,
+		@CurrentUser('sub') memberId: string,
 		@Query() dto: GetProductSuggestionDTO
 	) {
 		return await this.productMemberService.getSuggestionList(
-			user.sub,
+			memberId,
 			dto.limit
 		)
 	}
@@ -53,11 +52,11 @@ export class ProductMemberController {
 	@JwtAccess(Role.MEMBER)
 	@ApiResponse({ type: BooleanResponseDTO })
 	async changeFavoriteProduct(
-		@CurrentUser() user: UserPayload,
+		@CurrentUser('sub') memberId: string,
 		@Param('id') productId: string
 	) {
 		return await this.productMemberService.toggleFavoriteProduct(
-			user.sub,
+			memberId,
 			productId
 		)
 	}
@@ -65,8 +64,8 @@ export class ProductMemberController {
 	@Get('favorite/all')
 	@JwtAccess(Role.MEMBER)
 	@ApiSuccessResponse(ProductListIdDTO)
-	async getAllFavoriteProducts(@CurrentUser() user: UserPayload) {
-		return await this.productMemberService.getAllFavorites(user.sub)
+	async getAllFavoriteProducts(@CurrentUser('sub') memberId: string) {
+		return await this.productMemberService.getAllFavorites(memberId)
 	}
 
 	@Get(':id')
@@ -84,12 +83,12 @@ export class ProductMemberController {
 		description: 'ID of selected store',
 	})
 	async getDetailProduct(
-		@CurrentUser() user: UserPayload,
+		@CurrentUser('sub') memberId: string,
 		@Param('id', ObjectIdPipe) productId: string,
 		@Query('storeId', ObjectIdPipe) storeId?: string
 	) {
 		return await this.productMemberService.getDetailProduct(
-			user.sub,
+			memberId,
 			productId,
 			storeId
 		)

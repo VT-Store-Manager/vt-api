@@ -5,7 +5,6 @@ import { Role } from '@/common/constants'
 import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
 import { NotEmptyObjectPipe } from '@/common/pipes/object.pipe'
 import { SettingMemberApp } from '@/schemas/setting-member-app.schema'
-import { UserPayload } from '@/types/token.dto'
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common'
 import { ApiResponse, ApiTags } from '@nestjs/swagger'
 
@@ -33,10 +32,10 @@ export class CartTemplateMemberController {
 	@JwtAccess(Role.MEMBER)
 	@ApiSuccessResponse(CreateCartTemplateResponseDTO, 201)
 	async createCartTemplate(
-		@CurrentUser() { sub: userId }: UserPayload,
+		@CurrentUser('sub') memberId: string,
 		@Body() body: CreateCartTemplateDTO
 	) {
-		const template = await this.cartTemplateService.create(userId, body)
+		const template = await this.cartTemplateService.create(memberId, body)
 		return { id: template._id }
 	}
 
@@ -44,7 +43,7 @@ export class CartTemplateMemberController {
 	@JwtAccess(Role.MEMBER)
 	@ApiSuccessResponse(GetAllCartTemplateResponseDTO)
 	async getAllCartTemplate(
-		@CurrentUser() { sub: memberId }: UserPayload
+		@CurrentUser('sub') memberId: string
 	): Promise<GetAllCartTemplateResponseDTO> {
 		const [memberAppSetting, cartTemplates] = await Promise.all([
 			this.settingMemberAppService.getData<Pick<SettingMemberApp, 'limit'>>({
