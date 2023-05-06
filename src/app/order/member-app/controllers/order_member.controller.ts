@@ -4,7 +4,6 @@ import { Role } from '@/common/constants'
 import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
 import { ObjectIdPipe } from '@/common/pipes/object-id.pipe'
 import { BooleanResponseDTO } from '@/types/http.swagger'
-import { UserPayload } from '@/types/token.dto'
 import { Body, Controller, Get, Param, Post } from '@nestjs/common'
 import { ApiResponse, ApiTags } from '@nestjs/swagger'
 
@@ -28,11 +27,11 @@ export class OrderMemberController {
 	@Post('check-voucher')
 	@JwtAccess(Role.MEMBER)
 	async checkVoucherForApply(
-		@CurrentUser() user: UserPayload,
+		@CurrentUser('sub') memberId: string,
 		@Body() body: CheckVoucherDTO
 	): Promise<GetProductPriceApplyingVoucherDTO> {
 		const applyVoucherResult = await this.orderService.validateVoucher(
-			user.sub,
+			memberId,
 			body
 		)
 		return {
@@ -61,11 +60,11 @@ export class OrderMemberController {
 	@JwtAccess(Role.MEMBER)
 	@ApiSuccessResponse(CreateOrderDTO)
 	async createOrder(
-		@CurrentUser() user: UserPayload,
+		@CurrentUser('sub') memberId: string,
 		@Body() body: CreateOrderDTO
 	) {
 		const createdOrder = await this.orderService.createMemberOrder(
-			user.sub,
+			memberId,
 			body
 		)
 		return { id: createdOrder._id }
@@ -75,20 +74,20 @@ export class OrderMemberController {
 	@JwtAccess(Role.MEMBER)
 	@ApiResponse({ type: BooleanResponseDTO, status: 201 })
 	async reviewOrder(
-		@CurrentUser() user: UserPayload,
+		@CurrentUser('sub') memberId: string,
 		@Param('orderId', ObjectIdPipe) orderId: string,
 		@Body() body: ReviewOrderDTO
 	) {
-		return await this.orderService.createOrderReview(user.sub, orderId, body)
+		return await this.orderService.createOrderReview(memberId, orderId, body)
 	}
 
 	@Get(':orderId')
 	@JwtAccess(Role.MEMBER)
 	@ApiSuccessResponse(GetOrderDetailDTO)
 	async getCartDetail(
-		@CurrentUser() { sub: userId }: UserPayload,
+		@CurrentUser('sub') memberId: string,
 		@Param('orderId', ObjectIdPipe) orderId: string
 	) {
-		return await this.orderService.getOrderDetail(userId, orderId)
+		return await this.orderService.getOrderDetail(memberId, orderId)
 	}
 }

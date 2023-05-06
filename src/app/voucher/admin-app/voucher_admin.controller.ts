@@ -6,7 +6,6 @@ import { ParseFile } from '@/common/pipes/parse-file.pipe'
 import { ImageMulterOption } from '@/common/validations/file.validator'
 import { MongoSessionService } from '@/providers/mongo/session.service'
 import { BooleanResponseDTO } from '@/types/http.swagger'
-import { UserPayload } from '@/types/token.dto'
 import {
 	Body,
 	Controller,
@@ -65,7 +64,7 @@ export class VoucherAdminController {
 	async updateVoucherImage(
 		@UploadedFile(ParseFile) image: Express.Multer.File,
 		@Param('id', ObjectIdPipe) voucherId: string,
-		@Body() Body: UpdateVoucherImageDTO
+		@Body() _body: UpdateVoucherImageDTO
 	) {
 		const voucher = await this.voucherAdminService.getDetail(voucherId, 'image')
 
@@ -188,10 +187,10 @@ export class VoucherAdminController {
 	@Delete(':id/delete')
 	@ApiResponse({ type: BooleanResponseDTO, status: 200 })
 	async deleteVoucher(
-		@CurrentUser() user: UserPayload,
+		@CurrentUser('sub') memberId: string,
 		@Param('id') voucherId: string
 	) {
-		return await this.voucherAdminService.softDelete(voucherId, user.sub)
+		return await this.voucherAdminService.softDelete(voucherId, memberId)
 	}
 
 	@Patch(':id/restore')

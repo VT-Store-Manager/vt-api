@@ -12,6 +12,7 @@ import { InjectModel } from '@nestjs/mongoose'
 
 import { CreateCartTemplateDTO } from './dto/create-cart-template.dto'
 import { CartTemplateItemDTO } from './dto/response.dto'
+import { EditCartTemplateDTO } from './dto/edit-cart-template.dto'
 
 @Injectable()
 export class CartTemplateMemberService {
@@ -62,6 +63,37 @@ export class CartTemplateMemberService {
 				},
 			])
 			.exec()
+	}
+
+	async edit(memberId: string, templateId: string, data: EditCartTemplateDTO) {
+		Object.keys(data).forEach(key => {
+			if (!data[key]) delete data[key]
+		})
+
+		const updatedTemplate = await this.cartTemplateModel
+			.findOneAndUpdate(
+				{
+					_id: new Types.ObjectId(templateId),
+					member: new Types.ObjectId(memberId),
+				},
+				{
+					...data,
+				},
+				{
+					new: true,
+				}
+			)
+			.orFail(new BadRequestException('Cart template not found'))
+			.select({
+				id: '$_id',
+				_id: false,
+				name: true,
+				products: true,
+			})
+			.lean()
+			.exec()
+
+		return updatedTemplate
 	}
 
 	private async validateProducts(
