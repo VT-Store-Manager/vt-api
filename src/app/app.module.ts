@@ -34,6 +34,7 @@ import { RankModule } from './rank/rank.module'
 import { SettingModule } from './setting/setting.module'
 import { StoreModule } from './store/store.module'
 import { VoucherModule } from './voucher/voucher.module'
+import { CartTemplateModule } from './cart-template/cart-template.module'
 
 @Module({
 	imports: [
@@ -77,6 +78,7 @@ import { VoucherModule } from './voucher/voucher.module'
 		SettingModule,
 		PartnerModule,
 		MemberDataModule,
+		CartTemplateModule,
 	],
 	controllers: [],
 	providers: [

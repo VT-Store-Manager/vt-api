@@ -32,11 +32,11 @@ export class OrderInfoItem {
 			}
 
 			const validateKeys = v.every(key =>
-				new RegExp(`[a-z]{${optionItemKeyLength}}`).test(key)
+				new RegExp(`^[a-z]{${optionItemKeyLength}}$`).test(key)
 			)
 			if (!validateKeys) {
 				throw new Error(
-					`Option keys must match with pattern [a-z]{${optionItemKeyLength}}`
+					`Option keys must match with pattern ^[a-z]{${optionItemKeyLength}}$`
 				)
 			}
 			return true
