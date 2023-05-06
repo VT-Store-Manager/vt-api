@@ -173,6 +173,17 @@ export class CartTemplateMemberService {
 		return true
 	}
 
+	async delete(memberId: string, templateId: string) {
+		const deleteResult = await this.cartTemplateModel
+			.deleteOne({
+				_id: new Types.ObjectId(templateId),
+				member: new Types.ObjectId(memberId),
+			})
+			.orFail(new BadRequestException('Cart template not found'))
+			.exec()
+		return deleteResult.deletedCount === 1
+	}
+
 	private async validateProducts(
 		cartProducts: CreateCartTemplateDTO['products']
 	) {
