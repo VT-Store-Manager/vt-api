@@ -3,7 +3,10 @@ import { JwtAccess } from '@/app/auth/decorators/jwt.decorator'
 import { SettingMemberAppService } from '@/app/setting/services/setting-member-app.service'
 import { DEFAULT_MAX_CART_TEMPLATE, Role } from '@/common/constants'
 import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
-import { NotEmptyObjectPipe } from '@/common/pipes/object.pipe'
+import {
+	NotEmptyObjectPipe,
+	RemoveNullishObjectPipe,
+} from '@/common/pipes/object.pipe'
 import { SettingMemberApp } from '@/schemas/setting-member-app.schema'
 import { BooleanResponseDTO } from '@/types/http.swagger'
 import {
@@ -90,7 +93,7 @@ export class CartTemplateMemberController {
 	async editCartTemplate(
 		@CurrentUser('sub') memberId: string,
 		@Param('templateId') templateId: string,
-		@Body(NotEmptyObjectPipe) body: EditCartTemplateDTO
+		@Body(RemoveNullishObjectPipe, NotEmptyObjectPipe) body: EditCartTemplateDTO
 	) {
 		return await this.cartTemplateService.edit(memberId, templateId, body)
 	}

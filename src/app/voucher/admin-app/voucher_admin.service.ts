@@ -40,11 +40,6 @@ export class VoucherAdminService {
 		data: Record<string, any>,
 		session?: ClientSession
 	) {
-		Object.keys(data).forEach(key => {
-			if (data[key] === undefined && data[key] === null) {
-				delete data[key]
-			}
-		})
 		if (data.activeStartTime) {
 			data['activeStartTime'] = new Date(data.activeStartTime)
 		}

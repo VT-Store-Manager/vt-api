@@ -1,7 +1,10 @@
 import { CurrentUser } from '@/app/auth/decorators/current-user.decorator'
 import { FileService } from '@/app/file/file.service'
 import { ObjectIdPipe } from '@/common/pipes/object-id.pipe'
-import { NotEmptyObjectPipe } from '@/common/pipes/object.pipe'
+import {
+	NotEmptyObjectPipe,
+	RemoveNullishObjectPipe,
+} from '@/common/pipes/object.pipe'
 import { ParseFile } from '@/common/pipes/parse-file.pipe'
 import { ImageMulterOption } from '@/common/validations/file.validator'
 import { MongoSessionService } from '@/providers/mongo/session.service'
@@ -52,7 +55,8 @@ export class VoucherAdminController {
 	@ApiResponse({ type: BooleanResponseDTO, status: 200 })
 	async updateVoucherInfo(
 		@Param('id', ObjectIdPipe) voucherId: string,
-		@Body(NotEmptyObjectPipe) body: UpdateVoucherInfoDTO
+		@Body(RemoveNullishObjectPipe, NotEmptyObjectPipe)
+		body: UpdateVoucherInfoDTO
 	) {
 		return await this.voucherAdminService.updateInfo(voucherId, body)
 	}
@@ -108,7 +112,8 @@ export class VoucherAdminController {
 	@ApiResponse({ type: BooleanResponseDTO, status: 200 })
 	async updateVoucherDiscount(
 		@Param('id', ObjectIdPipe) voucherId: string,
-		@Body(NotEmptyObjectPipe) body: UpdateVoucherDiscountDTO
+		@Body(RemoveNullishObjectPipe, NotEmptyObjectPipe)
+		body: UpdateVoucherDiscountDTO
 	) {
 		return await this.voucherAdminService.updateDiscount(voucherId, body)
 	}
@@ -117,7 +122,8 @@ export class VoucherAdminController {
 	@ApiResponse({ type: BooleanResponseDTO, status: 200 })
 	async updateVoucherCondition(
 		@Param('id', ObjectIdPipe) voucherId: string,
-		@Body(NotEmptyObjectPipe) body: UpdateVoucherConditionDTO
+		@Body(RemoveNullishObjectPipe, NotEmptyObjectPipe)
+		body: UpdateVoucherConditionDTO
 	) {
 		return await this.voucherAdminService.updateCondition(voucherId, body)
 	}
