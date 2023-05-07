@@ -8,7 +8,7 @@ import {
 	RemoveNullishObjectPipe,
 } from '@/common/pipes/object.pipe'
 import { BooleanResponseDTO } from '@/types/http.swagger'
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common'
 import { ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import { CreateMemberAddressDTO } from './dto/create-member-address.dto'
@@ -82,5 +82,15 @@ export class MemberSettingController {
 			addressId,
 			body
 		)
+	}
+
+	@Delete('address/:addressId')
+	@JwtAccess(Role.MEMBER)
+	@ApiResponse({ type: BooleanResponseDTO, status: 200 })
+	async deleteAddress(
+		@CurrentUser('sub') memberId: string,
+		@Param('addressId', ObjectIdPipe) addressId: string
+	) {
+		return await this.memberSettingService.deleteAddress(memberId, addressId)
 	}
 }

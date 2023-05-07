@@ -339,4 +339,26 @@ export class MemberSettingService {
 		)
 		return updateResult.matchedCount === 1
 	}
+
+	async deleteAddress(memberId: string, addressId: string) {
+		const updateResult = await this.memberDataModel
+			.updateOne(
+				{
+					member: new Types.ObjectId(memberId),
+				},
+				{
+					$pull: {
+						'address.main': {
+							_id: new Types.ObjectId(addressId),
+						},
+						'address.other': {
+							_id: new Types.ObjectId(addressId),
+						},
+					},
+				}
+			)
+			.orFail(new BadRequestException('Member data not found'))
+			.exec()
+		return updateResult.modifiedCount === 1
+	}
 }
