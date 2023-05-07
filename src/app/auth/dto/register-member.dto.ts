@@ -42,6 +42,8 @@ export class RegisterMemberDTO extends PickType(Member, [
 
 	@Type(() => Number)
 	@IsPositive()
-	@ApiProperty({ description: 'Date of birth in UNIX time (milisecond)' })
-	dob: number
+	@ApiProperty({
+		description: 'Date of birth in UNIX time (millisecond)',
+	})
+	dob: number = Date.now()
 }

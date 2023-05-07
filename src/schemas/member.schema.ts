@@ -4,6 +4,7 @@ import mongooseDelete from 'mongoose-delete'
 import mongooseLeanVirtuals from 'mongoose-lean-virtuals'
 
 import { Gender } from '@/common/constants'
+import Joi from '@/common/validations/joi.validator'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 
 export type MemberVirtual = {
@@ -16,10 +17,23 @@ export type MemberDocument = Member & Document & MemberVirtual
 export class Member {
 	_id?: Types.ObjectId
 
-	@Prop({ type: String, required: true, unique: true, index: 1 })
+	@Prop({
+		type: String,
+		required: true,
+		unique: true,
+		validate: (v: string) => {
+			const error = Joi.string().phoneNumber({ strict: true }).validate(v).error
+			if (error)
+				throw new Error(
+					error.message ||
+						error.details.map(detail => detail.message).join(', ')
+				)
+			return true
+		},
+	})
 	phone: string
 
-	@Prop({ type: String })
+	@Prop({ type: String, index: 1 })
 	email?: string
 
 	@Prop({ type: String })
