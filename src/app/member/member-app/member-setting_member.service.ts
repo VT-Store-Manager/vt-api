@@ -1,5 +1,5 @@
 import { difference } from 'lodash'
-import { Model, Types } from 'mongoose'
+import { Model, Types, UpdateQuery } from 'mongoose'
 
 import { SettingMemberAppService } from '@/app/setting/services/setting-member-app.service'
 import { MongoSessionService } from '@/providers/mongo/session.service'
@@ -19,8 +19,8 @@ import {
 	MemberAddressItemDTO,
 	MemberDefaultAddressItemDTO,
 } from './dto/response.dto'
+import { UpdateMemberAddressDTO } from './dto/update-member-address.dto'
 import { UpdateProfileDTO } from './dto/update-profile.dto'
-
 @Injectable()
 export class MemberSettingService {
 	constructor(
@@ -264,5 +264,79 @@ export class MemberSettingService {
 		})
 
 		return { defaultAddress, otherAddress }
+	}
+
+	async updateAddress(
+		memberId: string,
+		addressId: string,
+		data: UpdateMemberAddressDTO
+	) {
+		const addressData: MemberAddress = {
+			...data,
+			latLng: [data.lat, data.lng],
+		}
+		const [memberAddress, { address: addressSetting }] = await Promise.all([
+			this.memberDataModel
+				.findOne({ member: new Types.ObjectId(memberId) })
+				.orFail(new BadRequestException('Member data not found'))
+				.select('address')
+				.lean()
+				.exec(),
+			this.settingMemberAppService.getData({ address: true }),
+		])
+		const mainIndex = memberAddress.address.main.findIndex(
+			addr => addr._id.toString() === addressId
+		)
+		let updateQuery: UpdateQuery<MemberData>
+		if (mainIndex !== -1) {
+			const fieldName = `address.main.${mainIndex}`
+			updateQuery = {
+				$set: {
+					[fieldName]: {
+						...memberAddress.address.main?.[mainIndex],
+						...addressData,
+						name: undefined,
+					},
+				},
+			}
+		} else if (
+			addressSetting.main.findIndex(
+				addr => addr._id.toString() === addressId
+			) !== -1
+		) {
+			updateQuery = {
+				$push: {
+					'address.main': {
+						_id: new Types.ObjectId(addressId),
+						...addressData,
+						name: undefined,
+					},
+				},
+			}
+		} else {
+			const otherIndex = memberAddress.address.other.findIndex(
+				addr => addr._id.toString() === addressId
+			)
+			if (otherIndex === -1) {
+				throw new BadRequestException('Member address not found')
+			}
+			const fieldName = `address.other.${otherIndex}`
+			updateQuery = {
+				$set: {
+					[fieldName]: {
+						...memberAddress.address.other?.[otherIndex],
+						...addressData,
+					},
+				},
+			}
+		}
+
+		const updateResult = await this.memberDataModel.updateOne(
+			{
+				member: new Types.ObjectId(memberId),
+			},
+			updateQuery
+		)
+		return updateResult.matchedCount === 1
 	}
 }

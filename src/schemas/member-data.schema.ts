@@ -1,17 +1,12 @@
 import { Document, Types } from 'mongoose'
 
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-import {
-	MemberAddress,
-	MemberAddressSchema,
-	MemberMainAddress,
-	MemberMainAddressSchema,
-} from './member-address.schema'
+import { MemberAddress, MemberAddressSchema } from './member-address.schema'
 
 @Schema({ versionKey: false, _id: false })
 export class MemberAddressList {
-	@Prop({ type: [MemberMainAddressSchema], default: [] })
-	main: MemberMainAddress[]
+	@Prop({ type: [MemberAddressSchema], default: [] })
+	main: MemberAddress[]
 
 	@Prop({ type: [MemberAddressSchema], default: [] })
 	other: MemberAddress[]
