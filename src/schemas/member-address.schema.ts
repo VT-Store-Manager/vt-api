@@ -2,6 +2,7 @@ import { Types } from 'mongoose'
 
 import Joi from '@/common/validations/joi.validator'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
+import { OmitType } from '@nestjs/swagger'
 
 @Schema({ versionKey: false })
 export class MemberAddress {
@@ -57,4 +58,10 @@ export class MemberAddress {
 	phone: string
 }
 
+export class MemberMainAddress extends OmitType(MemberAddress, [
+	'name',
+] as const) {}
+
 export const MemberAddressSchema = SchemaFactory.createForClass(MemberAddress)
+export const MemberMainAddressSchema =
+	SchemaFactory.createForClass(MemberMainAddress)

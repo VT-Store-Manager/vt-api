@@ -1,5 +1,6 @@
 import { CurrentUser } from '@/app/auth/decorators/current-user.decorator'
 import { JwtAccess } from '@/app/auth/decorators/jwt.decorator'
+import { CreateMemberAddressDTO } from '@/app/member/member-app/dto/create-member-address.dto'
 import { Role } from '@/common/constants'
 import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
 import {
@@ -7,10 +8,10 @@ import {
 	RemoveNullishObjectPipe,
 } from '@/common/pipes/object.pipe'
 import { BooleanResponseDTO } from '@/types/http.swagger'
-import { Body, Controller, Get, Put } from '@nestjs/common'
+import { Body, Controller, Get, Post, Put } from '@nestjs/common'
 import { ApiResponse, ApiTags } from '@nestjs/swagger'
 
-import { MemberProfileDTO } from './dto/response.dto'
+import { CreateAddressResultDTO, MemberProfileDTO } from './dto/response.dto'
 import { UpdateProfileDTO } from './dto/update-profile.dto'
 import { MemberSettingService } from './member-setting_member.service'
 
@@ -37,5 +38,21 @@ export class MemberSettingController {
 		@Body(RemoveNullishObjectPipe, NotEmptyObjectPipe) body: UpdateProfileDTO
 	) {
 		return await this.memberSettingService.updateProfile(memberId, body)
+	}
+
+	@Post('address')
+	@JwtAccess(Role.MEMBER)
+	@ApiSuccessResponse(CreateAddressResultDTO, 201)
+	async createAddress(
+		@CurrentUser('sub') memberId: string,
+		@Body() body: CreateMemberAddressDTO
+	): Promise<CreateAddressResultDTO> {
+		const address = await this.memberSettingService.addNewAddress(
+			memberId,
+			body
+		)
+		return {
+			id: address._id.toString(),
+		}
 	}
 }

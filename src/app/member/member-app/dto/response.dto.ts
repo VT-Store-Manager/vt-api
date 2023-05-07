@@ -5,3 +5,7 @@ export class MemberProfileDTO {
 	gender: number
 	phone: string
 }
+
+export class CreateAddressResultDTO {
+	id: string
+}
