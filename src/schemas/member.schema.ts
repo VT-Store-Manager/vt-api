@@ -1,3 +1,4 @@
+import { isNumber } from 'lodash'
 import { Document, Types } from 'mongoose'
 import mongooseDelete from 'mongoose-delete'
 import mongooseLeanVirtuals from 'mongoose-lean-virtuals'
@@ -31,8 +32,8 @@ export class Member {
 	lastName: string
 
 	@Prop({
-		type: String,
-		enum: Object.values(Gender).filter(e => !isNaN(+e)),
+		type: Number,
+		enum: Object.values(Gender).filter(e => isNumber(e)),
 		required: true,
 	})
 	gender: Gender
