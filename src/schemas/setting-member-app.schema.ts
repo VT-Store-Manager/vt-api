@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-import { Document } from 'mongoose'
+import { Document, Types } from 'mongoose'
 import { OrderStatus, SettingType } from '@/common/constants'
 
 export type SettingMemberAppDocument = Document & SettingMemberApp
@@ -127,6 +127,57 @@ export class SettingMemberApp {
 	})
 	limit: {
 		cartTemplate: number
+	}
+
+	@Prop({
+		type: {
+			main: {
+				type: [
+					{
+						name: { type: String, required: true, minlength: 1 },
+						icon: {
+							type: String,
+							required: true,
+							minlength: 1,
+							validate: (v: string) => {
+								const pattern =
+									/^[a-z]+(-[a-z]+){0,}( [a-z]+(-[a-z]+){0,}){0,}$/
+								if (pattern.test(v)) return true
+								throw new Error('Icon classes is invalid')
+							},
+						},
+					},
+				],
+			},
+			other: {
+				type: {
+					icon: {
+						type: String,
+						required: true,
+						minlength: 1,
+						validate: (v: string) => {
+							const pattern = /^[a-z]+(-[a-z]+){0,}( [a-z]+(-[a-z]+){0,}){0,}$/
+							if (pattern.test(v)) return true
+							throw new Error('Icon classes is invalid')
+						},
+					},
+					limit: { type: Number, min: 1 },
+					_id: false,
+				},
+			},
+			_id: false,
+		},
+	})
+	address: {
+		main: {
+			_id?: Types.ObjectId | string
+			name: string
+			icon: string
+		}[]
+		other: {
+			icon: string
+			limit: number
+		}
 	}
 }
 

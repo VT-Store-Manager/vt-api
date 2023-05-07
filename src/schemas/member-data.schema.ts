@@ -1,10 +1,21 @@
 import { Document, Types } from 'mongoose'
 
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
+import { MemberAddress, MemberAddressSchema } from './member-address.schema'
+
+@Schema({ versionKey: false, _id: false })
+export class MemberAddressList {
+	@Prop({ type: [MemberAddressSchema], default: [] })
+	main: MemberAddress[]
+
+	@Prop({ type: [MemberAddressSchema], default: [] })
+	other: MemberAddress[]
+}
+export const MemberAddressListSchema =
+	SchemaFactory.createForClass(MemberAddressList)
 
 export type MemberDataDocument = MemberData & Document
-
-@Schema({ versionKey: false, timestamps: true, collection: 'member_datas' })
+@Schema({ versionKey: false, timestamps: true, collection: 'member_data' })
 export class MemberData {
 	_id?: Types.ObjectId
 
@@ -17,8 +28,10 @@ export class MemberData {
 	@Prop({ type: [Types.ObjectId], default: [] })
 	favoriteStores?: Array<Types.ObjectId | string>
 
+	@Prop({ type: MemberAddressListSchema, default: () => ({}) })
+	address?: MemberAddressList
+
 	createdAt?: Date
 	updatedAt?: Date
 }
-
 export const MemberDataSchema = SchemaFactory.createForClass(MemberData)
