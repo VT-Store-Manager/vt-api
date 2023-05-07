@@ -79,10 +79,6 @@ export class CartTemplateMemberService {
 	}
 
 	async edit(memberId: string, templateId: string, data: EditCartTemplateDTO) {
-		Object.keys(data).forEach(key => {
-			if (!data[key]) delete data[key]
-		})
-
 		if (data.products) {
 			await this.validateProducts(data.products)
 		}
