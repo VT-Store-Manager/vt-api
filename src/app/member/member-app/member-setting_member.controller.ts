@@ -11,7 +11,11 @@ import { BooleanResponseDTO } from '@/types/http.swagger'
 import { Body, Controller, Get, Post, Put } from '@nestjs/common'
 import { ApiResponse, ApiTags } from '@nestjs/swagger'
 
-import { CreateAddressResultDTO, MemberProfileDTO } from './dto/response.dto'
+import {
+	CreateAddressResultDTO,
+	GetMemberAddressDTO,
+	MemberProfileDTO,
+} from './dto/response.dto'
 import { UpdateProfileDTO } from './dto/update-profile.dto'
 import { MemberSettingService } from './member-setting_member.service'
 
@@ -54,5 +58,12 @@ export class MemberSettingController {
 		return {
 			id: address._id.toString(),
 		}
+	}
+
+	@Get('address')
+	@JwtAccess(Role.MEMBER)
+	@ApiSuccessResponse(GetMemberAddressDTO)
+	async getAddress(@CurrentUser('sub') memberId: string) {
+		return this.memberSettingService.getAddress(memberId)
 	}
 }
