@@ -79,3 +79,10 @@ export enum OrderState {
 	DONE = 'done',
 	CANCELED = 'canceled',
 }
+
+export enum NotificationType {
+	OTHER = -1,
+	ORDER,
+	VOUCHER,
+	PROMOTION,
+}

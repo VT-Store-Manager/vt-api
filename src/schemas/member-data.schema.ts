@@ -1,7 +1,12 @@
 import { Document, Types } from 'mongoose'
 
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
+
 import { MemberAddress, MemberAddressSchema } from './member-address.schema'
+import {
+	MemberNotification,
+	MemberNotificationSchema,
+} from './member-notification.schema'
 
 @Schema({ versionKey: false, _id: false })
 export class MemberAddressList {
@@ -30,6 +35,9 @@ export class MemberData {
 
 	@Prop({ type: MemberAddressListSchema, default: () => ({}) })
 	address?: MemberAddressList
+
+	@Prop({ type: [MemberNotificationSchema], default: () => [] })
+	notifications?: MemberNotification[]
 
 	createdAt?: Date
 	updatedAt?: Date
