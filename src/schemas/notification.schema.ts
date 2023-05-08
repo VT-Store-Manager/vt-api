@@ -1,7 +1,7 @@
 import { isNumber } from 'lodash'
 import { Types } from 'mongoose'
 
-import { NotificationType } from '@/common/constants'
+import { cronTimePattern, NotificationType } from '@/common/constants'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 
 export type NotificationDocument = Notification & Document
@@ -22,7 +22,7 @@ export class Notification {
 	@Prop({ type: String })
 	image?: string
 
-	@Prop({ type: Types.ObjectId })
+	@Prop({ type: Types.ObjectId, set: (v: string) => new Types.ObjectId(v) })
 	targetId?: Types.ObjectId | string
 
 	@Prop({
@@ -38,15 +38,16 @@ export class Notification {
 	@Prop({
 		type: String,
 		validate: (v: string) => {
-			const pattern =
-				/^((((\d+,)+\d+|(\d+(\/|-|#)\d+)|\d+L?|\*(\/\d+)?|L(-\d+)?|\?|[A-Z]{3}(-[A-Z]{3})?) ?){5,7})$/
-			if (!pattern.test(v)) {
+			if (!cronTimePattern.test(v)) {
 				throw new Error('Cron time is not right pattern')
 			}
 			return true
 		},
 	})
 	cronTime?: string
+
+	@Prop({ type: Boolean, default: false })
+	disabled?: boolean
 }
 
 export const NotificationSchema = SchemaFactory.createForClass(Notification)

@@ -4,6 +4,10 @@ export const IS_ZERO_POINT_MESSAGE = 'Chưa tích điểm.'
 export const DEFAULT_POINT_NAME = 'BEAN'
 export const DEFAULT_MAX_CART_TEMPLATE = 10
 
+// Pattern
+export const cronTimePattern =
+	/^((((\d+,)+\d+|(\d+(\/|-|#)\d+)|\d+L?|\*(\/\d+)?|L(-\d+)?|\?|[A-Z]{3}(-[A-Z]{3})?) ?){5,7})$/
+
 // Enums
 export enum NodeEnv {
 	PRODUCTION = 'production',

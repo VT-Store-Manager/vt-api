@@ -201,6 +201,7 @@ export class SettingMemberApp {
 			description: string
 			image: string
 		}
+		defaultImage: string
 		limit: number
 	}
 }

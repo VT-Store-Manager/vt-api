@@ -328,7 +328,8 @@ export class OrderStream {
 		const notification: MemberNotification = {
 			name: notificationSetting.order.name,
 			description: notificationSetting.order.description,
-			image: notificationSetting.order.image,
+			image:
+				notificationSetting.order.image || notificationSetting.defaultImage,
 			targetId: preData._id,
 			type: NotificationType.ORDER,
 		}
