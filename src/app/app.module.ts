@@ -35,6 +35,7 @@ import { SettingModule } from './setting/setting.module'
 import { StoreModule } from './store/store.module'
 import { VoucherModule } from './voucher/voucher.module'
 import { CartTemplateModule } from './cart-template/cart-template.module'
+import { NotificationModule } from './notification/notification.module'
 
 @Module({
 	imports: [
@@ -79,6 +80,7 @@ import { CartTemplateModule } from './cart-template/cart-template.module'
 		PartnerModule,
 		MemberDataModule,
 		CartTemplateModule,
+		NotificationModule,
 	],
 	controllers: [],
 	providers: [
