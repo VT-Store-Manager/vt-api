@@ -25,7 +25,7 @@ export class MemberNotification {
 	targetId?: Types.ObjectId | string
 
 	@Prop({ type: Boolean, default: false })
-	checked: boolean
+	checked?: boolean
 
 	@Prop({
 		type: Number,

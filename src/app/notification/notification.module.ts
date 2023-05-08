@@ -1,5 +1,6 @@
 import { MemberData, MemberDataSchema } from '@/schemas/member-data.schema'
 import { Notification, NotificationSchema } from '@/schemas/notification.schema'
+import { Order, OrderSchema } from '@/schemas/order.schema'
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 
@@ -16,6 +17,10 @@ import { NotificationMemberService } from './member-app/notification_member.serv
 			{
 				name: MemberData.name,
 				schema: MemberDataSchema,
+			},
+			{
+				name: Order.name,
+				schema: OrderSchema,
 			},
 		]),
 	],

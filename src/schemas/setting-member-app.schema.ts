@@ -121,12 +121,13 @@ export class SettingMemberApp {
 
 	@Prop({
 		type: {
-			cartTemplate: { type: Number, default: 10 },
+			limit: { type: Number, default: 10 },
 		},
 		default: () => ({}),
+		_id: false,
 	})
-	limit: {
-		cartTemplate: number
+	cartTemplate: {
+		limit: number
 	}
 
 	@Prop({
@@ -178,6 +179,29 @@ export class SettingMemberApp {
 			icon: string
 			limit: number
 		}
+	}
+
+	@Prop({
+		type: {
+			order: {
+				type: {
+					name: { type: String },
+					description: { type: String },
+					image: { type: String },
+				},
+				_id: false,
+			},
+			limit: { type: Number, validate: (v: number) => v >= 10 },
+			_id: false,
+		},
+	})
+	notification: {
+		order: {
+			name: string
+			description: string
+			image: string
+		}
+		limit: number
 	}
 }
 

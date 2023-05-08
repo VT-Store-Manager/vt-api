@@ -50,13 +50,15 @@ export class CartTemplateMemberController {
 		@CurrentUser('sub') memberId: string,
 		@Body() body: CreateCartTemplateDTO
 	) {
-		const [{ limit }, countCartTemplates] = await Promise.all([
-			this.settingMemberAppService.getData<Pick<SettingMemberApp, 'limit'>>({
-				limit: true,
+		const [{ cartTemplate }, countCartTemplates] = await Promise.all([
+			this.settingMemberAppService.getData<
+				Pick<SettingMemberApp, 'cartTemplate'>
+			>({
+				cartTemplate: true,
 			}),
 			this.cartTemplateService.count(memberId),
 		])
-		const maxAmount = limit.cartTemplate || DEFAULT_MAX_CART_TEMPLATE
+		const maxAmount = cartTemplate.limit || DEFAULT_MAX_CART_TEMPLATE
 		if (countCartTemplates >= maxAmount) {
 			throw new BadRequestException(
 				`Reached max amount of cart template (${maxAmount} items)`
@@ -73,14 +75,16 @@ export class CartTemplateMemberController {
 		@CurrentUser('sub') memberId: string
 	): Promise<GetAllCartTemplateResponseDTO> {
 		const [memberAppSetting, cartTemplates] = await Promise.all([
-			this.settingMemberAppService.getData<Pick<SettingMemberApp, 'limit'>>({
-				limit: true,
+			this.settingMemberAppService.getData<
+				Pick<SettingMemberApp, 'cartTemplate'>
+			>({
+				cartTemplate: true,
 			}),
 			await this.cartTemplateService.getAll(memberId),
 		])
 
 		const limit =
-			memberAppSetting.limit.cartTemplate ?? DEFAULT_MAX_CART_TEMPLATE
+			memberAppSetting.cartTemplate.limit ?? DEFAULT_MAX_CART_TEMPLATE
 		return {
 			limit,
 			cartTemplate: cartTemplates,

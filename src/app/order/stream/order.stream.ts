@@ -6,8 +6,11 @@ import {
 } from 'mongodb'
 import { Model } from 'mongoose'
 
-import { OrderBuyer, OrderState } from '@/common/constants'
+import { SettingMemberAppService } from '@/app/setting/services/setting-member-app.service'
+import { NotificationType, OrderBuyer, OrderState } from '@/common/constants'
 import { MongoSessionService } from '@/providers/mongo/session.service'
+import { MemberData, MemberDataDocument } from '@/schemas/member-data.schema'
+import { MemberNotification } from '@/schemas/member-notification.schema'
 import { MemberRank, MemberRankDocument } from '@/schemas/member-rank.schema'
 import {
 	MemberVoucherHistory,
@@ -22,6 +25,7 @@ import { OrderMember, OrderMemberDocument } from '@/schemas/order-member.schema'
 import { Order, OrderDocument } from '@/schemas/order.schema'
 import { Injectable, Logger } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
+import { SettingMemberApp } from '@/schemas/setting-member-app.schema'
 
 @Injectable()
 export class OrderStream {
@@ -30,11 +34,14 @@ export class OrderStream {
 		private readonly orderModel: Model<OrderDocument>,
 		@InjectModel(MemberRank.name)
 		private readonly memberRankModel: Model<MemberRankDocument>,
+		@InjectModel(MemberData.name)
+		private readonly memberDataModel: Model<MemberDataDocument>,
 		@InjectModel(MemberVoucher.name)
 		private readonly memberVoucherModel: Model<MemberVoucherDocument>,
 		@InjectModel(MemberVoucherHistory.name)
 		private readonly memberVoucherHistoryModel: Model<MemberVoucherHistoryDocument>,
-		private readonly mongoSessionService: MongoSessionService
+		private readonly mongoSessionService: MongoSessionService,
+		private readonly settingMemberService: SettingMemberAppService
 	) {
 		this.watch()
 	}
@@ -68,6 +75,7 @@ export class OrderStream {
 							voucher: true,
 						},
 						fullDocumentBeforeChange: {
+							_id: true,
 							member: true,
 							voucher: true,
 							point: true,
@@ -99,6 +107,10 @@ export class OrderStream {
 						updateData.updateDescription.updatedFields
 					)
 					this.changeMemberVoucherTrigger(
+						updateData.fullDocumentBeforeChange,
+						updateData.updateDescription.updatedFields
+					)
+					this.createOrderNotificationTrigger(
 						updateData.fullDocumentBeforeChange,
 						updateData.updateDescription.updatedFields
 					)
@@ -294,6 +306,50 @@ export class OrderStream {
 					Logger.error(error, 'ChangeMemberVoucherTrigger')
 				}
 				break
+		}
+	}
+
+	private async createOrderNotificationTrigger(
+		preData: Pick<OrderMember, '_id' | 'member' | 'state'>,
+		updateFields: Partial<OrderMember>
+	) {
+		if (!preData.member) return
+		if (
+			preData.state !== OrderState.PROCESSING ||
+			updateFields?.state !== OrderState.DONE
+		)
+			return
+
+		const { notification: notificationSetting } =
+			await this.settingMemberService.getData<
+				Pick<SettingMemberApp, 'notification'>
+			>({ notification: true })
+
+		const notification: MemberNotification = {
+			name: notificationSetting.order.name,
+			description: notificationSetting.order.description,
+			image: notificationSetting.order.image,
+			targetId: preData._id,
+			type: NotificationType.ORDER,
+		}
+
+		const updateResult = await this.memberDataModel
+			.updateOne(
+				{
+					member: preData.member.id,
+				},
+				{
+					$push: {
+						notifications: { $each: [notification], $position: 0 },
+					},
+				}
+			)
+			.exec()
+		if (updateResult.modifiedCount) {
+			Logger.verbose(
+				`Member ${preData.member.id}: Add new notification - type ORDER`,
+				'CreateOrderNotificationTrigger'
+			)
 		}
 	}
 }
