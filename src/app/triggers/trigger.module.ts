@@ -19,6 +19,7 @@ import { Rank, RankSchema } from '@schema/rank.schema'
 import { SettingModule } from '../modules/setting/setting.module'
 import { MemberRankStreamService } from './services/member-rank-stream.service'
 import { MemberVoucherStreamService } from './services/member-voucher-stream.service'
+import { NotificationStreamService } from './services/notification-stream.service'
 import { OrderStreamService } from './services/order-stream.service'
 import { PromotionStreamService } from './services/promotion-stream.service'
 import { StreamHelperService } from './services/stream-helper.service'
@@ -66,6 +67,7 @@ import { StreamHelperService } from './services/stream-helper.service'
 		StreamHelperService,
 		MemberRankStreamService,
 		MemberVoucherStreamService,
+		NotificationStreamService,
 		PromotionStreamService,
 		OrderStreamService,
 	],

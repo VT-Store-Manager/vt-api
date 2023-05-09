@@ -12,7 +12,12 @@ export type PromotionDocument = Document & Promotion
 export class Promotion {
 	_id?: Types.ObjectId
 
-	@Prop({ type: Types.ObjectId, ref: 'PromotionCategory', required: true })
+	@Prop({
+		type: Types.ObjectId,
+		ref: 'PromotionCategory',
+		required: true,
+		set: (v: string) => new Types.ObjectId(v),
+	})
 	category: Types.ObjectId | string
 
 	@Prop({ type: String, required: true, minlength: 3 })

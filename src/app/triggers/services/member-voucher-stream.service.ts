@@ -13,6 +13,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 
 import { StreamHelperService } from './stream-helper.service'
+import { SettingMemberAppService } from '@/app/modules/setting/services/setting-member-app.service'
 
 @Injectable()
 export class MemberVoucherStreamService implements OnModuleInit {
@@ -22,7 +23,8 @@ export class MemberVoucherStreamService implements OnModuleInit {
 		@InjectModel(MemberData.name)
 		private readonly memberDataModel: Model<MemberDataDocument>,
 		@InjectModel(Notification.name)
-		private readonly notificationModel: Model<NotificationDocument>
+		private readonly notificationModel: Model<NotificationDocument>,
+		private readonly settingMemberAppService: SettingMemberAppService
 	) {}
 
 	onModuleInit() {
@@ -51,32 +53,35 @@ export class MemberVoucherStreamService implements OnModuleInit {
 	private async createNewVoucherNotificationTrigger(
 		data: Pick<MemberVoucher, 'member' | 'voucher'>
 	) {
-		const voucherNotification = await this.notificationModel
-
-			.aggregate<MemberNotification>([
-				{
-					$match: {
-						targetId: data.voucher,
-						type: NotificationType.VOUCHER,
-						disabled: { $ne: true },
-						immediate: true,
-					},
-				},
-				{
-					$sort: {
-						updatedAt: -1,
-					},
-				},
-				{
-					$limit: 1,
-				},
+		const [voucherNotification, { notification: notificationSetting }] =
+			await Promise.all([
+				this.notificationModel
+					.aggregate<MemberNotification>([
+						{
+							$match: {
+								targetId: data.voucher,
+								type: NotificationType.VOUCHER,
+								disabled: { $ne: true },
+								immediate: true,
+							},
+						},
+						{
+							$sort: {
+								updatedAt: -1,
+							},
+						},
+						{
+							$limit: 1,
+						},
+					])
+					.exec(),
+				this.settingMemberAppService.getData({ notification: true }),
 			])
-			.exec()
 		if (voucherNotification.length === 0) return
 		const notification: MemberNotification = {
 			name: voucherNotification[0].name,
 			description: voucherNotification[0].description,
-			image: voucherNotification[0].image,
+			image: voucherNotification[0].image || notificationSetting.defaultImage,
 			targetId: voucherNotification[0].targetId,
 			type: voucherNotification[0].type,
 		}

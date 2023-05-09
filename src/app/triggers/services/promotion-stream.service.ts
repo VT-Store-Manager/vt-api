@@ -1,6 +1,7 @@
 import { ChangeStreamInsertDocument } from 'mongodb'
-import { Model } from 'mongoose'
+import { Model, Types } from 'mongoose'
 
+import { SettingMemberAppService } from '@/app/modules/setting/services/setting-member-app.service'
 import { NotificationType } from '@/common/constants'
 import { Injectable, OnModuleInit } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
@@ -22,7 +23,8 @@ export class PromotionStreamService implements OnModuleInit {
 		@InjectModel(MemberData.name)
 		private readonly memberDataModel: Model<MemberDataDocument>,
 		@InjectModel(Notification.name)
-		private readonly notificationModel: Model<NotificationDocument>
+		private readonly notificationModel: Model<NotificationDocument>,
+		private readonly settingMemberAppService: SettingMemberAppService
 	) {}
 
 	onModuleInit() {
@@ -61,42 +63,50 @@ export class PromotionStreamService implements OnModuleInit {
 	private async createNewPromotionNotificationTrigger(
 		data: Pick<Promotion, '_id' | 'possibleTarget'>
 	) {
-		const promotionNotification = await this.notificationModel
-			.aggregate<MemberNotification>([
-				{
-					$match: {
-						targetId: data._id,
-						type: NotificationType.PROMOTION,
-						disabled: { $ne: true },
-						immediate: true,
-					},
-				},
-				{
-					$sort: {
-						updatedAt: -1,
-					},
-				},
-				{
-					$limit: 1,
-				},
+		const [promotionNotification, { notification: notificationSetting }] =
+			await Promise.all([
+				this.notificationModel
+					.aggregate<MemberNotification>([
+						{
+							$match: {
+								targetId: data._id,
+								type: NotificationType.PROMOTION,
+								disabled: { $ne: true },
+								immediate: true,
+							},
+						},
+						{
+							$sort: {
+								updatedAt: -1,
+							},
+						},
+						{
+							$limit: 1,
+						},
+					])
+					.exec(),
+				this.settingMemberAppService.getData({ notification: true }),
 			])
-			.exec()
 
 		if (promotionNotification.length === 0) return
 
 		const members = await this.memberRankModel
-			.aggregate<Pick<MemberRank, '_id'>>([
+			.aggregate<{ id: Types.ObjectId }>([
 				{
-					$match: {
-						$or: [
-							{ rank: { $in: data.possibleTarget } },
-							{ member: { $in: data.possibleTarget } },
-						],
-					},
+					$match:
+						Array.isArray(data.possibleTarget) && data.possibleTarget.length > 0
+							? {
+									$or: [
+										{ rank: { $in: data.possibleTarget } },
+										{ member: { $in: data.possibleTarget } },
+									],
+							  }
+							: {},
 				},
 				{
 					$project: {
-						_id: true,
+						id: '$member',
+						_id: false,
 					},
 				},
 			])
@@ -105,7 +115,7 @@ export class PromotionStreamService implements OnModuleInit {
 		const notification: MemberNotification = {
 			name: promotionNotification[0].name,
 			description: promotionNotification[0].description,
-			image: promotionNotification[0].image,
+			image: promotionNotification[0].image || notificationSetting.defaultImage,
 			targetId: promotionNotification[0].targetId,
 			type: promotionNotification[0].type,
 		}
@@ -113,9 +123,7 @@ export class PromotionStreamService implements OnModuleInit {
 		const updateResult = await this.memberDataModel
 			.updateMany(
 				{
-					...(members.length === 0
-						? {}
-						: { member: { $in: members.map(member => member._id) } }),
+					member: { $in: members.map(member => member.id) },
 				},
 				{
 					$push: {

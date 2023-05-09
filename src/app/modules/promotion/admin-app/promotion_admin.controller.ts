@@ -31,7 +31,7 @@ export class PromotionAdminController {
 	@Post('create')
 	@UseInterceptors(FileInterceptor('image', ImageMulterOption(2, 1)))
 	@ApiConsumes('multipart/form-data')
-	@ApiResponse({ type: BooleanResponseDTO })
+	@ApiResponse({ type: BooleanResponseDTO, status: 201 })
 	async createPromotion(
 		@UploadedFile() image: Express.Multer.File,
 		@Body() body: CreatePromotionDTO
