@@ -16,26 +16,27 @@ import {
 } from '@nestjs/mongoose'
 import { ServeStaticModule } from '@nestjs/serve-static'
 
-import { AuthModule } from './auth/auth.module'
-import { CounterModule } from './counter/counter.module'
-import { FileModule } from './file/file.module'
-import { MemberDataModule } from './member-data/member-data.module'
-import { MemberRankModule } from './member-rank/member-rank.module'
-import { MemberVoucherModule } from './member-voucher/member-voucher.module'
-import { MemberModule } from './member/member.module'
-import { OrderModule } from './order/order.module'
-import { PartnerModule } from './partner/partner.module'
-import { ProductCategoryModule } from './product-category/product-category.module'
-import { ProductOptionModule } from './product-option/product-option.module'
-import { ProductModule } from './product/product.module'
-import { PromotionCategoryModule } from './promotion-category/promotion-category.module'
-import { PromotionModule } from './promotion/promotion.module'
-import { RankModule } from './rank/rank.module'
-import { SettingModule } from './setting/setting.module'
-import { StoreModule } from './store/store.module'
-import { VoucherModule } from './voucher/voucher.module'
-import { CartTemplateModule } from './cart-template/cart-template.module'
-import { NotificationModule } from './notification/notification.module'
+import { AuthModule } from './modules/auth/auth.module'
+import { CartTemplateModule } from './modules/cart-template/cart-template.module'
+import { CounterModule } from './modules/counter/counter.module'
+import { FileModule } from './modules/file/file.module'
+import { MemberDataModule } from './modules/member-data/member-data.module'
+import { MemberRankModule } from './modules/member-rank/member-rank.module'
+import { MemberVoucherModule } from './modules/member-voucher/member-voucher.module'
+import { MemberModule } from './modules/member/member.module'
+import { NotificationModule } from './modules/notification/notification.module'
+import { OrderModule } from './modules/order/order.module'
+import { PartnerModule } from './modules/partner/partner.module'
+import { ProductCategoryModule } from './modules/product-category/product-category.module'
+import { ProductOptionModule } from './modules/product-option/product-option.module'
+import { ProductModule } from './modules/product/product.module'
+import { PromotionCategoryModule } from './modules/promotion-category/promotion-category.module'
+import { PromotionModule } from './modules/promotion/promotion.module'
+import { RankModule } from './modules/rank/rank.module'
+import { SettingModule } from './modules/setting/setting.module'
+import { StoreModule } from './modules/store/store.module'
+import { VoucherModule } from './modules/voucher/voucher.module'
+import { TriggerModule } from './triggers/trigger.module'
 
 @Module({
 	imports: [
@@ -81,6 +82,7 @@ import { NotificationModule } from './notification/notification.module'
 		MemberDataModule,
 		CartTemplateModule,
 		NotificationModule,
+		TriggerModule,
 	],
 	controllers: [],
 	providers: [

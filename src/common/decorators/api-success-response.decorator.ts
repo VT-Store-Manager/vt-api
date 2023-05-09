@@ -1,4 +1,4 @@
-import { SuccessResponseDTO } from '@/types/http.swagger'
+import { SuccessResponseDTO } from '@/types/swagger'
 import { applyDecorators, Type } from '@nestjs/common'
 import { ApiExtraModels, ApiResponse, getSchemaPath } from '@nestjs/swagger'
 

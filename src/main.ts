@@ -1,12 +1,13 @@
 import compression from 'compression'
 import morgan from 'morgan'
 
-import { AppModule } from '@/app/app.module'
-import awsS3Config from '@/config/aws-s3'
+import awsS3Config from '@/config/s3'
 import SwaggerConfig from '@/config/swagger'
 import { Logger, ValidationPipe, VersioningType } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { NestFactory } from '@nestjs/core'
+
+import { AppModule } from './app/app.module'
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule, {
