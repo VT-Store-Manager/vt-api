@@ -18,13 +18,17 @@ export class HttpExceptionFilter implements ExceptionFilter {
 			response.status(statusCode).json({
 				statusCode: statusCode,
 				error: exception['response'].error,
-				message: exception['response'].message,
+				message: Array.isArray(exception['response'].message)
+					? exception['response'].message.join('\n')
+					: exception['response'].message,
 			})
 		} else {
 			response.status(exception.getStatus()).json({
 				statusCode: response.statusCode,
 				error: exception.name,
-				message: exception.message,
+				message: Array.isArray(exception.message)
+					? exception.message.join('\n')
+					: exception.message,
 			})
 		}
 	}
