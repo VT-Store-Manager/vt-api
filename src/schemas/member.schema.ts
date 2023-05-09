@@ -55,7 +55,7 @@ export class Member {
 	@Prop({ type: Date, required: true })
 	dob: Date
 
-	@Prop({ type: Date, default: Date.now(), expires: '5m' })
+	@Prop({ type: Date, default: Date.now(), expires: '10m' })
 	notVerified: Date
 
 	@Prop({ type: Date, default: Date.now() })
