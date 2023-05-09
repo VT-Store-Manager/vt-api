@@ -30,7 +30,7 @@ export class ClassValidatorExceptionFilter implements ExceptionFilter {
 					)
 					return [...res, ...constraints]
 				}, [])
-				.join(' | '),
+				.join('\n'),
 		})
 	}
 }
