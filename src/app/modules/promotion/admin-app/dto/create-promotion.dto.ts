@@ -45,7 +45,7 @@ export class CreatePromotionDTO extends IntersectionType(
 
 	@IsOptional()
 	@IsMongoId()
-	partner: string
+	partner?: string
 
 	@IsOptional()
 	@ApiPropertyFile()
@@ -65,7 +65,7 @@ export class CreatePromotionDTO extends IntersectionType(
 	@Type(() => Number)
 	@IsNumber()
 	@Validate(FinishTimeRule)
-	finishTime: number
+	finishTime?: number
 
 	@IsArray()
 	@IsMongoId({ each: true })

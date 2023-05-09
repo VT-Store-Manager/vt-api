@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-export class CommonErrorResponseDTO {
+export class ErrorResponseDTO {
 	@ApiProperty({ default: 400 })
 	statusCode: number
 
@@ -9,17 +9,6 @@ export class CommonErrorResponseDTO {
 
 	@ApiProperty()
 	message: string
-}
-
-export class ValidationErrorResponseDTO {
-	@ApiProperty({ default: 400 })
-	statusCode: number
-
-	@ApiProperty()
-	error: string
-
-	@ApiProperty()
-	message: string[]
 }
 
 export class SuccessResponseDTO<T extends Record<string, any>> {
