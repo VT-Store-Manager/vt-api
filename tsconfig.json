@@ -21,7 +21,10 @@
 		"baseUrl": "./src",
 		"preserveSymlinks": true,
 		"paths": {
-			"@/*": ["./*"]
+			"@/*": ["./*"],
+			"@schema/*": ["./database/schemas/*"],
+			"@module/*": ["./app/modules/*"],
+			"@trigger/*": ["./app/triggers/*"]
 		}
 	}
 }
