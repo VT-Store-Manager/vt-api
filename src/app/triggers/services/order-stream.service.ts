@@ -96,6 +96,7 @@ export class OrderStreamService implements OnModuleInit {
 				case 'insert':
 					const insertData =
 						data as ChangeStreamInsertDocument<OrderMemberDocument>
+					if (!data.fullDocument) return
 					this.disableVoucherAfterUsedTrigger(insertData.fullDocument)
 
 					break
@@ -103,6 +104,7 @@ export class OrderStreamService implements OnModuleInit {
 				case 'update':
 					const updateData =
 						data as ChangeStreamUpdateDocument<OrderMemberDocument>
+					if (!data.fullDocumentBeforeChange) return
 					this.addMemberPointTrigger(
 						updateData.fullDocumentBeforeChange,
 						updateData.updateDescription.updatedFields
