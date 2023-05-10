@@ -54,6 +54,7 @@ export class NotificationStreamService implements OnModuleInit {
 		changeStream.on(
 			'change',
 			(data: ChangeStreamInsertDocument<Notification>) => {
+				if (!data.fullDocument) return
 				this.createMemberNotificationByType(data.fullDocument)
 			}
 		)

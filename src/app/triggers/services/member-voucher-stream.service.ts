@@ -45,6 +45,7 @@ export class MemberVoucherStreamService implements OnModuleInit {
 		changeStream.on(
 			'change',
 			(data: ChangeStreamInsertDocument<MemberVoucher>) => {
+				if (!data.fullDocument) return
 				this.createNewVoucherNotificationTrigger(data.fullDocument)
 			}
 		)

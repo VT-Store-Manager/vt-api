@@ -59,6 +59,7 @@ export class MemberRankStreamService implements OnModuleInit {
 			(
 				data: ChangeStreamUpdateDocument<MemberRank & { totalPoint: number }>
 			) => {
+				if (!data.fullDocument) return
 				this.updateMemberRankTrigger(data.fullDocument)
 			}
 		)

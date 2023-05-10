@@ -23,6 +23,7 @@ import { NotificationStreamService } from './services/notification-stream.servic
 import { OrderStreamService } from './services/order-stream.service'
 import { PromotionStreamService } from './services/promotion-stream.service'
 import { StreamHelperService } from './services/stream-helper.service'
+import { MemberDataStreamService } from './services/member-data-stream.service'
 
 @Module({
 	imports: [
@@ -65,6 +66,7 @@ import { StreamHelperService } from './services/stream-helper.service'
 	providers: [
 		MongoSessionService,
 		StreamHelperService,
+		MemberDataStreamService,
 		MemberRankStreamService,
 		MemberVoucherStreamService,
 		NotificationStreamService,
