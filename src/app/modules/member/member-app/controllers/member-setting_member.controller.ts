@@ -1,5 +1,3 @@
-import { CurrentUser } from '@module/auth/decorators/current-user.decorator'
-import { JwtAccess } from '@module/auth/decorators/jwt.decorator'
 import { Role } from '@/common/constants'
 import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
 import { ObjectIdPipe } from '@/common/pipes/object-id.pipe'
@@ -8,6 +6,8 @@ import {
 	RemoveNullishObjectPipe,
 } from '@/common/pipes/object.pipe'
 import { BooleanResponseDTO } from '@/types/swagger'
+import { CurrentUser } from '@module/auth/decorators/current-user.decorator'
+import { JwtAccess } from '@module/auth/decorators/jwt.decorator'
 import {
 	Body,
 	Controller,
@@ -20,15 +20,15 @@ import {
 } from '@nestjs/common'
 import { ApiResponse, ApiTags } from '@nestjs/swagger'
 
-import { CreateMemberAddressDTO } from './dto/create-member-address.dto'
+import { CreateMemberAddressDTO } from '../dto/create-member-address.dto'
 import {
 	CreateAddressResultDTO,
 	GetMemberAddressDTO,
 	MemberProfileDTO,
-} from './dto/response.dto'
-import { UpdateMemberAddressDTO } from './dto/update-member-address.dto'
-import { UpdateProfileDTO } from './dto/update-profile.dto'
-import { MemberSettingService } from './member-setting_member.service'
+} from '../dto/response.dto'
+import { UpdateMemberAddressDTO } from '../dto/update-member-address.dto'
+import { UpdateProfileDTO } from '../dto/update-profile.dto'
+import { MemberService } from '../member_member.service'
 
 @Controller({
 	path: 'member/setting',
@@ -36,13 +36,13 @@ import { MemberSettingService } from './member-setting_member.service'
 })
 @ApiTags('member-app > setting')
 export class MemberSettingController {
-	constructor(private readonly memberSettingService: MemberSettingService) {}
+	constructor(private readonly memberService: MemberService) {}
 
 	@Get('profile')
 	@JwtAccess(Role.MEMBER)
 	@ApiSuccessResponse(MemberProfileDTO)
 	async getMemberProfile(@CurrentUser('sub') memberId: string) {
-		return await this.memberSettingService.getProfile(memberId)
+		return await this.memberService.getProfile(memberId)
 	}
 
 	@Put('profile')
@@ -52,7 +52,7 @@ export class MemberSettingController {
 		@CurrentUser('sub') memberId: string,
 		@Body(RemoveNullishObjectPipe, NotEmptyObjectPipe) body: UpdateProfileDTO
 	) {
-		return await this.memberSettingService.updateProfile(memberId, body)
+		return await this.memberService.updateProfile(memberId, body)
 	}
 
 	@Post('address')
@@ -62,10 +62,7 @@ export class MemberSettingController {
 		@CurrentUser('sub') memberId: string,
 		@Body() body: CreateMemberAddressDTO
 	): Promise<CreateAddressResultDTO> {
-		const address = await this.memberSettingService.addNewAddress(
-			memberId,
-			body
-		)
+		const address = await this.memberService.addNewAddress(memberId, body)
 		return {
 			id: address._id.toString(),
 		}
@@ -75,7 +72,7 @@ export class MemberSettingController {
 	@JwtAccess(Role.MEMBER)
 	@ApiSuccessResponse(GetMemberAddressDTO)
 	async getAddress(@CurrentUser('sub') memberId: string) {
-		return this.memberSettingService.getAddress(memberId)
+		return this.memberService.getAddress(memberId)
 	}
 
 	@Put('address/:addressId')
@@ -86,11 +83,7 @@ export class MemberSettingController {
 		@Param('addressId', ObjectIdPipe) addressId: string,
 		@Body() body: UpdateMemberAddressDTO
 	) {
-		return await this.memberSettingService.updateAddress(
-			memberId,
-			addressId,
-			body
-		)
+		return await this.memberService.updateAddress(memberId, addressId, body)
 	}
 
 	@Delete('address/:addressId')
@@ -100,13 +93,13 @@ export class MemberSettingController {
 		@CurrentUser('sub') memberId: string,
 		@Param('addressId', ObjectIdPipe) addressId: string
 	) {
-		return await this.memberSettingService.deleteAddress(memberId, addressId)
+		return await this.memberService.deleteAddress(memberId, addressId)
 	}
 
 	@Patch('notification')
 	@JwtAccess(Role.MEMBER)
 	@ApiResponse({ type: BooleanResponseDTO, status: 200 })
 	async togglePushNotification(@CurrentUser('sub') memberId: string) {
-		return await this.memberSettingService.togglePushNotification(memberId)
+		return await this.memberService.togglePushNotification(memberId)
 	}
 }
