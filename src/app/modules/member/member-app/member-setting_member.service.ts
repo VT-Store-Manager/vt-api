@@ -361,4 +361,24 @@ export class MemberSettingService {
 			.exec()
 		return updateResult.modifiedCount === 1
 	}
+
+	async togglePushNotification(memberId: string) {
+		const updateResult = await this.memberDataModel
+			.updateOne(
+				{
+					member: new Types.ObjectId(memberId),
+				},
+				[
+					{
+						$set: {
+							'setting.pushNotification': { $not: '$setting.pushNotification' },
+						},
+					},
+				]
+			)
+			.orFail(new BadRequestException('Member data not found'))
+			.exec()
+
+		return updateResult.modifiedCount === 1
+	}
 }

@@ -19,6 +19,13 @@ export class MemberAddressList {
 export const MemberAddressListSchema =
 	SchemaFactory.createForClass(MemberAddressList)
 
+@Schema({ versionKey: false, _id: false })
+export class MemberSetting {
+	@Prop({ type: Boolean, default: true })
+	pushNotification?: boolean
+}
+export const MemberSettingSchema = SchemaFactory.createForClass(MemberSetting)
+
 export type MemberDataDocument = MemberData & Document
 @Schema({ versionKey: false, timestamps: true, collection: 'member_data' })
 export class MemberData {
@@ -38,6 +45,9 @@ export class MemberData {
 
 	@Prop({ type: [MemberNotificationSchema], default: () => [] })
 	notifications?: MemberNotification[]
+
+	@Prop({ type: MemberSettingSchema, default: () => ({}) })
+	setting?: MemberSetting
 
 	createdAt?: Date
 	updatedAt?: Date
