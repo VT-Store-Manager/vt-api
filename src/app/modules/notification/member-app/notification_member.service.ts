@@ -2,7 +2,6 @@ import { Model, Types } from 'mongoose'
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 
-import { NotificationDocument, Notification } from '@schema/notification.schema'
 import { MemberData, MemberDataDocument } from '@schema/member-data.schema'
 import { MemberNotificationItemDTO } from './dto/response.dto'
 import { SettingMemberAppService } from '../../setting/services/setting-member-app.service'
@@ -10,8 +9,6 @@ import { SettingMemberAppService } from '../../setting/services/setting-member-a
 @Injectable()
 export class NotificationMemberService {
 	constructor(
-		@InjectModel(Notification.name)
-		private readonly notificationModel: Model<NotificationDocument>,
 		@InjectModel(MemberData.name)
 		private readonly memberDataModel: Model<MemberDataDocument>,
 		private readonly settingMemberAppService: SettingMemberAppService
@@ -61,5 +58,60 @@ export class NotificationMemberService {
 				...item,
 				...(!item.image ? { image: notificationSetting.defaultImage } : {}),
 			}))
+	}
+
+	async check(memberId: string, notificationId: string) {
+		const notifications = await this.memberDataModel
+			.aggregate<{ index: number }>([
+				{
+					$match: {
+						member: new Types.ObjectId(memberId),
+					},
+				},
+				{
+					$project: {
+						notifications: {
+							$map: {
+								input: '$notifications',
+								as: 'el',
+								in: '$$el._id',
+							},
+						},
+						_id: false,
+					},
+				},
+				{
+					$project: {
+						index: {
+							$indexOfArray: [
+								'$notifications',
+								new Types.ObjectId(notificationId),
+							],
+						},
+					},
+				},
+			])
+			.exec()
+
+		if (notifications.length === 0) {
+			throw new BadRequestException('Member data not found')
+		}
+		const { index } = notifications[0]
+		if (index === -1) {
+			throw new BadRequestException('Member notification not found')
+		}
+
+		const updateResult = await this.memberDataModel.updateOne(
+			{
+				member: new Types.ObjectId(memberId),
+			},
+			{
+				$set: {
+					[`notifications.${index}.checked`]: true,
+				},
+			}
+		)
+
+		return updateResult.modifiedCount === 1
 	}
 }
