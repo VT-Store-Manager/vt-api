@@ -36,3 +36,11 @@ export class MemberDefaultAddressItemDTO extends IntersectionType(
 	PickType(MemberAddressItemDTO, ['id', 'name', 'icon'] as const),
 	PartialType(OmitType(MemberAddressItemDTO, ['id', 'name', 'icon'] as const))
 ) {}
+
+export class AppBarDTO {
+	image: string
+	greeting: string
+	templateCartAmount: number
+	voucherAmount: number
+	notifyAmount: number
+}

@@ -1,33 +1,48 @@
 import { difference } from 'lodash'
 import { Model, Types, UpdateQuery } from 'mongoose'
 
-import { SettingMemberAppService } from '@module/setting/services/setting-member-app.service'
+import { getImagePath } from '@/common/helpers/file.helper'
 import { MongoSessionService } from '@/common/providers/mongo-session.service'
-import { MemberAddress } from '@schema/member-address.schema'
-import { MemberData, MemberDataDocument } from '@schema/member-data.schema'
-import { Member, MemberDocument } from '@schema/member.schema'
+import { SettingMemberAppService } from '@module/setting/services/setting-member-app.service'
 import {
 	BadRequestException,
 	Injectable,
 	InternalServerErrorException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
+import {
+	CartTemplate,
+	CartTemplateDocument,
+} from '@schema/cart-template.schema'
+import { MemberAddress } from '@schema/member-address.schema'
+import { MemberData, MemberDataDocument } from '@schema/member-data.schema'
+import {
+	MemberVoucher,
+	MemberVoucherDocument,
+} from '@schema/member-voucher.schema'
+import { Member, MemberDocument } from '@schema/member.schema'
 
 import { CreateMemberAddressDTO } from './dto/create-member-address.dto'
 import {
+	AppBarDTO,
 	GetMemberAddressDTO,
 	MemberAddressItemDTO,
 	MemberDefaultAddressItemDTO,
 } from './dto/response.dto'
 import { UpdateMemberAddressDTO } from './dto/update-member-address.dto'
 import { UpdateProfileDTO } from './dto/update-profile.dto'
+
 @Injectable()
-export class MemberSettingService {
+export class MemberService {
 	constructor(
 		@InjectModel(Member.name)
 		private readonly memberModel: Model<MemberDocument>,
 		@InjectModel(MemberData.name)
 		private readonly memberDataModel: Model<MemberDataDocument>,
+		@InjectModel(MemberVoucher.name)
+		private readonly memberVoucherModel: Model<MemberVoucherDocument>,
+		@InjectModel(CartTemplate.name)
+		private readonly cartTemplateModel: Model<CartTemplateDocument>,
 		private readonly settingMemberAppService: SettingMemberAppService,
 		private readonly mongoSessionService: MongoSessionService
 	) {}
@@ -380,5 +395,179 @@ export class MemberSettingService {
 			.exec()
 
 		return updateResult.modifiedCount === 1
+	}
+
+	async getAppBarData(memberId: string): Promise<AppBarDTO> {
+		const now = new Date()
+		type CountType = { count: number }
+
+		const [
+			notificationCount,
+			voucherCount,
+			templateCount,
+			members,
+			{ greeting },
+		] = await Promise.all([
+			this.memberDataModel
+				.aggregate<CountType>([
+					{
+						$match: {
+							member: new Types.ObjectId(memberId),
+						},
+					},
+					{
+						$project: {
+							count: {
+								$size: {
+									$filter: {
+										input: '$notifications',
+										as: 'item',
+										cond: {
+											$eq: ['$$item.checked', false],
+										},
+									},
+								},
+							},
+							_id: false,
+						},
+					},
+				])
+				.exec(),
+			this.memberVoucherModel
+				.aggregate<CountType>([
+					{
+						$lookup: {
+							from: 'vouchers',
+							localField: 'voucher',
+							foreignField: '_id',
+							as: 'voucher',
+						},
+					},
+					{
+						$unwind: {
+							path: '$voucher',
+						},
+					},
+					{
+						$match: {
+							'voucher.disabled': false,
+							'voucher.deleted': false,
+							member: new Types.ObjectId(memberId),
+							startTime: {
+								$lte: now,
+							},
+							finishTime: {
+								$gt: now,
+							},
+							disabled: false,
+							$and: [
+								{
+									$or: [
+										{
+											'voucher.activeStartTime': null,
+										},
+										{
+											'voucher.activeStartTime': {
+												$lte: now,
+											},
+										},
+									],
+								},
+								{
+									$or: [
+										{
+											'voucher.activeStartTime': null,
+										},
+										{
+											'voucher.activeStartTime': {
+												$lte: now,
+											},
+										},
+									],
+								},
+							],
+						},
+					},
+					{
+						$group: {
+							_id: '$member',
+							vouchers: {
+								$push: '$voucher._id',
+							},
+						},
+					},
+					{
+						$project: {
+							count: {
+								$size: '$vouchers',
+							},
+							_id: false,
+						},
+					},
+				])
+				.exec(),
+			this.cartTemplateModel
+				.aggregate<CountType>([
+					{
+						$match: {
+							member: new Types.ObjectId(memberId),
+						},
+					},
+					{
+						$group: {
+							_id: '$member',
+							templates: {
+								$push: '$_id',
+							},
+						},
+					},
+					{
+						$project: {
+							count: {
+								$size: '$templates',
+							},
+							_id: false,
+						},
+					},
+				])
+				.exec(),
+			this.memberModel.aggregate([
+				{
+					$match: {
+						_id: new Types.ObjectId(memberId),
+					},
+				},
+				{
+					$project: {
+						firstName: true,
+						lastName: true,
+						fullName: {
+							$concat: ['$firstName', ' ', '$lastName'],
+						},
+						_id: false,
+					},
+				},
+			]),
+			this.settingMemberAppService.getData({ greeting: true }),
+		])
+		if (notificationCount.length === 0) {
+			throw new BadRequestException('Member data not found')
+		}
+		if (members.length === 0) {
+			throw new BadRequestException('Member not found')
+		}
+
+		return {
+			image: getImagePath(greeting.image),
+			greeting: Object.keys(members[0]).reduce((res, key) => {
+				return res.replaceAll(
+					new RegExp(`{{\s{0,}${key}\s{0,}}}`, 'g'),
+					members[0][key]
+				)
+			}, greeting.content),
+			templateCartAmount: templateCount?.[0].count ?? 0,
+			voucherAmount: voucherCount?.[0].count ?? 0,
+			notifyAmount: notificationCount[0].count,
+		}
 	}
 }
