@@ -8,6 +8,9 @@ export const DEFAULT_MAX_CART_TEMPLATE = 10
 export const cronTimePattern =
 	/^((((\d+,)+\d+|(\d+(\/|-|#)\d+)|\d+L?|\*(\/\d+)?|L(-\d+)?|\?|[A-Z]{3}(-[A-Z]{3})?) ?){5,7})$/
 
+export const s3KeyPattern =
+	/^([a-zA-Z0-9_-]+\/){0,}[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}(.[a-z]+)?$/
+
 // Enums
 export enum NodeEnv {
 	PRODUCTION = 'production',

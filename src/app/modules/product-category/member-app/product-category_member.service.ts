@@ -1,14 +1,15 @@
 import { Model, Types } from 'mongoose'
 
-import { getImagePath } from '@/common/helpers/file.helper'
+import { s3KeyPattern } from '@/common/constants'
+import { imageUrl } from '@/common/helpers/file.helper'
+import { BadRequestException, Injectable } from '@nestjs/common'
+import { InjectModel } from '@nestjs/mongoose'
 import {
 	ProductCategory,
 	ProductCategoryDocument,
 } from '@schema/product-category.schema'
 import { Product, ProductDocument } from '@schema/product.schema'
 import { Store, StoreDocument } from '@schema/store.schema'
-import { BadRequestException, Injectable } from '@nestjs/common'
-import { InjectModel } from '@nestjs/mongoose'
 
 import { ProductCategoryDTO } from './dto/response.dto'
 
@@ -64,14 +65,22 @@ export class ProductCategoryMemberService {
 			.project({
 				id: '$_id',
 				name: '$category.name',
-				image: '$category.image',
+				image: {
+					$cond: [
+						{
+							$regexMatch: {
+								input: '$category.image',
+								regex: s3KeyPattern,
+							},
+						},
+						{ $concat: [imageUrl, '$category.image'] },
+						null,
+					],
+				},
 				productIds: 1,
 				_id: 0,
 			})
 			.exec()
-		return products.map(product => {
-			product.image = getImagePath(product.image)
-			return product
-		})
+		return products
 	}
 }

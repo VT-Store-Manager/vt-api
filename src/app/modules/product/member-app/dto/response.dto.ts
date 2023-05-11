@@ -1,14 +1,14 @@
 export class ShortProductItemDTO {
 	id: string
 	name: string
-	mainImage: string
+	image: string
 	price: number
 }
 
 export class DetailProductDTO {
 	id: string
 	name: string
-	mainImage: string
+	image: string
 	images: string[]
 	description: string
 	isFavorite: boolean

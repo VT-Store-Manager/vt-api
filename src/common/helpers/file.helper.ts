@@ -1,6 +1,14 @@
 import { hostname } from 'os'
 
+import { envConfiguration } from '@/config/configuration'
+
 import { NodeEnv } from '../constants'
+
+const env = envConfiguration()
+export const imageUrl =
+	env.nodeEnv !== NodeEnv.PRODUCTION
+		? `${hostname()}:${env.port}/api/v1/file/render?key=`
+		: `${hostname()}/api/v1/file/render?key=`
 
 /**
  * It returns the file extension of a given filename
@@ -10,11 +18,4 @@ import { NodeEnv } from '../constants'
 export const getFileExtension = (filename: string) => {
 	const dot = filename.lastIndexOf('.')
 	return dot === -1 ? '' : filename.slice(dot)
-}
-
-export const getImagePath = (key: string) => {
-	if (process.env.NODE_ENV !== NodeEnv.PRODUCTION) {
-		return `${hostname()}:${process.env.PORT}/api/v1/file/render?key=${key}`
-	}
-	return `${hostname()}/api/v1/file/render?key=${key}`
 }

@@ -12,6 +12,7 @@ import {
 	RANK_MESSAGE_SPLIT,
 } from '@/common/constants'
 import { colorHexToInt } from '@/common/helpers/color.helper'
+import { imageUrl } from '@/common/helpers/file.helper'
 
 @Injectable()
 export class MemberRankMemberService {
@@ -91,7 +92,7 @@ export class MemberRankMemberService {
 			currentRankName: memberRank.rank.name,
 			nextRankPoint: nextRank ? nextRank.minPoint : null,
 			nextRankName: nextRank ? nextRank.name : null,
-			backgroundImage: memberRank.rank.appearance.background,
+			backgroundImage: imageUrl + memberRank.rank.appearance.background,
 			description: rankMessage,
 			color: colorHexToInt(memberRank.rank.appearance.color),
 			fee: memberRank.rank.deliveryFee ?? 0,

@@ -1,6 +1,5 @@
 import { Model } from 'mongoose'
 
-import { getImagePath } from '@/common/helpers/file.helper'
 import {
 	PromotionCategory,
 	PromotionCategoryDocument,
@@ -69,9 +68,6 @@ export class PromotionCategoryMemberService {
 			])
 			.exec()
 
-		return categories.map(category => ({
-			...category,
-			image: getImagePath(category.image),
-		}))
+		return categories
 	}
 }

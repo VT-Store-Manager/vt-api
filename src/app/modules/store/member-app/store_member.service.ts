@@ -1,6 +1,7 @@
 import { Model, Types } from 'mongoose'
 
-import { getImagePath } from '@/common/helpers/file.helper'
+import { s3KeyPattern } from '@/common/constants'
+import { imageUrl } from '@/common/helpers/file.helper'
 import { SettingGeneralService } from '@module/setting/services/setting-general.service'
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
@@ -27,7 +28,32 @@ export class StoreMemberService {
 				})
 				.select({
 					name: true,
-					images: true,
+					images: {
+						$filter: {
+							input: {
+								$map: {
+									input: '$images',
+									as: 'image',
+									in: {
+										$cond: [
+											{
+												$regexMatch: {
+													input: '$$image',
+													regex: s3KeyPattern,
+												},
+											},
+											{ $concat: [imageUrl, '$$image'] },
+											null,
+										],
+									},
+								},
+							},
+							as: 'image',
+							cond: {
+								$ne: ['$$image', null],
+							},
+						},
+					},
 					address: true,
 				})
 				.lean({ virtuals: true })
@@ -44,7 +70,7 @@ export class StoreMemberService {
 			return stores.map(store => ({
 				id: store._id.toString(),
 				name: store.name,
-				image: getImagePath(store.images[0]),
+				image: store.images?.[0] || null,
 				address: store.fullAddress,
 				distance: +(Math.random() * 20).toFixed(1),
 				isFavorite:
@@ -56,7 +82,7 @@ export class StoreMemberService {
 			return stores.map(store => ({
 				id: store._id.toString(),
 				name: store.name,
-				image: getImagePath(store.images[0]),
+				image: store.images?.[0] || null,
 				address: store.fullAddress,
 				distance: +(Math.random() * 20).toFixed(1),
 				isFavorite: false,
@@ -72,8 +98,32 @@ export class StoreMemberService {
 				.select({
 					id: '$_id',
 					name: true,
-					images: true,
-					mainImage: { $first: '$images' },
+					images: {
+						$filter: {
+							input: {
+								$map: {
+									input: '$images',
+									as: 'image',
+									in: {
+										$cond: [
+											{
+												$regexMatch: {
+													input: '$$image',
+													regex: s3KeyPattern,
+												},
+											},
+											{ $concat: [imageUrl, '$$image'] },
+											null,
+										],
+									},
+								},
+							},
+							as: 'image',
+							cond: {
+								$ne: ['$$image', null],
+							},
+						},
+					},
 					address: true,
 					openTime: true,
 					unavailableGoods: true,
@@ -87,7 +137,8 @@ export class StoreMemberService {
 			id: storeData.id.toString(),
 			openTime: `${storeData.openTime.start} - ${storeData.openTime.end}`,
 			phone: settingData.storeContact,
-			images: storeData.images.map(image => getImagePath(image)),
+			images: storeData.images,
+			mapImage: null,
 			unavailableProducts: storeData.unavailableGoods.product as string[],
 			unavailableCategories: storeData.unavailableGoods.category as string[],
 			unavailableOptions: storeData.unavailableGoods.option as string[],

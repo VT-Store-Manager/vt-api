@@ -1,7 +1,6 @@
 import { ChangeStreamInsertDocument } from 'mongodb'
 import { Model, Types } from 'mongoose'
 
-import { SettingMemberAppService } from '@/app/modules/setting/services/setting-member-app.service'
 import { NotificationType } from '@/common/constants'
 import { Injectable, OnModuleInit } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
@@ -23,8 +22,7 @@ export class PromotionStreamService implements OnModuleInit {
 		@InjectModel(MemberData.name)
 		private readonly memberDataModel: Model<MemberDataDocument>,
 		@InjectModel(Notification.name)
-		private readonly notificationModel: Model<NotificationDocument>,
-		private readonly settingMemberAppService: SettingMemberAppService
+		private readonly notificationModel: Model<NotificationDocument>
 	) {}
 
 	onModuleInit() {
@@ -64,30 +62,28 @@ export class PromotionStreamService implements OnModuleInit {
 	private async createNewPromotionNotificationTrigger(
 		data: Pick<Promotion, '_id' | 'possibleTarget'>
 	) {
-		const [promotionNotification, { notification: notificationSetting }] =
-			await Promise.all([
-				this.notificationModel
-					.aggregate<MemberNotification>([
-						{
-							$match: {
-								targetId: data._id,
-								type: NotificationType.PROMOTION,
-								disabled: { $ne: true },
-								immediate: true,
-							},
+		const [promotionNotification] = await Promise.all([
+			this.notificationModel
+				.aggregate<MemberNotification>([
+					{
+						$match: {
+							targetId: data._id,
+							type: NotificationType.PROMOTION,
+							disabled: { $ne: true },
+							immediate: true,
 						},
-						{
-							$sort: {
-								updatedAt: -1,
-							},
+					},
+					{
+						$sort: {
+							updatedAt: -1,
 						},
-						{
-							$limit: 1,
-						},
-					])
-					.exec(),
-				this.settingMemberAppService.getData({ notification: true }),
-			])
+					},
+					{
+						$limit: 1,
+					},
+				])
+				.exec(),
+		])
 
 		if (promotionNotification.length === 0) return
 
@@ -116,7 +112,7 @@ export class PromotionStreamService implements OnModuleInit {
 		const notification: MemberNotification = {
 			name: promotionNotification[0].name,
 			description: promotionNotification[0].description,
-			image: promotionNotification[0].image || notificationSetting.defaultImage,
+			image: promotionNotification[0].image,
 			targetId: promotionNotification[0].targetId,
 			type: promotionNotification[0].type,
 		}

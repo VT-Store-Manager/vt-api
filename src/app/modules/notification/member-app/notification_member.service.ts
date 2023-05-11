@@ -5,6 +5,8 @@ import { InjectModel } from '@nestjs/mongoose'
 import { MemberData, MemberDataDocument } from '@schema/member-data.schema'
 import { MemberNotificationItemDTO } from './dto/response.dto'
 import { SettingMemberAppService } from '../../setting/services/setting-member-app.service'
+import { s3KeyPattern } from '@/common/constants'
+import { imageUrl } from '@/common/helpers/file.helper'
 
 @Injectable()
 export class NotificationMemberService {
@@ -35,7 +37,18 @@ export class NotificationMemberService {
 											name: '$$e.name',
 											description: '$$e.name',
 											time: { $toLong: '$$e.createdAt' },
-											image: '$$e.image',
+											image: {
+												$cond: [
+													{
+														$regexMatch: {
+															input: '$$e.image',
+															regex: s3KeyPattern,
+														},
+													},
+													{ $concat: [imageUrl, '$$e.image'] },
+													null,
+												],
+											},
 											targetId: '$$e.targetId',
 											checked: '$$e.checked',
 											type: '$$e.type',
@@ -56,7 +69,9 @@ export class NotificationMemberService {
 			.slice(0, notificationSetting.limit)
 			.map(item => ({
 				...item,
-				...(!item.image ? { image: notificationSetting.defaultImage } : {}),
+				...(!item.image && s3KeyPattern.test(notificationSetting.defaultImage)
+					? { image: imageUrl + notificationSetting.defaultImage }
+					: {}),
 			}))
 	}
 
