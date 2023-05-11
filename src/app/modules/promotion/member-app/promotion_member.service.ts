@@ -1,6 +1,5 @@
 import { ClientSession, Model, Types } from 'mongoose'
 
-import { getImagePath } from '@/common/helpers/file.helper'
 import {
 	MemberPromotionHistory,
 	MemberPromotionHistoryDocument,
@@ -23,6 +22,8 @@ import {
 import { InjectModel } from '@nestjs/mongoose'
 
 import { PromotionItemDTO } from './dto/response.dto'
+import { s3KeyPattern } from '@/common/constants'
+import { imageUrl } from '@/common/helpers/file.helper'
 
 @Injectable()
 export class PromotionMemberService {
@@ -164,9 +165,34 @@ export class PromotionMemberService {
 						id: '$_id',
 						_id: false,
 						name: '$title',
-						partnerImage: '$partner.image',
+						partnerImage: {
+							$cond: [
+								{
+									$regexMatch: {
+										input: '$partner.image',
+										regex: s3KeyPattern,
+									},
+								},
+								{ $concat: [imageUrl, '$partner.image'] },
+								null,
+							],
+						},
 						backgroundImage: {
-							$ifNull: ['$image', '$voucher.image'],
+							$cond: [
+								{
+									$regexMatch: {
+										input: { $ifNull: ['$image', '$voucher.image'] },
+										regex: s3KeyPattern,
+									},
+								},
+								{
+									$concat: [
+										imageUrl,
+										{ $ifNull: ['$image', '$voucher.image'] },
+									],
+								},
+								null,
+							],
 						},
 						point: '$cost',
 						expire: '$voucher.expireHour',
@@ -182,15 +208,7 @@ export class PromotionMemberService {
 				},
 			])
 			.exec()
-		return promotions.map(promotion => ({
-			...promotion,
-			...(promotion.partnerImage
-				? { partnerImage: getImagePath(promotion.partnerImage) }
-				: {}),
-			...(promotion.backgroundImage
-				? { backgroundImage: getImagePath(promotion.backgroundImage) }
-				: {}),
-		}))
+		return promotions
 	}
 
 	async exchangeVoucher(

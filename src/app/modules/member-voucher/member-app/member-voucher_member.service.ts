@@ -1,6 +1,5 @@
 import { Model, Types } from 'mongoose'
 
-import { getImagePath } from '@/common/helpers/file.helper'
 import {
 	MemberVoucherHistory,
 	MemberVoucherHistoryDocument,
@@ -18,6 +17,8 @@ import {
 } from './dto/response.dto'
 import { SettingGeneralService } from '@module/setting/services/setting-general.service'
 import { SettingGeneral } from '@schema/setting-general.schema'
+import { s3KeyPattern } from '@/common/constants'
+import { imageUrl } from '@/common/helpers/file.helper'
 
 @Injectable()
 export class MemberVoucherMemberService {
@@ -77,9 +78,31 @@ export class MemberVoucherMemberService {
 						_id: false,
 						code: '$voucher.code',
 						name: '$voucher.title',
-						image: '$voucher.image',
+						image: {
+							$cond: [
+								{
+									$regexMatch: {
+										input: '$voucher.image',
+										regex: s3KeyPattern,
+									},
+								},
+								{ $concat: [imageUrl, '$voucher.image'] },
+								null,
+							],
+						},
 						partner: '$voucher.partner',
-						sliderImage: '$voucher.slider',
+						sliderImage: {
+							$cond: [
+								{
+									$regexMatch: {
+										input: '$voucher.slider',
+										regex: s3KeyPattern,
+									},
+								},
+								{ $concat: [imageUrl, '$voucher.slider'] },
+								null,
+							],
+						},
 						from: '$startTime',
 						to: '$finishTime',
 						description: '$voucher.description',
@@ -94,13 +117,7 @@ export class MemberVoucherMemberService {
 			])
 			.exec()
 
-		return availableVouchers.map(voucher => ({
-			...voucher,
-			...(voucher.image ? { image: getImagePath(voucher.image) } : {}),
-			...(voucher.sliderImage
-				? { sliderImage: getImagePath(voucher.sliderImage) }
-				: {}),
-		}))
+		return availableVouchers
 	}
 
 	async getMemberUsedVoucher(
@@ -123,7 +140,18 @@ export class MemberVoucherMemberService {
 							_id: false,
 							code: '$voucherData.code',
 							name: '$voucherData.title',
-							image: '$voucherData.image',
+							image: {
+								$cond: [
+									{
+										$regexMatch: {
+											input: '$voucherData.image',
+											regex: s3KeyPattern,
+										},
+									},
+									{ $concat: [imageUrl, '$voucherData.image'] },
+									null,
+								],
+							},
 							partner: '$partner.name',
 							usedAt: '$usedAt',
 							from: '$voucherData.startTime',

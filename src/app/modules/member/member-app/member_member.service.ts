@@ -1,7 +1,7 @@
 import { difference } from 'lodash'
 import { Model, Types, UpdateQuery } from 'mongoose'
 
-import { getImagePath } from '@/common/helpers/file.helper'
+import { imageUrl } from '@/common/helpers/file.helper'
 import { MongoSessionService } from '@/common/providers/mongo-session.service'
 import { SettingMemberAppService } from '@module/setting/services/setting-member-app.service'
 import {
@@ -558,7 +558,7 @@ export class MemberService {
 		}
 
 		return {
-			image: getImagePath(greeting.image),
+			image: imageUrl + greeting.image,
 			greeting: Object.keys(members[0]).reduce((res, key) => {
 				return res.replaceAll(
 					new RegExp(`{{\s{0,}${key}\s{0,}}}`, 'g'),

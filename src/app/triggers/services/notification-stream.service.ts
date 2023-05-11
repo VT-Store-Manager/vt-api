@@ -70,89 +70,82 @@ export class NotificationStreamService implements OnModuleInit {
 		}
 		let memberIds: Types.ObjectId[]
 		if (data.type === NotificationType.VOUCHER) {
-			const [members, { notification: notificationSetting }] =
-				await Promise.all([
-					this.memberVoucherModel
-						.aggregate<{ id: Types.ObjectId }>([
-							{
-								$match: {
-									voucher: data.targetId,
-								},
+			const [members] = await Promise.all([
+				this.memberVoucherModel
+					.aggregate<{ id: Types.ObjectId }>([
+						{
+							$match: {
+								voucher: data.targetId,
 							},
-							{
-								$lookup: {
-									from: 'vouchers',
-									localField: 'voucher',
-									foreignField: '_id',
-									as: 'voucher',
-								},
+						},
+						{
+							$lookup: {
+								from: 'vouchers',
+								localField: 'voucher',
+								foreignField: '_id',
+								as: 'voucher',
 							},
-							{
-								$unwind: {
-									path: '$voucher',
-								},
+						},
+						{
+							$unwind: {
+								path: '$voucher',
 							},
-							{
-								$match: {
-									startTime: {
-										$lte: new Date(),
+						},
+						{
+							$match: {
+								startTime: {
+									$lte: new Date(),
+								},
+								$or: [
+									{
+										finishTime: null,
 									},
-									$or: [
-										{
-											finishTime: null,
+									{
+										finishTime: {
+											$gt: new Date(),
 										},
-										{
-											finishTime: {
-												$gt: new Date(),
-											},
-										},
-									],
-									disabled: false,
-									'voucher.disabled': false,
-									'voucher.deleted': false,
-								},
+									},
+								],
+								disabled: false,
+								'voucher.disabled': false,
+								'voucher.deleted': false,
 							},
-							{
-								$project: {
-									id: '$member',
-									_id: false,
-								},
+						},
+						{
+							$project: {
+								id: '$member',
+								_id: false,
 							},
-						])
-						.exec(),
-					this.settingMemberAppService.getData({ notification: true }),
-				])
+						},
+					])
+					.exec(),
+			])
 			memberIds = uniq(members.map(member => member.id.toString())).map(
 				id => new Types.ObjectId(id)
 			)
-			if (!notification.image) {
-				notification.image = notificationSetting.defaultImage
-			}
 		} else if (data.type === NotificationType.PROMOTION) {
 			const now = new Date()
-			const [promotions, { notification: notificationSetting }] =
-				await Promise.all([
-					this.promotionModel
-						.aggregate<Pick<Promotion, 'possibleTarget'>>([
-							{
-								$match: {
-									_id: data.targetId,
-									startTime: { $lte: now },
-									$or: [{ finishTime: null }, { finishTime: { $gt: now } }],
-									disabled: false,
-									deleted: false,
-								},
+			const [promotions] = await Promise.all([
+				this.promotionModel
+					.aggregate<Pick<Promotion, 'possibleTarget'>>([
+						{
+							$match: {
+								_id: data.targetId,
+								startTime: { $lte: now },
+								$or: [{ finishTime: null }, { finishTime: { $gt: now } }],
+								disabled: false,
+								deleted: false,
 							},
-							{
-								$project: {
-									possibleTarget: true,
-									_id: false,
-								},
+						},
+						{
+							$project: {
+								possibleTarget: true,
+								_id: false,
 							},
-						])
-						.exec(),
-					this.settingMemberAppService.getData({ notification: true }),
-				])
+						},
+					])
+					.exec(),
+			])
 
 			if (promotions.length === 0) return
 			const members = await this.memberRankModel
@@ -177,9 +170,6 @@ export class NotificationStreamService implements OnModuleInit {
 				.exec()
 
 			memberIds = members.map(member => member.id)
-			if (!notification.image) {
-				notification.image = notificationSetting.defaultImage
-			}
 		}
 
 		const updateResult = await this.memberDataModel

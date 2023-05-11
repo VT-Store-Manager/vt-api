@@ -1,11 +1,12 @@
 import { Model, Types } from 'mongoose'
 
-import { getImagePath } from '@/common/helpers/file.helper'
+import { s3KeyPattern } from '@/common/constants'
+import { imageUrl } from '@/common/helpers/file.helper'
+import { BadRequestException, Injectable } from '@nestjs/common'
+import { InjectModel } from '@nestjs/mongoose'
 import { MemberData, MemberDataDocument } from '@schema/member-data.schema'
 import { Product, ProductDocument } from '@schema/product.schema'
 import { Store, StoreDocument } from '@schema/store.schema'
-import { BadRequestException, Injectable } from '@nestjs/common'
-import { InjectModel } from '@nestjs/mongoose'
 
 import { DetailProductDTO, ProductListItemDTO } from './dto/response.dto'
 
@@ -25,22 +26,43 @@ export class ProductMemberService {
 			.aggregate<ProductListItemDTO>()
 			.project({
 				id: '$_id',
+				_id: false,
 				name: true,
 				cost: '$originalPrice',
-				image: { $first: '$images' },
-				images: true,
+				images: {
+					$filter: {
+						input: {
+							$map: {
+								input: '$images',
+								as: 'image',
+								in: {
+									$cond: [
+										{
+											$regexMatch: {
+												input: '$$image',
+												regex: s3KeyPattern,
+											},
+										},
+										{ $concat: [imageUrl, '$$image'] },
+										null,
+									],
+								},
+							},
+						},
+						as: 'image',
+						cond: {
+							$ne: ['$$image', null],
+						},
+					},
+				},
 				optionIds: '$options',
 				description: true,
 			})
-			.project({
-				_id: 0,
+			.addFields({
+				image: { $first: '$images' },
 			})
 			.exec()
-		return allProducts.map(product => {
-			product.image = getImagePath(product.image)
-			product.images = product.images.map(image => getImagePath(image))
-			return product
-		})
+		return allProducts
 	}
 
 	async getDetailProduct(
@@ -59,15 +81,40 @@ export class ProductMemberService {
 				.match({ _id: new Types.ObjectId(productId) })
 				.project({
 					id: '$_id',
-					name: 1,
-					mainImage: { $first: '$images' },
-					price: '$originalPrice',
-					description: 1,
-					images: '$images',
-					optionIDs: '$options',
+					_id: false,
+					name: true,
+					cost: '$originalPrice',
+					images: {
+						$filter: {
+							input: {
+								$map: {
+									input: '$images',
+									as: 'image',
+									in: {
+										$cond: [
+											{
+												$regexMatch: {
+													input: '$$image',
+													regex: s3KeyPattern,
+												},
+											},
+											{ $concat: [imageUrl, '$$image'] },
+											null,
+										],
+									},
+								},
+							},
+							as: 'image',
+							cond: {
+								$ne: ['$$image', null],
+							},
+						},
+					},
+					optionIds: '$options',
+					description: true,
 				})
-				.project({
-					_id: 0,
+				.addFields({
+					image: { $first: '$images' },
 				})
 				.exec(),
 			this.storeModel

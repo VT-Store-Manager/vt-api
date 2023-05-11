@@ -327,8 +327,7 @@ export class OrderStreamService implements OnModuleInit {
 		const notification: MemberNotification = {
 			name: notificationSetting.order.name,
 			description: notificationSetting.order.description,
-			image:
-				notificationSetting.order.image || notificationSetting.defaultImage,
+			image: notificationSetting.order.image,
 			targetId: preData._id,
 			type: NotificationType.ORDER,
 		}
