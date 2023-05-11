@@ -36,20 +36,21 @@ export class PromotionAdminController {
 		@UploadedFile() image: Express.Multer.File,
 		@Body() body: CreatePromotionDTO
 	) {
+		let imageKey = ''
 		if (!image) {
-			const promotion = await this.promotionAdminService.create(body)
-			return !!promotion
+			imageKey = this.fileService.createObjectKey(
+				['promotion'],
+				image.originalname
+			)
 		}
-		const imageKey = this.fileService.createObjectKey(
-			['promotion'],
-			image.originalname
-		)
 		body.image = imageKey
 		const abortController = new AbortController()
 		const { error } = await this.mongoSessionService.execTransaction(
 			async session => {
 				await Promise.all([
-					this.fileService.upload(image.buffer, imageKey, abortController),
+					image
+						? this.fileService.upload(image.buffer, imageKey, abortController)
+						: null,
 					this.promotionAdminService.create(body, session),
 				])
 			}

@@ -40,23 +40,25 @@ export class ProductCategoryAdminController {
 	@ApiSuccessResponse(ProductCategory, 201)
 	async createProductCategory(
 		@UploadedFile(ParseFile) image: Express.Multer.File,
-		@Body() dto: CreateProductCategoryDTO
+		@Body() body: CreateProductCategoryDTO
 	) {
-		const objectKey = this.fileService.createObjectKey(
-			['product-category'],
-			image.originalname
-		)
-
+		let imageKey = ''
+		if (image) {
+			imageKey = this.fileService.createObjectKey(
+				['product-category'],
+				image.originalname
+			)
+		}
+		body.image = imageKey
 		let result: ProductCategory
 		const abortController = new AbortController()
 		const { error } = await this.mongoSessionService.execTransaction(
 			async session => {
 				const createResult = await Promise.all([
-					this.fileService.upload(image.buffer, objectKey, abortController),
-					this.productCategoryService.create(
-						{ ...dto, image: objectKey },
-						session
-					),
+					image
+						? this.fileService.upload(image.buffer, imageKey, abortController)
+						: null,
+					this.productCategoryService.create(body, session),
 				])
 
 				result = createResult[1]
@@ -64,7 +66,7 @@ export class ProductCategoryAdminController {
 		)
 		if (error) {
 			abortController.abort()
-			this.fileService.delete([objectKey])
+			this.fileService.delete([imageKey])
 			throw new InternalServerErrorException(error.message)
 		}
 
