@@ -8,7 +8,7 @@ export type TagDocument = Tag & Document
 export class Tag {
 	_id?: Types.ObjectId
 
-	@Prop({ type: String, required: true, minlength: 1 })
+	@Prop({ type: String, required: true, minlength: 1, unique: true })
 	name: string
 
 	updatedAt?: Date

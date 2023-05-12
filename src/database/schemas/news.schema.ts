@@ -25,6 +25,13 @@ export class News {
 	@Prop({ type: String, required: true })
 	content: string
 
+	@Prop({
+		type: [Types.ObjectId],
+		default: [],
+		set: (v: string[]) => v.map(id => new Types.ObjectId(id)),
+	})
+	tags?: Types.ObjectId[]
+
 	createdAt?: Date
 	updatedAt?: Date
 }
