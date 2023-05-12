@@ -1,20 +1,25 @@
 import { Model, Types } from 'mongoose'
-import { BadRequestException, Injectable } from '@nestjs/common'
-import { InjectModel } from '@nestjs/mongoose'
 
-import { MemberData, MemberDataDocument } from '@schema/member-data.schema'
-import { MemberNotificationItemDTO } from './dto/response.dto'
-import { SettingMemberAppService } from '../../setting/services/setting-member-app.service'
 import { s3KeyPattern } from '@/common/constants'
-import { imageUrl } from '@/common/helpers/file.helper'
+import { SettingMemberAppService } from '@module/setting/services/setting-member-app.service'
+import { BadRequestException, Injectable } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import { InjectModel } from '@nestjs/mongoose'
+import { MemberData, MemberDataDocument } from '@schema/member-data.schema'
+
+import { MemberNotificationItemDTO } from './dto/response.dto'
 
 @Injectable()
 export class NotificationMemberService {
+	private readonly imageUrl: string
 	constructor(
 		@InjectModel(MemberData.name)
 		private readonly memberDataModel: Model<MemberDataDocument>,
-		private readonly settingMemberAppService: SettingMemberAppService
-	) {}
+		private readonly settingMemberAppService: SettingMemberAppService,
+		private readonly configService: ConfigService
+	) {
+		this.imageUrl = configService.get<string>('imageUrl')
+	}
 
 	async getAll(memberId: string) {
 		const [memberData, { notification: notificationSetting }] =
@@ -45,7 +50,7 @@ export class NotificationMemberService {
 															regex: s3KeyPattern,
 														},
 													},
-													{ $concat: [imageUrl, '$$e.image'] },
+													{ $concat: [this.imageUrl, '$$e.image'] },
 													null,
 												],
 											},
@@ -70,7 +75,7 @@ export class NotificationMemberService {
 			.map(item => ({
 				...item,
 				...(!item.image && s3KeyPattern.test(notificationSetting.defaultImage)
-					? { image: imageUrl + notificationSetting.defaultImage }
+					? { image: this.imageUrl + notificationSetting.defaultImage }
 					: {}),
 			}))
 	}

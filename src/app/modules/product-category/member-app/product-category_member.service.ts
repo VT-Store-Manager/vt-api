@@ -1,8 +1,8 @@
 import { Model, Types } from 'mongoose'
 
 import { s3KeyPattern } from '@/common/constants'
-import { imageUrl } from '@/common/helpers/file.helper'
 import { BadRequestException, Injectable } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import { InjectModel } from '@nestjs/mongoose'
 import {
 	ProductCategory,
@@ -15,14 +15,18 @@ import { ProductCategoryDTO } from './dto/response.dto'
 
 @Injectable()
 export class ProductCategoryMemberService {
+	private readonly imageUrl: string
 	constructor(
 		@InjectModel(ProductCategory.name)
 		private readonly productCategoryModel: Model<ProductCategoryDocument>,
 		@InjectModel(Product.name)
 		private readonly productModel: Model<ProductDocument>,
 		@InjectModel(Store.name)
-		private readonly storeModel: Model<StoreDocument>
-	) {}
+		private readonly storeModel: Model<StoreDocument>,
+		private readonly configService: ConfigService
+	) {
+		this.imageUrl = configService.get<string>('imageUrl')
+	}
 
 	async getCategoriesWithProducts(storeId?: string) {
 		let unavailableGoods: Store['unavailableGoods'] = {
@@ -73,7 +77,7 @@ export class ProductCategoryMemberService {
 								regex: s3KeyPattern,
 							},
 						},
-						{ $concat: [imageUrl, '$category.image'] },
+						{ $concat: [this.imageUrl, '$category.image'] },
 						null,
 					],
 				},

@@ -8,6 +8,7 @@ import { ConfigService } from '@nestjs/config'
 import { NestFactory } from '@nestjs/core'
 
 import { AppModule } from './app/app.module'
+import { NodeEnv } from './common/constants'
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule, {
@@ -39,15 +40,13 @@ async function bootstrap() {
 		configService.get<string>('aws.bucketName')
 	)
 
-	const port = configService.get<number>('port') || process.env.PORT || 8080
+	const host = configService.get<string>('host')
+	const port = configService.get<string>('port')
 	const nodeEnv = configService.get<string>('nodeEnv')
 	await app.listen(port, () => {
-		if (!nodeEnv || nodeEnv === 'development') {
-			Logger.debug(
-				`Nest application runs at http://localhost:${port}`,
-				'NestApplication'
-			)
-			Logger.debug(`Swagger viewed at http://localhost:${port}/api`, 'OpenAPI')
+		if (nodeEnv === NodeEnv.DEVELOPMENT) {
+			Logger.debug(`Nest application runs at ${host}`, 'NestApplication')
+			Logger.debug(`Swagger viewed at ${host}/api`, 'OpenAPI')
 		}
 	})
 }

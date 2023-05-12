@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<style>
+		body {
+			background: #e57905;
+			color: #fff;
+		}
+
+
+		@keyframes fadeIn {
+			from {
+				top: 20%;
+				opacity: 0;
+			}
+
+			to {
+				top: 100;
+				opacity: 1;
+			}
+
+		}
+
+		@-webkit-keyframes fadeIn {
+			from {
+				top: 20%;
+				opacity: 0;
+			}
+
+			to {
+				top: 100;
+				opacity: 1;
+			}
+
+		}
+
+		.wrapper {
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			transform: translate(-50%, -50%);
+			-webkit-transform: translate(-50%, -50%);
+			animation: fadeIn 1000ms ease;
+			-webkit-animation: fadeIn 1000ms ease;
+
+		}
+
+		h1 {
+			font-size: 50px;
+			font-family: 'Poppins', sans-serif;
+			margin-bottom: 0;
+			line-height: 1;
+			font-weight: 700;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="wrapper">
+		<h1>coming soon<span class="dot">.</span></h1>
+	</div>
+</body>
+
+</html>

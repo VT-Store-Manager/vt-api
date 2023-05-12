@@ -1,9 +1,9 @@
 import { Model, Types } from 'mongoose'
 
 import { s3KeyPattern } from '@/common/constants'
-import { imageUrl } from '@/common/helpers/file.helper'
 import { SettingGeneralService } from '@module/setting/services/setting-general.service'
 import { BadRequestException, Injectable } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import { InjectModel } from '@nestjs/mongoose'
 import { MemberData, MemberDataDocument } from '@schema/member-data.schema'
 import { Store, StoreDocument } from '@schema/store.schema'
@@ -12,12 +12,16 @@ import { ShortStoreItemDTO, StoreDetailDTO } from './dto/response.dto'
 
 @Injectable()
 export class StoreMemberService {
+	private readonly imageUrl: string
 	constructor(
 		@InjectModel(Store.name) private readonly storeModel: Model<StoreDocument>,
 		@InjectModel(MemberData.name)
 		private readonly memberDataModel: Model<MemberDataDocument>,
-		private readonly settingGeneralService: SettingGeneralService
-	) {}
+		private readonly settingGeneralService: SettingGeneralService,
+		private readonly configService: ConfigService
+	) {
+		this.imageUrl = configService.get<string>('imageUrl')
+	}
 
 	async getAllStoresInShort(memberId?: string): Promise<ShortStoreItemDTO[]> {
 		const [stores, memberData] = await Promise.all([
@@ -42,7 +46,7 @@ export class StoreMemberService {
 													regex: s3KeyPattern,
 												},
 											},
-											{ $concat: [imageUrl, '$$image'] },
+											{ $concat: [this.imageUrl, '$$image'] },
 											null,
 										],
 									},
@@ -112,7 +116,7 @@ export class StoreMemberService {
 													regex: s3KeyPattern,
 												},
 											},
-											{ $concat: [imageUrl, '$$image'] },
+											{ $concat: [this.imageUrl, '$$image'] },
 											null,
 										],
 									},

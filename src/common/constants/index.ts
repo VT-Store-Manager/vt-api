@@ -93,3 +93,7 @@ export enum NotificationType {
 	VOUCHER,
 	PROMOTION,
 }
+
+export enum ErrorCode {
+	MONGO_DUPLICATED = 11000,
+}

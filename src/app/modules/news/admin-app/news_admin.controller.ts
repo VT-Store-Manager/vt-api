@@ -19,10 +19,10 @@ import { ApiSuccessResponse } from '@/common/decorators/api-success-response.dec
 import { CreateNewsResultDTO } from './dto/response.dto'
 
 @Controller({
-	path: 'member/news',
+	path: 'admin/news',
 	version: '1',
 })
-@ApiTags('member-app > news')
+@ApiTags('admin-app > news')
 export class NewsAdminController {
 	constructor(
 		private readonly newsService: NewsAdminService,

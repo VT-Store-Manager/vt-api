@@ -4,7 +4,10 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 
 export type TagDocument = Tag & Document
 
-@Schema({ versionKey: true, timestamps: { updatedAt: true, createdAt: false } })
+@Schema({
+	versionKey: false,
+	timestamps: { updatedAt: true, createdAt: false },
+})
 export class Tag {
 	_id?: Types.ObjectId
 
