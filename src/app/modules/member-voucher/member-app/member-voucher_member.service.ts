@@ -1,5 +1,10 @@
 import { Model, Types } from 'mongoose'
 
+import { s3KeyPattern } from '@/common/constants'
+import { SettingGeneralService } from '@module/setting/services/setting-general.service'
+import { Injectable } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import { InjectModel } from '@nestjs/mongoose'
 import {
 	MemberVoucherHistory,
 	MemberVoucherHistoryDocument,
@@ -8,27 +13,26 @@ import {
 	MemberVoucher,
 	MemberVoucherDocument,
 } from '@schema/member-voucher.schema'
-import { Injectable } from '@nestjs/common'
-import { InjectModel } from '@nestjs/mongoose'
+import { SettingGeneral } from '@schema/setting-general.schema'
 
 import {
 	AvailableMemberVoucherDTO,
 	UsedMemberVoucherDTO,
 } from './dto/response.dto'
-import { SettingGeneralService } from '@module/setting/services/setting-general.service'
-import { SettingGeneral } from '@schema/setting-general.schema'
-import { s3KeyPattern } from '@/common/constants'
-import { imageUrl } from '@/common/helpers/file.helper'
 
 @Injectable()
 export class MemberVoucherMemberService {
+	private readonly imageUrl: string
 	constructor(
 		@InjectModel(MemberVoucher.name)
 		private readonly memberVoucherModel: Model<MemberVoucherDocument>,
 		@InjectModel(MemberVoucherHistory.name)
 		private readonly memberVoucherHistoryModel: Model<MemberVoucherHistoryDocument>,
-		private readonly settingGeneralService: SettingGeneralService
-	) {}
+		private readonly settingGeneralService: SettingGeneralService,
+		private readonly configService: ConfigService
+	) {
+		this.imageUrl = configService.get<string>('imageUrl')
+	}
 
 	async getMemberAvailableVoucher(memberId: string) {
 		const now = new Date()
@@ -86,7 +90,7 @@ export class MemberVoucherMemberService {
 										regex: s3KeyPattern,
 									},
 								},
-								{ $concat: [imageUrl, '$voucher.image'] },
+								{ $concat: [this.imageUrl, '$voucher.image'] },
 								null,
 							],
 						},
@@ -99,7 +103,7 @@ export class MemberVoucherMemberService {
 										regex: s3KeyPattern,
 									},
 								},
-								{ $concat: [imageUrl, '$voucher.slider'] },
+								{ $concat: [this.imageUrl, '$voucher.slider'] },
 								null,
 							],
 						},
@@ -148,7 +152,7 @@ export class MemberVoucherMemberService {
 											regex: s3KeyPattern,
 										},
 									},
-									{ $concat: [imageUrl, '$voucherData.image'] },
+									{ $concat: [this.imageUrl, '$voucherData.image'] },
 									null,
 								],
 							},

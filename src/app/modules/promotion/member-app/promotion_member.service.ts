@@ -1,5 +1,13 @@
 import { ClientSession, Model, Types } from 'mongoose'
 
+import { s3KeyPattern } from '@/common/constants'
+import {
+	BadRequestException,
+	Injectable,
+	InternalServerErrorException,
+} from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import { InjectModel } from '@nestjs/mongoose'
 import {
 	MemberPromotionHistory,
 	MemberPromotionHistoryDocument,
@@ -14,19 +22,12 @@ import {
 	PromotionDocument,
 	ShortPromotion,
 } from '@schema/promotion.schema'
-import {
-	BadRequestException,
-	Injectable,
-	InternalServerErrorException,
-} from '@nestjs/common'
-import { InjectModel } from '@nestjs/mongoose'
 
 import { PromotionItemDTO } from './dto/response.dto'
-import { s3KeyPattern } from '@/common/constants'
-import { imageUrl } from '@/common/helpers/file.helper'
 
 @Injectable()
 export class PromotionMemberService {
+	private readonly imageUrl: string
 	constructor(
 		@InjectModel(Promotion.name)
 		private readonly promotionModel: Model<PromotionDocument>,
@@ -35,8 +36,11 @@ export class PromotionMemberService {
 		@InjectModel(MemberVoucher.name)
 		private readonly memberVoucherModel: Model<MemberVoucherDocument>,
 		@InjectModel(MemberPromotionHistory.name)
-		private readonly memberPromotionHistoryModel: Model<MemberPromotionHistoryDocument>
-	) {}
+		private readonly memberPromotionHistoryModel: Model<MemberPromotionHistoryDocument>,
+		private readonly configService: ConfigService
+	) {
+		this.imageUrl = configService.get<string>('imageUrl')
+	}
 
 	async getAll(memberId: string) {
 		const memberRank = await this.memberRankModel
@@ -173,7 +177,7 @@ export class PromotionMemberService {
 										regex: s3KeyPattern,
 									},
 								},
-								{ $concat: [imageUrl, '$partner.image'] },
+								{ $concat: [this.imageUrl, '$partner.image'] },
 								null,
 							],
 						},
@@ -187,7 +191,7 @@ export class PromotionMemberService {
 								},
 								{
 									$concat: [
-										imageUrl,
+										this.imageUrl,
 										{ $ifNull: ['$image', '$voucher.image'] },
 									],
 								},

@@ -1,7 +1,6 @@
 import { difference } from 'lodash'
 import { Model, Types, UpdateQuery } from 'mongoose'
 
-import { imageUrl } from '@/common/helpers/file.helper'
 import { MongoSessionService } from '@/common/providers/mongo-session.service'
 import { SettingMemberAppService } from '@module/setting/services/setting-member-app.service'
 import {
@@ -9,6 +8,7 @@ import {
 	Injectable,
 	InternalServerErrorException,
 } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import { InjectModel } from '@nestjs/mongoose'
 import {
 	CartTemplate,
@@ -34,6 +34,7 @@ import { UpdateProfileDTO } from './dto/update-profile.dto'
 
 @Injectable()
 export class MemberService {
+	private readonly imageUrl: string
 	constructor(
 		@InjectModel(Member.name)
 		private readonly memberModel: Model<MemberDocument>,
@@ -44,8 +45,11 @@ export class MemberService {
 		@InjectModel(CartTemplate.name)
 		private readonly cartTemplateModel: Model<CartTemplateDocument>,
 		private readonly settingMemberAppService: SettingMemberAppService,
-		private readonly mongoSessionService: MongoSessionService
-	) {}
+		private readonly mongoSessionService: MongoSessionService,
+		private readonly configService: ConfigService
+	) {
+		this.imageUrl = this.configService.get<string>('imageUrl')
+	}
 
 	async getProfile(memberId: string) {
 		const memberData = await this.memberModel
@@ -558,7 +562,7 @@ export class MemberService {
 		}
 
 		return {
-			image: imageUrl + greeting.image,
+			image: this.imageUrl + greeting.image,
 			greeting: Object.keys(members[0]).reduce((res, key) => {
 				return res.replaceAll(
 					new RegExp(`{{\s{0,}${key}\s{0,}}}`, 'g'),

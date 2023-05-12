@@ -8,6 +8,7 @@ import { ConfigService } from '@nestjs/config'
 import { NestFactory } from '@nestjs/core'
 
 import { AppModule } from './app/app.module'
+import { NodeEnv } from './common/constants'
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule, {
@@ -43,10 +44,9 @@ async function bootstrap() {
 	const port = configService.get<string>('port')
 	const nodeEnv = configService.get<string>('nodeEnv')
 	await app.listen(port, () => {
-		if (!nodeEnv || nodeEnv === 'development') {
-			const appUrl = `${host}:${port}`
-			Logger.debug(`Nest application runs at ${appUrl}`, 'NestApplication')
-			Logger.debug(`Swagger viewed at ${appUrl}/api`, 'OpenAPI')
+		if (nodeEnv === NodeEnv.DEVELOPMENT) {
+			Logger.debug(`Nest application runs at ${host}`, 'NestApplication')
+			Logger.debug(`Swagger viewed at ${host}/api`, 'OpenAPI')
 		}
 	})
 }

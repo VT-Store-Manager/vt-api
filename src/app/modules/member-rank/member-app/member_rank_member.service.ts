@@ -1,29 +1,34 @@
 import { Model, Types } from 'mongoose'
 
-import { MemberRank, MemberRankDocument } from '@schema/member-rank.schema'
-import { Member, MemberDocument } from '@schema/member.schema'
-import { Injectable, InternalServerErrorException } from '@nestjs/common'
-import { InjectModel } from '@nestjs/mongoose'
-import { MemberRankCardDTO } from './dto/response.dto'
-import { Rank, RankDocument } from '@schema/rank.schema'
 import {
 	DEFAULT_POINT_NAME,
 	IS_ZERO_POINT_MESSAGE,
 	RANK_MESSAGE_SPLIT,
 } from '@/common/constants'
 import { colorHexToInt } from '@/common/helpers/color.helper'
-import { imageUrl } from '@/common/helpers/file.helper'
+import { Injectable, InternalServerErrorException } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import { InjectModel } from '@nestjs/mongoose'
+import { MemberRank, MemberRankDocument } from '@schema/member-rank.schema'
+import { Member, MemberDocument } from '@schema/member.schema'
+import { Rank, RankDocument } from '@schema/rank.schema'
+
+import { MemberRankCardDTO } from './dto/response.dto'
 
 @Injectable()
 export class MemberRankMemberService {
+	private readonly imageUrl: string
 	constructor(
 		@InjectModel(Member.name)
 		private readonly memberModel: Model<MemberDocument>,
 		@InjectModel(Rank.name)
 		private readonly rankModel: Model<RankDocument>,
 		@InjectModel(MemberRank.name)
-		private readonly memberRankModel: Model<MemberRankDocument>
-	) {}
+		private readonly memberRankModel: Model<MemberRankDocument>,
+		private readonly configService: ConfigService
+	) {
+		this.imageUrl = configService.get('imageUrl')
+	}
 
 	private getRankMessage(
 		script: string | null | undefined,
@@ -92,7 +97,7 @@ export class MemberRankMemberService {
 			currentRankName: memberRank.rank.name,
 			nextRankPoint: nextRank ? nextRank.minPoint : null,
 			nextRankName: nextRank ? nextRank.name : null,
-			backgroundImage: imageUrl + memberRank.rank.appearance.background,
+			backgroundImage: this.imageUrl + memberRank.rank.appearance.background,
 			description: rankMessage,
 			color: colorHexToInt(memberRank.rank.appearance.color),
 			fee: memberRank.rank.deliveryFee ?? 0,

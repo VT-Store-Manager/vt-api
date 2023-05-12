@@ -1,8 +1,8 @@
 import { Model, Types } from 'mongoose'
 
 import { s3KeyPattern } from '@/common/constants'
-import { imageUrl } from '@/common/helpers/file.helper'
 import { BadRequestException, Injectable } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import { InjectModel } from '@nestjs/mongoose'
 import { MemberData, MemberDataDocument } from '@schema/member-data.schema'
 import { Product, ProductDocument } from '@schema/product.schema'
@@ -12,14 +12,18 @@ import { DetailProductDTO, ProductListItemDTO } from './dto/response.dto'
 
 @Injectable()
 export class ProductMemberService {
+	private readonly imageUrl: string
 	constructor(
 		@InjectModel(Product.name)
 		private readonly productModel: Model<ProductDocument>,
 		@InjectModel(MemberData.name)
 		private readonly memberDataModel: Model<MemberDataDocument>,
 		@InjectModel(Store.name)
-		private readonly storeModel: Model<StoreDocument>
-	) {}
+		private readonly storeModel: Model<StoreDocument>,
+		private readonly configService: ConfigService
+	) {
+		this.imageUrl = configService.get<string>('imageUrl')
+	}
 
 	async getAllProducts() {
 		const allProducts = await this.productModel
@@ -43,7 +47,7 @@ export class ProductMemberService {
 												regex: s3KeyPattern,
 											},
 										},
-										{ $concat: [imageUrl, '$$image'] },
+										{ $concat: [this.imageUrl, '$$image'] },
 										null,
 									],
 								},
@@ -98,7 +102,7 @@ export class ProductMemberService {
 													regex: s3KeyPattern,
 												},
 											},
-											{ $concat: [imageUrl, '$$image'] },
+											{ $concat: [this.imageUrl, '$$image'] },
 											null,
 										],
 									},
