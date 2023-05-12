@@ -1,4 +1,4 @@
-import { ClientSession, Model } from 'mongoose'
+import { ClientSession, Model, Types } from 'mongoose'
 
 import {
 	RefreshToken,
@@ -27,7 +27,7 @@ export class TokenService {
 
 	private async deleteAllRefreshToken(uid: string, session?: ClientSession) {
 		const deleteResult = await this.refreshTokenModel
-			.deleteMany({ uid }, session ? { session } : {})
+			.deleteMany({ uid: new Types.ObjectId(uid) }, session ? { session } : {})
 			.exec()
 		return deleteResult.deletedCount
 	}
@@ -43,7 +43,7 @@ export class TokenService {
 	}
 
 	async signMemberToken(payload: TokenPayload, session?: ClientSession) {
-		const { sub, exp: _, ...payloadWithoutSubject } = payload
+		const { sub, exp: _exp, iat: _iat, ...payloadWithoutSubject } = payload
 		const tokens = {
 			accessToken: this.jwtService.sign(payloadWithoutSubject, {
 				secret: this.configService.get<string>('jwt.accessTokenSecret'),

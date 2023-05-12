@@ -10,7 +10,7 @@ export type RefreshTokenDocument = Document & RefreshToken
 	collection: 'refresh_tokens',
 })
 export class RefreshToken {
-	@Prop({ type: Types.ObjectId })
+	@Prop({ type: Types.ObjectId, set: v => new Types.ObjectId(v.toString()) })
 	uid: Types.ObjectId
 
 	@Prop({
