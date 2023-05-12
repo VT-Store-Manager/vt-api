@@ -37,6 +37,7 @@ import { SettingModule } from './modules/setting/setting.module'
 import { StoreModule } from './modules/store/store.module'
 import { VoucherModule } from './modules/voucher/voucher.module'
 import { TriggerModule } from './triggers/trigger.module'
+import { NewsModule } from './modules/news/news.module'
 
 @Module({
 	imports: [
@@ -83,6 +84,7 @@ import { TriggerModule } from './triggers/trigger.module'
 		CartTemplateModule,
 		NotificationModule,
 		TriggerModule,
+		NewsModule,
 	],
 	controllers: [],
 	providers: [
