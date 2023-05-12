@@ -1,14 +1,4 @@
-import { hostname } from 'os'
-
-import { envConfiguration } from '@/config/configuration'
-
-import { NodeEnv } from '../constants'
-
-const env = envConfiguration()
-export const imageUrl =
-	env.nodeEnv !== NodeEnv.PRODUCTION
-		? `${hostname()}:${env.port}/api/v1/file/render?key=`
-		: `${hostname()}/api/v1/file/render?key=`
+export const imageUrl = '/api/v1/file/render?key='
 
 /**
  * It returns the file extension of a given filename

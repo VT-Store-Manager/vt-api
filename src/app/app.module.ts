@@ -24,6 +24,7 @@ import { MemberDataModule } from './modules/member-data/member-data.module'
 import { MemberRankModule } from './modules/member-rank/member-rank.module'
 import { MemberVoucherModule } from './modules/member-voucher/member-voucher.module'
 import { MemberModule } from './modules/member/member.module'
+import { NewsModule } from './modules/news/news.module'
 import { NotificationModule } from './modules/notification/notification.module'
 import { OrderModule } from './modules/order/order.module'
 import { PartnerModule } from './modules/partner/partner.module'
@@ -35,9 +36,9 @@ import { PromotionModule } from './modules/promotion/promotion.module'
 import { RankModule } from './modules/rank/rank.module'
 import { SettingModule } from './modules/setting/setting.module'
 import { StoreModule } from './modules/store/store.module'
+import { TagModule } from './modules/tag/tag.module'
 import { VoucherModule } from './modules/voucher/voucher.module'
 import { TriggerModule } from './triggers/trigger.module'
-import { NewsModule } from './modules/news/news.module'
 
 @Module({
 	imports: [
@@ -57,8 +58,8 @@ import { NewsModule } from './modules/news/news.module'
 			cache: true,
 		}),
 		ServeStaticModule.forRoot({
-			rootPath: join(__dirname, '..', '..', '..', 'public'),
-			serveRoot: '/api/v1/public',
+			rootPath: join(__dirname, '..', '..', 'public'),
+			serveRoot: '/public',
 			serveStaticOptions: {
 				cacheControl: true,
 			},
@@ -85,6 +86,7 @@ import { NewsModule } from './modules/news/news.module'
 		NotificationModule,
 		TriggerModule,
 		NewsModule,
+		TagModule,
 	],
 	controllers: [],
 	providers: [

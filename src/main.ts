@@ -39,15 +39,14 @@ async function bootstrap() {
 		configService.get<string>('aws.bucketName')
 	)
 
-	const port = configService.get<number>('port') || process.env.PORT || 8080
+	const host = configService.get<string>('host')
+	const port = configService.get<string>('port')
 	const nodeEnv = configService.get<string>('nodeEnv')
 	await app.listen(port, () => {
 		if (!nodeEnv || nodeEnv === 'development') {
-			Logger.debug(
-				`Nest application runs at http://localhost:${port}`,
-				'NestApplication'
-			)
-			Logger.debug(`Swagger viewed at http://localhost:${port}/api`, 'OpenAPI')
+			const appUrl = `${host}:${port}`
+			Logger.debug(`Nest application runs at ${appUrl}`, 'NestApplication')
+			Logger.debug(`Swagger viewed at ${appUrl}/api`, 'OpenAPI')
 		}
 	})
 }

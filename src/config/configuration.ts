@@ -1,9 +1,12 @@
+import { hostname } from 'os'
+
 import { NodeEnv } from '@/common/constants'
 import Joi from '@/common/validations/joi.validator'
 
 export const envConfiguration = () => ({
 	nodeEnv: process.env.NODE_ENV ?? NodeEnv.DEVELOPMENT,
-	port: parseInt(process.env.PORT, 10) || 8080,
+	host: process.env.HOST ?? 'http://' + hostname(),
+	port: process.env.PORT ? parseInt(process.env.PORT, 10) : 8080,
 	database: {
 		url: process.env.MONGODB_URL,
 		db: process.env.MONGODB_DB,
@@ -32,7 +35,6 @@ export const envConfiguration = () => ({
 })
 
 export const envValidationSchema = Joi.object({
-	PORT: Joi.number().default(8080),
 	MONGODB_URL: Joi.string().required(),
 	AWS_REGION: Joi.string().required(),
 	AWS_ACCESS_KEY_ID: Joi.string().required(),
