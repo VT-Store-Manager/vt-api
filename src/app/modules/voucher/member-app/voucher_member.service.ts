@@ -97,10 +97,11 @@ export class VoucherMemberService {
 			const isValid = condition.inclusion.every(detail => {
 				if (!detail.required) ++numberOfOptionalInclusion
 
-				let matchProducts = detail.id
+				let matchProducts = detail.ids.map(id => id.toString())
 					? cart.products.filter(
 							product =>
-								detail.id === product.id || detail.id === product.category
+								matchProducts.include(product.id.toString()) ||
+								matchProducts.include(product.category.toString())
 					  )
 					: cart.products
 
@@ -130,7 +131,7 @@ export class VoucherMemberService {
 					if (totalQuantity < detail.quantity) {
 						error = new Error(
 							`Total quantity${
-								detail.id ? ' of ' + detail.id : ''
+								detail.ids ? ' of ' + detail.ids : ''
 							} must be greater or equal to ${detail.quantity}`
 						)
 						return !detail.required // False if required, true if optional
@@ -207,10 +208,11 @@ export class VoucherMemberService {
 				const matchProducts = cart.products
 					.map((product, index) => ({ ...product, index }))
 					.filter(product => {
-						if (target.id) {
+						const targetIds = target.ids.map(id => id.toString())
+						if (target.ids) {
 							if (
-								product.id !== target.id.toString() &&
-								product.category !== target.id.toString()
+								targetIds.includes(product.id.toString()) &&
+								targetIds.includes(product.category.toString())
 							) {
 								return false
 							}

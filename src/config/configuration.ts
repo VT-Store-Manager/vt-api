@@ -20,7 +20,7 @@ export const envConfiguration = () => {
 			host = host.replace(portPattern, ':' + port)
 		}
 	}
-	const imageUrl = host + '/api/v1/file/render?key='
+	const imageUrl = host + '/api/v1/file/'
 
 	const env = {
 		nodeEnv,

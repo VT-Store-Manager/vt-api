@@ -56,9 +56,24 @@ export class UnavailableGoods {
 }
 
 export const UnavailableGoodsSchema = {
-	product: { type: [Types.ObjectId], default: [], ref: 'Product' },
-	category: { type: [Types.ObjectId], default: [], ref: 'ProductCategory' },
-	option: { type: [Types.ObjectId], default: [], ref: 'ProductOption' },
+	product: {
+		type: [Types.ObjectId],
+		default: [],
+		ref: 'Product',
+		set: (v: string[]) => v.map(id => new Types.ObjectId(id)),
+	},
+	category: {
+		type: [Types.ObjectId],
+		default: [],
+		ref: 'ProductCategory',
+		set: (v: string[]) => v.map(id => new Types.ObjectId(id)),
+	},
+	option: {
+		type: [Types.ObjectId],
+		default: [],
+		ref: 'ProductOption',
+		set: (v: string[]) => v.map(id => new Types.ObjectId(id)),
+	},
 }
 
 @Schema({ versionKey: false, timestamps: true })

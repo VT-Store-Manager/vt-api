@@ -20,7 +20,15 @@ export class Promotion {
 	})
 	category: Types.ObjectId | string
 
-	@Prop({ type: String, required: true, minlength: 3 })
+	@Prop({
+		type: String,
+		validate: (v: string) => {
+			if (typeof v === 'string' && v.length < 3) {
+				throw new Error('Title must be longer then 3')
+			}
+			return true
+		},
+	})
 	title: string
 
 	@Prop({ type: String, default: '' })

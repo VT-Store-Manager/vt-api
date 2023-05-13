@@ -37,97 +37,123 @@ export class MemberVoucherMemberService {
 	async getMemberAvailableVoucher(memberId: string) {
 		const now = new Date()
 
-		const availableVouchers = await this.memberVoucherModel
-			.aggregate<AvailableMemberVoucherDTO>([
-				{
-					$lookup: {
-						from: 'vouchers',
-						localField: 'voucher',
-						foreignField: '_id',
-						as: 'voucher',
+		const [{ brand }, availableVouchers] = await Promise.all([
+			this.settingGeneralService.getData<Pick<SettingGeneral, 'brand'>>({
+				brand: true,
+			}),
+			this.memberVoucherModel
+				.aggregate<AvailableMemberVoucherDTO>([
+					{
+						$lookup: {
+							from: 'vouchers',
+							localField: 'voucher',
+							foreignField: '_id',
+							as: 'voucher',
+						},
 					},
-				},
-				{
-					$unwind: {
-						path: '$voucher',
+					{
+						$unwind: {
+							path: '$voucher',
+						},
 					},
-				},
-				{
-					$match: {
-						'voucher.disabled': false,
-						'voucher.deleted': false,
-						member: new Types.ObjectId(memberId),
-						startTime: { $lte: now },
-						finishTime: { $gt: now },
-						disabled: false,
-						$and: [
-							{
-								$or: [
-									{ 'voucher.activeStartTime': null },
-									{ 'voucher.activeStartTime': { $lte: now } },
-								],
-							},
-							{
-								$or: [
-									{ 'voucher.activeStartTime': null },
-									{ 'voucher.activeStartTime': { $lte: now } },
-								],
-							},
-						],
-					},
-				},
-				{
-					$project: {
-						id: '$_id',
-						_id: false,
-						code: '$voucher.code',
-						name: '$voucher.title',
-						image: {
-							$cond: [
+					{
+						$match: {
+							'voucher.disabled': false,
+							'voucher.deleted': false,
+							member: new Types.ObjectId(memberId),
+							startTime: { $lte: now },
+							finishTime: { $gt: now },
+							disabled: false,
+							$and: [
 								{
-									$regexMatch: {
-										input: '$voucher.image',
-										regex: s3KeyPattern,
-									},
+									$or: [
+										{ 'voucher.activeStartTime': null },
+										{ 'voucher.activeStartTime': { $lte: now } },
+									],
 								},
-								{ $concat: [this.imageUrl, '$voucher.image'] },
-								null,
+								{
+									$or: [
+										{ 'voucher.activeStartTime': null },
+										{ 'voucher.activeStartTime': { $lte: now } },
+									],
+								},
 							],
 						},
-						partner: '$voucher.partner',
-						sliderImage: {
-							$cond: [
-								{
-									$regexMatch: {
-										input: '$voucher.slider',
-										regex: s3KeyPattern,
-									},
-								},
-								{ $concat: [this.imageUrl, '$voucher.slider'] },
-								null,
-							],
+					},
+					{
+						$lookup: {
+							from: 'partners',
+							localField: 'partner',
+							foreignField: '_id',
+							as: 'partner',
 						},
-						from: '$startTime',
-						to: '$finishTime',
-						description: '$voucher.description',
 					},
-				},
-				{
-					$sort: {
-						to: 1,
-						from: 1,
+					{
+						$unwind: {
+							path: '$partner',
+							preserveNullAndEmptyArrays: true,
+						},
 					},
-				},
-			])
-			.exec()
+					{
+						$project: {
+							id: '$_id',
+							_id: false,
+							code: '$voucher.code',
+							name: '$voucher.title',
+							image: {
+								$cond: [
+									{
+										$regexMatch: {
+											input: '$voucher.image',
+											regex: s3KeyPattern,
+										},
+									},
+									{ $concat: [this.imageUrl, '$voucher.image'] },
+									null,
+								],
+							},
+							partner: '$voucher.partner.name',
+							sliderImage: {
+								$cond: [
+									{
+										$regexMatch: {
+											input: '$voucher.slider',
+											regex: s3KeyPattern,
+										},
+									},
+									{ $concat: [this.imageUrl, '$voucher.slider'] },
+									null,
+								],
+							},
+							from: { $toLong: '$startTime' },
+							to: { $toLong: '$finishTime' },
+							description: '$voucher.description',
+						},
+					},
+					{
+						$sort: {
+							to: 1,
+							from: 1,
+						},
+					},
+				])
+				.exec(),
+		])
 
-		return availableVouchers
+		return availableVouchers.map(voucher => ({
+			...voucher,
+			...(voucher.partner
+				? {}
+				: {
+						partner: brand.name,
+				  }),
+		}))
 	}
 
 	async getMemberUsedVoucher(
 		memberId: string
 	): Promise<UsedMemberVoucherDTO[]> {
-		const [generalSetting, usedVouchers] = await Promise.all([
+		const [{ brand }, usedVouchers] = await Promise.all([
 			this.settingGeneralService.getData<Pick<SettingGeneral, 'brand'>>({
 				brand: true,
 			}),
@@ -176,7 +202,7 @@ export class MemberVoucherMemberService {
 			...(voucher.partner
 				? {}
 				: {
-						partner: generalSetting.brand.name,
+						partner: brand.name,
 				  }),
 		}))
 	}

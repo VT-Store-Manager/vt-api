@@ -25,13 +25,13 @@ export class RegisterMemberDTO extends PickType(Member, [
 
 	@IsString()
 	@IsNotEmpty()
-	@Matches(/^[a-zA-Z-]+$/)
+	@Matches(/^[0-9a-zA-Z-]+$/)
 	@ApiProperty({ description: 'Your first name' })
 	firstName: string
 
 	@IsString()
 	@IsNotEmpty()
-	@Matches(/^[a-zA-Z-]+$/)
+	@Matches(/^[0-9a-zA-Z-]+$/)
 	@ApiProperty({ description: 'Your last name' })
 	lastName: string
 

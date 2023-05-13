@@ -29,6 +29,7 @@ import { UpdateVoucherDiscountDTO } from './dto/update-voucher-discount.dto'
 import { UpdateVoucherImageDTO } from './dto/update-voucher-image.dto'
 import { UpdateVoucherInfoDTO } from './dto/update-voucher-info.dto'
 import { VoucherAdminService } from './voucher_admin.service'
+import { UpdateVoucherSliderDTO } from './dto/update-voucher-slider.dto'
 
 @Controller({
 	path: 'admin/voucher',
@@ -134,14 +135,15 @@ export class VoucherAdminController {
 	@ApiResponse({ type: BooleanResponseDTO, status: 200 })
 	async updateVoucherSlider(
 		@UploadedFile(ParseFile) image: Express.Multer.File,
-		@Param('id', ObjectIdPipe) voucherId: string
+		@Param('id', ObjectIdPipe) voucherId: string,
+		@Body() _body: UpdateVoucherSliderDTO
 	) {
 		const voucher = await this.voucherAdminService.getDetail(voucherId, 'image')
 
 		const abortController = new AbortController()
 		const { error } = await this.mongoSessionService.execTransaction(
 			async session => {
-				if (voucher.image) {
+				if (voucher.slider) {
 					await this.fileService.overrideFile(
 						image.buffer,
 						voucher.image,

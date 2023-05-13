@@ -14,6 +14,7 @@ import {
 	UploadedFile,
 	UploadedFiles,
 	UseInterceptors,
+	Param,
 } from '@nestjs/common'
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express'
 import { ApiBody, ApiConsumes, ApiResponse, ApiTags } from '@nestjs/swagger'
@@ -81,27 +82,17 @@ export class FileController {
 		@Body('key', S3KeyPipe) key: string
 	) {
 		await this.fileService.checkFile(key, true)
-		const abortControler = new AbortController()
+		const abortController = new AbortController()
 		try {
 			return await this.fileService.overrideFile(
 				file.buffer,
 				key,
-				abortControler
+				abortController
 			)
 		} catch (error) {
-			abortControler.abort()
+			abortController.abort()
 			throw error
 		}
-	}
-
-	@Get('render')
-	async render(@Query('key', S3KeyPipe) key: string, @Res() res: Response) {
-		await this.fileService.checkFile(key, true)
-		const fileBody = await this.fileService.getFile(key)
-		res.setHeader('Content-Type', 'image/png')
-		res.setHeader('Cache-Control', 'public, max-age=10000')
-		res.write(fileBody, 'binary')
-		res.end(null, 'binary')
 	}
 
 	@Delete('delete')
@@ -109,11 +100,11 @@ export class FileController {
 	async delete(@Query('keys') keys: string[]) {
 		await Promise.all(keys.map(key => this.fileService.checkFile(key, true)))
 
-		const abortControler = new AbortController()
+		const abortController = new AbortController()
 		try {
 			return await this.fileService.delete(keys)
 		} catch (error) {
-			abortControler.abort()
+			abortController.abort()
 			throw error
 		}
 	}
@@ -127,5 +118,15 @@ export class FileController {
 		return result.reduce((res, exist, index) => {
 			return Object.assign(res, { [keys[index]]: exist })
 		}, {})
+	}
+
+	@Get(':key(*)')
+	async render(@Param('key', S3KeyPipe) key: string, @Res() res: Response) {
+		await this.fileService.checkFile(key, true)
+		const fileBody = await this.fileService.getFile(key)
+		res.setHeader('Content-Type', 'image/png')
+		res.setHeader('Cache-Control', 'public, max-age=10000')
+		res.write(fileBody, 'binary')
+		res.end(null, 'binary')
 	}
 }

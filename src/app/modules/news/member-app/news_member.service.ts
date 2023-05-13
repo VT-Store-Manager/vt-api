@@ -38,8 +38,8 @@ export class NewsMemberService {
 								},
 								url:
 									this.configService.get<string>('host') +
-									'/public/assets/html/coming-soon.html',
-								time: '$createdAt',
+									'/assets/html/coming-soon.html',
+								time: { $toLong: '$createdAt' },
 							},
 						},
 					},

@@ -29,12 +29,16 @@ export class MemberVoucherAdminService {
 				.aggregate<{
 					member: Types.ObjectId
 				}>()
-				.match({
-					$or: [
-						{ member: { $in: targetObjectIds } },
-						{ rank: { $in: targetObjectIds } },
-					],
-				})
+				.match(
+					targetObjectIds.length > 0
+						? {
+								$or: [
+									{ member: { $in: targetObjectIds } },
+									{ rank: { $in: targetObjectIds } },
+								],
+						  }
+						: {}
+				)
 				.project({
 					member: true,
 					_id: false,

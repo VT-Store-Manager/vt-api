@@ -29,7 +29,6 @@ export class UpdateVoucherInfoDTO extends PartialType(
 	code?: string
 
 	@IsOptional()
-	@IsOptional()
 	@IsString()
 	description?: string
 
@@ -40,7 +39,7 @@ export class UpdateVoucherInfoDTO extends PartialType(
 	@IsOptional()
 	@IsNumber()
 	@Min(new Date(2023, 0, 1).getTime())
-	activeStartTime?: number
+	activeStartTime?: number = Date.now()
 
 	@IsOptional()
 	@IsNumber()
