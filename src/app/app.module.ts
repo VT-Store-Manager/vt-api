@@ -59,7 +59,7 @@ import { TriggerModule } from './triggers/trigger.module'
 		}),
 		ServeStaticModule.forRoot({
 			rootPath: join(__dirname, '..', '..', 'public'),
-			serveRoot: '/public',
+			serveRoot: '/',
 			serveStaticOptions: {
 				cacheControl: true,
 			},

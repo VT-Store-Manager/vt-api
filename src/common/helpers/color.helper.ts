@@ -24,7 +24,7 @@ export const colorHexToInt = (color: string) => {
 			}, '')
 			break
 		case 6:
-			result = result + 'ff'
+			result = color + 'ff'
 			break
 		case 8:
 			break

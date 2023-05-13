@@ -36,8 +36,8 @@ export class PromotionAdminController {
 		@UploadedFile() image: Express.Multer.File,
 		@Body() body: CreatePromotionDTO
 	) {
-		let imageKey = ''
-		if (!image) {
+		let imageKey: string = null
+		if (image) {
 			imageKey = this.fileService.createObjectKey(
 				['promotion'],
 				image.originalname

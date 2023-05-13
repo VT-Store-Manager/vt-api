@@ -4,8 +4,12 @@ import { Types } from 'mongoose'
 
 @Schema({ versionKey: false, _id: false })
 export class OfferTarget {
-	@Prop({ type: Types.ObjectId })
-	id?: string | Types.ObjectId
+	@Prop({
+		type: [Types.ObjectId],
+		default: [],
+		validate: (v: string[]) => v.map(id => new Types.ObjectId(id)),
+	})
+	ids?: Array<string | Types.ObjectId>
 
 	@Prop({
 		type: [String],
@@ -72,7 +76,7 @@ export class VoucherDiscount {
 			validator: (v: OfferTarget[]) => {
 				if (!Array.isArray(v)) return false
 				return v.every(target => {
-					return target.id || target.options.length > 0
+					return target.ids || target.options.length > 0
 				})
 			},
 			message: 'Offer of target is invalid',

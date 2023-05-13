@@ -66,6 +66,9 @@ export class ProductCategoryMemberService {
 			.unwind({
 				path: '$category',
 			})
+			.sort({
+				'category.createdAt': 1,
+			})
 			.project({
 				id: '$_id',
 				name: '$category.name',

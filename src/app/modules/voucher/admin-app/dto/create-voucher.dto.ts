@@ -17,7 +17,7 @@ export class CreateVoucherDTO {
 
 	@IsOptional()
 	@IsString()
-	description?: string = ''
+	description?: string
 
 	@IsOptional()
 	@IsString()

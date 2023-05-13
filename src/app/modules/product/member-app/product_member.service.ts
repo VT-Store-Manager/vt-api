@@ -9,6 +9,7 @@ import { Product, ProductDocument } from '@schema/product.schema'
 import { Store, StoreDocument } from '@schema/store.schema'
 
 import { DetailProductDTO, ProductListItemDTO } from './dto/response.dto'
+import { intersection } from 'lodash'
 
 @Injectable()
 export class ProductMemberService {
@@ -190,13 +191,28 @@ export class ProductMemberService {
 	}
 
 	async getAllFavorites(memberId: string) {
-		const memberData = await this.memberDataModel
-			.findOne({ member: new Types.ObjectId(memberId) })
-			.select('favoriteProducts')
-			.lean()
-			.exec()
+		const [memberData, products] = await Promise.all([
+			this.memberDataModel
+				.findOne({ member: new Types.ObjectId(memberId) })
+				.select('favoriteProducts')
+				.lean()
+				.exec(),
+			this.productModel
+				.aggregate<{ id: string }>([
+					{
+						$project: {
+							id: { $toString: '$_id' },
+							_id: false,
+						},
+					},
+				])
+				.exec(),
+		])
 		return {
-			products: memberData.favoriteProducts,
+			products: intersection(
+				memberData.favoriteProducts.map(id => id.toString()),
+				products.map(product => product.id)
+			),
 		}
 	}
 }

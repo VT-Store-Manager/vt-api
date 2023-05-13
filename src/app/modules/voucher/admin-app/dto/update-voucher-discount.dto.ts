@@ -7,6 +7,7 @@ import {
 	IsOptional,
 	IsString,
 	Matches,
+	Max,
 	Min,
 	ValidateNested,
 } from 'class-validator'
@@ -31,6 +32,7 @@ export class UpdateVoucherDiscountDTO extends PartialType(VoucherDiscount) {
 	@Type(() => Number)
 	@IsNumber()
 	@Min(-1)
+	@Max(100)
 	percentage?: number
 
 	@IsOptional()
@@ -59,8 +61,8 @@ export class UpdateVoucherDiscountDTO extends PartialType(VoucherDiscount) {
 
 export class OfferTargetDTO extends OfferTarget {
 	@IsOptional()
-	@IsMongoId()
-	id?: string
+	@IsMongoId({ each: true })
+	ids?: string[]
 
 	@IsOptional()
 	@IsString({ each: true })

@@ -569,9 +569,9 @@ export class MemberService {
 					members[0][key]
 				)
 			}, greeting.content),
-			templateCartAmount: templateCount?.[0].count ?? 0,
-			voucherAmount: voucherCount?.[0].count ?? 0,
-			notifyAmount: notificationCount[0].count,
+			templateCartAmount: templateCount?.[0]?.count ?? 0,
+			voucherAmount: voucherCount?.[0]?.count ?? 0,
+			notifyAmount: notificationCount?.[0]?.count ?? 0,
 		}
 	}
 }

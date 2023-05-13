@@ -48,8 +48,8 @@ export class UpdateVoucherConditionDTO extends PartialType(VoucherCondition) {
 
 export class ConditionInclusionDTO extends ConditionInclusion {
 	@IsOptional()
-	@IsMongoId()
-	id?: string
+	@IsMongoId({ each: true })
+	ids?: string[]
 
 	@IsOptional()
 	@IsString({ each: true })

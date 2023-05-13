@@ -1,6 +1,7 @@
 import { ClientSession, Model, Types } from 'mongoose'
 
 import { s3KeyPattern } from '@/common/constants'
+import { SettingGeneralService } from '@module/setting/services/setting-general.service'
 import {
 	BadRequestException,
 	Injectable,
@@ -37,54 +38,41 @@ export class PromotionMemberService {
 		private readonly memberVoucherModel: Model<MemberVoucherDocument>,
 		@InjectModel(MemberPromotionHistory.name)
 		private readonly memberPromotionHistoryModel: Model<MemberPromotionHistoryDocument>,
+		private readonly settingGeneralModel: SettingGeneralService,
 		private readonly configService: ConfigService
 	) {
 		this.imageUrl = configService.get<string>('imageUrl')
 	}
 
 	async getAll(memberId: string) {
-		const memberRank = await this.memberRankModel
-			.findOne({
-				member: new Types.ObjectId(memberId),
-			})
-			.select('member rank -_id')
-			.lean()
-			.exec()
+		const [memberRank, { brand }] = await Promise.all([
+			this.memberRankModel
+				.findOne({
+					member: new Types.ObjectId(memberId),
+				})
+				.select('member rank -_id')
+				.lean()
+				.exec(),
+			this.settingGeneralModel.getData({ brand: true }),
+		])
 
 		const now = new Date()
 		const promotions = await this.promotionModel
 			.aggregate<PromotionItemDTO>([
 				{
 					$match: {
-						startTime: {
-							$lte: now,
-						},
+						disabled: false,
+						deleted: false,
+						startTime: { $lte: now },
 						$and: [
 							{
-								$or: [
-									{
-										finishTime: {
-											$gt: now,
-										},
-									},
-									{
-										finishTime: null,
-									},
-								],
+								$or: [{ finishTime: { $gt: now } }, { finishTime: null }],
 							},
 							{
 								$or: [
-									{
-										'possibleTarget.0': {
-											$exists: false,
-										},
-									},
-									{
-										possibleTarget: memberRank.member,
-									},
-									{
-										possibleTarget: memberRank.rank,
-									},
+									{ 'possibleTarget.0': { $exists: false } },
+									{ possibleTarget: memberRank.member },
+									{ possibleTarget: memberRank.rank },
 								],
 							},
 						],
@@ -101,28 +89,10 @@ export class PromotionMemberService {
 								$match: {
 									$and: [
 										{
-											$or: [
-												{
-													startTime: null,
-												},
-												{
-													startTime: {
-														$lte: now,
-													},
-												},
-											],
+											$or: [{ startTime: null }, { startTime: { $lte: now } }],
 										},
 										{
-											$or: [
-												{
-													finishTime: null,
-												},
-												{
-													finishTime: {
-														$gt: now,
-													},
-												},
-											],
+											$or: [{ finishTime: null }, { finishTime: { $gt: now } }],
 										},
 									],
 								},
@@ -137,8 +107,8 @@ export class PromotionMemberService {
 				},
 				{
 					$lookup: {
-						from: 'partner',
-						localField: 'partner',
+						from: 'partners',
+						localField: 'voucher.partner',
 						foreignField: '_id',
 						as: 'partner',
 					},
@@ -155,20 +125,14 @@ export class PromotionMemberService {
 						localField: '_id',
 						foreignField: 'promotion',
 						as: 'history',
-						pipeline: [
-							{
-								$project: {
-									_id: true,
-								},
-							},
-						],
+						pipeline: [{ $project: { _id: true } }],
 					},
 				},
 				{
 					$project: {
 						id: '$_id',
 						_id: false,
-						name: '$title',
+						name: { $ifNull: ['$title', '$voucher.title'] },
 						partnerImage: {
 							$cond: [
 								{
@@ -178,7 +142,7 @@ export class PromotionMemberService {
 									},
 								},
 								{ $concat: [this.imageUrl, '$partner.image'] },
-								null,
+								this.imageUrl + brand.image,
 							],
 						},
 						backgroundImage: {
@@ -203,11 +167,15 @@ export class PromotionMemberService {
 						partner: '$partner.name',
 						from: { $toLong: '$startTime' },
 						to: { $toLong: '$finishTime' },
-						description: '$description',
-						isFeatured: '$isFeatured',
-						exchangeCount: {
-							$size: '$history',
+						description: {
+							$cond: [
+								{ $eq: ['$description', ''] },
+								'$voucher.description',
+								'$description',
+							],
 						},
+						isFeatured: '$isFeatured',
+						exchangeCount: { $size: '$history' },
 					},
 				},
 			])

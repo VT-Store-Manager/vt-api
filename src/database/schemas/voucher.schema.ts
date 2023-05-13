@@ -34,7 +34,11 @@ export class Voucher {
 	})
 	code: string
 
-	@Prop({ type: Types.ObjectId, ref: 'Partner' })
+	@Prop({
+		type: Types.ObjectId,
+		ref: 'Partner',
+		set: (v: string) => new Types.ObjectId(v),
+	})
 	partner?: Types.ObjectId
 
 	@Prop({ type: String, default: '' })
@@ -43,7 +47,7 @@ export class Voucher {
 	@Prop({ type: Number, default: 24 * 30 })
 	expireHour: number
 
-	@Prop({ type: Date })
+	@Prop({ type: Date, default: new Date() })
 	activeStartTime?: Date
 
 	@Prop({

@@ -1,10 +1,11 @@
 import { ClientSession, Model, Types } from 'mongoose'
 
-import { MemberRank, MemberRankDocument } from '@schema/member-rank.schema'
-import { Promotion, PromotionDocument } from '@schema/promotion.schema'
-import { Voucher, VoucherDocument } from '@schema/voucher.schema'
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
+import { MemberRank, MemberRankDocument } from '@schema/member-rank.schema'
+import { Promotion, PromotionDocument } from '@schema/promotion.schema'
+import { Rank, RankDocument } from '@schema/rank.schema'
+import { Voucher, VoucherDocument } from '@schema/voucher.schema'
 
 import { CreatePromotionDTO } from './dto/create-promotion.dto'
 
@@ -16,25 +17,34 @@ export class PromotionAdminService {
 		@InjectModel(Voucher.name)
 		private readonly voucherModel: Model<VoucherDocument>,
 		@InjectModel(MemberRank.name)
-		private readonly memberRankModel: Model<MemberRankDocument>
+		private readonly memberRankModel: Model<MemberRankDocument>,
+		@InjectModel(Rank.name)
+		private readonly rankModel: Model<RankDocument>
 	) {}
 
 	async create(data: CreatePromotionDTO, session?: ClientSession) {
-		const [voucherCount, targetByMember, targetByRank] = await Promise.all([
+		const [voucherCount, targetMember, targetRank] = await Promise.all([
 			this.voucherModel.findById(data.voucher).count().exec(),
 			this.memberRankModel
 				.find({
-					member: {
-						$in: data.possibleTarget.map(id => new Types.ObjectId(id)),
-					},
+					$or: [
+						{
+							member: {
+								$in: data.possibleTarget.map(id => new Types.ObjectId(id)),
+							},
+						},
+						{
+							rank: {
+								$in: data.possibleTarget.map(id => new Types.ObjectId(id)),
+							},
+						},
+					],
 				})
 				.count()
 				.exec(),
-			this.memberRankModel
+			this.rankModel
 				.find({
-					rank: {
-						$in: data.possibleTarget.map(id => new Types.ObjectId(id)),
-					},
+					_id: { $in: data.possibleTarget.map(id => new Types.ObjectId(id)) },
 				})
 				.count()
 				.exec(),
@@ -42,7 +52,7 @@ export class PromotionAdminService {
 		if (!voucherCount) {
 			throw new BadRequestException('Voucher not found')
 		}
-		if (data.possibleTarget.length > 0 && targetByMember + targetByRank === 0) {
+		if (data.possibleTarget.length > 0 && targetMember + targetRank === 0) {
 			throw new BadRequestException('Possible target not found')
 		}
 

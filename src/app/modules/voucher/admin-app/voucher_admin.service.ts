@@ -118,16 +118,14 @@ export class VoucherAdminService {
 		offerTarget: OfferTarget | ConditionInclusion
 	) {
 		// 1. Get products with id + get product options with list of item keys
+		const ids = offerTarget.ids?.map(id => new Types.ObjectId(id))
 		// eslint-disable-next-line prefer-const
 		let [products, ...optionList] = await Promise.all([
 			this.productModel
 				.find(
-					offerTarget.id
+					ids && ids.length > 0
 						? {
-								$or: [
-									{ category: new Types.ObjectId(offerTarget.id) },
-									{ _id: new Types.ObjectId(offerTarget.id) },
-								],
+								$or: [{ category: { $in: ids } }, { _id: { $in: ids } }],
 						  }
 						: {}
 				)

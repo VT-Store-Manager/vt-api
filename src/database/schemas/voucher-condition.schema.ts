@@ -1,11 +1,16 @@
 import { ShippingMethod } from '@/common/constants'
 import { optionItemKeyLength } from '@/common/helpers/key.helper'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
+import { Types } from 'mongoose'
 
 @Schema({ versionKey: false, _id: false })
 export class ConditionInclusion {
-	@Prop({ type: String })
-	id?: string
+	@Prop({
+		type: [Types.ObjectId],
+		default: [],
+		set: (v: string[]) => v.map(id => new Types.ObjectId(id)),
+	})
+	ids?: Array<Types.ObjectId | string>
 
 	@Prop({
 		type: [String],
@@ -57,7 +62,7 @@ export class VoucherCondition {
 			validator: (v: ConditionInclusion[]) => {
 				if (!Array.isArray(v)) return false
 				return v.every(target => {
-					return target.id || target.options.length > 0
+					return target.ids || target.options.length > 0
 				})
 			},
 			message: 'Condition of inclusion is invalid',

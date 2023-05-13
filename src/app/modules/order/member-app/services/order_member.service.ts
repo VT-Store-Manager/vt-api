@@ -661,6 +661,9 @@ export class OrderMemberService {
 		if (memberVoucherData.length === 0) {
 			throw new BadRequestException(`Member voucher not found`)
 		}
+		if (memberVoucherData[0].voucher.partner) {
+			throw new BadRequestException('Cannot use voucher of other brands')
+		}
 
 		return {
 			productMap: new Map(
