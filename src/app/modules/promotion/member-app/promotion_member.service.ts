@@ -272,9 +272,31 @@ export class PromotionMemberService {
 				},
 				{
 					$project: {
-						title: true,
-						description: true,
-						image: true,
+						title: { $ifNull: ['$title', '$voucher.title'] },
+						description: {
+							$cond: [
+								{ $eq: ['$description', ''] },
+								'$voucher.description',
+								'$description',
+							],
+						},
+						image: {
+							$cond: [
+								{
+									$regexMatch: {
+										input: { $ifNull: ['$image', '$voucher.image'] },
+										regex: s3KeyPattern,
+									},
+								},
+								{
+									$concat: [
+										this.imageUrl,
+										{ $ifNull: ['$image', '$voucher.image'] },
+									],
+								},
+								null,
+							],
+						},
 						cost: true,
 						voucher: {
 							id: '$voucher._id',
