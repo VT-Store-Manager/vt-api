@@ -88,7 +88,7 @@ export class StoreMemberService {
 				name: store.name,
 				image: store.images?.[0] || null,
 				address: store.fullAddress,
-				distance: +(Math.random() * 20).toFixed(1),
+				distance: Math.floor(Math.random() * 10000),
 				isFavorite: false,
 			}))
 		}
