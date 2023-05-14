@@ -92,7 +92,7 @@ export class MemberRankMemberService {
 			id: member._id.toString(),
 			name: member.fullName,
 			code: memberRank.code,
-			point: memberRank.totalPoint,
+			point: memberRank.currentPoint,
 			currentRankPoint: memberRank.rank.minPoint,
 			currentRankName: memberRank.rank.name,
 			nextRankPoint: nextRank ? nextRank.minPoint : null,
