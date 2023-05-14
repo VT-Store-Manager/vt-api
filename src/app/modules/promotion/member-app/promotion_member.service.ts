@@ -262,6 +262,16 @@ export class PromotionMemberService {
 						localField: 'voucher.partner',
 						foreignField: '_id',
 						as: 'voucher.partner',
+						pipeline: [
+							{
+								$project: {
+									id: '$_id',
+									_id: false,
+									name: true,
+									image: true,
+								},
+							},
+						],
 					},
 				},
 				{
@@ -303,11 +313,7 @@ export class PromotionMemberService {
 							title: true,
 							code: true,
 							image: true,
-							partner: {
-								id: '$voucher.partner._id',
-								name: true,
-								image: true,
-							},
+							partner: true,
 							expireHour: true,
 							activeStartTime: {
 								$toLong: '$voucher.activeStartTime',
@@ -321,6 +327,7 @@ export class PromotionMemberService {
 				},
 			])
 			.exec()
+
 		if (!promotions || promotions.length === 0) {
 			throw new BadRequestException('Promotion not found')
 		}

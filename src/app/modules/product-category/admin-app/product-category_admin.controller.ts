@@ -9,7 +9,6 @@ import {
 	Body,
 	Controller,
 	Get,
-	InternalServerErrorException,
 	Param,
 	Patch,
 	Post,
@@ -67,7 +66,7 @@ export class ProductCategoryAdminController {
 		if (error) {
 			abortController.abort()
 			this.fileService.delete([imageKey])
-			throw new InternalServerErrorException(error.message)
+			throw error
 		}
 
 		return result

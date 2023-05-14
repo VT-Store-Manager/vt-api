@@ -6,7 +6,6 @@ import { BooleanResponseDTO } from '@/types/swagger'
 import {
 	Body,
 	Controller,
-	InternalServerErrorException,
 	Post,
 	UploadedFile,
 	UseInterceptors,
@@ -55,9 +54,8 @@ export class PartnerAdminController {
 
 		if (error) {
 			abortController.abort()
-			throw new InternalServerErrorException(
-				'Create partner failed. ' + error.message
-			)
+			error.message = 'Create partner failed. ' + error.message
+			throw error
 		}
 
 		return true

@@ -1,7 +1,7 @@
 import { Document, MongoError } from 'mongodb'
 import { ClientSession, Connection } from 'mongoose'
 
-import { Injectable } from '@nestjs/common'
+import { HttpException, Injectable } from '@nestjs/common'
 import { InjectConnection } from '@nestjs/mongoose'
 
 @Injectable()
@@ -10,7 +10,7 @@ export class MongoSessionService {
 
 	async execTransaction<T = any>(
 		fn: (session: ClientSession) => Promise<T>
-	): Promise<{ result: Document; error: Error | MongoError }> {
+	): Promise<{ result: Document; error: Error | MongoError | HttpException }> {
 		try {
 			const session = await this.connection.startSession()
 

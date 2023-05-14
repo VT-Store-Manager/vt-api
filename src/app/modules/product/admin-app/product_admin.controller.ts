@@ -10,7 +10,6 @@ import {
 	Body,
 	Controller,
 	Get,
-	InternalServerErrorException,
 	Post,
 	UploadedFiles,
 	UseInterceptors,
@@ -61,7 +60,7 @@ export class ProductAdminController {
 		if (error) {
 			abortController.abort()
 			this.fileService.delete(objectKeys)
-			throw new InternalServerErrorException(error)
+			throw error
 		}
 		return result
 	}

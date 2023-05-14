@@ -11,7 +11,6 @@ import {
 	Body,
 	Controller,
 	Get,
-	InternalServerErrorException,
 	Post,
 	Query,
 	UploadedFiles,
@@ -96,7 +95,7 @@ export class StoreAdminController {
 		if (error) {
 			abortController.abort()
 			this.fileService.delete(objectKeys)
-			throw new InternalServerErrorException()
+			throw error
 		}
 
 		return result

@@ -13,7 +13,6 @@ import {
 	Body,
 	Controller,
 	Delete,
-	InternalServerErrorException,
 	Param,
 	Patch,
 	Post,
@@ -104,7 +103,7 @@ export class VoucherAdminController {
 		)
 		if (error) {
 			abortController.abort()
-			throw new InternalServerErrorException(error.message)
+			throw error
 		}
 		return true
 	}
@@ -171,7 +170,7 @@ export class VoucherAdminController {
 		)
 		if (error) {
 			abortController.abort()
-			throw new InternalServerErrorException(error.message)
+			throw error
 		}
 		return true
 	}

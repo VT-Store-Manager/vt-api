@@ -6,7 +6,6 @@ import { Rank } from '@schema/rank.schema'
 import {
 	Body,
 	Controller,
-	InternalServerErrorException,
 	Post,
 	UploadedFiles,
 	UseInterceptors,
@@ -80,9 +79,7 @@ export class RankAdminController {
 			abortController.abort()
 			this.fileService.delete([iconObjectKey, backgroundObjectKey])
 
-			throw new InternalServerErrorException(
-				typeof error === 'boolean' ? undefined : error.message
-			)
+			throw error
 		}
 
 		return result

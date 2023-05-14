@@ -2,15 +2,7 @@ import { ApiSuccessResponse } from '@/common/decorators/api-success-response.dec
 import { clearUndefineOrNullField } from '@/common/helpers/body.helper'
 import { ObjectIdPipe } from '@/common/pipes/object-id.pipe'
 import { MongoSessionService } from '@/common/providers/mongo-session.service'
-import {
-	Body,
-	Controller,
-	Get,
-	InternalServerErrorException,
-	Param,
-	Patch,
-	Post,
-} from '@nestjs/common'
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
 import { CreateProductOptionDTO } from './dto/create-product-option.dto'
@@ -50,7 +42,7 @@ export class ProductOptionAdminController {
 				result = newProductOption
 			}
 		)
-		if (error) throw new InternalServerErrorException()
+		if (error) throw error
 
 		return result
 	}

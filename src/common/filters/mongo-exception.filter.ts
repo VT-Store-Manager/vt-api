@@ -15,7 +15,7 @@ export class MongoExceptionFilter implements ExceptionFilter {
 	catch(exception: MongoError, host: ArgumentsHost) {
 		const context = host.switchToHttp()
 		const response = context.getResponse<Response>()
-		const status = exception['httpCode'] ?? HttpStatus.BAD_REQUEST
+		const status = exception['httpCode'] ?? HttpStatus.INTERNAL_SERVER_ERROR
 
 		if (this.isDuplicateKeyError(exception)) {
 			const mongoServerErr = exception as MongoServerError

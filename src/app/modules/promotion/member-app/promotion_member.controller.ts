@@ -5,13 +5,7 @@ import { ApiSuccessResponse } from '@/common/decorators/api-success-response.dec
 import { ObjectIdPipe } from '@/common/pipes/object-id.pipe'
 import { MongoSessionService } from '@/common/providers/mongo-session.service'
 import { BooleanResponseDTO } from '@/types/swagger'
-import {
-	Controller,
-	Get,
-	InternalServerErrorException,
-	Param,
-	Post,
-} from '@nestjs/common'
+import { Controller, Get, Param, Post } from '@nestjs/common'
 import { ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import { PromotionItemDTO } from './dto/response.dto'
@@ -52,9 +46,7 @@ export class PromotionMemberController {
 			}
 		)
 		if (error) {
-			throw new InternalServerErrorException(
-				'Exchange promotion failed. ' + error.message
-			)
+			throw error
 		}
 		return true
 	}

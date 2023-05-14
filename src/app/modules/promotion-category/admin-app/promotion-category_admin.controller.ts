@@ -6,7 +6,6 @@ import { BooleanResponseDTO } from '@/types/swagger'
 import {
 	Body,
 	Controller,
-	InternalServerErrorException,
 	Post,
 	UploadedFile,
 	UseInterceptors,
@@ -54,7 +53,7 @@ export class PromotionCategoryAdminController {
 
 		if (error) {
 			abortController.abort()
-			throw new InternalServerErrorException(error.message)
+			throw error
 		}
 
 		return true

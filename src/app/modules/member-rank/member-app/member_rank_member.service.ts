@@ -60,7 +60,7 @@ export class MemberRankMemberService {
 			this.memberRankModel
 				.findOne({ member: new Types.ObjectId(memberId) })
 				.populate<{ rank: Rank }>('rank')
-				.select('rank usedPoint expiredPoint currentPoint deliveryFee')
+				.select('rank usedPoint expiredPoint currentPoint deliveryFee code')
 				.lean({ virtuals: true })
 				.exec(),
 		])
