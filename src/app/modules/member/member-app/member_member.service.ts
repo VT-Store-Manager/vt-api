@@ -55,7 +55,14 @@ export class MemberService {
 		const memberData = await this.memberModel
 			.findById(memberId)
 			.orFail(new BadRequestException('Member not found'))
-			.select('-_id firstName lastName dob gender phone')
+			.select({
+				_id: false,
+				firstName: true,
+				lastName: true,
+				dob: { $toLong: '$dob' },
+				gender: true,
+				phone: true,
+			})
 			.lean()
 			.exec()
 		return memberData
