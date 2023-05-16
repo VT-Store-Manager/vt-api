@@ -237,6 +237,13 @@ export class CartTemplateMemberService {
 				)
 			}
 			product.options.forEach(option => {
+				option.items.forEach(item => {
+					if (item.parentKey && validateProduct.options.includes(item.key)) {
+						throw new BadRequestException(
+							'Option item key must use its parent item key'
+						)
+					}
+				})
 				const selectedKeys = intersection(
 					option.items.map(item => item.parentKey || item.key),
 					validateProduct.options
@@ -245,14 +252,14 @@ export class CartTemplateMemberService {
 					throw new BadRequestException(
 						`Option ${option._id.toString()} must contain more than ${
 							option.range[0]
-						} item`
+						} item${option.range[0] > 1 ? 's' : ''}`
 					)
 				}
 				if (selectedKeys.length > option.range[1]) {
 					throw new BadRequestException(
 						`Option ${option._id.toString()} must contain less than ${
 							option.range[1]
-						} item`
+						} item${option.range[0] > 1 ? 's' : ''}`
 					)
 				}
 			})
