@@ -90,9 +90,7 @@ export class MemberDataMemberService {
 							_id: false,
 							point: { $multiply: [-1, '$promotionData.cost'] },
 							name: '$promotionData.title',
-							time: {
-								$toLong: '$createdAt',
-							},
+							time: { $toLong: '$createdAt' },
 						},
 					},
 					{
