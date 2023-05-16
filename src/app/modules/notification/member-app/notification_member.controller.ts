@@ -38,4 +38,11 @@ export class NotificationMemberController {
 	) {
 		return await this.notificationService.check(memberId, notificationId)
 	}
+
+	@Patch('check-all')
+	@JwtAccess(Role.MEMBER)
+	@ApiResponse({ type: BooleanResponseDTO, status: 200 })
+	async checkAllNotification(@CurrentUser('sub') memberId: string) {
+		return await this.notificationService.checkAll(memberId)
+	}
 }

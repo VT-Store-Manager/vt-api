@@ -134,4 +134,19 @@ export class NotificationMemberService {
 
 		return updateResult.modifiedCount === 1
 	}
+
+	async checkAll(memberId: string) {
+		const updateResult = await this.memberDataModel
+			.updateOne(
+				{ member: new Types.ObjectId(memberId) },
+				{
+					$set: {
+						'notifications.$[].checked': true,
+					},
+				}
+			)
+			.exec()
+
+		return updateResult.matchedCount === 1
+	}
 }
