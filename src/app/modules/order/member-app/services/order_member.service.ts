@@ -1082,7 +1082,7 @@ export class OrderMemberService {
 						},
 						cost: '$totalProductPrice',
 						payType: '$payment',
-						time: '$createdAt',
+						time: { $toLong: '$createdAt' },
 						phone: '$receiver.phone',
 						receiver: '$receiver.name',
 						voucherId: '$voucher.id',

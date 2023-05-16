@@ -193,10 +193,10 @@ export class ProductOptionAdminService {
 				range: { $first: '$range' },
 				items: { $first: '$items' },
 				deleted: { $first: '$deleted' },
-				deletedAt: { $first: '$deletedAt' },
+				deletedAt: { $first: { $toLong: '$deletedAt' } },
 				disabled: { $first: '$disabled' },
-				createdAt: { $first: '$createdAt' },
-				updatedAt: { $first: '$updatedAt' },
+				createdAt: { $first: { $toLong: '$createdAt' } },
+				updatedAt: { $first: { $toLong: '$updatedAt' } },
 				parent: { $first: '$parent' },
 				children: { $push: '$children' },
 			})
