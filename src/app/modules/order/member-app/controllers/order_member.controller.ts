@@ -34,16 +34,19 @@ export class OrderMemberController {
 			memberId,
 			body
 		)
+		// For reuse
+		const fee =
+			applyVoucherResult.deliveryPrice - applyVoucherResult.deliverySalePrice
 		return {
-			fee:
-				applyVoucherResult.deliveryPrice - applyVoucherResult.deliverySalePrice,
+			fee,
 			originalFee: applyVoucherResult.deliveryPrice,
-			cost: applyVoucherResult.products.reduce((res, product) => {
-				const productPrice =
-					product.quantity * (product.mainPrice + product.extraPrice) -
-					product.discountPrice
-				return res + productPrice
-			}, 0),
+			cost:
+				applyVoucherResult.products.reduce((res, product) => {
+					const productPrice =
+						product.quantity * (product.mainPrice + product.extraPrice) -
+						product.discountPrice
+					return res + productPrice
+				}, 0) + fee,
 			voucherDiscount:
 				applyVoucherResult.totalDiscount ||
 				applyVoucherResult.products.reduce((res, product) => {

@@ -1084,7 +1084,12 @@ export class OrderMemberService {
 							$subtract: ['$deliveryPrice', '$deliveryDiscount'],
 						},
 						originalFee: '$deliveryPrice',
-						cost: '$totalProductPrice',
+						cost: {
+							$sum: [
+								'$totalProductPrice',
+								{ $subtract: ['$deliveryPrice', '$deliveryDiscount'] },
+							],
+						},
 						payType: '$payment',
 						time: { $toLong: '$createdAt' },
 						phone: '$receiver.phone',
