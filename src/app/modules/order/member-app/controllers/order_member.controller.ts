@@ -37,6 +37,7 @@ export class OrderMemberController {
 		return {
 			fee:
 				applyVoucherResult.deliveryPrice - applyVoucherResult.deliverySalePrice,
+			originalFee: applyVoucherResult.deliveryPrice,
 			cost: applyVoucherResult.products.reduce((res, product) => {
 				const productPrice =
 					product.quantity * (product.mainPrice + product.extraPrice) -

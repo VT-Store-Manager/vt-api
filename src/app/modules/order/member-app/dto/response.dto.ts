@@ -2,6 +2,7 @@ import { PaymentType, ShippingMethod } from '@/common/constants'
 
 export class GetProductPriceApplyingVoucherDTO {
 	fee: number
+	originalFee: number
 	cost: number
 	voucherDiscount: number
 	products: ProductWithCostDTO[]
@@ -41,6 +42,7 @@ export class GetOrderDetailDTO {
 	name: string
 	categoryId: ShippingMethod
 	fee: number
+	originalFee: number
 	cost: number
 	payType: PaymentType
 	time: number

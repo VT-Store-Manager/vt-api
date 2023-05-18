@@ -96,7 +96,7 @@ export class MemberVoucherMemberService {
 					},
 					{
 						$project: {
-							id: '$_id',
+							id: '$voucher._id',
 							_id: false,
 							code: '$voucher.code',
 							name: '$voucher.title',

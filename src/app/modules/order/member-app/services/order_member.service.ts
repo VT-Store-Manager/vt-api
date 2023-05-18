@@ -1054,7 +1054,10 @@ export class OrderMemberService {
 		return updateResult.modifiedCount === 1
 	}
 
-	async getOrderDetail(memberId: string, orderId: string) {
+	async getOrderDetail(
+		memberId: string,
+		orderId: string
+	): Promise<GetOrderDetailDTO> {
 		const orders = await this.orderMemberModel
 			.aggregate<GetOrderDetailDTO & { itemNames: string[] }>([
 				{
@@ -1080,6 +1083,7 @@ export class OrderMemberService {
 						fee: {
 							$subtract: ['$deliveryPrice', '$deliveryDiscount'],
 						},
+						originalFee: '$deliveryPrice',
 						cost: '$totalProductPrice',
 						payType: '$payment',
 						time: { $toLong: '$createdAt' },
