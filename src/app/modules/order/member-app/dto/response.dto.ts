@@ -1,4 +1,4 @@
-import { PaymentType, ShippingMethod } from '@/common/constants'
+import { OrderState, PaymentType, ShippingMethod } from '@/common/constants'
 
 export class GetProductPriceApplyingVoucherDTO {
 	fee: number
@@ -55,6 +55,7 @@ export class GetOrderDetailDTO {
 	products: OrderProductItemDTO[]
 	review: OrderReviewDTO
 	point: number
+	state: OrderState
 }
 
 export class OrderProductItemDTO {

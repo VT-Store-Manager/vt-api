@@ -1116,6 +1116,7 @@ export class OrderMemberService {
 						'review.rate': '$review.rate',
 						'review.review': '$review.content',
 						point: '$point',
+						state: '$state',
 					},
 				},
 			])
