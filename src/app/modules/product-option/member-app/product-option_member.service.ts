@@ -48,7 +48,25 @@ export class ProductOptionMemberService {
 						},
 						minSelected: { $first: '$range' },
 						maxSelected: { $arrayElemAt: ['$range', 1] },
-						defaultSelect: '$defaultSelect',
+						defaultSelect: {
+							$filter: {
+								input: {
+									$map: {
+										input: '$items',
+										as: 'item',
+										in: {
+											$cond: [
+												{ $eq: ['$$item.isDefault', true] },
+												{ $ifNull: ['$$item.parentKey', '$$item.key'] },
+												null,
+											],
+										},
+									},
+								},
+								as: 'item',
+								cond: { $ne: ['$$item', null] },
+							},
+						},
 						optionItems: {
 							$map: {
 								input: '$items',

@@ -20,6 +20,9 @@ export class ProductOptionItem {
 
 	@Prop({ type: Boolean, default: false })
 	disabled: boolean
+
+	@Prop({ type: Boolean, default: false })
+	isDefault?: boolean
 }
 
 export const ProductOptionItemSchema =

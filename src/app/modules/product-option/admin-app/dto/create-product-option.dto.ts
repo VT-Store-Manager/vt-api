@@ -2,6 +2,7 @@ import { Type } from 'class-transformer'
 import {
 	ArrayMaxSize,
 	ArrayMinSize,
+	IsBoolean,
 	IsNotEmpty,
 	IsNumber,
 	IsOptional,
@@ -55,22 +56,27 @@ export class CreateProductOptionDTO extends IntersectionType(
 
 class ChildProductOptionItemInput extends IntersectionType(
 	PickType(ProductOptionItem, ['key'] as const),
-	PartialType(PickType(ProductOptionItem, ['cost'] as const))
+	PartialType(PickType(ProductOptionItem, ['cost', 'isDefault'] as const))
 ) {
 	@IsString()
 	@IsNotEmpty()
 	key: string
 
+	@IsOptional()
 	@IsNumber()
 	@Min(0)
-	@IsOptional()
 	cost?: number
+
+	@IsOptional()
+	@Type(() => Boolean)
+	@IsBoolean()
+	isDefault?: boolean
 }
 
-class NewProductOptionItemInput extends PickType(ProductOptionItem, [
-	'name',
-	'cost',
-] as const) {
+class NewProductOptionItemInput extends IntersectionType(
+	PickType(ProductOptionItem, ['name', 'cost'] as const),
+	PartialType(PickType(ProductOptionItem, ['isDefault'] as const))
+) {
 	@IsString()
 	@IsNotEmpty()
 	name: string
@@ -78,4 +84,9 @@ class NewProductOptionItemInput extends PickType(ProductOptionItem, [
 	@IsNumber()
 	@Min(0)
 	cost: number
+
+	@IsOptional()
+	@Type(() => Boolean)
+	@IsBoolean()
+	isDefault?: boolean
 }
