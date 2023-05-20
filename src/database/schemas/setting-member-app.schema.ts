@@ -61,18 +61,14 @@ export class SettingMemberApp {
 		type: {
 			product: String,
 			store: String,
-			category: String,
-			coupon: String,
-			couponNotification: String,
+			voucher: String,
 		},
 		_id: false,
 	})
 	defaultImages: {
 		product: string
 		store: string
-		category: string
-		coupon: string
-		couponNotification: string
+		voucher: string
 	}
 
 	@Prop({

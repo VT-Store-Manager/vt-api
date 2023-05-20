@@ -55,7 +55,7 @@ export class GetOrderDetailDTO {
 	products: OrderProductItemDTO[]
 	review: OrderReviewDTO
 	point: number
-	state: OrderState
+	status: OrderState
 }
 
 export class OrderProductItemDTO {
@@ -64,6 +64,7 @@ export class OrderProductItemDTO {
 	cost: number
 	amount: number
 	note: string
+	options: string[]
 }
 
 export class OrderReviewDTO {

@@ -13,7 +13,9 @@ export class SettingMemberAppService {
 		private readonly settingMemberAppModel: Model<SettingGeneralDocument>
 	) {}
 
-	async getData<T = SettingMemberApp>(project: Record<string, any>) {
+	async getData<T = SettingMemberApp>(
+		project: Record<string, any>
+	): Promise<T> {
 		const setting = await this.settingMemberAppModel
 			.aggregate<T>([
 				{
