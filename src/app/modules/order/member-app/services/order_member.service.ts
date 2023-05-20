@@ -1110,6 +1110,7 @@ export class OrderMemberService {
 									},
 									amount: '$$item.quantity',
 									note: '$$item.note',
+									options: '$$item.note',
 								},
 							},
 						},

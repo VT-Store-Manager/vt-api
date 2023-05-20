@@ -64,6 +64,7 @@ export class OrderProductItemDTO {
 	cost: number
 	amount: number
 	note: string
+	options: string[]
 }
 
 export class OrderReviewDTO {
