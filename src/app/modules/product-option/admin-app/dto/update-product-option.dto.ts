@@ -73,6 +73,11 @@ export class ParentOptionItems {
 	@IsBoolean()
 	disabled?: boolean
 
+	@IsOptional()
+	@Type(() => Boolean)
+	@IsBoolean()
+	isDefault?: boolean
+
 	@ValidateIf((o: ParentOptionItems) => o.action !== 'add')
 	@IsString()
 	@Matches(/^[a-z]{6}(-[a-z]{6}){0,}$/)
@@ -97,4 +102,9 @@ export class ChildOptionItems {
 	@ValidateIf((o: ParentOptionItems) => o.action === 'update')
 	@IsBoolean()
 	disabled?: boolean
+
+	@IsOptional()
+	@Type(() => Boolean)
+	@IsBoolean()
+	isDefault?: boolean
 }

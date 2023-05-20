@@ -265,6 +265,7 @@ export class ProductOptionAdminService {
 							key: optionItemKeyUid(),
 							cost: curItem.cost,
 							disabled: curItem.disabled,
+							isDefault: curItem.isDefault,
 						}
 						res.push(item)
 						break
@@ -277,6 +278,9 @@ export class ProductOptionAdminService {
 						}
 						if (typeof curItem.disabled === 'boolean') {
 							res[idx].disabled = curItem.disabled
+						}
+						if (typeof curItem.isDefault === 'boolean') {
+							res[idx].isDefault = curItem.isDefault
 						}
 						break
 				}
@@ -298,6 +302,7 @@ export class ProductOptionAdminService {
 							name: curItem.name,
 							cost: curItem.cost,
 							disabled: curItem.disabled,
+							isDefault: curItem.isDefault,
 						}
 						res.push(item)
 						break
@@ -310,6 +315,9 @@ export class ProductOptionAdminService {
 						}
 						if (typeof curItem.cost === 'number') {
 							res[idx].cost = curItem.cost
+						}
+						if (typeof curItem.isDefault === 'boolean') {
+							res[idx].isDefault = curItem.isDefault
 						}
 						break
 				}

@@ -6,6 +6,7 @@ import {
 	Injectable,
 	PipeTransform,
 } from '@nestjs/common'
+import { clearUndefineOrNullField } from '../helpers/body.helper'
 
 @Injectable()
 export class NotEmptyObjectPipe implements PipeTransform {
@@ -24,11 +25,7 @@ export class NotEmptyObjectPipe implements PipeTransform {
 @Injectable()
 export class RemoveNullishObjectPipe implements PipeTransform {
 	transform(value: Record<string | number, any>) {
-		Object.keys(value).forEach(key => {
-			if (value[key] === null || value[key] === undefined) {
-				delete value[key]
-			}
-		})
+		clearUndefineOrNullField(value)
 		return value
 	}
 }

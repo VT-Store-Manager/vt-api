@@ -1,6 +1,6 @@
 import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
-import { clearUndefineOrNullField } from '@/common/helpers/body.helper'
 import { ObjectIdPipe } from '@/common/pipes/object-id.pipe'
+import { RemoveNullishObjectPipe } from '@/common/pipes/object.pipe'
 import { MongoSessionService } from '@/common/providers/mongo-session.service'
 import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
@@ -67,9 +67,8 @@ export class ProductOptionAdminController {
 	@Patch(':id/update')
 	async updateProductOption(
 		@Param('id', ObjectIdPipe) id: string,
-		@Body() dto: UpdateProductOptionDTO
+		@Body(RemoveNullishObjectPipe) dto: UpdateProductOptionDTO
 	) {
-		clearUndefineOrNullField(dto)
 		const updateResult = await this.productOptionService.update(id, dto)
 		return updateResult.modifiedCount === 1
 	}
