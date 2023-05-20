@@ -25,8 +25,9 @@ export class CreateOrderDTO {
 	@IsEnum(ShippingMethod)
 	categoryId: ShippingMethod
 
+	@IsOptional()
 	@IsEnum(PaymentType)
-	payType: PaymentType
+	payType?: PaymentType = PaymentType.CAST
 
 	@IsOptional()
 	@IsPhoneNumber()

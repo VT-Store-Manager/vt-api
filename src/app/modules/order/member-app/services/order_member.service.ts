@@ -732,14 +732,17 @@ export class OrderMemberService {
 								options: product.options,
 								unitPrice: product.mainPrice + product.extraPrice,
 								name: productMap.get(product.id).name,
-								note: [
-									dtoProductMap.get(product.id).note,
-									...product.options.map(
-										key => optionKeyMap.get(key).item.name
-									),
-								]
-									.filter(opt => !!opt)
-									.join(', '),
+								note:
+									[
+										...product.options.map(
+											key => optionKeyMap.get(key).item.name
+										),
+									]
+										.filter(opt => !!opt)
+										.join(', ') +
+									(dtoProductMap.get(product.id).note
+										? `\n${dtoProductMap.get(product.id).note}`
+										: ''),
 							}
 							if (
 								!product.discountQuantity ||
@@ -798,10 +801,12 @@ export class OrderMemberService {
 							product.optionalOptionPrice,
 						name: productMap.get(product.id).name,
 						note:
-							dtoProductMap.get(product.id).note +
-							product.options
-								.map(key => optionKeyMap.get(key)?.item.name)
-								.join(', '),
+							[...product.options.map(key => optionKeyMap.get(key).item.name)]
+								.filter(opt => !!opt)
+								.join(', ') +
+							(dtoProductMap.get(product.id).note
+								? `\n${dtoProductMap.get(product.id).note}`
+								: ''),
 					})),
 					totalProductPrice: (validatedProducts as ValidatedProduct[]).reduce(
 						(res, product) =>
@@ -1110,7 +1115,7 @@ export class OrderMemberService {
 									},
 									amount: '$$item.quantity',
 									note: '$$item.note',
-									options: '$$item.note',
+									options: '$$item.options',
 								},
 							},
 						},

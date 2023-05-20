@@ -19,6 +19,8 @@ import {
 	AvailableMemberVoucherDTO,
 	UsedMemberVoucherDTO,
 } from './dto/response.dto'
+import { SettingMemberAppService } from '@module/setting/services/setting-member-app.service'
+import { SettingMemberApp } from '@/database/schemas/setting-member-app.schema'
 
 @Injectable()
 export class MemberVoucherMemberService {
@@ -29,12 +31,18 @@ export class MemberVoucherMemberService {
 		@InjectModel(MemberVoucherHistory.name)
 		private readonly memberVoucherHistoryModel: Model<MemberVoucherHistoryDocument>,
 		private readonly settingGeneralService: SettingGeneralService,
+		private readonly settingMemberAppService: SettingMemberAppService,
 		private readonly configService: ConfigService
 	) {
 		this.imageUrl = configService.get<string>('imageUrl')
 	}
 
 	async getMemberAvailableVoucher(memberId: string) {
+		const { defaultImages } = await this.settingMemberAppService.getData<
+			Pick<SettingMemberApp, 'defaultImages'>
+		>({
+			defaultImages: true,
+		})
 		const now = new Date()
 
 		const [{ brand }, availableVouchers] = await Promise.all([
@@ -109,7 +117,7 @@ export class MemberVoucherMemberService {
 										},
 									},
 									{ $concat: [this.imageUrl, '$voucher.image'] },
-									null,
+									{ $concat: [this.imageUrl, defaultImages.voucher] },
 								],
 							},
 							partner: '$voucher.partner.name',
@@ -153,10 +161,17 @@ export class MemberVoucherMemberService {
 	async getMemberUsedVoucher(
 		memberId: string
 	): Promise<UsedMemberVoucherDTO[]> {
+		const { defaultImages } = await this.settingMemberAppService.getData<
+			Pick<SettingMemberApp, 'defaultImages'>
+		>({
+			defaultImages: true,
+		})
 		const [{ brand }, usedVouchers] = await Promise.all([
 			this.settingGeneralService.getData<Pick<SettingGeneral, 'brand'>>({
 				brand: true,
+				defaultImages: true,
 			}),
+
 			this.memberVoucherHistoryModel
 				.aggregate<UsedMemberVoucherDTO>([
 					{
@@ -179,14 +194,14 @@ export class MemberVoucherMemberService {
 										},
 									},
 									{ $concat: [this.imageUrl, '$voucherData.image'] },
-									null,
+									{ $concat: [this.imageUrl, defaultImages.voucher] },
 								],
 							},
 							partner: '$partner.name',
 							usedAt: { $toLong: '$usedAt' },
 							from: { $toLong: '$voucherData.startTime' },
 							to: { $toLong: '$voucherData.finishTime' },
-							description: '$voucher.description',
+							description: '$voucherData.description',
 						},
 					},
 					{
