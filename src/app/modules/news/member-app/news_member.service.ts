@@ -42,6 +42,9 @@ export class NewsMemberService {
 								time: { $toLong: '$createdAt' },
 							},
 						},
+						lastUpdated: {
+							$max: '$updatedAt',
+						},
 					},
 				},
 				{
@@ -55,6 +58,12 @@ export class NewsMemberService {
 				{
 					$unwind: {
 						path: '$tag',
+					},
+				},
+				{
+					$sort: {
+						lastUpdated: -1,
+						'tag.updatedAt': -1,
 					},
 				},
 				{
