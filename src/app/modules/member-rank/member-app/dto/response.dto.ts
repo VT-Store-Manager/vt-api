@@ -3,6 +3,7 @@ export class MemberRankCardDTO {
 	name: string
 	code: string
 	point: number
+	currentPoint: number
 	currentRankPoint: number
 	currentRankName: string
 	nextRankPoint: number | null
