@@ -67,7 +67,9 @@ export class ProductCategoryMemberService {
 				path: '$category',
 			})
 			.sort({
-				'category.createdAt': 1,
+				'category.isFeatured': -1,
+				'category.displayOrder': 1,
+				'category.createdAt': -1,
 			})
 			.project({
 				id: '$_id',

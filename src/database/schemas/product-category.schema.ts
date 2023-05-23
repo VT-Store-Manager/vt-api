@@ -25,6 +25,9 @@ export class ProductCategory {
 	@Prop({ type: Number, min: 1, default: 1 })
 	displayOrder?: number
 
+	@Prop({ type: Boolean, default: false })
+	isFeatured?: boolean
+
 	deleted?: boolean
 	createdAt: Date
 	updatedAt: Date

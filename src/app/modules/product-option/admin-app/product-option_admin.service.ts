@@ -86,7 +86,9 @@ export class ProductOptionAdminService {
 					.select('name range items')
 					.lean()
 					.exec(),
-				this.productOptionModel.countDocuments({ parent: data.parent }).exec(),
+				this.productOptionModel
+					.countDocuments({ parent: new Types.ObjectId(data.parent) })
+					.exec(),
 			])
 			createData.parent = parentOption._id
 			createData.name = parentOption.name + ` #${countChildOption + 1}`
