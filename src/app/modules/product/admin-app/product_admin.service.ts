@@ -69,7 +69,7 @@ export class ProductAdminService {
 				_id: 0,
 			})
 			.addFields({
-				salesVolumn: {
+				salesVolume: {
 					month: 0,
 				},
 			})

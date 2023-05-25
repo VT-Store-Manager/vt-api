@@ -7,7 +7,7 @@ class ShortProductCategory extends PickType(ProductCategory, ['code', 'name']) {
 	id: string
 }
 
-class SaleVolumn {
+class SaleVolume {
 	month: number
 }
 
@@ -19,6 +19,6 @@ export class ResponseProductItemDTO extends PickType(Product, [
 ] as const) {
 	id: string
 	category: ShortProductCategory
-	salesVolumn: SaleVolumn
+	salesVolume: SaleVolume
 	status: Status
 }

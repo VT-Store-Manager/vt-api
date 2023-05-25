@@ -29,6 +29,12 @@ export enum Status {
 	REMOVED = 'removed',
 }
 
+export enum PublishStatus {
+	NOT_YET,
+	OPENING,
+	CLOSED,
+}
+
 export enum Role {
 	MEMBER = 'member',
 	ADMIN = 'admin',

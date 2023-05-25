@@ -13,9 +13,11 @@ import {
 	Body,
 	Controller,
 	Delete,
+	Get,
 	Param,
 	Patch,
 	Post,
+	Query,
 	UploadedFile,
 	UseInterceptors,
 } from '@nestjs/common'
@@ -29,6 +31,9 @@ import { UpdateVoucherImageDTO } from './dto/update-voucher-image.dto'
 import { UpdateVoucherInfoDTO } from './dto/update-voucher-info.dto'
 import { VoucherAdminService } from './voucher_admin.service'
 import { UpdateVoucherSliderDTO } from './dto/update-voucher-slider.dto'
+import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
+import { GetVoucherListDTO } from './dto/response.dto'
+import { GetVoucherPaginationDTO } from './dto/get-voucher-pagination.dto'
 
 @Controller({
 	path: 'admin/voucher',
@@ -204,5 +209,11 @@ export class VoucherAdminController {
 	@ApiResponse({ type: BooleanResponseDTO, status: 200 })
 	async restoreVoucher(@Param('id') voucherId: string) {
 		return await this.voucherAdminService.restore(voucherId)
+	}
+
+	@Get()
+	@ApiSuccessResponse(GetVoucherListDTO)
+	async getVoucherPagination(@Query() query: GetVoucherPaginationDTO) {
+		return await this.voucherAdminService.getVoucherWithPagination(query)
 	}
 }

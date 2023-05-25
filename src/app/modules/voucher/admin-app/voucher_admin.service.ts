@@ -15,6 +15,9 @@ import { CreateVoucherDTO } from './dto/create-voucher.dto'
 import { UpdateVoucherDiscountDTO } from './dto/update-voucher-discount.dto'
 import { UpdateVoucherConditionDTO } from './dto/update-voucher-condition.dto'
 import { ConditionInclusion } from '@schema/voucher-condition.schema'
+import { GetVoucherPaginationDTO } from './dto/get-voucher-pagination.dto'
+import { GetVoucherListDTO, VoucherListItemDTO } from './dto/response.dto'
+import { PublishStatus, Status } from '@/common/constants'
 
 @Injectable()
 export class VoucherAdminService {
@@ -224,5 +227,105 @@ export class VoucherAdminService {
 			.orFail(new BadRequestException('Voucher not found or deleted'))
 			.exec()
 		return updateResult.modifiedCount === 1
+	}
+
+	async getVoucherWithPagination(
+		query: GetVoucherPaginationDTO
+	): Promise<GetVoucherListDTO> {
+		const now = new Date()
+		const [vouchers, count] = await Promise.all([
+			this.voucherModel
+				.aggregate<VoucherListItemDTO>([
+					{
+						$sort: {
+							createdAt: -1,
+						},
+					},
+					{
+						$lookup: {
+							from: 'partners',
+							localField: 'partner',
+							foreignField: '_id',
+							as: 'partner',
+						},
+					},
+					{
+						$unwind: {
+							path: '$partner',
+							preserveNullAndEmptyArrays: true,
+						},
+					},
+					{
+						$addFields: {
+							activeFinishTime: {
+								$ifNull: ['$activeFinishTime', null],
+							},
+						},
+					},
+					{
+						$project: {
+							id: '$_id',
+							_id: false,
+							name: '$title',
+							image: true,
+							code: true,
+							partner: {
+								$cond: [
+									{ $eq: [{ $ifNull: ['$partner', null] }, null] },
+									null,
+									{
+										id: '$partner._id',
+										name: '$partner.name',
+										code: '$partner.code',
+									},
+								],
+							},
+							startTime: { $toLong: '$activeStartTime' },
+							finishTime: { $toLong: '$activeFinishTime' },
+							publishStatus: {
+								$cond: [
+									{ $lt: [now, '$activeStartTime'] },
+									PublishStatus.NOT_YET,
+									{
+										$cond: [
+											{
+												$or: [
+													{ $eq: ['$activeFinishTime', null] },
+													{ $lt: [now, '$activeFinishTime'] },
+												],
+											},
+											PublishStatus.OPENING,
+											PublishStatus.CLOSED,
+										],
+									},
+								],
+							},
+							updatedAt: { $toLong: '$updatedAt' },
+							status: {
+								$cond: {
+									if: { $eq: ['$deleted', true] },
+									then: Status.REMOVED,
+									else: {
+										$cond: {
+											if: { $eq: ['$disabled', true] },
+											then: Status.DISABLED,
+											else: Status.ACTIVE,
+										},
+									},
+								},
+							},
+						},
+					},
+					{ $skip: (query.page - 1) * query.limit },
+					{ $limit: query.limit },
+				])
+				.exec(),
+			this.voucherModel.countDocuments().exec(),
+		])
+
+		return {
+			maxCount: count,
+			items: vouchers,
+		}
 	}
 }
