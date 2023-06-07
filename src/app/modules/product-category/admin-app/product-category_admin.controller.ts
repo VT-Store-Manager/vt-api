@@ -12,6 +12,7 @@ import {
 	Param,
 	Patch,
 	Post,
+	Query,
 	UploadedFile,
 	UseInterceptors,
 } from '@nestjs/common'
@@ -20,6 +21,7 @@ import { ApiConsumes, ApiTags } from '@nestjs/swagger'
 
 import { CreateProductCategoryDTO } from './dto/create-product-category.dto'
 import { ProductCategoryAdminService } from './product-category_admin.service'
+import { GetProductCategoryPaginationDTO } from './dto/get-product-category-pagination'
 
 @ApiTags('admin-app > product-category')
 @Controller({
@@ -73,8 +75,10 @@ export class ProductCategoryAdminController {
 	}
 
 	@Get('list')
-	async getProductCategory() {
-		return await this.productCategoryService.list()
+	async getProductCategoryList(
+		@Query() query: GetProductCategoryPaginationDTO
+	) {
+		return await this.productCategoryService.getListPagination(query)
 	}
 
 	@Patch('delete/:id')

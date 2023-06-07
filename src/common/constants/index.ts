@@ -29,6 +29,12 @@ export enum Status {
 	REMOVED = 'removed',
 }
 
+export enum StatusText {
+	ACTIVE = 'active',
+	DISABLED = 'disabled',
+	REMOVED = 'removed',
+}
+
 export enum PublishStatus {
 	NOT_YET,
 	OPENING,
