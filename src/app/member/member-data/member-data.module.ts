@@ -1,13 +1,13 @@
+import { Module } from '@nestjs/common'
+import { MongooseModule } from '@nestjs/mongoose'
 import {
 	MemberPromotionHistory,
 	MemberPromotionHistorySchema,
 } from '@schema/member-promotion-history.schema'
 import { Order, OrderSchema } from '@schema/order.schema'
-import { Module } from '@nestjs/common'
-import { MongooseModule } from '@nestjs/mongoose'
 
-import { MemberDataMemberController } from './member-app/member-data_member.controller'
-import { MemberDataMemberService } from './member-app/member-data_member.service'
+import { MemberDataController } from './member-data.controller'
+import { MemberDataService } from './member-data.service'
 
 @Module({
 	imports: [
@@ -22,7 +22,7 @@ import { MemberDataMemberService } from './member-app/member-data_member.service
 			},
 		]),
 	],
-	controllers: [MemberDataMemberController],
-	providers: [MemberDataMemberService],
+	controllers: [MemberDataController],
+	providers: [MemberDataService],
 })
 export class MemberDataModule {}

@@ -28,7 +28,7 @@ import {
 } from '../dto/response.dto'
 import { UpdateMemberAddressDTO } from '../dto/update-member-address.dto'
 import { UpdateProfileDTO } from '../dto/update-profile.dto'
-import { MemberService } from '../member_member.service'
+import { MemberService } from '../member.service'
 
 @Controller({
 	path: 'member/setting',

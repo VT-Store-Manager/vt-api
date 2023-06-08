@@ -1,3 +1,4 @@
+import { SettingModule } from '@/app/modules/setting/setting.module'
 import { MongoSessionService } from '@/common/providers/mongo-session.service'
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
@@ -9,10 +10,9 @@ import {
 } from '@schema/member-voucher.schema'
 import { Member, MemberSchema } from '@schema/member.schema'
 
-import { SettingModule } from '../setting/setting.module'
-import { MemberAppController } from './member-app/controllers/member-app_member.controller'
-import { MemberSettingController } from './member-app/controllers/member-setting_member.controller'
-import { MemberService } from './member-app/member_member.service'
+import { MemberAppController } from './controllers/member-app.controller'
+import { MemberSettingController } from './controllers/member-setting.controller'
+import { MemberService } from './member.service'
 
 @Module({
 	imports: [

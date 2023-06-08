@@ -14,7 +14,7 @@ import { GetPointHistoryDTO } from './dto/get-point-history.dto'
 import { HistoryItemDTO, PointHistoryResultDTO } from './dto/response.dto'
 
 @Injectable()
-export class MemberDataMemberService {
+export class MemberDataService {
 	constructor(
 		@InjectModel(Order.name)
 		private readonly orderModel: Model<OrderDocument>,

@@ -5,7 +5,7 @@ import { Controller, Get } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
 import { AppBarDTO } from '../dto/response.dto'
-import { MemberService } from '../member_member.service'
+import { MemberService } from '../member.service'
 import { CurrentUser } from '@/app/authentication/decorators/current-user.decorator'
 
 @Controller({

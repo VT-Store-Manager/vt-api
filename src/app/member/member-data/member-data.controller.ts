@@ -7,17 +7,15 @@ import { ApiTags } from '@nestjs/swagger'
 
 import { GetPointHistoryDTO } from './dto/get-point-history.dto'
 import { PointHistoryResultDTO } from './dto/response.dto'
-import { MemberDataMemberService } from './member-data_member.service'
+import { MemberDataService } from './member-data.service'
 
 @Controller({
 	path: 'member-data',
 	version: '1',
 })
 @ApiTags('member-app > member-data')
-export class MemberDataMemberController {
-	constructor(
-		private readonly memberDataMemberService: MemberDataMemberService
-	) {}
+export class MemberDataController {
+	constructor(private readonly memberDataService: MemberDataService) {}
 
 	@Get('point-history')
 	@JwtAccess(Role.MEMBER)
@@ -26,6 +24,6 @@ export class MemberDataMemberController {
 		@CurrentUser('sub') memberId: string,
 		@Query() query: GetPointHistoryDTO
 	) {
-		return await this.memberDataMemberService.getPointHistory(memberId, query)
+		return await this.memberDataService.getPointHistory(memberId, query)
 	}
 }
