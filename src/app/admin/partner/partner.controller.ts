@@ -14,16 +14,16 @@ import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiConsumes, ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import { CreatePartnerDTO } from './dto/create_partner.dto'
-import { PartnerAdminService } from './partner_admin.service'
+import { PartnerService } from './partner.service'
 
 @Controller({
 	path: 'admin/partner',
 	version: '1',
 })
 @ApiTags('admin-app > partner')
-export class PartnerAdminController {
+export class PartnerController {
 	constructor(
-		private readonly partnerService: PartnerAdminService,
+		private readonly partnerService: PartnerService,
 		private readonly fileService: FileService,
 		private readonly mongoSessionService: MongoSessionService
 	) {}

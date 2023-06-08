@@ -6,7 +6,7 @@ import { InjectModel } from '@nestjs/mongoose'
 import { CreatePartnerDTO } from './dto/create_partner.dto'
 
 @Injectable()
-export class PartnerAdminService {
+export class PartnerService {
 	constructor(
 		@InjectModel(Partner.name)
 		private readonly partnerModel: Model<PartnerDocument>
