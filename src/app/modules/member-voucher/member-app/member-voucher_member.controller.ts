@@ -1,5 +1,5 @@
-import { CurrentUser } from '@module/auth/decorators/current-user.decorator'
-import { JwtAccess } from '@module/auth/decorators/jwt.decorator'
+import { CurrentUser } from '@/app/authentication/decorators/current-user.decorator'
+import { JwtAccess } from '@/app/authentication/decorators/jwt.decorator'
 import { Role } from '@/common/constants'
 import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
 import { Controller, Get } from '@nestjs/common'

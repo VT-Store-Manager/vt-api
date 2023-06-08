@@ -1,14 +1,14 @@
+import { CurrentUser } from '@/app/authentication/decorators/current-user.decorator'
+import { JwtAccess } from '@/app/authentication/decorators/jwt.decorator'
 import { Role } from '@/common/constants'
-import { CurrentUser } from '@module/auth/decorators/current-user.decorator'
-import { JwtAccess } from '@module/auth/decorators/jwt.decorator'
+import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
+import { ObjectIdPipe } from '@/common/pipes/object-id.pipe'
+import { BooleanResponseDTO } from '@/types/swagger'
 import { Controller, Get, Param, Patch } from '@nestjs/common'
 import { ApiResponse, ApiTags } from '@nestjs/swagger'
 
-import { NotificationMemberService } from './notification_member.service'
-import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
 import { MemberNotificationItemDTO } from './dto/response.dto'
-import { BooleanResponseDTO } from '@/types/swagger'
-import { ObjectIdPipe } from '@/common/pipes/object-id.pipe'
+import { NotificationMemberService } from './notification_member.service'
 
 @Controller({
 	path: 'member/notification',

@@ -16,7 +16,6 @@ import {
 } from '@nestjs/mongoose'
 import { ServeStaticModule } from '@nestjs/serve-static'
 
-import { AuthModule } from './modules/auth/auth.module'
 import { CartTemplateModule } from './modules/cart-template/cart-template.module'
 import { CounterModule } from './modules/counter/counter.module'
 import { FileModule } from './modules/file/file.module'
@@ -39,6 +38,7 @@ import { StoreModule } from './modules/store/store.module'
 import { TagModule } from './modules/tag/tag.module'
 import { VoucherModule } from './modules/voucher/voucher.module'
 import { TriggerModule } from './triggers/trigger.module'
+import { MemberAppModule } from './member/member-app.module'
 
 @Module({
 	imports: [
@@ -71,7 +71,6 @@ import { TriggerModule } from './triggers/trigger.module'
 		ProductModule,
 		StoreModule,
 		MemberModule,
-		AuthModule,
 		RankModule,
 		MemberRankModule,
 		VoucherModule,
@@ -87,6 +86,7 @@ import { TriggerModule } from './triggers/trigger.module'
 		TriggerModule,
 		NewsModule,
 		TagModule,
+		MemberAppModule,
 	],
 	controllers: [],
 	providers: [

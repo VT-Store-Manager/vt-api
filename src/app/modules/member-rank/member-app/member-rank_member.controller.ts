@@ -1,6 +1,6 @@
-import { CurrentUser } from '@module/auth/decorators/current-user.decorator'
-import { JwtAccess } from '@module/auth/decorators/jwt.decorator'
+import { JwtAccess } from '@/app/authentication/decorators/jwt.decorator'
 import { Role } from '@/common/constants'
+import { CurrentUser } from '@/app/authentication/decorators/current-user.decorator'
 import { Controller, Get } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 

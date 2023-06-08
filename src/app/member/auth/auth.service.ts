@@ -1,20 +1,20 @@
 import { ClientSession, Model, Types } from 'mongoose'
 
-import { MemberData, MemberDataDocument } from '@schema/member-data.schema'
-import { MemberRank, MemberRankDocument } from '@schema/member-rank.schema'
-import { Member, MemberDocument } from '@schema/member.schema'
-import { Rank, RankDocument } from '@schema/rank.schema'
 import {
 	BadRequestException,
 	Injectable,
 	UnauthorizedException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
+import { MemberData, MemberDataDocument } from '@schema/member-data.schema'
+import { MemberRank, MemberRankDocument } from '@schema/member-rank.schema'
+import { Member, MemberDocument } from '@schema/member.schema'
+import { Rank, RankDocument } from '@schema/rank.schema'
 
-import { RegisterMemberDTO } from '../dto/register-member.dto'
+import { RegisterMemberDTO } from './dto/register-member.dto'
 
 @Injectable()
-export class AuthMemberService {
+export class AuthService {
 	constructor(
 		@InjectModel(Member.name)
 		private readonly memberModel: Model<MemberDocument>,

@@ -1,19 +1,19 @@
+import { TokenService } from '@/app/authentication/services/token.service'
+import { JwtAccessStrategy } from '@/app/authentication/strategies/jwt-access.strategy'
+import { JwtRefreshStrategy } from '@/app/authentication/strategies/jwt-refresh.strategy'
 import { MongoSessionService } from '@/common/providers/mongo-session.service'
+import { Module } from '@nestjs/common'
+import { JwtModule } from '@nestjs/jwt'
+import { MongooseModule } from '@nestjs/mongoose'
 import { MemberData, MemberDataSchema } from '@schema/member-data.schema'
 import { MemberRank, MemberRankSchema } from '@schema/member-rank.schema'
 import { Member, MemberSchema } from '@schema/member.schema'
 import { Rank, RankSchema } from '@schema/rank.schema'
 import { RefreshToken, RefreshTokenSchema } from '@schema/refresh-token.schema'
-import { Module } from '@nestjs/common'
-import { JwtModule } from '@nestjs/jwt'
-import { MongooseModule } from '@nestjs/mongoose'
 
-import { AuthMemberController } from './member-app/auth-member.controller'
-import { AuthMemberService } from './member-app/auth-member.service'
-import { SmsService } from './services/sms.service'
-import { TokenService } from './services/token.service'
-import { JwtAccessStrategy } from './strategies/jwt-access.strategy'
-import { JwtRefreshStrategy } from './strategies/jwt-refresh.strategy'
+import { SmsService } from '../../authentication/services/sms.service'
+import { AuthController } from './auth.controller'
+import { AuthService } from './auth.service'
 
 @Module({
 	imports: [
@@ -26,9 +26,9 @@ import { JwtRefreshStrategy } from './strategies/jwt-refresh.strategy'
 		]),
 		JwtModule.register({}),
 	],
-	controllers: [AuthMemberController],
+	controllers: [AuthController],
 	providers: [
-		AuthMemberService,
+		AuthService,
 		SmsService,
 		TokenService,
 		MongoSessionService,

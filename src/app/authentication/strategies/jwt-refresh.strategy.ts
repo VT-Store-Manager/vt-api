@@ -1,12 +1,11 @@
 import { ExtractJwt, Strategy } from 'passport-jwt'
 
+import { TokenPayload } from '@/types/token'
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { PassportStrategy } from '@nestjs/passport'
-
-import { AuthMemberService } from '../member-app/auth-member.service'
 import { TokenService } from '../services/token.service'
-import { TokenPayload } from '@/types/token'
+import { AuthService as MemberAuthService } from '@/app/member/auth/auth.service'
 
 @Injectable()
 export class JwtRefreshStrategy extends PassportStrategy(
@@ -16,7 +15,7 @@ export class JwtRefreshStrategy extends PassportStrategy(
 	constructor(
 		private readonly configService: ConfigService,
 		private readonly tokenService: TokenService,
-		private readonly authMemberService: AuthMemberService
+		private readonly memberAuthService: MemberAuthService
 	) {
 		super({
 			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -30,7 +29,7 @@ export class JwtRefreshStrategy extends PassportStrategy(
 		try {
 			await this.tokenService.check(refreshToken)
 		} catch (error) {
-			await this.authMemberService.updateTokenValidTime(payload.sub)
+			await this.memberAuthService.updateTokenValidTime(payload.sub)
 			throw error
 		}
 

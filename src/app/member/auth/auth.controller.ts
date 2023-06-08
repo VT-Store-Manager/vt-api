@@ -1,3 +1,9 @@
+import { CurrentUser } from '@/app/authentication/decorators/current-user.decorator'
+import {
+	JwtAccess,
+	JwtRefresh,
+} from '@/app/authentication/decorators/jwt.decorator'
+import { TokenService } from '@/app/authentication/services/token.service'
 import { Role } from '@/common/constants'
 import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
 import { MongoSessionService } from '@/common/providers/mongo-session.service'
@@ -7,25 +13,22 @@ import { Body, Controller, Get, Post } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 
-import { CurrentUser } from '../decorators/current-user.decorator'
-import { JwtAccess, JwtRefresh } from '../decorators/jwt.decorator'
-import { LoginDTO } from '../dto/login.dto'
-import { RegisterMemberDTO } from '../dto/register-member.dto'
-import { TokenDTO } from '../dto/response.dto'
-import { VerifySmsOtpDTO } from '../dto/verify-sms-otp.dto'
-import { SmsService } from '../services/sms.service'
-import { TokenService } from '../services/token.service'
-import { AuthMemberService } from './auth-member.service'
+import { SmsService } from '../../authentication/services/sms.service'
+import { AuthService } from './auth.service'
+import { LoginDTO } from './dto/login.dto'
+import { RegisterMemberDTO } from './dto/register-member.dto'
+import { TokenDTO } from './dto/response.dto'
+import { VerifySmsOtpDTO } from './dto/verify-sms-otp.dto'
 
 @Controller({
 	path: 'member/auth',
 	version: '1',
 })
 @ApiTags('member-app > auth')
-export class AuthMemberController {
+export class AuthController {
 	private disableSMS: boolean
 	constructor(
-		private readonly authMemberService: AuthMemberService,
+		private readonly authService: AuthService,
 		private readonly configService: ConfigService,
 		private readonly smsService: SmsService,
 		private readonly tokenService: TokenService,
@@ -38,7 +41,7 @@ export class AuthMemberController {
 	@ApiOperation({ summary: 'Get OTP by phone number' })
 	@ApiResponse({ type: BooleanResponseDTO, status: 201 })
 	async sendVerification(@Body() { phone }: LoginDTO) {
-		await this.authMemberService.checkAccount(phone)
+		await this.authService.checkAccount(phone)
 		if (!this.disableSMS) {
 			await this.smsService.initiatePhoneNumberVerification(phone)
 		}
@@ -52,7 +55,7 @@ export class AuthMemberController {
 			'Register temporary account and get OTP to verify. Temporary account will destroy after 10 min',
 	})
 	async registerMember(@Body() dto: RegisterMemberDTO) {
-		const member = await this.authMemberService.createTemporaryMember(dto)
+		const member = await this.authService.createTemporaryMember(dto)
 
 		if (!member) return false
 		if (!this.disableSMS) {
@@ -69,7 +72,7 @@ export class AuthMemberController {
 		const { error } = await this.mongoSessionService.execTransaction(
 			async session => {
 				const [memberId, _] = await Promise.all([
-					this.authMemberService.initMemberData(dto.phone, session),
+					this.authService.initMemberData(dto.phone, session),
 					this.disableSMS
 						? null
 						: this.smsService.confirmPhoneNumber(dto.phone, dto.code),
