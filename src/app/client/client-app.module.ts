@@ -7,6 +7,7 @@ import { MemberRankModule } from './member-rank/member-rank.module'
 import { MemberVoucherModule } from './member-voucher/member-voucher.module'
 import { MemberModule } from './member/member.module'
 import { NewsModule } from './news/news.module'
+import { NotificationModule } from './notification/notification.module'
 
 @Module({
 	imports: [
@@ -17,6 +18,7 @@ import { NewsModule } from './news/news.module'
 		MemberRankModule,
 		MemberVoucherModule,
 		NewsModule,
+		NotificationModule,
 	],
 })
 export class ClientAppModule {}

@@ -8,17 +8,15 @@ import { Controller, Get, Param, Patch } from '@nestjs/common'
 import { ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import { MemberNotificationItemDTO } from './dto/response.dto'
-import { NotificationMemberService } from './notification_member.service'
+import { NotificationService } from './notification.service'
 
 @Controller({
 	path: 'member/notification',
 	version: '1',
 })
 @ApiTags('member-app > notification')
-export class NotificationMemberController {
-	constructor(
-		private readonly notificationService: NotificationMemberService
-	) {}
+export class NotificationController {
+	constructor(private readonly notificationService: NotificationService) {}
 
 	@Get('all')
 	@JwtAccess(Role.MEMBER)

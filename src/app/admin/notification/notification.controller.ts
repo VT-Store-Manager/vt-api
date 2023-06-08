@@ -17,16 +17,16 @@ import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiConsumes, ApiTags } from '@nestjs/swagger'
 
 import { CreateNotificationDTO } from './dto/create-notification.dto'
-import { NotificationAdminService } from './notification_admin.service'
+import { NotificationService } from './notification.service'
 
 @Controller({
 	path: 'admin/notification',
 	version: '1',
 })
 @ApiTags('admin-app > notification')
-export class NotificationAdminController {
+export class NotificationController {
 	constructor(
-		private readonly notificationService: NotificationAdminService,
+		private readonly notificationService: NotificationService,
 		private readonly fileService: FileService,
 		private readonly mongoSessionService: MongoSessionService
 	) {}

@@ -6,7 +6,7 @@ import { NotificationDocument, Notification } from '@schema/notification.schema'
 import { CreateNotificationDTO } from './dto/create-notification.dto'
 
 @Injectable()
-export class NotificationAdminService {
+export class NotificationService {
 	constructor(
 		@InjectModel(Notification.name)
 		private readonly notificationModel: Model<NotificationDocument>

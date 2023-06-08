@@ -10,7 +10,7 @@ import { MemberData, MemberDataDocument } from '@schema/member-data.schema'
 import { MemberNotificationItemDTO } from './dto/response.dto'
 
 @Injectable()
-export class NotificationMemberService {
+export class NotificationService {
 	private readonly imageUrl: string
 	constructor(
 		@InjectModel(MemberData.name)
