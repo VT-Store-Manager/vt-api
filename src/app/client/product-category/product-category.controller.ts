@@ -3,16 +3,16 @@ import { Controller, Get, Query } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { GetProductCategoryDTO } from './dto/get-product-category.dto'
 import { ProductCategoryDTO } from './dto/response.dto'
-import { ProductCategoryMemberService } from './product-category_member.service'
+import { ProductCategoryService } from './product-category.service'
 
 @Controller({
 	path: 'member/product-category',
 	version: '1',
 })
 @ApiTags('member-app > product-category')
-export class ProductCategoryMemberController {
+export class ProductCategoryController {
 	constructor(
-		private readonly productCategoryService: ProductCategoryMemberService
+		private readonly productCategoryService: ProductCategoryService
 	) {}
 
 	@Get()

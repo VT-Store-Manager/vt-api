@@ -14,7 +14,7 @@ import { ProductCategoryListPaginationDTO } from './dto/response.dto'
 type CreateProductCategoryModel = Pick<ProductCategory, 'image' | 'name'>
 
 @Injectable()
-export class ProductCategoryAdminService {
+export class ProductCategoryService {
 	constructor(
 		@InjectModel(ProductCategory.name)
 		private readonly productCategoryModel: Model<ProductCategoryDocument>,

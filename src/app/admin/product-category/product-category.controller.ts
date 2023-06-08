@@ -20,7 +20,7 @@ import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiConsumes, ApiTags } from '@nestjs/swagger'
 
 import { CreateProductCategoryDTO } from './dto/create-product-category.dto'
-import { ProductCategoryAdminService } from './product-category_admin.service'
+import { ProductCategoryService } from './product-category.service'
 import { GetProductCategoryPaginationDTO } from './dto/get-product-category-pagination'
 
 @ApiTags('admin-app > product-category')
@@ -28,9 +28,9 @@ import { GetProductCategoryPaginationDTO } from './dto/get-product-category-pagi
 	path: 'admin/product-category',
 	version: '1',
 })
-export class ProductCategoryAdminController {
+export class ProductCategoryController {
 	constructor(
-		private readonly productCategoryService: ProductCategoryAdminService,
+		private readonly productCategoryService: ProductCategoryService,
 		private readonly fileService: FileService,
 		private readonly mongoSessionService: MongoSessionService
 	) {}

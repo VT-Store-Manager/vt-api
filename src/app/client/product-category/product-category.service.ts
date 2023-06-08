@@ -14,7 +14,7 @@ import { Store, StoreDocument } from '@schema/store.schema'
 import { ProductCategoryDTO } from './dto/response.dto'
 
 @Injectable()
-export class ProductCategoryMemberService {
+export class ProductCategoryService {
 	private readonly imageUrl: string
 	constructor(
 		@InjectModel(ProductCategory.name)
