@@ -11,6 +11,7 @@ import {
 	Controller,
 	Get,
 	Post,
+	Query,
 	UploadedFiles,
 	UseInterceptors,
 } from '@nestjs/common'
@@ -18,8 +19,12 @@ import { FilesInterceptor } from '@nestjs/platform-express'
 import { ApiConsumes, ApiTags } from '@nestjs/swagger'
 
 import { CreateProductDTO } from './dto/create-product.dto'
-import { ResponseProductItemDTO } from './dto/response-products.dto'
+import {
+	ProductListPaginationDTO,
+	ProductListItemDTO,
+} from './dto/response.dto'
 import { ProductAdminService } from './product_admin.service'
+import { GetProductListQueryDTO } from './dto/get-product-list-query.dto'
 
 @ApiTags('admin-app > product')
 @Controller({
@@ -66,8 +71,14 @@ export class ProductAdminController {
 	}
 
 	@Get()
-	@ApiSuccessResponse(ResponseProductItemDTO, 200, true)
+	@ApiSuccessResponse(ProductListItemDTO, 200, true)
 	async getProducts() {
 		return await this.productService.getAll()
+	}
+
+	@Get('list')
+	@ApiSuccessResponse(ProductListPaginationDTO)
+	async getProductListPagination(@Query() query: GetProductListQueryDTO) {
+		return await this.productService.getList(query)
 	}
 }

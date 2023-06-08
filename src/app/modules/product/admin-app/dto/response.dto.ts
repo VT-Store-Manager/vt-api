@@ -11,7 +11,7 @@ class SaleVolume {
 	month: number
 }
 
-export class ResponseProductItemDTO extends PickType(Product, [
+export class ProductListItemDTO extends PickType(Product, [
 	'name',
 	'images',
 	'originalPrice',
@@ -21,4 +21,9 @@ export class ResponseProductItemDTO extends PickType(Product, [
 	category: ShortProductCategory
 	salesVolume: SaleVolume
 	status: Status
+}
+
+export class ProductListPaginationDTO {
+	totalCount: number
+	list: ProductListItemDTO[]
 }
