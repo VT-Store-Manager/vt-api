@@ -34,7 +34,7 @@ import { StoreModule } from './modules/store/store.module'
 import { TagModule } from './modules/tag/tag.module'
 import { VoucherModule } from './modules/voucher/voucher.module'
 import { TriggerModule } from './triggers/trigger.module'
-import { MemberAppModule } from './member/member-app.module'
+import { ClientAppModule } from './client/client-app.module'
 
 @Module({
 	imports: [
@@ -78,7 +78,7 @@ import { MemberAppModule } from './member/member-app.module'
 		TriggerModule,
 		NewsModule,
 		TagModule,
-		MemberAppModule,
+		ClientAppModule,
 	],
 	controllers: [],
 	providers: [

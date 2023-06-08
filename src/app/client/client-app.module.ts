@@ -15,4 +15,4 @@ import { MemberModule } from './member/member.module'
 		MemberRankModule,
 	],
 })
-export class MemberAppModule {}
+export class ClientAppModule {}
