@@ -18,7 +18,6 @@ import { ServeStaticModule } from '@nestjs/serve-static'
 
 import { CounterModule } from './modules/counter/counter.module'
 import { FileModule } from './modules/file/file.module'
-import { MemberRankModule } from './modules/member-rank/member-rank.module'
 import { MemberVoucherModule } from './modules/member-voucher/member-voucher.module'
 import { NewsModule } from './modules/news/news.module'
 import { NotificationModule } from './modules/notification/notification.module'
@@ -68,7 +67,6 @@ import { MemberAppModule } from './member/member-app.module'
 		ProductModule,
 		StoreModule,
 		RankModule,
-		MemberRankModule,
 		VoucherModule,
 		MemberVoucherModule,
 		PromotionModule,

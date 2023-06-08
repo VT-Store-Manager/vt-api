@@ -16,7 +16,7 @@ import { Rank, RankDocument } from '@schema/rank.schema'
 import { MemberRankCardDTO } from './dto/response.dto'
 
 @Injectable()
-export class MemberRankMemberService {
+export class MemberRankService {
 	private readonly imageUrl: string
 	constructor(
 		@InjectModel(Member.name)

@@ -1,11 +1,11 @@
+import { Module } from '@nestjs/common'
+import { MongooseModule } from '@nestjs/mongoose'
 import { MemberRank, MemberRankSchema } from '@schema/member-rank.schema'
 import { Member, MemberSchema } from '@schema/member.schema'
 import { Rank, RankSchema } from '@schema/rank.schema'
-import { Module } from '@nestjs/common'
-import { MongooseModule } from '@nestjs/mongoose'
 
-import { MemberRankMemberController } from './member-app/member-rank_member.controller'
-import { MemberRankMemberService } from './member-app/member_rank_member.service'
+import { MemberRankController } from './member-rank.controller'
+import { MemberRankService } from './member_rank.service'
 
 @Module({
 	imports: [
@@ -15,7 +15,7 @@ import { MemberRankMemberService } from './member-app/member_rank_member.service
 			{ name: MemberRank.name, schema: MemberRankSchema },
 		]),
 	],
-	controllers: [MemberRankMemberController],
-	providers: [MemberRankMemberService],
+	controllers: [MemberRankController],
+	providers: [MemberRankService],
 })
 export class MemberRankModule {}
