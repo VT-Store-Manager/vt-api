@@ -11,7 +11,7 @@ import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiConsumes, ApiTags } from '@nestjs/swagger'
 
 import { CreateNewsDTO } from './dto/create-news.dto'
-import { NewsAdminService } from './news_admin.service'
+import { NewsService } from './news.service'
 import { FileService } from '@module/file/file.service'
 import { MongoSessionService } from '@/common/providers/mongo-session.service'
 import { News } from '@schema/news.schema'
@@ -23,9 +23,9 @@ import { CreateNewsResultDTO } from './dto/response.dto'
 	version: '1',
 })
 @ApiTags('admin-app > news')
-export class NewsAdminController {
+export class NewsController {
 	constructor(
-		private readonly newsService: NewsAdminService,
+		private readonly newsService: NewsService,
 		private readonly fileService: FileService,
 		private readonly mongoSessionService: MongoSessionService
 	) {}

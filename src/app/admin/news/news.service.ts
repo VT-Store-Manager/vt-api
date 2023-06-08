@@ -6,7 +6,7 @@ import { InjectModel } from '@nestjs/mongoose'
 import { CreateNewsDTO } from './dto/create-news.dto'
 
 @Injectable()
-export class NewsAdminService {
+export class NewsService {
 	constructor(
 		@InjectModel(News.name)
 		private readonly newsModel: Model<NewsDocument>

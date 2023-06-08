@@ -1,7 +1,7 @@
 import { Controller, Get } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
-import { NewsMemberService } from './news_member.service'
+import { NewsService } from './news.service'
 import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
 import { NewsListByTagItemDTO } from './dto/response.dto'
 
@@ -10,8 +10,8 @@ import { NewsListByTagItemDTO } from './dto/response.dto'
 	version: '1',
 })
 @ApiTags('member-app > news')
-export class NewsMemberController {
-	constructor(private readonly newsService: NewsMemberService) {}
+export class NewsController {
+	constructor(private readonly newsService: NewsService) {}
 
 	@Get()
 	@ApiSuccessResponse(NewsListByTagItemDTO, 200, true)

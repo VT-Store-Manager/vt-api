@@ -8,7 +8,7 @@ import { News, NewsDocument } from '@schema/news.schema'
 import { NewsListByTagItemDTO } from './dto/response.dto'
 
 @Injectable()
-export class NewsMemberService {
+export class NewsService {
 	private readonly imageUrl: string
 	constructor(
 		@InjectModel(News.name)

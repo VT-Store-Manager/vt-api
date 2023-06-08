@@ -20,7 +20,6 @@ import { AdminAppModule } from './admin/admin-app.module'
 import { ClientAppModule } from './client/client-app.module'
 import { CounterModule } from './modules/counter/counter.module'
 import { FileModule } from './modules/file/file.module'
-import { NewsModule } from './modules/news/news.module'
 import { NotificationModule } from './modules/notification/notification.module'
 import { OrderModule } from './modules/order/order.module'
 import { PartnerModule } from './modules/partner/partner.module'
@@ -75,7 +74,6 @@ import { TriggerModule } from './triggers/trigger.module'
 		PartnerModule,
 		NotificationModule,
 		TriggerModule,
-		NewsModule,
 		TagModule,
 		ClientAppModule,
 		AdminAppModule,

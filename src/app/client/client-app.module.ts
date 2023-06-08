@@ -6,6 +6,7 @@ import { MemberDataModule } from './member-data/member-data.module'
 import { MemberRankModule } from './member-rank/member-rank.module'
 import { MemberVoucherModule } from './member-voucher/member-voucher.module'
 import { MemberModule } from './member/member.module'
+import { NewsModule } from './news/news.module'
 
 @Module({
 	imports: [
@@ -15,6 +16,7 @@ import { MemberModule } from './member/member.module'
 		MemberDataModule,
 		MemberRankModule,
 		MemberVoucherModule,
+		NewsModule,
 	],
 })
 export class ClientAppModule {}
