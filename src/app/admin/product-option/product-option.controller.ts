@@ -10,16 +10,16 @@ import { NewProductOptionDTO } from './dto/new-product-option.dto'
 import { ProductOptionDetailDTO } from './dto/product-option-detail.dto'
 import { ProductOptionListItemDTO } from './dto/product-option-list-item.dto'
 import { UpdateProductOptionDTO } from './dto/update-product-option.dto'
-import { ProductOptionAdminService } from './product-option_admin.service'
+import { ProductOptionService } from './product-option.service'
 
 @ApiTags('admin-app > product-option')
 @Controller({
 	path: 'admin/product-option',
 	version: '1',
 })
-export class ProductOptionAdminController {
+export class ProductOptionController {
 	constructor(
-		private readonly productOptionService: ProductOptionAdminService,
+		private readonly productOptionService: ProductOptionService,
 		private readonly mongoSessionService: MongoSessionService
 	) {}
 

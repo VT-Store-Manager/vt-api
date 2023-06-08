@@ -22,7 +22,7 @@ import { ProductOptionListItemDTO } from './dto/product-option-list-item.dto'
 import { UpdateProductOptionDTO } from './dto/update-product-option.dto'
 
 @Injectable()
-export class ProductOptionAdminService {
+export class ProductOptionService {
 	constructor(
 		@InjectModel(ProductOption.name)
 		private readonly productOptionModel: Model<ProductOptionDocument>,

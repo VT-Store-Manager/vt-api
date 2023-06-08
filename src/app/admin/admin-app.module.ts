@@ -6,6 +6,7 @@ import { NotificationModule } from './notification/notification.module'
 import { PartnerModule } from './partner/partner.module'
 import { ProductModule } from './product/product.module'
 import { ProductCategoryModule } from './product-category/product-category.module'
+import { ProductOptionModule } from './product-option/product-option.module'
 
 @Module({
 	imports: [
@@ -15,6 +16,7 @@ import { ProductCategoryModule } from './product-category/product-category.modul
 		PartnerModule,
 		ProductModule,
 		ProductCategoryModule,
+		ProductOptionModule,
 	],
 })
 export class AdminAppModule {}

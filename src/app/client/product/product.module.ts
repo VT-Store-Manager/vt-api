@@ -1,7 +1,5 @@
 import { CounterModule } from '@/app/modules/counter/counter.module'
 import { FileService } from '@/app/modules/file/file.service'
-import { ProductCategoryModule } from '@/app/modules/product-category/product-category.module'
-import { ProductOptionModule } from '@/app/modules/product-option/product-option.module'
 import { MongoSessionService } from '@/common/providers/mongo-session.service'
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
@@ -12,6 +10,8 @@ import { Store, StoreSchema } from '@schema/store.schema'
 
 import { ProductMemberController } from './product.controller'
 import { ProductService } from './product.service'
+import { ProductCategoryModule } from '@/app/admin/product-category/product-category.module'
+import { ProductOptionModule } from '@/app/admin/product-option/product-option.module'
 
 @Module({
 	imports: [

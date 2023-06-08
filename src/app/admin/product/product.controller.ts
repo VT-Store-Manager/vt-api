@@ -1,6 +1,4 @@
 import { FileService } from '@module/file/file.service'
-import { ProductCategoryAdminService } from '@module/product-category/admin-app/product-category_admin.service'
-import { ProductOptionAdminService } from '@module/product-option/admin-app/product-option_admin.service'
 import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
 import { ParseFile } from '@/common/pipes/parse-file.pipe'
 import { ImageMulterOption } from '@/common/validations/file.validator'
@@ -20,6 +18,8 @@ import { ApiConsumes, ApiTags } from '@nestjs/swagger'
 import { CreateProductDTO } from './dto/create-product.dto'
 import { ResponseProductItemDTO } from './dto/response-products.dto'
 import { ProductService } from './product.service'
+import { ProductCategoryService } from '../product-category/product-category.service'
+import { ProductOptionService } from '../product-option/product-option.service'
 
 @ApiTags('admin-app > product')
 @Controller({
@@ -29,8 +29,8 @@ import { ProductService } from './product.service'
 export class ProductController {
 	constructor(
 		private readonly productService: ProductService,
-		private readonly productCategoryService: ProductCategoryAdminService,
-		private readonly productOptionService: ProductOptionAdminService,
+		private readonly productCategoryService: ProductCategoryService,
+		private readonly productOptionService: ProductOptionService,
 		private readonly fileService: FileService,
 		private readonly mongoSessionService: MongoSessionService
 	) {}

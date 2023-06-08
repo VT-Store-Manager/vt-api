@@ -10,7 +10,7 @@ import { InjectModel } from '@nestjs/mongoose'
 import { GetAllProductOptionDTO } from './dto/response.dto'
 
 @Injectable()
-export class ProductOptionMemberService {
+export class ProductOptionService {
 	constructor(
 		@InjectModel(ProductOption.name)
 		private readonly productOptionModel: Model<ProductOptionDocument>

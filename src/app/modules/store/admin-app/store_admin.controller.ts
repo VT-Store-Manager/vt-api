@@ -1,10 +1,11 @@
+import { ProductCategoryService } from '@/app/admin/product-category/product-category.service'
+import { ProductOptionService } from '@/app/admin/product-option/product-option.service'
+import { ProductService } from '@/app/admin/product/product.service'
 import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
 import { ParseFile } from '@/common/pipes/parse-file.pipe'
 import { MongoSessionService } from '@/common/providers/mongo-session.service'
 import { ImageMulterOption } from '@/common/validations/file.validator'
 import { FileService } from '@module/file/file.service'
-import { ProductCategoryAdminService } from '@module/product-category/admin-app/product-category_admin.service'
-import { ProductOptionAdminService } from '@module/product-option/admin-app/product-option_admin.service'
 import {
 	BadRequestException,
 	Body,
@@ -23,7 +24,6 @@ import { CreateStoreDTO } from './dto/create-store.dto'
 import { GetListStoreDTO } from './dto/get-list-store.dto'
 import { ResponseStoreListDTO } from './dto/response-store-item.dto'
 import { StoreAdminService } from './store_admin.service'
-import { ProductService } from '@/app/admin/product/product.service'
 
 @ApiTags('admin-app > store')
 @Controller({
@@ -36,8 +36,8 @@ export class StoreAdminController {
 		private readonly fileService: FileService,
 		private readonly mongoSessionService: MongoSessionService,
 		private readonly productService: ProductService,
-		private readonly productCategoryService: ProductCategoryAdminService,
-		private readonly productOptionService: ProductOptionAdminService
+		private readonly productCategoryService: ProductCategoryService,
+		private readonly productOptionService: ProductOptionService
 	) {}
 
 	@Post('create')

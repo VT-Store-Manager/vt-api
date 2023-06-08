@@ -11,6 +11,7 @@ import { NotificationModule } from './notification/notification.module'
 import { OrderModule } from './order/order.module'
 import { ProductCategoryModule } from './product-category/product-category.module'
 import { ProductModule } from './product/product.module'
+import { ProductOptionModule } from './product-option/product-option.module'
 
 @Module({
 	imports: [
@@ -25,6 +26,7 @@ import { ProductModule } from './product/product.module'
 		OrderModule,
 		ProductModule,
 		ProductCategoryModule,
+		ProductOptionModule,
 	],
 })
 export class ClientAppModule {}
