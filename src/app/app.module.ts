@@ -16,7 +16,6 @@ import {
 } from '@nestjs/mongoose'
 import { ServeStaticModule } from '@nestjs/serve-static'
 
-import { CartTemplateModule } from './modules/cart-template/cart-template.module'
 import { CounterModule } from './modules/counter/counter.module'
 import { FileModule } from './modules/file/file.module'
 import { MemberDataModule } from './modules/member-data/member-data.module'
@@ -81,7 +80,6 @@ import { MemberAppModule } from './member/member-app.module'
 		SettingModule,
 		PartnerModule,
 		MemberDataModule,
-		CartTemplateModule,
 		NotificationModule,
 		TriggerModule,
 		NewsModule,

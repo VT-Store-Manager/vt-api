@@ -21,7 +21,7 @@ import { EditCartTemplateDTO } from './dto/edit-cart-template.dto'
 import { CartTemplateItemDTO } from './dto/response.dto'
 
 @Injectable()
-export class CartTemplateMemberService {
+export class CartTemplateService {
 	constructor(
 		@InjectModel(CartTemplate.name)
 		private readonly cartTemplateModel: Model<CartTemplateDocument>,

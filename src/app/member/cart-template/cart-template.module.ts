@@ -3,10 +3,9 @@ import { CartTemplate, CartTemplateSchema } from '@schema/cart-template.schema'
 import { Product, ProductSchema } from '@schema/product.schema'
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
-
-import { SettingModule } from '../setting/setting.module'
-import { CartTemplateMemberController } from './member-app/cart-template_member.controller'
-import { CartTemplateMemberService } from './member-app/cart-template_member.service'
+import { SettingModule } from '@/app/modules/setting/setting.module'
+import { CartTemplateController } from './cart-template.controller'
+import { CartTemplateService } from './cart-template.service'
 
 @Module({
 	imports: [
@@ -16,7 +15,7 @@ import { CartTemplateMemberService } from './member-app/cart-template_member.ser
 		]),
 		SettingModule,
 	],
-	controllers: [CartTemplateMemberController],
-	providers: [CartTemplateMemberService, MongoSessionService],
+	controllers: [CartTemplateController],
+	providers: [CartTemplateService, MongoSessionService],
 })
 export class CartTemplateModule {}

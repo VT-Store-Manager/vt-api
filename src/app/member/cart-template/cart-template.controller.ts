@@ -22,7 +22,7 @@ import {
 import { ApiResponse, ApiTags } from '@nestjs/swagger'
 import { SettingMemberApp } from '@schema/setting-member-app.schema'
 
-import { CartTemplateMemberService } from './cart-template_member.service'
+import { CartTemplateService } from './cart-template.service'
 import { ArrangeCartTemplateDTO } from './dto/arrange-cart-template.dto'
 import { CreateCartTemplateDTO } from './dto/create-cart-template.dto'
 import { EditCartTemplateDTO } from './dto/edit-cart-template.dto'
@@ -37,9 +37,9 @@ import {
 	version: '1',
 })
 @ApiTags('member-app > cart-template')
-export class CartTemplateMemberController {
+export class CartTemplateController {
 	constructor(
-		private readonly cartTemplateService: CartTemplateMemberService,
+		private readonly cartTemplateService: CartTemplateService,
 		private readonly settingMemberAppService: SettingMemberAppService
 	) {}
 
