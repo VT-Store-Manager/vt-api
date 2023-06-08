@@ -12,7 +12,7 @@ import { NodeEnv } from './common/constants'
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule, {
-		logger: ['error', 'warn', 'debug', 'verbose'],
+		logger: ['error', 'warn', 'debug', 'verbose', 'log'],
 	})
 	const configService = app.get(ConfigService)
 

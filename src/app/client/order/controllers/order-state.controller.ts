@@ -8,15 +8,15 @@ import { ApiTags } from '@nestjs/swagger'
 
 import { GetOrderByStateDTO } from '../dto/get-order-by-state.dto'
 import { OrderByStateResultDTO, OrderStateItemDTO } from '../dto/response.dto'
-import { OrderStateMemberService } from '../services/order-state_member.service'
+import { OrderStateService } from '../services/order-state.service'
 
 @Controller({
 	path: 'cart-status',
 	version: '1',
 })
 @ApiTags('member-app > order-state')
-export class OrderStateMemberController {
-	constructor(private readonly orderStateService: OrderStateMemberService) {}
+export class OrderStateController {
+	constructor(private readonly orderStateService: OrderStateService) {}
 
 	@Get('all')
 	@ApiSuccessResponse(OrderStateItemDTO, 200, true)

@@ -12,7 +12,7 @@ import { DetailProductDTO, ProductListItemDTO } from './dto/response.dto'
 import { intersection } from 'lodash'
 
 @Injectable()
-export class ProductMemberService {
+export class ProductService {
 	private readonly imageUrl: string
 	constructor(
 		@InjectModel(Product.name)

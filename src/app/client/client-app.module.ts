@@ -8,6 +8,8 @@ import { MemberVoucherModule } from './member-voucher/member-voucher.module'
 import { MemberModule } from './member/member.module'
 import { NewsModule } from './news/news.module'
 import { NotificationModule } from './notification/notification.module'
+import { OrderModule } from './order/order.module'
+import { ProductModule } from './product/product.module'
 
 @Module({
 	imports: [
@@ -19,6 +21,8 @@ import { NotificationModule } from './notification/notification.module'
 		MemberVoucherModule,
 		NewsModule,
 		NotificationModule,
+		OrderModule,
+		ProductModule,
 	],
 })
 export class ClientAppModule {}

@@ -1,5 +1,9 @@
+import { SettingModule } from '@/app/modules/setting/setting.module'
+import { VoucherModule } from '@/app/modules/voucher/voucher.module'
 import { OrderBuyer } from '@/common/constants'
 import { MongoSessionService } from '@/common/providers/mongo-session.service'
+import { Module } from '@nestjs/common'
+import { MongooseModule } from '@nestjs/mongoose'
 import { MemberData, MemberDataSchema } from '@schema/member-data.schema'
 import { MemberRank, MemberRankSchema } from '@schema/member-rank.schema'
 import {
@@ -20,15 +24,11 @@ import {
 import { Product, ProductSchema } from '@schema/product.schema'
 import { Store, StoreSchema } from '@schema/store.schema'
 import { Voucher, VoucherSchema } from '@schema/voucher.schema'
-import { Module } from '@nestjs/common'
-import { MongooseModule } from '@nestjs/mongoose'
 
-import { SettingModule } from '../setting/setting.module'
-import { VoucherModule } from '../voucher/voucher.module'
-import { OrderStateMemberController } from './member-app/controllers/order-state_member.controller'
-import { OrderMemberController } from './member-app/controllers/order_member.controller'
-import { OrderStateMemberService } from './member-app/services/order-state_member.service'
-import { OrderMemberService } from './member-app/services/order_member.service'
+import { OrderStateController } from './controllers/order-state.controller'
+import { OrderController } from './controllers/order.controller'
+import { OrderStateService } from './services/order-state.service'
+import { OrderService } from './services/order.service'
 
 @Module({
 	imports: [
@@ -53,7 +53,7 @@ import { OrderMemberService } from './member-app/services/order_member.service'
 		VoucherModule,
 		SettingModule,
 	],
-	controllers: [OrderMemberController, OrderStateMemberController],
-	providers: [OrderMemberService, OrderStateMemberService, MongoSessionService],
+	controllers: [OrderController, OrderStateController],
+	providers: [OrderService, OrderStateService, MongoSessionService],
 })
 export class OrderModule {}

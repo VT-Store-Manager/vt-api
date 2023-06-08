@@ -10,7 +10,7 @@ import { CreateProductDTO } from './dto/create-product.dto'
 import { ResponseProductItemDTO } from './dto/response-products.dto'
 
 @Injectable()
-export class ProductAdminService {
+export class ProductService {
 	constructor(
 		@InjectModel(Product.name)
 		private readonly productModel: Model<ProductDocument>,

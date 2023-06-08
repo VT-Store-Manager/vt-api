@@ -14,15 +14,15 @@ import {
 	GetProductPriceApplyingVoucherDTO,
 } from '../dto/response.dto'
 import { ReviewOrderDTO } from '../dto/review-order.dto'
-import { OrderMemberService } from '../services/order_member.service'
+import { OrderService } from '../services/order.service'
 
 @Controller({
 	path: 'member/cart',
 	version: '1',
 })
 @ApiTags('member-app > order')
-export class OrderMemberController {
-	constructor(private readonly orderService: OrderMemberService) {}
+export class OrderController {
+	constructor(private readonly orderService: OrderService) {}
 
 	@Post('check-voucher')
 	@JwtAccess(Role.MEMBER)

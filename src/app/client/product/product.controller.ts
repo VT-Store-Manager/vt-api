@@ -13,7 +13,7 @@ import {
 	ProductListIdDTO,
 	ProductListItemDTO,
 } from './dto/response.dto'
-import { ProductMemberService } from './product_member.service'
+import { ProductService } from './product.service'
 
 @Controller({
 	path: 'member/product',
@@ -21,12 +21,12 @@ import { ProductMemberService } from './product_member.service'
 })
 @ApiTags('member-app > product')
 export class ProductMemberController {
-	constructor(private readonly productMemberService: ProductMemberService) {}
+	constructor(private readonly productService: ProductService) {}
 
 	@Get('all')
 	@ApiSuccessResponse(ProductListItemDTO, 200, true)
 	async getAllProducts() {
-		return await this.productMemberService.getAllProducts()
+		return await this.productService.getAllProducts()
 	}
 
 	@Get('suggestion')
@@ -42,10 +42,7 @@ export class ProductMemberController {
 		@CurrentUser('sub') memberId: string,
 		@Query() dto: GetProductSuggestionDTO
 	) {
-		return await this.productMemberService.getSuggestionList(
-			memberId,
-			dto.limit
-		)
+		return await this.productService.getSuggestionList(memberId, dto.limit)
 	}
 
 	@Patch(':id/favorite')
@@ -55,17 +52,14 @@ export class ProductMemberController {
 		@CurrentUser('sub') memberId: string,
 		@Param('id') productId: string
 	) {
-		return await this.productMemberService.toggleFavoriteProduct(
-			memberId,
-			productId
-		)
+		return await this.productService.toggleFavoriteProduct(memberId, productId)
 	}
 
 	@Get('favorite/all')
 	@JwtAccess(Role.MEMBER)
 	@ApiSuccessResponse(ProductListIdDTO)
 	async getAllFavoriteProducts(@CurrentUser('sub') memberId: string) {
-		return await this.productMemberService.getAllFavorites(memberId)
+		return await this.productService.getAllFavorites(memberId)
 	}
 
 	@Get(':id')
@@ -87,7 +81,7 @@ export class ProductMemberController {
 		@Param('id', ObjectIdPipe) productId: string,
 		@Query('storeId', ObjectIdPipe) storeId?: string
 	) {
-		return await this.productMemberService.getDetailProduct(
+		return await this.productService.getDetailProduct(
 			memberId,
 			productId,
 			storeId

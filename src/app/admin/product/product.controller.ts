@@ -19,16 +19,16 @@ import { ApiConsumes, ApiTags } from '@nestjs/swagger'
 
 import { CreateProductDTO } from './dto/create-product.dto'
 import { ResponseProductItemDTO } from './dto/response-products.dto'
-import { ProductAdminService } from './product_admin.service'
+import { ProductService } from './product.service'
 
 @ApiTags('admin-app > product')
 @Controller({
 	path: 'admin/product',
 	version: '1',
 })
-export class ProductAdminController {
+export class ProductController {
 	constructor(
-		private readonly productService: ProductAdminService,
+		private readonly productService: ProductService,
 		private readonly productCategoryService: ProductCategoryAdminService,
 		private readonly productOptionService: ProductOptionAdminService,
 		private readonly fileService: FileService,

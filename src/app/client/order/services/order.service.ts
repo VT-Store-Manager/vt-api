@@ -87,7 +87,7 @@ type MemberRankShort = {
 type ValidatedProduct = ArrElement<ValidatedCart['products']>
 
 @Injectable()
-export class OrderMemberService {
+export class OrderService {
 	constructor(
 		@InjectModel(OrderBuyer.MEMBER)
 		private readonly orderMemberModel: Model<OrderMemberDocument>,

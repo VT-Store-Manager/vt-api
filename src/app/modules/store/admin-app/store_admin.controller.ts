@@ -5,7 +5,6 @@ import { ImageMulterOption } from '@/common/validations/file.validator'
 import { FileService } from '@module/file/file.service'
 import { ProductCategoryAdminService } from '@module/product-category/admin-app/product-category_admin.service'
 import { ProductOptionAdminService } from '@module/product-option/admin-app/product-option_admin.service'
-import { ProductAdminService } from '@module/product/admin-app/product_admin.service'
 import {
 	BadRequestException,
 	Body,
@@ -24,6 +23,7 @@ import { CreateStoreDTO } from './dto/create-store.dto'
 import { GetListStoreDTO } from './dto/get-list-store.dto'
 import { ResponseStoreListDTO } from './dto/response-store-item.dto'
 import { StoreAdminService } from './store_admin.service'
+import { ProductService } from '@/app/admin/product/product.service'
 
 @ApiTags('admin-app > store')
 @Controller({
@@ -35,7 +35,7 @@ export class StoreAdminController {
 		private readonly storeService: StoreAdminService,
 		private readonly fileService: FileService,
 		private readonly mongoSessionService: MongoSessionService,
-		private readonly productService: ProductAdminService,
+		private readonly productService: ProductService,
 		private readonly productCategoryService: ProductCategoryAdminService,
 		private readonly productOptionService: ProductOptionAdminService
 	) {}

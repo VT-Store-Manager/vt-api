@@ -20,10 +20,8 @@ import { AdminAppModule } from './admin/admin-app.module'
 import { ClientAppModule } from './client/client-app.module'
 import { CounterModule } from './modules/counter/counter.module'
 import { FileModule } from './modules/file/file.module'
-import { OrderModule } from './modules/order/order.module'
 import { ProductCategoryModule } from './modules/product-category/product-category.module'
 import { ProductOptionModule } from './modules/product-option/product-option.module'
-import { ProductModule } from './modules/product/product.module'
 import { PromotionCategoryModule } from './modules/promotion-category/promotion-category.module'
 import { PromotionModule } from './modules/promotion/promotion.module'
 import { RankModule } from './modules/rank/rank.module'
@@ -61,13 +59,11 @@ import { TriggerModule } from './triggers/trigger.module'
 		CounterModule,
 		ProductCategoryModule,
 		ProductOptionModule,
-		ProductModule,
 		StoreModule,
 		RankModule,
 		VoucherModule,
 		PromotionModule,
 		PromotionCategoryModule,
-		OrderModule,
 		SettingModule,
 		TriggerModule,
 		TagModule,

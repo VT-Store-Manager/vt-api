@@ -14,7 +14,7 @@ import {
 } from '../dto/response.dto'
 
 @Injectable()
-export class OrderStateMemberService {
+export class OrderStateService {
 	constructor(
 		@InjectModel(OrderBuyer.MEMBER)
 		private readonly orderMemberModel: Model<OrderMemberDocument>
