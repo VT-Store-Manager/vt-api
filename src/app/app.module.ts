@@ -16,9 +16,10 @@ import {
 } from '@nestjs/mongoose'
 import { ServeStaticModule } from '@nestjs/serve-static'
 
+import { AdminAppModule } from './admin/admin-app.module'
+import { ClientAppModule } from './client/client-app.module'
 import { CounterModule } from './modules/counter/counter.module'
 import { FileModule } from './modules/file/file.module'
-import { MemberVoucherModule } from './modules/member-voucher/member-voucher.module'
 import { NewsModule } from './modules/news/news.module'
 import { NotificationModule } from './modules/notification/notification.module'
 import { OrderModule } from './modules/order/order.module'
@@ -34,7 +35,6 @@ import { StoreModule } from './modules/store/store.module'
 import { TagModule } from './modules/tag/tag.module'
 import { VoucherModule } from './modules/voucher/voucher.module'
 import { TriggerModule } from './triggers/trigger.module'
-import { ClientAppModule } from './client/client-app.module'
 
 @Module({
 	imports: [
@@ -68,7 +68,6 @@ import { ClientAppModule } from './client/client-app.module'
 		StoreModule,
 		RankModule,
 		VoucherModule,
-		MemberVoucherModule,
 		PromotionModule,
 		PromotionCategoryModule,
 		OrderModule,
@@ -79,6 +78,7 @@ import { ClientAppModule } from './client/client-app.module'
 		NewsModule,
 		TagModule,
 		ClientAppModule,
+		AdminAppModule,
 	],
 	controllers: [],
 	providers: [

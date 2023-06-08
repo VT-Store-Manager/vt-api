@@ -8,16 +8,16 @@ import { ApiTags } from '@nestjs/swagger'
 
 import { AssignVoucherDTO } from './dto/create-member-voucher.dto'
 import { CreateMemberVoucherDTO } from './dto/response.dto'
-import { MemberVoucherAdminService } from './member-voucher_admin.service'
+import { MemberVoucherService } from './member-voucher.service'
 
 @Controller({
 	path: 'admin/member-voucher',
 	version: '1',
 })
 @ApiTags('admin-app > member-voucher')
-export class MemberVoucherAdminController {
+export class MemberVoucherController {
 	constructor(
-		private readonly memberVoucherAdminService: MemberVoucherAdminService
+		private readonly memberVoucherAdminService: MemberVoucherService
 	) {}
 
 	@Post('create')

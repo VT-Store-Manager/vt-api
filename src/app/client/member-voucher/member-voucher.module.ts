@@ -1,3 +1,6 @@
+import { SettingModule } from '@/app/modules/setting/setting.module'
+import { Module } from '@nestjs/common'
+import { MongooseModule } from '@nestjs/mongoose'
 import { MemberData, MemberDataSchema } from '@schema/member-data.schema'
 import { MemberRank, MemberRankSchema } from '@schema/member-rank.schema'
 import {
@@ -10,14 +13,9 @@ import {
 } from '@schema/member-voucher.schema'
 import { Notification, NotificationSchema } from '@schema/notification.schema'
 import { Voucher, VoucherSchema } from '@schema/voucher.schema'
-import { Module } from '@nestjs/common'
-import { MongooseModule } from '@nestjs/mongoose'
 
-import { SettingModule } from '../setting/setting.module'
-import { MemberVoucherAdminController } from './admin-app/member-voucher_admin.controller'
-import { MemberVoucherAdminService } from './admin-app/member-voucher_admin.service'
-import { MemberVoucherMemberController } from './member-app/member-voucher_member.controller'
-import { MemberVoucherMemberService } from './member-app/member-voucher_member.service'
+import { MemberVoucherController } from './member-voucher.controller'
+import { MemberVoucherService } from './member-voucher.service'
 
 @Module({
 	imports: [
@@ -31,7 +29,7 @@ import { MemberVoucherMemberService } from './member-app/member-voucher_member.s
 		]),
 		SettingModule,
 	],
-	controllers: [MemberVoucherAdminController, MemberVoucherMemberController],
-	providers: [MemberVoucherAdminService, MemberVoucherMemberService],
+	controllers: [MemberVoucherController],
+	providers: [MemberVoucherService],
 })
 export class MemberVoucherModule {}

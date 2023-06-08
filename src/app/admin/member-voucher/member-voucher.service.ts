@@ -12,7 +12,7 @@ import { InjectModel } from '@nestjs/mongoose'
 import { AssignVoucherDTO } from './dto/create-member-voucher.dto'
 
 @Injectable()
-export class MemberVoucherAdminService {
+export class MemberVoucherService {
 	constructor(
 		@InjectModel(Voucher.name)
 		private readonly voucherModel: Model<VoucherDocument>,

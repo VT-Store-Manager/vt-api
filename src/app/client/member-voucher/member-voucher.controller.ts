@@ -9,31 +9,27 @@ import {
 	AvailableMemberVoucherDTO,
 	UsedMemberVoucherDTO,
 } from './dto/response.dto'
-import { MemberVoucherMemberService } from './member-voucher_member.service'
+import { MemberVoucherService } from './member-voucher.service'
 
 @Controller({
 	path: 'member/voucher',
 	version: '1',
 })
 @ApiTags('member-app > member-voucher')
-export class MemberVoucherMemberController {
-	constructor(
-		private readonly memberVoucherMemberService: MemberVoucherMemberService
-	) {}
+export class MemberVoucherController {
+	constructor(private readonly memberVoucherService: MemberVoucherService) {}
 
 	@Get('available')
 	@JwtAccess(Role.MEMBER)
 	@ApiSuccessResponse(AvailableMemberVoucherDTO, 200, true)
 	async getAvailableVoucherList(@CurrentUser('sub') memberId: string) {
-		return await this.memberVoucherMemberService.getMemberAvailableVoucher(
-			memberId
-		)
+		return await this.memberVoucherService.getMemberAvailableVoucher(memberId)
 	}
 
 	@Get('used')
 	@JwtAccess(Role.MEMBER)
 	@ApiSuccessResponse(UsedMemberVoucherDTO, 200, true)
 	async getUsedVoucherList(@CurrentUser('sub') memberId: string) {
-		return await this.memberVoucherMemberService.getMemberUsedVoucher(memberId)
+		return await this.memberVoucherService.getMemberUsedVoucher(memberId)
 	}
 }

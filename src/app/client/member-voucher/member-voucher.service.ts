@@ -23,7 +23,7 @@ import { SettingMemberAppService } from '@module/setting/services/setting-member
 import { SettingMemberApp } from '@/database/schemas/setting-member-app.schema'
 
 @Injectable()
-export class MemberVoucherMemberService {
+export class MemberVoucherService {
 	private readonly imageUrl: string
 	constructor(
 		@InjectModel(MemberVoucher.name)
