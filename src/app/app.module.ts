@@ -20,7 +20,6 @@ import { AdminAppModule } from './admin/admin-app.module'
 import { ClientAppModule } from './client/client-app.module'
 import { CounterModule } from './modules/counter/counter.module'
 import { FileModule } from './modules/file/file.module'
-import { RankModule } from './modules/rank/rank.module'
 import { SettingModule } from './modules/setting/setting.module'
 import { StoreModule } from './modules/store/store.module'
 import { TagModule } from './modules/tag/tag.module'
@@ -54,7 +53,6 @@ import { TriggerModule } from './triggers/trigger.module'
 		FileModule,
 		CounterModule,
 		StoreModule,
-		RankModule,
 		VoucherModule,
 		SettingModule,
 		TriggerModule,

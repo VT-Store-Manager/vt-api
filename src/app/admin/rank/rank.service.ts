@@ -6,7 +6,7 @@ import { InjectModel } from '@nestjs/mongoose'
 import { CreateRankDTO } from './dto/create-rank.dto'
 
 @Injectable()
-export class RankAdminService {
+export class RankService {
 	constructor(
 		@InjectModel(Rank.name) private readonly rankModel: Model<RankDocument>
 	) {}

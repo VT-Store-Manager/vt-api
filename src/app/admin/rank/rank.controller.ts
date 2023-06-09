@@ -14,16 +14,16 @@ import { FileFieldsInterceptor } from '@nestjs/platform-express'
 import { ApiConsumes, ApiTags } from '@nestjs/swagger'
 import { CreateRankDTO } from './dto/create-rank.dto'
 
-import { RankAdminService } from './rank_admin.service'
+import { RankService } from './rank.service'
 
 @Controller({
 	path: 'admin/rank',
 	version: '1',
 })
 @ApiTags('admin-app > rank')
-export class RankAdminController {
+export class RankController {
 	constructor(
-		private readonly rankAdminService: RankAdminService,
+		private readonly rankService: RankService,
 		private readonly mongoSessionService: MongoSessionService,
 		private readonly fileService: FileService
 	) {}
@@ -57,7 +57,7 @@ export class RankAdminController {
 		const { error } = await this.mongoSessionService.execTransaction(
 			async session => {
 				const createResult = await Promise.all([
-					this.rankAdminService.createNewRank(
+					this.rankService.createNewRank(
 						{
 							icon: iconObjectKey,
 							background: backgroundObjectKey,
