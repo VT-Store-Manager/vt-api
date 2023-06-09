@@ -2,15 +2,15 @@ import { Body, Controller, Post } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
 import { CreateTagDTO } from './dto/create-tag.dto'
-import { TagAdminService } from './tag_admin.service'
+import { TagService } from './tag.service'
 
 @Controller({
 	path: 'admin/tag',
 	version: '1',
 })
 @ApiTags('admin-app > tag')
-export class TagAdminController {
-	constructor(private readonly tagService: TagAdminService) {}
+export class TagController {
+	constructor(private readonly tagService: TagService) {}
 
 	@Post('create')
 	async createTag(@Body() body: CreateTagDTO) {

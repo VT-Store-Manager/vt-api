@@ -12,7 +12,7 @@ import { CreateTagDTO } from './dto/create-tag.dto'
 import { ErrorCode } from '@/common/constants'
 
 @Injectable()
-export class TagAdminService {
+export class TagService {
 	constructor(
 		@InjectModel(Tag.name)
 		private readonly tagModel: Model<TagDocument>

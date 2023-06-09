@@ -21,7 +21,6 @@ import { ClientAppModule } from './client/client-app.module'
 import { CounterModule } from './modules/counter/counter.module'
 import { FileModule } from './modules/file/file.module'
 import { SettingModule } from './modules/setting/setting.module'
-import { TagModule } from './modules/tag/tag.module'
 import { VoucherModule } from './modules/voucher/voucher.module'
 import { TriggerModule } from './triggers/trigger.module'
 
@@ -54,7 +53,6 @@ import { TriggerModule } from './triggers/trigger.module'
 		VoucherModule,
 		SettingModule,
 		TriggerModule,
-		TagModule,
 		ClientAppModule,
 		AdminAppModule,
 	],
