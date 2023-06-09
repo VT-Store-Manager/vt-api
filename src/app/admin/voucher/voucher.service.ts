@@ -20,7 +20,7 @@ import { GetVoucherListDTO, VoucherListItemDTO } from './dto/response.dto'
 import { PublishStatus, Status } from '@/common/constants'
 
 @Injectable()
-export class VoucherAdminService {
+export class VoucherService {
 	constructor(
 		@InjectModel(Voucher.name)
 		private readonly voucherModel: Model<VoucherDocument>,

@@ -33,7 +33,7 @@ import { UpdateVoucherDiscountDTO } from './dto/update-voucher-discount.dto'
 import { UpdateVoucherImageDTO } from './dto/update-voucher-image.dto'
 import { UpdateVoucherInfoDTO } from './dto/update-voucher-info.dto'
 import { UpdateVoucherSliderDTO } from './dto/update-voucher-slider.dto'
-import { VoucherAdminService } from './voucher_admin.service'
+import { VoucherService } from './voucher.service'
 
 @Controller({
 	path: 'admin/voucher',
@@ -42,9 +42,9 @@ import { VoucherAdminService } from './voucher_admin.service'
 @ApiTags('admin-app > voucher')
 // TODO: Turn on authen admin
 // @JwtAccess(Role.ADMIN)
-export class VoucherAdminController {
+export class VoucherController {
 	constructor(
-		private readonly voucherAdminService: VoucherAdminService,
+		private readonly voucherService: VoucherService,
 		private readonly fileService: FileService,
 		private readonly mongoSessionService: MongoSessionService
 	) {}
@@ -52,7 +52,7 @@ export class VoucherAdminController {
 	@Post('create')
 	@ApiResponse({ type: BooleanResponseDTO, status: 201 })
 	async createVoucher(@Body() body: CreateVoucherDTO) {
-		const voucher = await this.voucherAdminService.create(body)
+		const voucher = await this.voucherService.create(body)
 		return !!voucher
 	}
 
@@ -63,7 +63,7 @@ export class VoucherAdminController {
 		@Body(RemoveNullishObjectPipe, NotEmptyObjectPipe)
 		body: UpdateVoucherInfoDTO
 	) {
-		return await this.voucherAdminService.updateInfo(voucherId, body)
+		return await this.voucherService.updateInfo(voucherId, body)
 	}
 
 	@Patch(':id/image')
@@ -75,7 +75,7 @@ export class VoucherAdminController {
 		@Param('id', ObjectIdPipe) voucherId: string,
 		@Body() _body: UpdateVoucherImageDTO
 	) {
-		const voucher = await this.voucherAdminService.getDetail(voucherId, 'image')
+		const voucher = await this.voucherService.getDetail(voucherId, 'image')
 
 		const abortController = new AbortController()
 		const { error } = await this.mongoSessionService.execTransaction(
@@ -97,7 +97,7 @@ export class VoucherAdminController {
 							voucherImageKey,
 							abortController
 						),
-						this.voucherAdminService.updateInfo(
+						this.voucherService.updateInfo(
 							voucherId,
 							{ image: voucherImageKey },
 							session
@@ -120,7 +120,7 @@ export class VoucherAdminController {
 		@Body(RemoveNullishObjectPipe, NotEmptyObjectPipe)
 		body: UpdateVoucherDiscountDTO
 	) {
-		return await this.voucherAdminService.updateDiscount(voucherId, body)
+		return await this.voucherService.updateDiscount(voucherId, body)
 	}
 
 	@Patch(':id/condition')
@@ -130,7 +130,7 @@ export class VoucherAdminController {
 		@Body(RemoveNullishObjectPipe, NotEmptyObjectPipe)
 		body: UpdateVoucherConditionDTO
 	) {
-		return await this.voucherAdminService.updateCondition(voucherId, body)
+		return await this.voucherService.updateCondition(voucherId, body)
 	}
 
 	@Patch(':id/slider')
@@ -142,7 +142,7 @@ export class VoucherAdminController {
 		@Param('id', ObjectIdPipe) voucherId: string,
 		@Body() _body: UpdateVoucherSliderDTO
 	) {
-		const voucher = await this.voucherAdminService.getDetail(voucherId, 'image')
+		const voucher = await this.voucherService.getDetail(voucherId, 'image')
 
 		const abortController = new AbortController()
 		const { error } = await this.mongoSessionService.execTransaction(
@@ -164,7 +164,7 @@ export class VoucherAdminController {
 							voucherImageKey,
 							abortController
 						),
-						this.voucherAdminService.updateInfo(
+						this.voucherService.updateInfo(
 							voucherId,
 							{ slider: voucherImageKey },
 							session
@@ -183,7 +183,7 @@ export class VoucherAdminController {
 	@Patch(':id/disable')
 	@ApiResponse({ type: BooleanResponseDTO, status: 200 })
 	async disableVoucher(@Param('id') voucherId: string) {
-		return await this.voucherAdminService.updateInfo(voucherId, {
+		return await this.voucherService.updateInfo(voucherId, {
 			disabled: true,
 		})
 	}
@@ -191,7 +191,7 @@ export class VoucherAdminController {
 	@Patch(':id/enable')
 	@ApiResponse({ type: BooleanResponseDTO, status: 200 })
 	async enableVoucher(@Param('id') voucherId: string) {
-		return await this.voucherAdminService.updateInfo(voucherId, {
+		return await this.voucherService.updateInfo(voucherId, {
 			disabled: false,
 		})
 	}
@@ -202,18 +202,18 @@ export class VoucherAdminController {
 		@CurrentUser('sub') memberId: string,
 		@Param('id') voucherId: string
 	) {
-		return await this.voucherAdminService.softDelete(voucherId, memberId)
+		return await this.voucherService.softDelete(voucherId, memberId)
 	}
 
 	@Patch(':id/restore')
 	@ApiResponse({ type: BooleanResponseDTO, status: 200 })
 	async restoreVoucher(@Param('id') voucherId: string) {
-		return await this.voucherAdminService.restore(voucherId)
+		return await this.voucherService.restore(voucherId)
 	}
 
 	@Get()
 	@ApiSuccessResponse(GetVoucherListDTO)
 	async getVoucherPagination(@Query() query: GetVoucherPaginationDTO) {
-		return await this.voucherAdminService.getVoucherWithPagination(query)
+		return await this.voucherService.getVoucherWithPagination(query)
 	}
 }

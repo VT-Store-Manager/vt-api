@@ -5,8 +5,8 @@ import { SettingMemberAppService } from '@module/setting/services/setting-member
 import {
 	ApplyVoucherResult,
 	ValidatedCart,
-	VoucherMemberService,
-} from '@module/voucher/member-app/voucher_member.service'
+	VoucherService,
+} from '@/app/client/voucher/voucher.service'
 import { OrderBuyer, OrderState, PaymentType } from '@/common/constants'
 import { MemberRank, MemberRankDocument } from '@schema/member-rank.schema'
 import {
@@ -101,7 +101,7 @@ export class OrderService {
 		private readonly storeModel: Model<StoreDocument>,
 		@InjectModel(ProductOption.name)
 		private readonly productOptionModel: Model<ProductOptionDocument>,
-		private readonly voucherService: VoucherMemberService,
+		private readonly voucherService: VoucherService,
 		private readonly settingMemberAppService: SettingMemberAppService
 	) {}
 

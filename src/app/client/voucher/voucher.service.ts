@@ -37,7 +37,7 @@ export type ApplyVoucherResult = {
 	totalDiscount: number
 }
 @Injectable()
-export class VoucherMemberService {
+export class VoucherService {
 	constructor(
 		@InjectModel(MemberRank.name)
 		private readonly memberRankModel: Model<MemberRankDocument>

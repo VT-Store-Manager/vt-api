@@ -1,4 +1,7 @@
+import { FileService } from '@/app/modules/file/file.service'
 import { MongoSessionService } from '@/common/providers/mongo-session.service'
+import { Module } from '@nestjs/common'
+import { MongooseModule } from '@nestjs/mongoose'
 import { MemberRank, MemberRankSchema } from '@schema/member-rank.schema'
 import {
 	ProductOption,
@@ -6,14 +9,9 @@ import {
 } from '@schema/product-option.schema'
 import { Product, ProductSchema } from '@schema/product.schema'
 import { Voucher, VoucherSchema } from '@schema/voucher.schema'
-import { Module } from '@nestjs/common'
-import { MongooseModule } from '@nestjs/mongoose'
 
-import { FileService } from '../file/file.service'
-import { VoucherAdminController } from './admin-app/voucher_admin.controller'
-import { VoucherAdminService } from './admin-app/voucher_admin.service'
-import { VoucherMemberController } from './member-app/voucher_member.controller'
-import { VoucherMemberService } from './member-app/voucher_member.service'
+import { VoucherController } from './voucher.controller'
+import { VoucherService } from './voucher.service'
 
 @Module({
 	imports: [
@@ -33,13 +31,7 @@ import { VoucherMemberService } from './member-app/voucher_member.service'
 			},
 		]),
 	],
-	controllers: [VoucherAdminController, VoucherMemberController],
-	providers: [
-		VoucherAdminService,
-		VoucherMemberService,
-		FileService,
-		MongoSessionService,
-	],
-	exports: [VoucherMemberService],
+	controllers: [VoucherController],
+	providers: [VoucherService, FileService, MongoSessionService],
 })
 export class VoucherModule {}

@@ -16,6 +16,7 @@ import { PromotionCategoryModule } from './promotion-category/promotion-category
 import { PromotionModule } from './promotion/promotion.module'
 import { RankModule } from './rank/rank.module'
 import { StoreModule } from './store/store.module'
+import { VoucherModule } from './voucher/voucher.module'
 
 @Module({
 	imports: [
@@ -35,6 +36,7 @@ import { StoreModule } from './store/store.module'
 		PromotionCategoryModule,
 		RankModule,
 		StoreModule,
+		VoucherModule,
 	],
 })
 export class ClientAppModule {}

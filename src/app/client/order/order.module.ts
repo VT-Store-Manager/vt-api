@@ -1,5 +1,5 @@
 import { SettingModule } from '@/app/modules/setting/setting.module'
-import { VoucherModule } from '@/app/modules/voucher/voucher.module'
+import { VoucherModule } from '@/app/client/voucher/voucher.module'
 import { OrderBuyer } from '@/common/constants'
 import { MongoSessionService } from '@/common/providers/mongo-session.service'
 import { Module } from '@nestjs/common'
