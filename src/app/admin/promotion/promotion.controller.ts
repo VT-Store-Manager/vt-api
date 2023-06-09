@@ -13,16 +13,16 @@ import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiConsumes, ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import { CreatePromotionDTO } from './dto/create-promotion.dto'
-import { PromotionAdminService } from './promotion_admin.service'
+import { PromotionService } from './promotion.service'
 
 @Controller({
 	path: 'admin/promotion',
 	version: '1',
 })
 @ApiTags('admin-app > promotion')
-export class PromotionAdminController {
+export class PromotionController {
 	constructor(
-		private readonly promotionAdminService: PromotionAdminService,
+		private readonly promotionService: PromotionService,
 		private readonly fileService: FileService,
 		private readonly mongoSessionService: MongoSessionService
 	) {}
@@ -50,7 +50,7 @@ export class PromotionAdminController {
 					image
 						? this.fileService.upload(image.buffer, imageKey, abortController)
 						: null,
-					this.promotionAdminService.create(body, session),
+					this.promotionService.create(body, session),
 				])
 			}
 		)

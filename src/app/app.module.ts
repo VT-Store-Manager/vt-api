@@ -21,7 +21,6 @@ import { ClientAppModule } from './client/client-app.module'
 import { CounterModule } from './modules/counter/counter.module'
 import { FileModule } from './modules/file/file.module'
 import { PromotionCategoryModule } from './modules/promotion-category/promotion-category.module'
-import { PromotionModule } from './modules/promotion/promotion.module'
 import { RankModule } from './modules/rank/rank.module'
 import { SettingModule } from './modules/setting/setting.module'
 import { StoreModule } from './modules/store/store.module'
@@ -58,7 +57,6 @@ import { TriggerModule } from './triggers/trigger.module'
 		StoreModule,
 		RankModule,
 		VoucherModule,
-		PromotionModule,
 		PromotionCategoryModule,
 		SettingModule,
 		TriggerModule,

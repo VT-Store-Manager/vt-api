@@ -7,7 +7,7 @@ import { Controller, Get, Param, Post } from '@nestjs/common'
 import { ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import { PromotionItemDTO } from './dto/response.dto'
-import { PromotionMemberService } from './promotion_member.service'
+import { PromotionService } from './promotion.service'
 import { JwtAccess } from '@/app/authentication/decorators/jwt.decorator'
 import { CurrentUser } from '@/app/authentication/decorators/current-user.decorator'
 
@@ -16,9 +16,9 @@ import { CurrentUser } from '@/app/authentication/decorators/current-user.decora
 	version: '1',
 })
 @ApiTags('member-app > promotion')
-export class PromotionMemberController {
+export class PromotionController {
 	constructor(
-		private readonly promotionMemberService: PromotionMemberService,
+		private readonly promotionService: PromotionService,
 		private readonly mongoSessionService: MongoSessionService
 	) {}
 
@@ -26,7 +26,7 @@ export class PromotionMemberController {
 	@JwtAccess(Role.MEMBER)
 	@ApiSuccessResponse(PromotionItemDTO, 200, true)
 	async getAllPromotion(@CurrentUser('sub') memberId: string) {
-		return await this.promotionMemberService.getAll(memberId)
+		return await this.promotionService.getAll(memberId)
 	}
 
 	@Post(':promotionId/exchange')
@@ -38,7 +38,7 @@ export class PromotionMemberController {
 	) {
 		const { error } = await this.mongoSessionService.execTransaction(
 			async session => {
-				await this.promotionMemberService.exchangeVoucher(
+				await this.promotionService.exchangeVoucher(
 					memberId,
 					promotionId,
 					session

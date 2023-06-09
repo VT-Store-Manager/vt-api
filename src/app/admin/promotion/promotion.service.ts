@@ -10,7 +10,7 @@ import { Voucher, VoucherDocument } from '@schema/voucher.schema'
 import { CreatePromotionDTO } from './dto/create-promotion.dto'
 
 @Injectable()
-export class PromotionAdminService {
+export class PromotionService {
 	constructor(
 		@InjectModel(Promotion.name)
 		private readonly promotionModel: Model<PromotionDocument>,

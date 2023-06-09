@@ -10,8 +10,9 @@ import { NewsModule } from './news/news.module'
 import { NotificationModule } from './notification/notification.module'
 import { OrderModule } from './order/order.module'
 import { ProductCategoryModule } from './product-category/product-category.module'
-import { ProductModule } from './product/product.module'
 import { ProductOptionModule } from './product-option/product-option.module'
+import { ProductModule } from './product/product.module'
+import { PromotionModule } from './promotion/promotion.module'
 
 @Module({
 	imports: [
@@ -27,6 +28,7 @@ import { ProductOptionModule } from './product-option/product-option.module'
 		ProductModule,
 		ProductCategoryModule,
 		ProductOptionModule,
+		PromotionModule,
 	],
 })
 export class ClientAppModule {}

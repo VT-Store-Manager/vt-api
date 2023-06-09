@@ -27,7 +27,7 @@ import {
 import { PromotionItemDTO } from './dto/response.dto'
 
 @Injectable()
-export class PromotionMemberService {
+export class PromotionService {
 	private readonly imageUrl: string
 	constructor(
 		@InjectModel(Promotion.name)
