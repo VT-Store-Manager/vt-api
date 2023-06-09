@@ -11,15 +11,15 @@ import { Controller, Get, Param, Patch } from '@nestjs/common'
 import { ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import { ShortStoreItemDTO, StoreDetailDTO } from './dto/response.dto'
-import { StoreMemberService } from './store_member.service'
+import { StoreService } from './store.service'
 
 @Controller({
 	path: 'member/store',
 	version: '1',
 })
 @ApiTags('member-app > store')
-export class StoreMemberController {
-	constructor(private readonly storeMemberService: StoreMemberService) {}
+export class StoreController {
+	constructor(private readonly storeMemberService: StoreService) {}
 
 	@Get('short')
 	@JwtAccessOptional(Role.MEMBER)

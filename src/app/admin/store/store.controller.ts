@@ -23,16 +23,16 @@ import { Store } from '@schema/store.schema'
 import { CreateStoreDTO } from './dto/create-store.dto'
 import { GetListStoreDTO } from './dto/get-list-store.dto'
 import { ResponseStoreListDTO } from './dto/response-store-item.dto'
-import { StoreAdminService } from './store_admin.service'
+import { StoreService } from './store.service'
 
 @ApiTags('admin-app > store')
 @Controller({
 	path: 'admin/store',
 	version: '1',
 })
-export class StoreAdminController {
+export class StoreController {
 	constructor(
-		private readonly storeService: StoreAdminService,
+		private readonly storeService: StoreService,
 		private readonly fileService: FileService,
 		private readonly mongoSessionService: MongoSessionService,
 		private readonly productService: ProductService,

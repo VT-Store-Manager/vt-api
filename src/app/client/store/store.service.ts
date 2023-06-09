@@ -11,7 +11,7 @@ import { Store, StoreDocument } from '@schema/store.schema'
 import { ShortStoreItemDTO, StoreDetailDTO } from './dto/response.dto'
 
 @Injectable()
-export class StoreMemberService {
+export class StoreService {
 	private readonly imageUrl: string
 	constructor(
 		@InjectModel(Store.name) private readonly storeModel: Model<StoreDocument>,

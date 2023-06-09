@@ -13,7 +13,7 @@ import {
 } from './dto/response-store-item.dto'
 
 @Injectable()
-export class StoreAdminService {
+export class StoreService {
 	constructor(
 		@InjectModel(Store.name) private readonly storeModel: Model<StoreDocument>,
 		private readonly counterService: CounterService

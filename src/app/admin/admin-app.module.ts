@@ -10,6 +10,7 @@ import { ProductModule } from './product/product.module'
 import { PromotionCategoryModule } from './promotion-category/promotion-category.module'
 import { PromotionModule } from './promotion/promotion.module'
 import { RankModule } from './rank/rank.module'
+import { StoreModule } from './store/store.module'
 
 @Module({
 	imports: [
@@ -23,6 +24,7 @@ import { RankModule } from './rank/rank.module'
 		PromotionModule,
 		PromotionCategoryModule,
 		RankModule,
+		StoreModule,
 	],
 })
 export class AdminAppModule {}
