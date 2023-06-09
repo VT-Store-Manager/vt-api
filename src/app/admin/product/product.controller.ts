@@ -1,25 +1,30 @@
-import { FileService } from '@module/file/file.service'
 import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
 import { ParseFile } from '@/common/pipes/parse-file.pipe'
-import { ImageMulterOption } from '@/common/validations/file.validator'
 import { MongoSessionService } from '@/common/providers/mongo-session.service'
-import { Product } from '@schema/product.schema'
+import { ImageMulterOption } from '@/common/validations/file.validator'
+import { FileService } from '@module/file/file.service'
 import {
 	Body,
 	Controller,
 	Get,
 	Post,
+	Query,
 	UploadedFiles,
 	UseInterceptors,
 } from '@nestjs/common'
 import { FilesInterceptor } from '@nestjs/platform-express'
 import { ApiConsumes, ApiTags } from '@nestjs/swagger'
+import { Product } from '@schema/product.schema'
 
-import { CreateProductDTO } from './dto/create-product.dto'
-import { ResponseProductItemDTO } from './dto/response-products.dto'
-import { ProductService } from './product.service'
 import { ProductCategoryService } from '../product-category/product-category.service'
 import { ProductOptionService } from '../product-option/product-option.service'
+import { CreateProductDTO } from './dto/create-product.dto'
+import { GetProductListQueryDTO } from './dto/get-product-list-query.dto'
+import {
+	ProductListItemDTO,
+	ProductListPaginationDTO,
+} from './dto/response-products.dto'
+import { ProductService } from './product.service'
 
 @ApiTags('admin-app > product')
 @Controller({
@@ -66,8 +71,14 @@ export class ProductController {
 	}
 
 	@Get()
-	@ApiSuccessResponse(ResponseProductItemDTO, 200, true)
+	@ApiSuccessResponse(ProductListItemDTO, 200, true)
 	async getProducts() {
 		return await this.productService.getAll()
+	}
+
+	@Get('list')
+	@ApiSuccessResponse(ProductListPaginationDTO)
+	async getProductListPagination(@Query() query: GetProductListQueryDTO) {
+		return await this.productService.getList(query)
 	}
 }
