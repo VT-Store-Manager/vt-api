@@ -10,7 +10,7 @@ import { InjectModel } from '@nestjs/mongoose'
 import { PromotionCategoryItemDTO } from './dto/response.dto'
 
 @Injectable()
-export class PromotionCategoryMemberService {
+export class PromotionCategoryService {
 	constructor(
 		@InjectModel(PromotionCategory.name)
 		private readonly promotionCategoryModel: Model<PromotionCategoryDocument>

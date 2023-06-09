@@ -14,16 +14,16 @@ import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiConsumes, ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import { CreatePromotionCategoryDTO } from './dto/create-promotion-category.dto'
-import { PromotionCategoryAdminService } from './promotion-category_admin.service'
+import { PromotionCategoryService } from './promotion-category.service'
 
 @Controller({
 	path: 'admin/promotion-category',
 	version: '1',
 })
 @ApiTags('admin-app > promotion-category')
-export class PromotionCategoryAdminController {
+export class PromotionCategoryController {
 	constructor(
-		private readonly promotionCategoryService: PromotionCategoryAdminService,
+		private readonly promotionCategoryService: PromotionCategoryService,
 		private readonly fileService: FileService,
 		private readonly mongoSessionService: MongoSessionService
 	) {}

@@ -3,16 +3,16 @@ import { Controller, Get } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
 import { PromotionCategoryItemDTO } from './dto/response.dto'
-import { PromotionCategoryMemberService } from './promotion-category_member.service'
+import { PromotionCategoryService } from './promotion-category.service'
 
 @Controller({
 	path: 'member/promotion-category',
 	version: '1',
 })
 @ApiTags('member-app > promotion-category')
-export class PromotionCategoryMemberController {
+export class PromotionCategoryController {
 	constructor(
-		private readonly promotionCategoryService: PromotionCategoryMemberService
+		private readonly promotionCategoryService: PromotionCategoryService
 	) {}
 
 	@Get('all')

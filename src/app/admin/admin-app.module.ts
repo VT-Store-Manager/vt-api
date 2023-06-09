@@ -7,6 +7,7 @@ import { PartnerModule } from './partner/partner.module'
 import { ProductCategoryModule } from './product-category/product-category.module'
 import { ProductOptionModule } from './product-option/product-option.module'
 import { ProductModule } from './product/product.module'
+import { PromotionCategoryModule } from './promotion-category/promotion-category.module'
 import { PromotionModule } from './promotion/promotion.module'
 
 @Module({
@@ -19,6 +20,7 @@ import { PromotionModule } from './promotion/promotion.module'
 		ProductCategoryModule,
 		ProductOptionModule,
 		PromotionModule,
+		PromotionCategoryModule,
 	],
 })
 export class AdminAppModule {}
