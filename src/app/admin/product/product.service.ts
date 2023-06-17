@@ -33,54 +33,6 @@ export class ProductService {
 		return product[0]
 	}
 
-	async getAll(): Promise<ProductListItemDTO[]> {
-		const products = await this.productModel
-			.aggregate<ProductListItemDTO>()
-			.lookup({
-				from: 'product_categories',
-				localField: 'category',
-				foreignField: '_id',
-				as: 'category',
-			})
-			.unwind('category')
-			.project({
-				id: '$_id',
-				code: 1,
-				name: 1,
-				images: 1,
-				originalPrice: 1,
-				category: {
-					id: '$category._id',
-					name: '$category.name',
-					code: '$category.code',
-				},
-				status: {
-					$cond: {
-						if: { $eq: ['$deleted', true] },
-						then: Status.REMOVED,
-						else: {
-							$cond: {
-								if: { $eq: ['$disabled', true] },
-								then: Status.DISABLED,
-								else: Status.ACTIVE,
-							},
-						},
-					},
-				},
-				updatedAt: 1,
-			})
-			.project({
-				_id: 0,
-			})
-			.addFields({
-				salesVolume: {
-					month: 0,
-				},
-			})
-			.exec()
-		return products
-	}
-
 	async getList(
 		query: GetProductListQueryDTO
 	): Promise<ProductListPaginationDTO> {
@@ -146,7 +98,7 @@ export class ProductService {
 		])
 		return {
 			totalCount,
-			list: products,
+			items: products,
 		}
 	}
 

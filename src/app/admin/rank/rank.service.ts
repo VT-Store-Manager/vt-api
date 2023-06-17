@@ -4,6 +4,7 @@ import { Rank, RankAppearance, RankDocument } from '@schema/rank.schema'
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { CreateRankDTO } from './dto/create-rank.dto'
+import { RankItemDTO } from './dto/response.dto'
 
 @Injectable()
 export class RankService {
@@ -40,5 +41,49 @@ export class RankService {
 			session ? { session } : {}
 		)
 		return newRank
+	}
+
+	async getList(): Promise<RankItemDTO[]> {
+		return this.rankModel
+			.aggregate<RankItemDTO>([
+				{
+					$sort: {
+						rank: 1,
+					},
+				},
+				{
+					$lookup: {
+						from: 'member_ranks',
+						localField: '_id',
+						foreignField: 'rank',
+						as: 'members',
+						pipeline: [
+							{
+								$project: {
+									_id: false,
+									member: true,
+								},
+							},
+						],
+					},
+				},
+				{
+					$project: {
+						id: '$_id',
+						_id: false,
+						name: true,
+						rank: true,
+						appearance: true,
+						minPoint: true,
+						coefficientPoint: true,
+						deliveryFee: true,
+						updatedAt: { $toLong: '$updatedAt' },
+						memberNumber: {
+							$size: '$members',
+						},
+					},
+				},
+			])
+			.exec()
 	}
 }

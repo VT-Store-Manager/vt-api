@@ -1,15 +1,20 @@
 import { ClientSession, Model } from 'mongoose'
 
-import { CounterService } from '@module/counter/counter.service'
 import { Status } from '@/common/constants'
+import { Product, ProductDocument } from '@/database/schemas/product.schema'
+import { CounterService } from '@module/counter/counter.service'
+import { Injectable } from '@nestjs/common'
+import { InjectModel } from '@nestjs/mongoose'
 import {
 	ProductCategory,
 	ProductCategoryDocument,
 } from '@schema/product-category.schema'
-import { Injectable } from '@nestjs/common'
-import { InjectModel } from '@nestjs/mongoose'
+
 import { GetProductCategoryPaginationDTO } from './dto/get-product-category-pagination'
-import { ProductCategoryListPaginationDTO } from './dto/response.dto'
+import {
+	ProductCategoryListItemDTO,
+	ProductCategoryListPaginationDTO,
+} from './dto/response.dto'
 
 type CreateProductCategoryModel = Pick<ProductCategory, 'image' | 'name'>
 
@@ -18,6 +23,8 @@ export class ProductCategoryService {
 	constructor(
 		@InjectModel(ProductCategory.name)
 		private readonly productCategoryModel: Model<ProductCategoryDocument>,
+		@InjectModel(Product.name)
+		private readonly productModel: Model<ProductDocument>,
 		private readonly counterService: CounterService
 	) {}
 
@@ -42,10 +49,10 @@ export class ProductCategoryService {
 	async getListPagination(
 		query: GetProductCategoryPaginationDTO
 	): Promise<ProductCategoryListPaginationDTO> {
-		const [totalCount, data] = await Promise.all([
+		const [totalCount, data, productCount] = await Promise.all([
 			this.productCategoryModel.count().exec(),
 			this.productCategoryModel
-				.aggregate([
+				.aggregate<ProductCategoryListItemDTO>([
 					{
 						$sort: {
 							isFeatured: -1,
@@ -61,7 +68,7 @@ export class ProductCategoryService {
 					},
 					{
 						$project: {
-							id: '$_id',
+							id: { $toString: '$_id' },
 							_id: 0,
 							name: 1,
 							image: 1,
@@ -89,10 +96,38 @@ export class ProductCategoryService {
 					},
 				])
 				.exec(),
+			this.productModel
+				.aggregate<{ category: string; productAmount: number }>([
+					{
+						$group: {
+							_id: '$category',
+							productIds: {
+								$push: '$_id',
+							},
+						},
+					},
+					{
+						$project: {
+							category: { $toString: '$_id' },
+							_id: false,
+							productAmount: {
+								$size: '$productIds',
+							},
+						},
+					},
+				])
+				.exec(),
 		])
+		const productCountMap = new Map(
+			productCount.map(category => [category.category, category])
+		)
+		data.forEach(category => {
+			category.amountOfProduct =
+				productCountMap.get(category.id).productAmount || 0
+		})
 		return {
 			totalCount,
-			list: data,
+			items: data,
 		}
 	}
 

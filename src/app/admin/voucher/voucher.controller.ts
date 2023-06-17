@@ -211,7 +211,7 @@ export class VoucherController {
 		return await this.voucherService.restore(voucherId)
 	}
 
-	@Get()
+	@Get('list')
 	@ApiSuccessResponse(GetVoucherListDTO)
 	async getVoucherPagination(@Query() query: GetVoucherPaginationDTO) {
 		return await this.voucherService.getVoucherWithPagination(query)

@@ -5,7 +5,9 @@ import { BooleanResponseDTO } from '@/types/swagger'
 import {
 	Body,
 	Controller,
+	Get,
 	Post,
+	Query,
 	UploadedFile,
 	UseInterceptors,
 } from '@nestjs/common'
@@ -14,6 +16,9 @@ import { ApiConsumes, ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import { CreatePromotionDTO } from './dto/create-promotion.dto'
 import { PromotionService } from './promotion.service'
+import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
+import { PromotionListPaginationDTO } from './dto/response.dto'
+import { GetPromotionListDTO } from './dto/get-promotion-list.dto'
 
 @Controller({
 	path: 'admin/promotion',
@@ -59,5 +64,11 @@ export class PromotionController {
 			throw error
 		}
 		return true
+	}
+
+	@Get('list')
+	@ApiSuccessResponse(PromotionListPaginationDTO)
+	async getPromotionList(@Query() query: GetPromotionListDTO) {
+		return await this.promotionService.getPromotionList(query)
 	}
 }

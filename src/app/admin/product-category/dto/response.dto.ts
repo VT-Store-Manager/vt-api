@@ -2,7 +2,7 @@ import { StatusText } from '@/common/constants'
 
 export class ProductCategoryListPaginationDTO {
 	totalCount: number
-	list: ProductCategoryListItemDTO[]
+	items: ProductCategoryListItemDTO[]
 }
 
 export class ProductCategoryListItemDTO {

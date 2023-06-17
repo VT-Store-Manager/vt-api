@@ -25,5 +25,5 @@ export class ProductListItemDTO extends PickType(Product, [
 
 export class ProductListPaginationDTO {
 	totalCount: number
-	list: ProductListItemDTO[]
+	items: ProductListItemDTO[]
 }

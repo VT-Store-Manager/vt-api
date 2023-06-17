@@ -6,6 +6,7 @@ import { Rank } from '@schema/rank.schema'
 import {
 	Body,
 	Controller,
+	Get,
 	Post,
 	UploadedFiles,
 	UseInterceptors,
@@ -15,6 +16,8 @@ import { ApiConsumes, ApiTags } from '@nestjs/swagger'
 import { CreateRankDTO } from './dto/create-rank.dto'
 
 import { RankService } from './rank.service'
+import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
+import { RankItemDTO } from './dto/response.dto'
 
 @Controller({
 	path: 'admin/rank',
@@ -83,5 +86,11 @@ export class RankController {
 		}
 
 		return result
+	}
+
+	@Get()
+	@ApiSuccessResponse(RankItemDTO, 200, true)
+	async getRankList() {
+		return await this.rankService.getList()
 	}
 }

@@ -277,6 +277,7 @@ export class VoucherService {
 										id: '$partner._id',
 										name: '$partner.name',
 										code: '$partner.code',
+										image: '$partner.image',
 									},
 								],
 							},

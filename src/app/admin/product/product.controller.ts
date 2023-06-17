@@ -20,10 +20,7 @@ import { ProductCategoryService } from '../product-category/product-category.ser
 import { ProductOptionService } from '../product-option/product-option.service'
 import { CreateProductDTO } from './dto/create-product.dto'
 import { GetProductListQueryDTO } from './dto/get-product-list-query.dto'
-import {
-	ProductListItemDTO,
-	ProductListPaginationDTO,
-} from './dto/response-products.dto'
+import { ProductListPaginationDTO } from './dto/response-products.dto'
 import { ProductService } from './product.service'
 
 @ApiTags('admin-app > product')
@@ -68,12 +65,6 @@ export class ProductController {
 			throw error
 		}
 		return result
-	}
-
-	@Get()
-	@ApiSuccessResponse(ProductListItemDTO, 200, true)
-	async getProducts() {
-		return await this.productService.getAll()
 	}
 
 	@Get('list')

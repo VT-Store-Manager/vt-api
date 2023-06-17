@@ -1,16 +1,14 @@
 import { Type } from 'class-transformer'
-import { IsNumber, IsOptional, Min } from 'class-validator'
+import { IsOptional, IsPositive } from 'class-validator'
 
 export class GetListStoreDTO {
-	@IsNumber()
 	@Type(() => Number)
-	@Min(1)
+	@IsPositive()
 	@IsOptional()
 	page = 1
 
-	@IsNumber()
 	@Type(() => Number)
-	@Min(1)
+	@IsPositive()
 	@IsOptional()
 	limit = 6
 }

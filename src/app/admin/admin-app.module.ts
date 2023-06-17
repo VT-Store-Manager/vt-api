@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
 
 import { MemberVoucherModule } from './member-voucher/member-voucher.module'
+import { MemberModule } from './member/member.module'
 import { NewsModule } from './news/news.module'
 import { NotificationModule } from './notification/notification.module'
 import { PartnerModule } from './partner/partner.module'
@@ -16,6 +17,7 @@ import { VoucherModule } from './voucher/voucher.module'
 
 @Module({
 	imports: [
+		MemberModule,
 		MemberVoucherModule,
 		NewsModule,
 		NotificationModule,

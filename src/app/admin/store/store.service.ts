@@ -48,6 +48,6 @@ export class StoreService {
 				.exec(),
 			this.storeModel.countDocuments().exec(),
 		])
-		return { items, maxCount }
+		return { maxCount, items }
 	}
 }
