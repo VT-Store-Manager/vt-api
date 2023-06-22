@@ -11,6 +11,7 @@ import { ProductOptionDetailDTO } from './dto/product-option-detail.dto'
 import { ProductOptionListItemDTO } from './dto/product-option-list-item.dto'
 import { UpdateProductOptionDTO } from './dto/update-product-option.dto'
 import { ProductOptionService } from './product-option.service'
+import { ProductOptionSelectDTO } from './dto/response.dto'
 
 @ApiTags('admin-app > product-option')
 @Controller({
@@ -27,6 +28,12 @@ export class ProductOptionController {
 	@ApiSuccessResponse(ProductOptionListItemDTO, 200, true)
 	async getProductOptionList(): Promise<ProductOptionListItemDTO[]> {
 		return this.productOptionService.getList()
+	}
+
+	@Get('select-list')
+	@ApiSuccessResponse(ProductOptionSelectDTO, 200, true)
+	async getProductOptionSelectList() {
+		return this.productOptionService.getSelectList()
 	}
 
 	@Post('create')

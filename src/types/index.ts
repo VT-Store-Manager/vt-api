@@ -8,3 +8,9 @@ export class QueryListDTO {
 	keyword?: string
 	sortBy?: string
 }
+
+export class SelectDataModel {
+	title: string
+	value: string
+	disabled?: boolean
+}

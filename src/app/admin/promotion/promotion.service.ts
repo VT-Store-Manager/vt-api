@@ -200,7 +200,7 @@ export class PromotionService {
 		})
 
 		return {
-			maxCount: totalCount,
+			totalCount: totalCount,
 			items: promotionList,
 		}
 	}

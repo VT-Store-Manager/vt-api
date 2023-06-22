@@ -1,4 +1,5 @@
 import { StatusText } from '@/common/constants'
+import { SelectDataModel } from '../../../../types/index'
 
 export class ProductCategoryListPaginationDTO {
 	totalCount: number
@@ -17,4 +18,8 @@ export class ProductCategoryListItemDTO {
 	order: number
 	featured: boolean
 	updatedAt: number
+}
+
+export class ProductCategorySelectDataDTO extends SelectDataModel {
+	image: string
 }

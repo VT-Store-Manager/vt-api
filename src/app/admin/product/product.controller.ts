@@ -13,7 +13,7 @@ import {
 	UseInterceptors,
 } from '@nestjs/common'
 import { FilesInterceptor } from '@nestjs/platform-express'
-import { ApiConsumes, ApiTags } from '@nestjs/swagger'
+import { ApiConsumes, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { Product } from '@schema/product.schema'
 
 import { ProductCategoryService } from '../product-category/product-category.service'
@@ -22,6 +22,7 @@ import { CreateProductDTO } from './dto/create-product.dto'
 import { GetProductListQueryDTO } from './dto/get-product-list-query.dto'
 import { ProductListPaginationDTO } from './dto/response-products.dto'
 import { ProductService } from './product.service'
+import { BooleanResponseDTO } from '../../../types/swagger'
 
 @ApiTags('admin-app > product')
 @Controller({
@@ -40,7 +41,8 @@ export class ProductController {
 	@Post('create')
 	@UseInterceptors(FilesInterceptor('images', 4, ImageMulterOption(2)))
 	@ApiConsumes('multipart/form-data')
-	@ApiSuccessResponse(Product, 201)
+	// @ApiSuccessResponse(Product, 201)
+	@ApiResponse({ type: BooleanResponseDTO })
 	async createProduct(
 		@UploadedFiles(ParseFile) images: Express.Multer.File[],
 		@Body() dto: CreateProductDTO
@@ -64,7 +66,7 @@ export class ProductController {
 			this.fileService.delete(objectKeys)
 			throw error
 		}
-		return result
+		return !!result
 	}
 
 	@Get('list')

@@ -325,7 +325,7 @@ export class VoucherService {
 		])
 
 		return {
-			maxCount: count,
+			totalCount: count,
 			items: vouchers,
 		}
 	}

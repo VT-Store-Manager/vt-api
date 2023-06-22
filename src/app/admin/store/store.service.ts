@@ -29,7 +29,7 @@ export class StoreService {
 	}
 
 	async getList(query: GetListStoreDTO): Promise<ResponseStoreListDTO> {
-		const [items, maxCount] = await Promise.all([
+		const [items, totalCount] = await Promise.all([
 			this.storeModel
 				.aggregate<ResponseStoreItem>()
 				.project({
@@ -48,6 +48,6 @@ export class StoreService {
 				.exec(),
 			this.storeModel.countDocuments().exec(),
 		])
-		return { maxCount, items }
+		return { totalCount, items }
 	}
 }

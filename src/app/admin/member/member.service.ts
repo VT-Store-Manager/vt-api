@@ -15,7 +15,7 @@ export class MemberService {
 	async getListPagination(
 		query: GetMemberListPaginationDTO
 	): Promise<MemberListPaginationDTO> {
-		const [maxCount, productList] = await Promise.all([
+		const [totalCount, productList] = await Promise.all([
 			this.memberModel.count().exec(),
 			this.memberModel
 				.aggregate<MemberItemDTO>([
@@ -92,7 +92,7 @@ export class MemberService {
 				.exec(),
 		])
 		return {
-			maxCount,
+			totalCount,
 			items: productList,
 		}
 	}

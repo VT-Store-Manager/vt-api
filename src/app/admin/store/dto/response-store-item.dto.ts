@@ -15,5 +15,5 @@ export class ResponseStoreItem extends PickType(Store, [
 
 export class ResponseStoreListDTO {
 	items: ResponseStoreItem[]
-	maxCount: number
+	totalCount: number
 }

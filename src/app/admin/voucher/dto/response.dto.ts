@@ -1,7 +1,7 @@
 import { Status } from '@/common/constants'
 
 export class GetVoucherListDTO {
-	maxCount: number
+	totalCount: number
 	items: VoucherListItemDTO[]
 }
 

@@ -33,6 +33,6 @@ export class PromotionItemDTO {
 }
 
 export class PromotionListPaginationDTO {
-	maxCount: number
+	totalCount: number
 	items: PromotionItemDTO[]
 }

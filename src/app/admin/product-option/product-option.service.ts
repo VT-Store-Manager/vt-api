@@ -20,6 +20,7 @@ import {
 } from './dto/product-option-detail.dto'
 import { ProductOptionListItemDTO } from './dto/product-option-list-item.dto'
 import { UpdateProductOptionDTO } from './dto/update-product-option.dto'
+import { ProductOptionSelectDTO } from './dto/response.dto'
 
 @Injectable()
 export class ProductOptionService {
@@ -337,5 +338,31 @@ export class ProductOptionService {
 		)
 
 		return updateOptionResult
+	}
+
+	async getSelectList(): Promise<ProductOptionSelectDTO[]> {
+		return await this.productOptionModel
+			.aggregate<ProductOptionSelectDTO>([
+				{
+					$match: {
+						deleted: false,
+					},
+				},
+				{
+					$project: {
+						_id: false,
+						title: '$name',
+						value: { $toString: '$_id' },
+						disabled: '$disabled',
+						parent: { $toString: '$parent' },
+					},
+				},
+				{
+					$sort: {
+						title: 1,
+					},
+				},
+			])
+			.exec()
 	}
 }

@@ -22,6 +22,7 @@ import { ApiConsumes, ApiTags } from '@nestjs/swagger'
 import { CreateProductCategoryDTO } from './dto/create-product-category.dto'
 import { ProductCategoryService } from './product-category.service'
 import { GetProductCategoryPaginationDTO } from './dto/get-product-category-pagination'
+import { ProductCategorySelectDataDTO } from './dto/response.dto'
 
 @ApiTags('admin-app > product-category')
 @Controller({
@@ -79,6 +80,12 @@ export class ProductCategoryController {
 		@Query() query: GetProductCategoryPaginationDTO
 	) {
 		return await this.productCategoryService.getListPagination(query)
+	}
+
+	@Get('select-list')
+	@ApiSuccessResponse(ProductCategorySelectDataDTO, 200, true)
+	async getProductCategorySelectList() {
+		return await this.productCategoryService.getSelectList()
 	}
 
 	@Patch('delete/:id')

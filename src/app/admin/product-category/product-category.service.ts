@@ -14,6 +14,7 @@ import { GetProductCategoryPaginationDTO } from './dto/get-product-category-pagi
 import {
 	ProductCategoryListItemDTO,
 	ProductCategoryListPaginationDTO,
+	ProductCategorySelectDataDTO,
 } from './dto/response.dto'
 
 type CreateProductCategoryModel = Pick<ProductCategory, 'image' | 'name'>
@@ -154,5 +155,33 @@ export class ProductCategoryService {
 		return listIds.filter(
 			id => !products.some(product => id === product._id.toString())
 		)
+	}
+
+	async getSelectList(): Promise<ProductCategorySelectDataDTO[]> {
+		return await this.productCategoryModel
+			.aggregate<ProductCategorySelectDataDTO>([
+				{
+					$match: {
+						deleted: false,
+					},
+				},
+				{
+					$sort: {
+						isFeatured: -1,
+						displayOrder: 1,
+						createdAt: -1,
+					},
+				},
+				{
+					$project: {
+						_id: false,
+						title: '$name',
+						value: { $toString: '$_id' },
+						image: '$image',
+						disabled: '$disabled',
+					},
+				},
+			])
+			.exec()
 	}
 }

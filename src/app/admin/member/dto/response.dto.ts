@@ -25,6 +25,6 @@ export class MemberItemDTO {
 }
 
 export class MemberListPaginationDTO {
-	maxCount: number
+	totalCount: number
 	items: MemberItemDTO[]
 }
