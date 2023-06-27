@@ -4,6 +4,7 @@ import { MongoSessionService } from '@/common/providers/mongo-session.service'
 import { ImageMulterOption } from '@/common/validations/file.validator'
 import { FileService } from '@module/file/file.service'
 import {
+	BadRequestException,
 	Body,
 	Controller,
 	Get,
@@ -47,6 +48,7 @@ export class ProductController {
 		@UploadedFiles(ParseFile) images: Express.Multer.File[],
 		@Body() dto: CreateProductDTO
 	) {
+		throw new BadRequestException()
 		const objectKeys = images.map(image =>
 			this.fileService.createObjectKey(['product'], image.originalname)
 		)

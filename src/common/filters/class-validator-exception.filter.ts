@@ -17,7 +17,7 @@ export class ClassValidatorExceptionFilter implements ExceptionFilter {
 			exception = [exception]
 		}
 
-		response.status(HttpStatus.BAD_REQUEST).json({
+		const responseData = {
 			statusCode: response.statusCode,
 			error: `Validation error${exception.length > 1 ? 's' : ''}`,
 			message: exception
@@ -31,6 +31,8 @@ export class ClassValidatorExceptionFilter implements ExceptionFilter {
 					return [...res, ...constraints]
 				}, [])
 				.join('\n'),
-		})
+		}
+		response['_data'] = responseData
+		response.status(HttpStatus.BAD_REQUEST).json(responseData)
 	}
 }

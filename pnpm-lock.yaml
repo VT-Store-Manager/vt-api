@@ -76,6 +76,9 @@ dependencies:
   rimraf:
     specifier: ^3.0.2
     version: 3.0.2
+  rotating-file-stream:
+    specifier: ^3.1.0
+    version: 3.1.0
   rxjs:
     specifier: ^7.2.0
     version: 7.8.0
@@ -6216,6 +6219,11 @@ packages:
     engines: {node: '>=14'}
     hasBin: true
     dev: true
+
+  /rotating-file-stream@3.1.0:
+    resolution: {integrity: sha512-TkMF6cP1/QDcon9D71mjxHoflNuznNOrY5JJQfuxkKklZRmoow/lWBLNxXVjb6KcjAU8BDCV145buLgOx9Px1Q==}
+    engines: {node: '>=14.0'}
+    dev: false
 
   /run-async@2.4.1:
     resolution: {integrity: sha512-tvVnVv01b8c1RrA6Ep7JkStj85Guv/YrMcwqYQnwjsAS2cTmmPGBBjAjpCW7RrSodNSoE2/qg9O4bceNvUuDgQ==}

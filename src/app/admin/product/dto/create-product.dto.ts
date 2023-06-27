@@ -31,9 +31,9 @@ export class CreateProductDTO extends IntersectionType(
 	@ApiPropertyMultiFiles()
 	images: any[]
 
+	@Type(() => Number)
 	@IsNumber()
 	@Min(0)
-	@Type(() => Number)
 	originalPrice: number
 
 	@IsString()

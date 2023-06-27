@@ -25,11 +25,13 @@ export class MongoExceptionFilter implements ExceptionFilter {
 			)} of field '${key}' is duplicated`
 		}
 
-		response.status(status).json({
+		const responseData = {
 			statusCode: status,
 			error: exception.name,
 			message: exception.message,
-		})
+		}
+		response['_data'] = responseData
+		response.status(status).json(responseData)
 	}
 
 	private isDuplicateKeyError(err: MongoError) {
