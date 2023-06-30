@@ -79,8 +79,9 @@ export class FileController {
 	@ApiResponse({ type: UploadFileResponseDTO })
 	async override(
 		@UploadedFile() file: Express.Multer.File,
-		@Body('key', S3KeyPipe) key: string
+		@Body('path', S3KeyPipe) key: string
 	) {
+		console.log(key)
 		await this.fileService.checkFile(key, true)
 		const abortController = new AbortController()
 		try {

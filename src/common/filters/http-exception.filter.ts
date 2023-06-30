@@ -22,13 +22,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
 					? exception['response'].message.join('\n')
 					: exception['response'].message,
 			}
-			// response.status(statusCode).json({
-			// 	statusCode: statusCode,
-			// 	error: exception['response'].error,
-			// 	message: Array.isArray(exception['response'].message)
-			// 		? exception['response'].message.join('\n')
-			// 		: exception['response'].message,
-			// })
 		} else {
 			statusCode = exception.getStatus()
 			responseData = {
@@ -38,13 +31,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
 					? exception.message.join('\n')
 					: exception.message,
 			}
-			// response.status(exception.getStatus()).json({
-			// 	statusCode: response.statusCode,
-			// 	error: exception.name,
-			// 	message: Array.isArray(exception.message)
-			// 		? exception.message.join('\n')
-			// 		: exception.message,
-			// })
 		}
 		response['_data'] = responseData
 		response.status(statusCode).json(responseData)

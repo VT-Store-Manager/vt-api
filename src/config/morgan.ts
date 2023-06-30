@@ -62,37 +62,37 @@ export default (app: INestApplication) => {
 		return JSON.stringify(res['_data'], null, 2).replace(/"([^"]+)":/g, '$1:')
 	})
 
-	app.use(
-		morgan(
-			':remote-addr [:date[iso]] - :method :url :status - :response-time ms',
-			{
-				stream: logSuccessPath(),
-				skip: (req: Request, res: Response) => {
-					return (
-						res.statusCode >= 400 ||
-						(req.method.toUpperCase() === 'GET' && req.url.includes('/file/'))
-					)
-				},
-			},
-			{ flags: 'a' }
-		)
-	)
-	app.use(
-		morgan(
-			`:remote-addr [:date[iso]] - :method :url :status - :res[content-length] bytes - :response-time ms
-Request: :request-data
-Response: :response-data
-=====================
-`,
-			{
-				stream: logErrorPath(),
-				skip: (res: Request, req: Response) => {
-					return req.statusCode < 400
-				},
-			},
-			{ flags: 'a' }
-		)
-	)
+	// 	app.use(
+	// 		morgan(
+	// 			':remote-addr [:date[iso]] - :method :url :status - :response-time ms',
+	// 			{
+	// 				stream: logSuccessPath(),
+	// 				skip: (req: Request, res: Response) => {
+	// 					return (
+	// 						res.statusCode >= 400 ||
+	// 						(req.method.toUpperCase() === 'GET' && req.url.includes('/file/'))
+	// 					)
+	// 				},
+	// 			},
+	// 			{ flags: 'a' }
+	// 		)
+	// 	)
+	// 	app.use(
+	// 		morgan(
+	// 			`:remote-addr [:date[iso]] - :method :url :status - :res[content-length] bytes - :response-time ms
+	// Request: :request-data
+	// Response: :response-data
+	// =====================
+	// `,
+	// 			{
+	// 				stream: logErrorPath(),
+	// 				skip: (res: Request, req: Response) => {
+	// 					return req.statusCode < 400
+	// 				},
+	// 			},
+	// 			{ flags: 'a' }
+	// 		)
+	// 	)
 	app.use(
 		morgan('dev', {
 			skip: (req: Request, res: Response) => {

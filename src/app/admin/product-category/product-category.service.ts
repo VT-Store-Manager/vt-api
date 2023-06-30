@@ -30,15 +30,21 @@ export class ProductCategoryService {
 	) {}
 
 	async create(data: CreateProductCategoryModel, session?: ClientSession) {
-		const counter = await this.counterService.next(
-			'product_categories',
-			session
-		)
+		const [counter, { displayOrder }] = await Promise.all([
+			this.counterService.next('product_categories', session),
+			this.productCategoryModel
+				.findOne()
+				.sort('-displayOrder')
+				.select('displayOrder')
+				.lean()
+				.exec(),
+		])
 
 		const category = await this.productCategoryModel.create(
 			[
 				{
 					code: counter,
+					displayOrder: displayOrder + 1,
 					...data,
 				},
 			],
@@ -124,7 +130,7 @@ export class ProductCategoryService {
 		)
 		data.forEach(category => {
 			category.amountOfProduct =
-				productCountMap.get(category.id).productAmount || 0
+				productCountMap.get(category.id)?.productAmount || 0
 		})
 		return {
 			totalCount,
