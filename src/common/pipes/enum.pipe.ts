@@ -7,8 +7,10 @@ import Joi from '../validations/joi.validator'
 @Injectable()
 export class EnumPipe implements PipeTransform {
 	private values: Array<string | number>
-	constructor(record: Record<string, string | number>) {
-		this.values = Object.values(record)
+	constructor(...record: Record<string, string | number>[]) {
+		this.values = Object.values(
+			record.reduce((res, v) => ({ ...res, ...v }), [])
+		)
 	}
 
 	transform(value: string | number, metadata: ArgumentMetadata) {

@@ -7,7 +7,12 @@ import {
 	ValidatedCart,
 	VoucherService,
 } from '@/app/client/voucher/voucher.service'
-import { OrderBuyer, OrderState, PaymentType } from '@/common/constants'
+import {
+	OrderBuyer,
+	OrderState,
+	PaymentType,
+	ShippingMethod,
+} from '@/common/constants'
 import { MemberRank, MemberRankDocument } from '@schema/member-rank.schema'
 import {
 	MemberVoucher,
@@ -719,6 +724,11 @@ export class OrderService {
 			validatedProducts,
 		} = await this.getRelatedDataToCreateOrder(memberId, data)
 
+		if (data.categoryId !== ShippingMethod.DELIVERY) {
+			;(validatedProducts as ApplyVoucherResult).deliveryPrice = 0
+			;(validatedProducts as ApplyVoucherResult).deliverySalePrice = 0
+		}
+
 		const orderItems: Pick<
 			OrderMember,
 			'items' | 'deliveryDiscount' | 'deliveryPrice' | 'totalProductPrice'
@@ -818,6 +828,7 @@ export class OrderService {
 					),
 					deliveryPrice: memberRank.rank.deliveryFee,
 			  }
+
 		const voucherDiscountAmount = memberVoucher?.voucher
 			? (validatedProducts as ApplyVoucherResult).deliverySalePrice +
 			  (validatedProducts as ApplyVoucherResult).totalDiscount

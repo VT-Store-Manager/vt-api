@@ -28,6 +28,7 @@ const generateOrderCode = (time = Date.now()) => {
 	versionKey: false,
 	timestamps: { createdAt: true, updatedAt: false },
 	discriminatorKey: 'buyer',
+	overwriteModels: true,
 })
 export class Order {
 	_id?: Types.ObjectId
@@ -100,7 +101,7 @@ export class Order {
 		type: Number,
 		min: 0,
 		default: function () {
-			return this.totalPrice
+			return this.totalProductPrice
 		},
 	})
 	paidAmount?: number
