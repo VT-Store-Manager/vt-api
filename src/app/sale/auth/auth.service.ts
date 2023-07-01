@@ -10,7 +10,7 @@ import { HashService } from '@/common/providers/hash.service'
 import { Store, StoreDocument } from '@/database/schemas/store.schema'
 
 @Injectable()
-export class AccountSaleService {
+export class AuthService {
 	constructor(
 		@InjectModel(AccountSale.name)
 		private readonly accountSaleModel: Model<AccountSaleDocument>,

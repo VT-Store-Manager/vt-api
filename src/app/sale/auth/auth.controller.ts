@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post } from '@nestjs/common'
-import { AccountSaleService } from './account.service'
+import { AuthService } from './auth.service'
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { BooleanResponseDTO } from '@/types/swagger'
 import { LoginDTO } from './dto/login.dto'
@@ -19,9 +19,9 @@ import { UserPayload } from '@/types/token'
 	version: '1',
 })
 @ApiTags('sale-app > auth')
-export class AccountSaleController {
+export class AuthController {
 	constructor(
-		private readonly accountSaleService: AccountSaleService,
+		private readonly accountSaleService: AuthService,
 		private readonly tokenService: TokenService
 	) {}
 

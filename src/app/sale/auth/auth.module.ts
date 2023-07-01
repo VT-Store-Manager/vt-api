@@ -4,8 +4,8 @@ import {
 } from '@/database/schemas/account-sale.schema'
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
-import { AccountSaleService } from './account.service'
-import { AccountSaleController } from './account.controller'
+import { AuthService } from './auth.service'
+import { AuthController } from './auth.controller'
 import { HashService } from '@/common/providers/hash.service'
 import { TokenService } from '@/app/authentication/services/token.service'
 import {
@@ -14,6 +14,8 @@ import {
 } from '@/database/schemas/refresh-token.schema'
 import { JwtService } from '@nestjs/jwt'
 import { Store, StoreSchema } from '@/database/schemas/store.schema'
+import { JwtAccessStrategy } from '@/app/authentication/strategies/jwt-access.strategy'
+import { Member, MemberSchema } from '@/database/schemas/member.schema'
 
 @Module({
 	imports: [
@@ -21,9 +23,16 @@ import { Store, StoreSchema } from '@/database/schemas/store.schema'
 			{ name: AccountSale.name, schema: AccountSaleSchema },
 			{ name: RefreshToken.name, schema: RefreshTokenSchema },
 			{ name: Store.name, schema: StoreSchema },
+			{ name: Member.name, schema: MemberSchema },
 		]),
 	],
-	controllers: [AccountSaleController],
-	providers: [AccountSaleService, HashService, TokenService, JwtService],
+	controllers: [AuthController],
+	providers: [
+		AuthService,
+		HashService,
+		TokenService,
+		JwtService,
+		JwtAccessStrategy,
+	],
 })
-export class AccountSaleModule {}
+export class AuthModule {}

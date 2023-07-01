@@ -2,6 +2,7 @@ import { TokenService } from '@/app/authentication/services/token.service'
 import { JwtAccessStrategy } from '@/app/authentication/strategies/jwt-access.strategy'
 import { JwtRefreshStrategy } from '@/app/authentication/strategies/jwt-refresh.strategy'
 import { MongoSessionService } from '@/common/providers/mongo-session.service'
+import { Store, StoreSchema } from '@/database/schemas/store.schema'
 import { Module } from '@nestjs/common'
 import { JwtModule } from '@nestjs/jwt'
 import { MongooseModule } from '@nestjs/mongoose'
@@ -23,6 +24,7 @@ import { AuthService } from './auth.service'
 			{ name: MemberData.name, schema: MemberDataSchema },
 			{ name: MemberRank.name, schema: MemberRankSchema },
 			{ name: Rank.name, schema: RankSchema },
+			{ name: Store.name, schema: StoreSchema },
 		]),
 		JwtModule.register({}),
 	],
