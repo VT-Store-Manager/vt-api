@@ -39,6 +39,8 @@ export class ProductCategoryService {
 				{
 					$match: {
 						_id: { $nin: category.map(v => new Types.ObjectId(v.toString())) },
+						deleted: false,
+						disabled: false,
 					},
 				},
 				{
