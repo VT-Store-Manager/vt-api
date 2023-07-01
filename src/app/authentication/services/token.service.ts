@@ -42,7 +42,7 @@ export class TokenService {
 			.exec()
 	}
 
-	async signMemberToken(payload: TokenPayload, session?: ClientSession) {
+	async signToken(payload: TokenPayload, session?: ClientSession) {
 		const { sub, exp: _exp, iat: _iat, ...payloadWithoutSubject } = payload
 		const tokens = {
 			accessToken: this.jwtService.sign(payloadWithoutSubject, {

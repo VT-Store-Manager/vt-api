@@ -77,7 +77,7 @@ export class AuthController {
 						? null
 						: this.smsService.confirmPhoneNumber(dto.phone, dto.code),
 				])
-				tokens = await this.tokenService.signMemberToken(
+				tokens = await this.tokenService.signToken(
 					{ role: Role.MEMBER, sub: memberId },
 					session
 				)
@@ -92,7 +92,7 @@ export class AuthController {
 	@ApiOperation({ summary: 'Get new access token and refresh token' })
 	@ApiSuccessResponse(TokenDTO, 201)
 	async refreshToken(@CurrentUser() user: UserPayload) {
-		return await this.tokenService.signMemberToken(user)
+		return await this.tokenService.signToken(user)
 	}
 
 	@Get('whoiam')
