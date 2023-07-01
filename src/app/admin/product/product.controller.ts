@@ -2,9 +2,9 @@ import { ApiSuccessResponse } from '@/common/decorators/api-success-response.dec
 import { ParseFile } from '@/common/pipes/parse-file.pipe'
 import { MongoSessionService } from '@/common/providers/mongo-session.service'
 import { ImageMulterOption } from '@/common/validations/file.validator'
+import { BooleanResponseDTO } from '@/types/swagger'
 import { FileService } from '@module/file/file.service'
 import {
-	BadRequestException,
 	Body,
 	Controller,
 	Get,
@@ -23,7 +23,6 @@ import { CreateProductDTO } from './dto/create-product.dto'
 import { GetProductListQueryDTO } from './dto/get-product-list-query.dto'
 import { ProductListPaginationDTO } from './dto/response-products.dto'
 import { ProductService } from './product.service'
-import { BooleanResponseDTO } from '../../../types/swagger'
 
 @ApiTags('admin-app > product')
 @Controller({

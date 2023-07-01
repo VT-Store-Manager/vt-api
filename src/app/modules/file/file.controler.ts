@@ -81,7 +81,6 @@ export class FileController {
 		@UploadedFile() file: Express.Multer.File,
 		@Body('path', S3KeyPipe) key: string
 	) {
-		console.log(key)
 		await this.fileService.checkFile(key, true)
 		const abortController = new AbortController()
 		try {

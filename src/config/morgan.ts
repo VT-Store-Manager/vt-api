@@ -8,7 +8,7 @@ import { createStream } from 'rotating-file-stream'
 
 import { INestApplication } from '@nestjs/common'
 
-const logSuccessPath = () => {
+const _logSuccessPath = () => {
 	return createStream(
 		(time: Date, _index?: number) => {
 			if (!time) time = new Date()
@@ -22,7 +22,7 @@ const logSuccessPath = () => {
 		}
 	)
 }
-const logErrorPath = () => {
+const _logErrorPath = () => {
 	return createStream(
 		(time: Date, _index?: number) => {
 			if (!time) time = new Date()
