@@ -40,6 +40,7 @@ import { OrderBuyer, ShippingMethod } from '@/common/constants'
 import { Voucher } from '@/database/schemas/voucher.schema'
 import { Order, OrderDocument } from '@/database/schemas/order.schema'
 import { OrderMember } from '@/database/schemas/order-member.schema'
+import { UpdateOrderStateDTO } from '../dto/update-order-state.dto'
 
 type ShortProductValidationData = {
 	_id: string
@@ -626,6 +627,7 @@ export class OrderService {
 
 		return createdOrder[0]
 	}
+
 	private async validateProducts(
 		cartProducts: ShortProductInCartDTO[],
 		productMap: Map<string, ShortProductValidationData>,
@@ -1023,5 +1025,19 @@ export class OrderService {
 		}
 
 		return accumulatedPoint
+	}
+
+	async updateState(data: UpdateOrderStateDTO) {
+		const updateResult = await this.orderModel
+			.updateOne(
+				{
+					_id: new Types.ObjectId(data.id),
+				},
+				{
+					state: data.status,
+				}
+			)
+			.exec()
+		return updateResult.matchedCount > 0
 	}
 }

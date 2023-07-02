@@ -8,13 +8,16 @@ import {
 	Body,
 	Controller,
 	InternalServerErrorException,
+	Patch,
 	Post,
 } from '@nestjs/common'
-import { ApiTags } from '@nestjs/swagger'
+import { ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import { CreateOrderDTO } from '../dto/create-order.dto'
 import { CreateOrderResponseDTO } from '../dto/response.dto'
 import { OrderService } from '../services/order.service'
+import { BooleanResponseDTO } from '@/types/swagger'
+import { UpdateOrderStateDTO } from '../dto/update-order-state.dto'
 
 @Controller({
 	path: 'sale/cart',
@@ -44,5 +47,12 @@ export class OrderController {
 			throw new InternalServerErrorException(error.message)
 		}
 		return order
+	}
+
+	@Patch('status')
+	@JwtAccess(Role.SALESPERSON)
+	@ApiResponse({ type: BooleanResponseDTO, status: 201 })
+	async updateOrderStatus(@Body() body: UpdateOrderStateDTO) {
+		return await this.orderService.updateState(body)
 	}
 }
