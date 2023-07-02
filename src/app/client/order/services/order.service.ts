@@ -784,16 +784,21 @@ export class OrderService {
 						},
 						[]
 					),
-					totalProductPrice:
-						(validatedProducts as ApplyVoucherResult).totalDiscount ||
-						(validatedProducts as ApplyVoucherResult).products.reduce(
-							(res, product) =>
-								res +
-								product.mainPrice +
-								product.extraPrice -
-								product.discountPrice,
-							0
-						),
+					totalProductPrice: (validatedProducts as ApplyVoucherResult)
+						.totalDiscount
+						? (validatedProducts as ApplyVoucherResult).products.reduce(
+								(res, product) =>
+									res +
+									(product.mainPrice + product.extraPrice) * product.quantity,
+								0
+						  ) - (validatedProducts as ApplyVoucherResult).totalDiscount
+						: (validatedProducts as ApplyVoucherResult).products.reduce(
+								(res, product) =>
+									res +
+									(product.mainPrice + product.extraPrice) * product.quantity -
+									product.discountPrice,
+								0
+						  ),
 					deliveryPrice: (validatedProducts as ApplyVoucherResult)
 						.deliveryPrice,
 					deliveryDiscount: (validatedProducts as ApplyVoucherResult)
@@ -821,9 +826,10 @@ export class OrderService {
 					totalProductPrice: (validatedProducts as ValidatedProduct[]).reduce(
 						(res, product) =>
 							res +
-							product.price +
-							product.requiredOptionPrice +
-							product.optionalOptionPrice,
+							(product.price +
+								product.requiredOptionPrice +
+								product.optionalOptionPrice) *
+								product.quantity,
 						0
 					),
 					deliveryPrice: memberRank.rank.deliveryFee,

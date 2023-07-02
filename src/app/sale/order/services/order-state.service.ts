@@ -71,6 +71,9 @@ export class OrderStateService {
 									},
 								],
 							},
+							fee: {
+								$subtract: ['$deliveryPrice', '$deliveryDiscount'],
+							},
 							time: { $toLong: '$createdAt' },
 							rate: '$review.rate',
 							payType: '$payment',
