@@ -5,6 +5,7 @@ import { ProductCategoryModule } from './product-category/product-category.modul
 import { ProductOptionModule } from './product-option/product-option.module'
 import { ProductModule } from './product/product.module'
 import { OrderModule } from './order/order.module'
+import { VoucherModule } from './voucher/voucher.module'
 
 @Module({
 	imports: [
@@ -13,6 +14,7 @@ import { OrderModule } from './order/order.module'
 		ProductOptionModule,
 		ProductModule,
 		OrderModule,
+		VoucherModule,
 	],
 })
 export class SaleAppModule {}

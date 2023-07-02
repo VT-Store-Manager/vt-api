@@ -1,7 +1,6 @@
 import { difference } from 'lodash'
 
 import { JwtAccess } from '@/app/authentication/decorators/jwt.decorator'
-import { Role } from '@/common/constants'
 import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
 import { Body, Controller, Post } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
@@ -21,7 +20,7 @@ export class MemberVoucherController {
 	) {}
 
 	@Post('create')
-	@JwtAccess(Role.MEMBER) //TODO: Change to Role.ADMIN
+	@JwtAccess() //TODO: Change to Role.ADMIN
 	@ApiSuccessResponse(CreateMemberVoucherDTO)
 	async createMemberVoucher(
 		@Body() body: AssignVoucherDTO

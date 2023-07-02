@@ -13,7 +13,7 @@ class ProductWithCostDTO {
 	cost: number
 }
 
-export class CreateOrderDTO {
+export class CreateOrderResponseDTO {
 	id: string
 }
 

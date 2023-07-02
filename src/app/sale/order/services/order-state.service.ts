@@ -6,12 +6,12 @@ import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { OrderMemberDocument } from '@schema/order-member.schema'
 
-import { GetOrderByStateDTO } from './dto/get-order-by-state.dto'
+import { GetOrderByStateDTO } from '../dto/get-order-by-state.dto'
 import {
 	OrderByStateResultDTO,
 	OrderCartItemDTO,
 	OrderStateItemDTO,
-} from './dto/response.dto'
+} from '../dto/response.dto'
 
 @Injectable()
 export class OrderStateService {
@@ -92,6 +92,7 @@ export class OrderStateService {
 										},
 										amount: '$$item.quantity',
 										note: '$$item.note',
+										options: '$$item.options',
 									},
 								},
 							},

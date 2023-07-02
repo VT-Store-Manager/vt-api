@@ -3,7 +3,7 @@ import { Store, StoreDocument } from '@/database/schemas/store.schema'
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model, Types } from 'mongoose'
-import { ProductItemDTO } from './dto/response.dto'
+import { ProductListItemDTO } from './dto/response.dto'
 import { ConfigService } from '@nestjs/config'
 import { s3KeyPattern } from '@/common/constants'
 
@@ -30,11 +30,13 @@ export class ProductService {
 		const { product } = store.unavailableGoods
 
 		const allProducts = await this.productModel
-			.aggregate<ProductItemDTO>([
+			.aggregate<ProductListItemDTO>([
 				{
 					$match: {
 						_id: { $nin: product.map(v => new Types.ObjectId(v.toString())) },
-						category: new Types.ObjectId(categoryId),
+						...(categoryId === 'all'
+							? {}
+							: { category: new Types.ObjectId(categoryId) }),
 					},
 				},
 				{
@@ -43,17 +45,31 @@ export class ProductService {
 						_id: false,
 						name: true,
 						cost: '$originalPrice',
-						image: {
-							$cond: [
-								{
-									$regexMatch: {
-										input: { $first: '$images' },
-										regex: s3KeyPattern,
+						images: {
+							$filter: {
+								input: {
+									$map: {
+										input: '$images',
+										as: 'image',
+										in: {
+											$cond: [
+												{
+													$regexMatch: {
+														input: '$$image',
+														regex: s3KeyPattern,
+													},
+												},
+												{ $concat: [this.imageUrl, '$$image'] },
+												null,
+											],
+										},
 									},
 								},
-								{ $concat: [this.imageUrl, { $first: '$images' }] },
-								null,
-							],
+								as: 'image',
+								cond: {
+									$ne: ['$$image', null],
+								},
+							},
 						},
 						optionIds: '$options',
 						description: true,
