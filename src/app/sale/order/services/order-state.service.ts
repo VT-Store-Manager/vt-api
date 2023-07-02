@@ -1,10 +1,9 @@
 import { uniq } from 'lodash'
 import { Model, Types } from 'mongoose'
 
-import { OrderBuyer, OrderState } from '@/common/constants'
+import { OrderState } from '@/common/constants'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-import { OrderMemberDocument } from '@schema/order-member.schema'
 
 import { GetOrderByStateDTO } from '../dto/get-order-by-state.dto'
 import {
@@ -12,12 +11,13 @@ import {
 	OrderCartItemDTO,
 	OrderStateItemDTO,
 } from '../dto/response.dto'
+import { Order, OrderDocument } from '@/database/schemas/order.schema'
 
 @Injectable()
 export class OrderStateService {
 	constructor(
-		@InjectModel(OrderBuyer.MEMBER)
-		private readonly orderMemberModel: Model<OrderMemberDocument>
+		@InjectModel(Order.name)
+		private readonly orderModel: Model<OrderDocument>
 	) {}
 
 	getAllOrderStates(): OrderStateItemDTO[] {
@@ -43,13 +43,13 @@ export class OrderStateService {
 		query: GetOrderByStateDTO
 	): Promise<OrderByStateResultDTO> {
 		const [count, orders] = await Promise.all([
-			this.orderMemberModel
+			this.orderModel
 				.countDocuments({
 					'store.id': new Types.ObjectId(storeId),
 					...(state !== 'all' ? { state } : {}),
 				})
 				.exec(),
-			this.orderMemberModel
+			this.orderModel
 				.aggregate<OrderCartItemDTO>([
 					{
 						$match: {
@@ -71,7 +71,7 @@ export class OrderStateService {
 									},
 								],
 							},
-							time: '$createdAt',
+							time: { $toLong: '$createdAt' },
 							rate: '$review.rate',
 							payType: '$payment',
 							given: {
@@ -127,7 +127,6 @@ export class OrderStateService {
 						} sản phẩm khác`
 					}
 				})(),
-				time: new Date(order.time).getTime(),
 			})),
 		}
 	}
