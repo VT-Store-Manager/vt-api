@@ -36,7 +36,7 @@ import {
 	CheckVoucherDTO,
 	ShortProductInCartDTO,
 } from '@/app/client/order/dto/check-voucher.dto'
-import { OrderBuyer, ShippingMethod } from '@/common/constants'
+import { OrderBuyer, OrderState, ShippingMethod } from '@/common/constants'
 import { Voucher } from '@/database/schemas/voucher.schema'
 import { Order, OrderDocument } from '@/database/schemas/order.schema'
 import { OrderMember } from '@/database/schemas/order-member.schema'
@@ -601,14 +601,7 @@ export class OrderService {
 						memberRank,
 						memberAppSetting.point
 					),
-					// receiver: {
-					// 	name: data.receiver || memberRank.member.name,
-					// 	phone: data.phone || memberRank.member.phone,
-					// 	address: data.addressName || store.address,
-					// 	timer: data.receivingTime
-					// 		? new Date(data.receivingTime)
-					// 		: undefined,
-					// },
+					state: OrderState.PROCESSING,
 			  } as OrderMember)
 			: {
 					type: ShippingMethod.IN_STORE,
@@ -616,6 +609,7 @@ export class OrderService {
 					store: store,
 					...orderItems,
 					payment: data.payType,
+					state: OrderState.PROCESSING,
 			  }
 
 		const createdOrder = await this.orderModel.create(

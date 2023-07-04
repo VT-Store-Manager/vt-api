@@ -109,9 +109,9 @@ export class Order {
 	@Prop({
 		type: String,
 		enum: Object.values(OrderState),
-		default: OrderState.PROCESSING,
+		default: OrderState.PENDING,
 	})
-	state?: OrderState = OrderState.PROCESSING
+	state?: OrderState = OrderState.PENDING
 
 	// TODO: Implement order process
 	process?: any[]

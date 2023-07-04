@@ -23,6 +23,10 @@ export class OrderStateService {
 	getAllOrderStates(): OrderStateItemDTO[] {
 		return [
 			{
+				id: OrderState.PENDING,
+				name: 'Chờ xác nhận',
+			},
+			{
 				id: OrderState.PROCESSING,
 				name: 'Đang thực hiện',
 			},
