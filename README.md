@@ -41,7 +41,10 @@ $ pnpm start
 # watch mode
 $ pnpm start:dev
 
+# or
+
 # production mode
+$ pnpm build
 $ pnpm start:prod
 ```
 

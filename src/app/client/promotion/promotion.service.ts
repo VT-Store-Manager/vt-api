@@ -340,7 +340,9 @@ export class PromotionService {
 			throw new BadRequestException('Not enough point to exchange')
 		}
 
-		const startTimeUnix = promotion.voucher.activeStartTime || Date.now()
+		const startTimeUnix = promotion.voucher.activeStartTime
+			? Math.max(promotion.voucher.activeStartTime, Date.now())
+			: Date.now()
 		const finishTimeUnix = promotion.voucher.activeFinishTime
 			? Math.min(
 					promotion.voucher.activeFinishTime,
@@ -383,6 +385,7 @@ export class PromotionService {
 					{ session }
 				),
 			])
+
 		if (updatePointResult.modifiedCount === 0) {
 			throw new InternalServerErrorException('Update point cause error')
 		}
