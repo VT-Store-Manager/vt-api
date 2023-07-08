@@ -77,6 +77,11 @@ export class ProductOptionService {
 						},
 					},
 					{
+						$sort: {
+							name: 1,
+						},
+					},
+					{
 						$skip: (query.page - 1) * query.limit,
 					},
 					{

@@ -52,6 +52,37 @@ export class ProductService {
 							localField: 'category',
 							foreignField: '_id',
 							as: 'category',
+							pipeline: [
+								{
+									$project: {
+										id: '$_id',
+										_id: false,
+										name: true,
+										code: true,
+									},
+								},
+							],
+						},
+					},
+					{
+						$lookup: {
+							from: 'product_options',
+							localField: 'options',
+							foreignField: '_id',
+							as: 'options',
+							pipeline: [
+								{
+									$project: {
+										id: '$_id',
+										_id: false,
+										name: true,
+										range: true,
+										items: { $size: '$items' },
+										disabled: true,
+										deleted: true,
+									},
+								},
+							],
 						},
 					},
 					{
@@ -65,11 +96,8 @@ export class ProductService {
 							name: true,
 							images: true,
 							originalPrice: true,
-							category: {
-								id: '$category._id',
-								name: '$category.name',
-								code: '$category.code',
-							},
+							category: true,
+							options: true,
 							status: {
 								$cond: {
 									if: { $eq: ['$deleted', true] },
