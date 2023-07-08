@@ -389,6 +389,11 @@ export class OrderService {
 									'voucher.discountPrice': 0,
 								},
 							},
+							{
+								$sort: {
+									disabled: 1,
+								},
+							},
 						])
 						.exec()
 				: null,
@@ -413,7 +418,6 @@ export class OrderService {
 		if (memberVoucher && memberVoucher.length === 0) {
 			throw new BadRequestException(`Voucher ${data.voucherId} not found`)
 		}
-
 		if (memberVoucher && memberVoucher[0].disabled) {
 			throw new BadRequestException(`Voucher ${data.voucherId} is disabled now`)
 		}
