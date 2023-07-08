@@ -1,21 +1,22 @@
 import { Type } from 'class-transformer'
 import {
+	ArrayMinSize,
 	IsArray,
 	IsMongoId,
 	IsOptional,
 	IsPositive,
-	IsString,
 	Min,
 } from 'class-validator'
 
 export class AssignVoucherDTO {
 	@IsArray()
 	@IsMongoId({ each: true })
-	target: string[] = []
+	targets: string[] = []
 
-	@IsString()
-	@IsMongoId()
-	voucher: string
+	@IsMongoId({ each: true })
+	@IsArray()
+	@ArrayMinSize(1)
+	vouchers: string[] = []
 
 	@IsOptional()
 	@IsPositive()

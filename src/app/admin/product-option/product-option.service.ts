@@ -18,9 +18,13 @@ import {
 	ApplyingProductInfo,
 	ProductOptionDetailDTO,
 } from './dto/product-option-detail.dto'
-import { ProductOptionListItemDTO } from './dto/product-option-list-item.dto'
+import {
+	ProductOptionListItemDTO,
+	ProductOptionListPagination,
+} from './dto/product-option-list-item.dto'
 import { UpdateProductOptionDTO } from './dto/update-product-option.dto'
 import { ProductOptionSelectDTO } from './dto/response.dto'
+import { GetOptionListQueryDTO } from './dto/get-option-list-query.dto'
 
 @Injectable()
 export class ProductOptionService {
@@ -32,38 +36,59 @@ export class ProductOptionService {
 		private readonly counterService: CounterService
 	) {}
 
-	async getList(): Promise<ProductOptionListItemDTO[]> {
-		const productOptions = await this.productOptionModel
-			.aggregate<ProductOptionListItemDTO>([])
-			.project({
-				id: '$_id',
-				code: 1,
-				name: 1,
-				parent: 1,
-				range: 1,
-				items: 1,
-				status: {
-					$cond: {
-						if: { $eq: ['$deleted', true] },
-						then: Status.REMOVED,
-						else: {
-							$cond: {
-								if: { $eq: ['$disabled', true] },
-								then: Status.DISABLED,
-								else: Status.ACTIVE,
+	async getList(
+		query: GetOptionListQueryDTO
+	): Promise<ProductOptionListPagination> {
+		const [totalCount, productOptions] = await Promise.all([
+			this.productOptionModel.countDocuments().exec(),
+			this.productOptionModel
+				.aggregate<ProductOptionListItemDTO>([
+					{
+						$lookup: {
+							from: 'products',
+							localField: '_id',
+							foreignField: 'options',
+							as: 'products',
+						},
+					},
+					{
+						$project: {
+							id: '$_id',
+							_id: false,
+							code: true,
+							name: true,
+							parent: true,
+							range: true,
+							items: true,
+							applying: { $size: '$products' },
+							status: {
+								$cond: {
+									if: { $eq: ['$deleted', true] },
+									then: Status.REMOVED,
+									else: {
+										$cond: {
+											if: { $eq: ['$disabled', true] },
+											then: Status.DISABLED,
+											else: Status.ACTIVE,
+										},
+									},
+								},
 							},
 						},
 					},
-				},
-			})
-			.project({
-				_id: 0,
-			})
-			.addFields({
-				used: 0,
-			})
-			.exec()
-		return productOptions
+					{
+						$skip: (query.page - 1) * query.limit,
+					},
+					{
+						$limit: query.limit,
+					},
+				])
+				.exec(),
+		])
+		return {
+			totalCount,
+			items: productOptions,
+		}
 	}
 
 	async create(

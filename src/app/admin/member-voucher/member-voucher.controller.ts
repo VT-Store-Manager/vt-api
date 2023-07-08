@@ -1,6 +1,3 @@
-import { difference } from 'lodash'
-
-import { JwtAccess } from '@/app/authentication/decorators/jwt.decorator'
 import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
 import { Body, Controller, Post } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
@@ -20,22 +17,11 @@ export class MemberVoucherController {
 	) {}
 
 	@Post('create')
-	@JwtAccess() //TODO: Change to Role.ADMIN
+	// @JwtAccess() //TODO: Change to Role.ADMIN
 	@ApiSuccessResponse(CreateMemberVoucherDTO)
 	async createMemberVoucher(
 		@Body() body: AssignVoucherDTO
 	): Promise<CreateMemberVoucherDTO> {
-		const createResult =
-			await this.memberVoucherAdminService.createMemberVoucher(body)
-		return {
-			totalCount: createResult.members.length,
-			successCount: createResult.newMemberVouchers.length,
-			failedList: difference(
-				createResult.members.map(member => member.member.toString()),
-				createResult.newMemberVouchers.map(memberVoucher =>
-					memberVoucher.member.toString()
-				)
-			),
-		}
+		return await this.memberVoucherAdminService.createMemberVoucher(body)
 	}
 }

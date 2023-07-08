@@ -13,3 +13,8 @@ export class ProductOptionListItemDTO extends PickType(ProductOption, [
 	applying: number
 	status: Status
 }
+
+export class ProductOptionListPagination {
+	totalCount: number
+	items: ProductOptionListItemDTO[]
+}

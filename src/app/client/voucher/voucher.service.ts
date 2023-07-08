@@ -97,13 +97,16 @@ export class VoucherService {
 			const isValid = condition.inclusion.every(detail => {
 				if (!detail.required) ++numberOfOptionalInclusion
 
-				let matchProducts = detail.ids.map(id => id.toString())
-					? cart.products.filter(
-							product =>
-								matchProducts.include(product.id.toString()) ||
-								matchProducts.include(product.category.toString())
-					  )
-					: cart.products
+				let matchProducts = (() => {
+					const inclusionIds = detail.ids.map(id => id.toString())
+					return inclusionIds.length
+						? cart.products.filter(
+								product =>
+									inclusionIds.includes(product.id.toString()) ||
+									inclusionIds.includes(product.category.toString())
+						  )
+						: cart.products
+				})()
 
 				// Check options
 				matchProducts = matchProducts.filter(product => {

@@ -55,6 +55,7 @@ export class MemberService {
 										pipeline: [
 											{
 												$project: {
+													id: '$_id',
 													_id: false,
 													name: true,
 													rank: true,

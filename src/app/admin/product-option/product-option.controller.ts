@@ -2,16 +2,25 @@ import { ApiSuccessResponse } from '@/common/decorators/api-success-response.dec
 import { ObjectIdPipe } from '@/common/pipes/object-id.pipe'
 import { RemoveNullishObjectPipe } from '@/common/pipes/object.pipe'
 import { MongoSessionService } from '@/common/providers/mongo-session.service'
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common'
+import {
+	Body,
+	Controller,
+	Get,
+	Param,
+	Patch,
+	Post,
+	Query,
+} from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
 import { CreateProductOptionDTO } from './dto/create-product-option.dto'
 import { NewProductOptionDTO } from './dto/new-product-option.dto'
 import { ProductOptionDetailDTO } from './dto/product-option-detail.dto'
-import { ProductOptionListItemDTO } from './dto/product-option-list-item.dto'
+import { ProductOptionListPagination } from './dto/product-option-list-item.dto'
 import { UpdateProductOptionDTO } from './dto/update-product-option.dto'
 import { ProductOptionService } from './product-option.service'
 import { ProductOptionSelectDTO } from './dto/response.dto'
+import { GetOptionListQueryDTO } from './dto/get-option-list-query.dto'
 
 @ApiTags('admin-app > product-option')
 @Controller({
@@ -25,9 +34,11 @@ export class ProductOptionController {
 	) {}
 
 	@Get('list')
-	@ApiSuccessResponse(ProductOptionListItemDTO, 200, true)
-	async getProductOptionList(): Promise<ProductOptionListItemDTO[]> {
-		return this.productOptionService.getList()
+	@ApiSuccessResponse(ProductOptionListPagination)
+	async getProductOptionList(
+		@Query() query: GetOptionListQueryDTO
+	): Promise<ProductOptionListPagination> {
+		return await this.productOptionService.getList(query)
 	}
 
 	@Get('select-list')

@@ -81,8 +81,8 @@ export class MemberVoucherService {
 								},
 								{
 									$or: [
-										{ 'voucher.activeStartTime': null },
-										{ 'voucher.activeStartTime': { $lte: now } },
+										{ 'voucher.activeFinishTime': null },
+										{ 'voucher.activeFinishTime': { $gt: now } },
 									],
 								},
 							],

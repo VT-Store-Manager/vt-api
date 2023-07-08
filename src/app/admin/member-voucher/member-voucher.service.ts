@@ -1,15 +1,17 @@
+import { difference } from 'lodash'
 import { ClientSession, Model, Types } from 'mongoose'
 
+import { BadRequestException, Injectable } from '@nestjs/common'
+import { InjectModel } from '@nestjs/mongoose'
 import { MemberRank, MemberRankDocument } from '@schema/member-rank.schema'
 import {
 	MemberVoucher,
 	MemberVoucherDocument,
 } from '@schema/member-voucher.schema'
 import { Voucher, VoucherDocument } from '@schema/voucher.schema'
-import { BadRequestException, Injectable } from '@nestjs/common'
-import { InjectModel } from '@nestjs/mongoose'
 
 import { AssignVoucherDTO } from './dto/create-member-voucher.dto'
+import { CreateMemberVoucherDTO, CreateResultItemDTO } from './dto/response.dto'
 
 @Injectable()
 export class MemberVoucherService {
@@ -22,48 +24,106 @@ export class MemberVoucherService {
 		private readonly memberRankModel: Model<MemberRankDocument>
 	) {}
 
-	async createMemberVoucher(data: AssignVoucherDTO, session?: ClientSession) {
-		const targetObjectIds = data.target.map(id => new Types.ObjectId(id))
-		const [members, voucher] = await Promise.all([
+	async createMemberVoucher(
+		data: AssignVoucherDTO,
+		session?: ClientSession
+	): Promise<CreateMemberVoucherDTO> {
+		const targetObjectIds = data.targets.map(id => new Types.ObjectId(id))
+		const [members, vouchers] = await Promise.all([
 			this.memberRankModel
 				.aggregate<{
-					member: Types.ObjectId
-				}>()
-				.match(
-					targetObjectIds.length > 0
-						? {
-								$or: [
-									{ member: { $in: targetObjectIds } },
-									{ rank: { $in: targetObjectIds } },
-								],
-						  }
-						: {}
-				)
-				.project({
-					member: true,
-					_id: false,
-				})
+					member: string
+					rank: string
+				}>([
+					{
+						$match:
+							targetObjectIds.length > 0
+								? {
+										$or: [
+											{ member: { $in: targetObjectIds } },
+											{ rank: { $in: targetObjectIds } },
+											{ code: { $in: targetObjectIds } },
+										],
+								  }
+								: {},
+					},
+					{
+						$lookup: {
+							from: 'ranks',
+							localField: 'rank',
+							foreignField: '_id',
+							as: 'rank',
+						},
+					},
+					{
+						$unwind: {
+							path: '$rank',
+						},
+					},
+					{
+						$project: {
+							_id: false,
+							member: {
+								$toString: '$member',
+							},
+							rank: true,
+						},
+					},
+				])
 				.exec(),
 			this.voucherModel
-				.findById(data.voucher)
+				.find({ _id: data.vouchers.map(id => new Types.ObjectId(id)) })
 				.orFail(new BadRequestException('Voucher not found'))
 				.select('expireHour')
 				.lean()
 				.exec(),
 		])
-		const finishTime = data.startTime + voucher.expireHour * 1000 * 60 * 60
-		const newMemberVouchers = await this.memberVoucherModel.create(
-			members.map(member => ({
-				member: member.member,
-				voucher: voucher._id,
-				startTime: data.startTime,
-				finishTime: finishTime,
-			})),
-			session ? { session } : {}
-		)
+
+		const memberMap = new Map(members.map(member => [member.member, member]))
+
+		const createResult: CreateResultItemDTO[] = []
+		for (const voucher of vouchers) {
+			const finishTime = data.startTime + voucher.expireHour * 1000 * 60 * 60
+			const result: CreateResultItemDTO = {
+				voucher: voucher._id.toString(),
+				failedList: [],
+			}
+			const newMemberVouchers = await this.memberVoucherModel.create(
+				members.map(member => ({
+					member: new Types.ObjectId(member.member),
+					voucher: voucher._id,
+					startTime: data.startTime,
+					finishTime: finishTime,
+				})),
+				session ? { session } : {}
+			)
+
+			const failedMembers = difference(
+				members.map(memberRank => memberRank.member.toString()),
+				newMemberVouchers.map(memberVoucher => memberVoucher.member.toString())
+			)
+
+			const failedRanks = failedMembers.reduce((res, memberId) => {
+				const memberRank = memberMap.get(memberId).rank
+				if (!Array.isArray(res[memberRank])) {
+					res[memberRank] = []
+				}
+				res[memberRank].push(memberId)
+
+				return res
+			}, {}) as Record<string, string[]>
+
+			result.failedList = Object.keys(failedRanks).map(rank => ({
+				rank: rank,
+				members: failedRanks[rank],
+			}))
+
+			createResult.push(result)
+		}
+
 		return {
-			members,
-			newMemberVouchers,
+			totalCount: members.length,
+			result: createResult,
 		}
 	}
 }
