@@ -110,3 +110,8 @@ export enum NotificationType {
 export enum ErrorCode {
 	MONGO_DUPLICATED = 11000,
 }
+
+export enum SortOrder {
+	ASC,
+	DESC,
+}

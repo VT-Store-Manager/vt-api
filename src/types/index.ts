@@ -14,3 +14,8 @@ export class SelectDataModel {
 	value: string
 	disabled?: boolean
 }
+
+export class PaginationModel<T extends Record<string, any>> {
+	totalCount: number
+	items: T[]
+}
