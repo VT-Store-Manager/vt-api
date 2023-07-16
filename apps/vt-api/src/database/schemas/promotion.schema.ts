@@ -2,8 +2,8 @@ import { Document, Types } from 'mongoose'
 import mongooseDelete from 'mongoose-delete'
 
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-
 import { PickType } from '@nestjs/swagger'
+
 import { ShortVoucher, ShortVoucherSchema } from './voucher.schema'
 
 export type PromotionDocument = Document & Promotion

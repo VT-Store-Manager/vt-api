@@ -3,8 +3,8 @@ import { Document, Types } from 'mongoose'
 import mongooseDelete from 'mongoose-delete'
 import mongooseLeanVirtuals from 'mongoose-lean-virtuals'
 
-import { Gender } from '@/common/constants'
-import Joi from '@/common/validations/joi.validator'
+import { Gender } from '@app/common'
+import { Joi } from '@app/common'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 
 export type MemberVirtual = {

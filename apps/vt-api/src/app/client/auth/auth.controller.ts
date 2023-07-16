@@ -1,14 +1,11 @@
-import { CurrentUser } from '@/app/authentication/decorators/current-user.decorator'
 import {
+	CurrentUser,
 	JwtAccess,
 	JwtRefresh,
-} from '@/app/authentication/decorators/jwt.decorator'
-import { TokenService } from '@/app/authentication/services/token.service'
-import { Role } from '@/common/constants'
-import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
-import { MongoSessionService } from '@/common/providers/mongo-session.service'
-import { BooleanResponseDTO } from '@/types/swagger'
-import { UserPayload } from '@/types/token'
+	TokenService,
+} from '@app/authentication'
+import { ApiSuccessResponse, MongoSessionService, Role } from '@app/common'
+import { BooleanResponseDTO, UserPayload } from '@app/types'
 import { Body, Controller, Get, Post } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'

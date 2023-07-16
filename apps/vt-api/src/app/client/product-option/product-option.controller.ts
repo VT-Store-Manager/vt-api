@@ -1,6 +1,7 @@
-import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
+import { ApiSuccessResponse } from '@app/common'
 import { Controller, Get } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
+
 import { GetAllProductOptionDTO } from './dto/response.dto'
 import { ProductOptionService } from './product-option.service'
 

@@ -1,9 +1,6 @@
 import { Model } from 'mongoose'
 
-import {
-	ProductOption,
-	ProductOptionDocument,
-} from '@schema/product-option.schema'
+import { ProductOption, ProductOptionDocument } from '@app/database'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 

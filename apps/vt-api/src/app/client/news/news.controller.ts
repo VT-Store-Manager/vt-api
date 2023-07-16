@@ -1,9 +1,9 @@
+import { ApiSuccessResponse } from '@app/common'
 import { Controller, Get } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
-import { NewsService } from './news.service'
-import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
 import { NewsListByTagItemDTO } from './dto/response.dto'
+import { NewsService } from './news.service'
 
 @Controller({
 	path: 'member/news',

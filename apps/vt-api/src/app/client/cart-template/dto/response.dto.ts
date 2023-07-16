@@ -1,4 +1,4 @@
-import { CartTemplate } from '@schema/cart-template.schema'
+import { CartTemplate } from '@app/database'
 import { PickType } from '@nestjs/swagger'
 
 export class CreateCartTemplateResponseDTO {

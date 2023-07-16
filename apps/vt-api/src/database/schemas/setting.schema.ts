@@ -1,6 +1,6 @@
 import { Document } from 'mongoose'
 
-import { SettingType } from '@/common/constants'
+import { SettingType } from '@app/common'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 
 export type SettingDocument = Setting & Document

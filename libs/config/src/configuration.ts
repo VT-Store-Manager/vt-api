@@ -1,25 +1,10 @@
+import { NodeEnv, Joi } from '@app/common'
 import { hostname } from 'os'
-
-import { NodeEnv } from '@/common/constants'
-import Joi from '@/common/validations/joi.validator'
 
 export const envConfiguration = () => {
 	const nodeEnv = process.env.NODE_ENV || NodeEnv.DEVELOPMENT
-	const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 80
-	let host = process.env.APP_URL || hostname()
-	if (nodeEnv === NodeEnv.DEVELOPMENT) {
-		if (!host.startsWith('http')) {
-			host = 'http://' + host
-		}
-		const portPattern = /:\d+$/
-		if (port === 80 || port === 443) {
-			host = host.replace(portPattern, '')
-		} else if (!portPattern.test(host)) {
-			host += ':' + port
-		} else {
-			host = host.replace(portPattern, ':' + port)
-		}
-	}
+	const port = process.env.PORT
+	const host = process.env.APP_URL || hostname()
 	const imageUrl = host + '/api/v1/file/'
 
 	const env = {

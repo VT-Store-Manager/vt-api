@@ -1,12 +1,13 @@
 import { Model, Types } from 'mongoose'
 
-import { Store, StoreDocument } from '@/database/schemas/store.schema'
-import { BadRequestException, Injectable } from '@nestjs/common'
-import { InjectModel } from '@nestjs/mongoose'
 import {
 	ProductOption,
 	ProductOptionDocument,
-} from '@schema/product-option.schema'
+	Store,
+	StoreDocument,
+} from '@app/database'
+import { BadRequestException, Injectable } from '@nestjs/common'
+import { InjectModel } from '@nestjs/mongoose'
 
 import { GetAllProductOptionDTO } from './dto/response.dto'
 

@@ -1,11 +1,12 @@
+import { ValidationError } from 'class-validator'
+import { Response } from 'express'
+
 import {
 	ArgumentsHost,
 	Catch,
 	ExceptionFilter,
 	HttpStatus,
 } from '@nestjs/common'
-import { ValidationError } from 'class-validator'
-import { Response } from 'express'
 
 @Catch(ValidationError)
 export class ClassValidatorExceptionFilter implements ExceptionFilter {

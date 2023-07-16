@@ -1,11 +1,10 @@
 import { Model, Types } from 'mongoose'
 
-import { s3KeyPattern } from '@/common/constants'
-import { SettingMemberAppService } from '@module/setting/services/setting-member-app.service'
+import { s3KeyPattern, SettingMemberAppService } from '@app/common'
+import { MemberData, MemberDataDocument } from '@app/database'
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { InjectModel } from '@nestjs/mongoose'
-import { MemberData, MemberDataDocument } from '@schema/member-data.schema'
 
 import { MemberNotificationItemDTO } from './dto/response.dto'
 

@@ -115,7 +115,8 @@
       "^@app/database(|/.*)$": "<rootDir>/libs/database/src/$1",
       "^@app/common(|/.*)$": "<rootDir>/libs/common/src/$1",
       "^@app/config(|/.*)$": "<rootDir>/libs/config/src/$1",
-      "^@app/types(|/.*)$": "<rootDir>/libs/types/src/$1"
+      "^@app/types(|/.*)$": "<rootDir>/libs/types/src/$1",
+      "^@app/authentication(|/.*)$": "<rootDir>/libs/authentication/src/$1"
     }
   }
 }

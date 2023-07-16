@@ -1,11 +1,12 @@
-import { Product, ProductDocument } from '@/database/schemas/product.schema'
-import { Store, StoreDocument } from '@/database/schemas/store.schema'
-import { BadRequestException, Injectable } from '@nestjs/common'
-import { InjectModel } from '@nestjs/mongoose'
 import { Model, Types } from 'mongoose'
-import { ProductListItemDTO } from './dto/response.dto'
+
+import { s3KeyPattern } from '@app/common'
+import { Product, ProductDocument, Store, StoreDocument } from '@app/database'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { s3KeyPattern } from '@/common/constants'
+import { InjectModel } from '@nestjs/mongoose'
+
+import { ProductListItemDTO } from './dto/response.dto'
 
 @Injectable()
 export class ProductService {

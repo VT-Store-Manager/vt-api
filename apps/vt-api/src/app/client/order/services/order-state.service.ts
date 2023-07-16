@@ -1,8 +1,8 @@
 import { uniq } from 'lodash'
 import { Model, Types } from 'mongoose'
 
-import { OrderBuyer, OrderState } from '@/common/constants'
-import { OrderMemberDocument } from '@schema/order-member.schema'
+import { OrderBuyer, OrderState } from '@app/common'
+import { OrderMemberDocument } from '@app/database'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 

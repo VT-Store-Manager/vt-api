@@ -1,7 +1,7 @@
 import { isNumber } from 'lodash'
 import { Types } from 'mongoose'
 
-import { NotificationType } from '@/common/constants'
+import { NotificationType } from '@app/common'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 
 @Schema({

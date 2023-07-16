@@ -1,7 +1,8 @@
 import { uniq } from 'lodash'
 import { Model, Types } from 'mongoose'
 
-import { OrderState } from '@/common/constants'
+import { OrderState } from '@app/common'
+import { Order, OrderDocument } from '@app/database'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 
@@ -11,7 +12,6 @@ import {
 	OrderCartItemDTO,
 	OrderStateItemDTO,
 } from '../dto/response.dto'
-import { Order, OrderDocument } from '@/database/schemas/order.schema'
 
 @Injectable()
 export class OrderStateService {

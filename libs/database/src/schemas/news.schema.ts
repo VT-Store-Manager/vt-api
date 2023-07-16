@@ -1,6 +1,6 @@
 import { Document, Types } from 'mongoose'
 
-import { s3KeyPattern } from '@/common/constants'
+import { s3KeyPattern } from '@app/common'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 
 export type NewsDocument = News & Document

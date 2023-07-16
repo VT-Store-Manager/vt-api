@@ -1,11 +1,10 @@
 import { CounterModule } from '@/app/modules/counter/counter.module'
 import { FileService } from '@/app/modules/file/file.service'
 import { SettingModule } from '@/app/modules/setting/setting.module'
-import { MongoSessionService } from '@/common/providers/mongo-session.service'
+import { MongoSessionService } from '@app/common'
+import { MemberData, MemberDataSchema, Store, StoreSchema } from '@app/database'
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
-import { MemberData, MemberDataSchema } from '@schema/member-data.schema'
-import { Store, StoreSchema } from '@schema/store.schema'
 
 import { ProductCategoryModule } from '../product-category/product-category.module'
 import { ProductOptionModule } from '../product-option/product-option.module'

@@ -1,11 +1,8 @@
 import { FileService } from '@/app/modules/file/file.service'
-import { MongoSessionService } from '@/common/providers/mongo-session.service'
+import { MongoSessionService } from '@app/common'
+import { PromotionCategory, PromotionCategorySchema } from '@app/database'
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
-import {
-	PromotionCategory,
-	PromotionCategorySchema,
-} from '@schema/promotion-category.schema'
 
 import { PromotionCategoryController } from './promotion-category.controller'
 import { PromotionCategoryService } from './promotion-category.service'

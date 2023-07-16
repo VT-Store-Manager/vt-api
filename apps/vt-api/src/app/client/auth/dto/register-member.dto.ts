@@ -8,8 +8,8 @@ import {
 	Matches,
 } from 'class-validator'
 
-import { Gender } from '@/common/constants'
-import { Member } from '@schema/member.schema'
+import { Gender } from '@app/common'
+import { Member } from '@app/database'
 import { ApiProperty, PickType } from '@nestjs/swagger'
 
 export class RegisterMemberDTO extends PickType(Member, [

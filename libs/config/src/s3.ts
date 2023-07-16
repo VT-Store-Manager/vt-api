@@ -5,7 +5,7 @@ import {
 } from '@aws-sdk/client-s3'
 import { Logger } from '@nestjs/common'
 
-export default async (
+export const awsS3Config = async (
 	region: string,
 	accessKeyId: string,
 	secretAccessKey: string,

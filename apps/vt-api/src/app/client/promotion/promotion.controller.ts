@@ -1,15 +1,16 @@
-import { Role } from '@/common/constants'
-import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
-import { ObjectIdPipe } from '@/common/pipes/object-id.pipe'
-import { MongoSessionService } from '@/common/providers/mongo-session.service'
-import { BooleanResponseDTO } from '@/types/swagger'
+import { CurrentUser, JwtAccess } from '@app/authentication'
+import {
+	ApiSuccessResponse,
+	MongoSessionService,
+	ObjectIdPipe,
+	Role,
+} from '@app/common'
+import { BooleanResponseDTO } from '@app/types'
 import { Controller, Get, Param, Post } from '@nestjs/common'
 import { ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import { PromotionItemDTO } from './dto/response.dto'
 import { PromotionService } from './promotion.service'
-import { JwtAccess } from '@/app/authentication/decorators/jwt.decorator'
-import { CurrentUser } from '@/app/authentication/decorators/current-user.decorator'
 
 @Controller({
 	path: 'member/promotion',

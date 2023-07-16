@@ -1,9 +1,14 @@
-import { MongoSessionService } from '@/common/providers/mongo-session.service'
-import { CartTemplate, CartTemplateSchema } from '@schema/cart-template.schema'
-import { Product, ProductSchema } from '@schema/product.schema'
+import { SettingModule } from '@/app/modules/setting/setting.module'
+import { MongoSessionService } from '@app/common'
+import {
+	CartTemplate,
+	CartTemplateSchema,
+	Product,
+	ProductSchema,
+} from '@app/database'
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
-import { SettingModule } from '@/app/modules/setting/setting.module'
+
 import { CartTemplateController } from './cart-template.controller'
 import { CartTemplateService } from './cart-template.service'
 

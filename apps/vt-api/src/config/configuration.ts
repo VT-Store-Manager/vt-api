@@ -1,7 +1,6 @@
 import { hostname } from 'os'
 
-import { NodeEnv } from '@/common/constants'
-import Joi from '@/common/validations/joi.validator'
+import { Joi, NodeEnv } from '@app/common'
 
 export const envConfiguration = () => {
 	const nodeEnv = process.env.NODE_ENV || NodeEnv.DEVELOPMENT

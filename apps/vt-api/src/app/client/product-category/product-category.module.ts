@@ -1,14 +1,14 @@
-import { MongoSessionService } from '@/common/providers/mongo-session.service'
-import { CounterModule } from '@module/counter/counter.module'
-import { FileService } from '@module/file/file.service'
-import { Module } from '@nestjs/common'
-import { MongooseModule } from '@nestjs/mongoose'
+import { CounterModule, FileService, MongoSessionService } from '@app/common'
 import {
+	Product,
 	ProductCategory,
 	ProductCategorySchema,
-} from '@schema/product-category.schema'
-import { Product, ProductSchema } from '@schema/product.schema'
-import { Store, StoreSchema } from '@schema/store.schema'
+	ProductSchema,
+	Store,
+	StoreSchema,
+} from '@app/database'
+import { Module } from '@nestjs/common'
+import { MongooseModule } from '@nestjs/mongoose'
 
 import { ProductCategoryController } from './product-category.controller'
 import { ProductCategoryService } from './product-category.service'

@@ -1,10 +1,12 @@
-import { FileService } from '@module/file/file.service'
-import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
-import { ObjectIdPipe } from '@/common/pipes/object-id.pipe'
-import { ParseFile } from '@/common/pipes/parse-file.pipe'
-import { ImageMulterOption } from '@/common/validations/file.validator'
-import { MongoSessionService } from '@/common/providers/mongo-session.service'
-import { ProductCategory } from '@schema/product-category.schema'
+import {
+	ApiSuccessResponse,
+	FileService,
+	ImageMulterOption,
+	MongoSessionService,
+	ObjectIdPipe,
+	ParseFile,
+} from '@app/common'
+import { ProductCategory } from '@app/database'
 import {
 	Body,
 	Controller,
@@ -20,9 +22,9 @@ import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiConsumes, ApiTags } from '@nestjs/swagger'
 
 import { CreateProductCategoryDTO } from './dto/create-product-category.dto'
-import { ProductCategoryService } from './product-category.service'
 import { GetProductCategoryPaginationDTO } from './dto/get-product-category-pagination'
 import { ProductCategorySelectDataDTO } from './dto/response.dto'
+import { ProductCategoryService } from './product-category.service'
 
 @ApiTags('admin-app > product-category')
 @Controller({
@@ -37,7 +39,7 @@ export class ProductCategoryController {
 	) {}
 
 	@Post('create')
-	@UseInterceptors(FileInterceptor('image', ImageMulterOption(2, 1)))
+	@UseInterceptors(FileInterceptor('image'))
 	@ApiConsumes('multipart/form-data')
 	@ApiSuccessResponse(ProductCategory, 201)
 	async createProductCategory(

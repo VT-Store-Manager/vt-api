@@ -1,12 +1,6 @@
-import { CurrentUser } from '@/app/authentication/decorators/current-user.decorator'
-import {
-	JwtAccess,
-	JwtAccessOptional,
-} from '@/app/authentication/decorators/jwt.decorator'
-import { Role } from '@/common/constants'
-import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
-import { ObjectIdPipe } from '@/common/pipes/object-id.pipe'
-import { BooleanResponseDTO } from '@/types/swagger'
+import { CurrentUser, JwtAccess, JwtAccessOptional } from '@app/authentication'
+import { ApiSuccessResponse, ObjectIdPipe, Role } from '@app/common'
+import { BooleanResponseDTO } from '@app/types'
 import { Controller, Get, Param, Patch } from '@nestjs/common'
 import { ApiResponse, ApiTags } from '@nestjs/swagger'
 

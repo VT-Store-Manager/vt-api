@@ -1,11 +1,14 @@
 import { isNumber, sortBy } from 'lodash'
 import { Model, Types } from 'mongoose'
 
-import { ShippingMethod } from '@/common/constants'
-import { MemberRank, MemberRankDocument } from '@schema/member-rank.schema'
-import { Rank } from '@schema/rank.schema'
-import { VoucherCondition } from '@schema/voucher-condition.schema'
-import { VoucherDiscount } from '@schema/voucher-discount.schema'
+import { ShippingMethod } from '@app/common'
+import {
+	MemberRank,
+	MemberRankDocument,
+	Rank,
+	VoucherCondition,
+	VoucherDiscount,
+} from '@app/database'
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 

@@ -1,10 +1,11 @@
-import { FileService } from '@module/file/file.service'
-import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
-import { RemoveNullishObjectPipe } from '@/common/pipes/object.pipe'
-import { ImageMulterOption } from '@/common/validations/file.validator'
-import { MongoSessionService } from '@/common/providers/mongo-session.service'
-import { MemberNotification } from '@schema/member-notification.schema'
-import { Notification } from '@schema/notification.schema'
+import {
+	ApiSuccessResponse,
+	FileService,
+	ImageMulterOption,
+	MongoSessionService,
+	RemoveNullishObjectPipe,
+} from '@app/common'
+import { MemberNotification, Notification } from '@app/database'
 import {
 	Body,
 	Controller,
@@ -32,7 +33,7 @@ export class NotificationController {
 	) {}
 
 	@Post()
-	@UseInterceptors(FileInterceptor('image', ImageMulterOption(2, 1)))
+	@UseInterceptors(FileInterceptor('image'))
 	@ApiConsumes('multipart/form-data')
 	@ApiSuccessResponse(MemberNotification, 201)
 	async createNotification(

@@ -1,6 +1,6 @@
 import { Model } from 'mongoose'
 
-import { Rank, RankDocument } from '@schema/rank.schema'
+import { Rank, RankDocument } from '@app/database'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 

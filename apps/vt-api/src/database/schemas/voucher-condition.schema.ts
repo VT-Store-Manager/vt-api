@@ -1,7 +1,7 @@
-import { ShippingMethod } from '@/common/constants'
-import { optionItemKeyLength } from '@/common/helpers/key.helper'
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { Types } from 'mongoose'
+
+import { optionItemKeyLength, ShippingMethod } from '@app/common'
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 
 @Schema({ versionKey: false, _id: false })
 export class ConditionInclusion {

@@ -12,7 +12,7 @@ import {
 	ValidateNested,
 } from 'class-validator'
 
-import { PaymentType } from '@/common/constants'
+import { PaymentType } from '@app/common'
 
 export class CreateOrderDTO {
 	@IsOptional()

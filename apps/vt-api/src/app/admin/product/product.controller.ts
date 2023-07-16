@@ -1,9 +1,12 @@
-import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
-import { ParseFile } from '@/common/pipes/parse-file.pipe'
-import { MongoSessionService } from '@/common/providers/mongo-session.service'
-import { ImageMulterOption } from '@/common/validations/file.validator'
-import { BooleanResponseDTO } from '@/types/swagger'
-import { FileService } from '@module/file/file.service'
+import {
+	ApiSuccessResponse,
+	FileService,
+	ImageMulterOption,
+	MongoSessionService,
+	ParseFile,
+} from '@app/common'
+import { Product } from '@app/database'
+import { BooleanResponseDTO } from '@app/types'
 import {
 	Body,
 	Controller,
@@ -15,7 +18,6 @@ import {
 } from '@nestjs/common'
 import { FilesInterceptor } from '@nestjs/platform-express'
 import { ApiConsumes, ApiResponse, ApiTags } from '@nestjs/swagger'
-import { Product } from '@schema/product.schema'
 
 import { ProductCategoryService } from '../product-category/product-category.service'
 import { ProductOptionService } from '../product-option/product-option.service'
@@ -39,7 +41,7 @@ export class ProductController {
 	) {}
 
 	@Post('create')
-	@UseInterceptors(FilesInterceptor('images', 4, ImageMulterOption(2)))
+	@UseInterceptors(FilesInterceptor('images', 4))
 	@ApiConsumes('multipart/form-data')
 	// @ApiSuccessResponse(Product, 201)
 	@ApiResponse({ type: BooleanResponseDTO })

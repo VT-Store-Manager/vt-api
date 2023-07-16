@@ -1,11 +1,12 @@
 import { ExtractJwt, Strategy } from 'passport-jwt'
 
-import { TokenPayload } from '@/types/token'
+import { AuthService as MemberAuthService } from '@/app/client/auth/auth.service'
+import { TokenPayload } from '@app/types'
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { PassportStrategy } from '@nestjs/passport'
+
 import { TokenService } from '../services/token.service'
-import { AuthService as MemberAuthService } from '@/app/client/auth/auth.service'
 
 @Injectable()
 export class JwtRefreshStrategy extends PassportStrategy(

@@ -2,10 +2,10 @@ import { ChangeStreamUpdateDocument } from 'mongodb'
 import { Model, Types } from 'mongoose'
 
 import { SettingMemberAppService } from '@/app/modules/setting/services/setting-member-app.service'
-import { MongoSessionService } from '@/common/providers/mongo-session.service'
+import { MongoSessionService } from '@app/common'
+import { MemberData, MemberDataDocument } from '@app/database'
 import { Injectable, OnModuleInit } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-import { MemberData, MemberDataDocument } from '@schema/member-data.schema'
 
 import { StreamHelperService } from './stream-helper.service'
 

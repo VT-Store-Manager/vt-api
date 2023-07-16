@@ -1,12 +1,18 @@
 import { CounterModule } from '@/app/modules/counter/counter.module'
 import { FileService } from '@/app/modules/file/file.service'
-import { MongoSessionService } from '@/common/providers/mongo-session.service'
+import { MongoSessionService } from '@app/common'
+import {
+	Member,
+	MemberData,
+	MemberDataSchema,
+	MemberSchema,
+	Product,
+	ProductSchema,
+	Store,
+	StoreSchema,
+} from '@app/database'
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
-import { MemberData, MemberDataSchema } from '@schema/member-data.schema'
-import { Member, MemberSchema } from '@schema/member.schema'
-import { Product, ProductSchema } from '@schema/product.schema'
-import { Store, StoreSchema } from '@schema/store.schema'
 
 import { ProductCategoryModule } from '../product-category/product-category.module'
 import { ProductOptionModule } from '../product-option/product-option.module'

@@ -1,12 +1,18 @@
 import { ClientSession, Model, Types } from 'mongoose'
 
 import { SettingMemberAppService } from '@/app/modules/setting/services/setting-member-app.service'
+import {
+	MemberRank,
+	MemberRankDocument,
+	Promotion,
+	PromotionDocument,
+	Rank,
+	RankDocument,
+	Voucher,
+	VoucherDocument,
+} from '@app/database'
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-import { MemberRank, MemberRankDocument } from '@schema/member-rank.schema'
-import { Promotion, PromotionDocument } from '@schema/promotion.schema'
-import { Rank, RankDocument } from '@schema/rank.schema'
-import { Voucher, VoucherDocument } from '@schema/voucher.schema'
 
 import { CreatePromotionDTO } from './dto/create-promotion.dto'
 import { GetPromotionListDTO } from './dto/get-promotion-list.dto'

@@ -1,11 +1,13 @@
 import { Connection } from 'mongoose'
 import { join } from 'path'
 
-import { ClassValidatorExceptionFilter } from '@/common/filters/class-validator-exception.filter'
-import { HttpExceptionFilter } from '@/common/filters/http-exception.filter'
-import { MongoExceptionFilter } from '@/common/filters/mongo-exception.filter'
-import { TransformInterceptor } from '@/common/interceptors/transform.interceptor'
-import { envConfiguration, envValidationSchema } from '@/config/configuration'
+import { envConfiguration, envValidationSchema } from '@app/config'
+import {
+	ClassValidatorExceptionFilter,
+	HttpExceptionFilter,
+	MongoExceptionFilter,
+	TransformInterceptor,
+} from '@app/common'
 import { Logger, Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core'

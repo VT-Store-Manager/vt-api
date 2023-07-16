@@ -1,7 +1,6 @@
 import { intersection, sortBy, uniq } from 'lodash'
 import { ClientSession, Model, Types } from 'mongoose'
 
-import { SettingMemberAppService } from '@module/setting/services/setting-member-app.service'
 import {
 	ApplyVoucherResult,
 	ValidatedCart,
@@ -11,29 +10,32 @@ import {
 	OrderBuyer,
 	OrderState,
 	PaymentType,
+	SettingMemberAppService,
 	ShippingMethod,
-} from '@/common/constants'
-import { MemberRank, MemberRankDocument } from '@schema/member-rank.schema'
+} from '@app/common'
 import {
+	MemberRank,
+	MemberRankDocument,
 	MemberVoucher,
 	MemberVoucherDocument,
-} from '@schema/member-voucher.schema'
-import { OrderInfoMember } from '@schema/order-info-member.schema'
-import { OrderInfoReview } from '@schema/order-info-review.schema'
-import { OrderInfoStore } from '@schema/order-info-store.schema'
-import { OrderInfoVoucher } from '@schema/order-info-voucher.schema'
-import { OrderMember, OrderMemberDocument } from '@schema/order-member.schema'
-import { ProductOptionItem } from '@schema/product-option-item.schema'
-import {
+	OrderInfoMember,
+	OrderInfoReview,
+	OrderInfoStore,
+	OrderInfoVoucher,
+	OrderMember,
+	OrderMemberDocument,
+	Product,
+	ProductDocument,
 	ProductOption,
 	ProductOptionDocument,
-} from '@schema/product-option.schema'
-import { Product, ProductDocument } from '@schema/product.schema'
-import { Rank } from '@schema/rank.schema'
-import { SettingMemberApp } from '@schema/setting-member-app.schema'
-import { Store, StoreDocument } from '@schema/store.schema'
-import { Voucher } from '@schema/voucher.schema'
-import { ArrElement } from '@/types'
+	ProductOptionItem,
+	Rank,
+	SettingMemberApp,
+	Store,
+	StoreDocument,
+	Voucher,
+} from '@app/database'
+import { ArrElement } from '@app/types'
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 
@@ -42,8 +44,8 @@ import {
 	ShortProductInCartDTO,
 } from '../dto/check-voucher.dto'
 import { CreateOrderDTO } from '../dto/create-order.dto'
-import { ReviewOrderDTO } from '../dto/review-order.dto'
 import { GetOrderDetailDTO } from '../dto/response.dto'
+import { ReviewOrderDTO } from '../dto/review-order.dto'
 
 type ShortProductValidationData = {
 	_id: string

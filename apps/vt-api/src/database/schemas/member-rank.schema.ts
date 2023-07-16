@@ -1,4 +1,4 @@
-import { Types, Document } from 'mongoose'
+import { Document, Types } from 'mongoose'
 import mongooseLeanVirtuals from 'mongoose-lean-virtuals'
 
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'

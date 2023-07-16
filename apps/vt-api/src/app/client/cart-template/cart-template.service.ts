@@ -1,13 +1,14 @@
 import { intersection } from 'lodash'
 import { Model, Types } from 'mongoose'
 
-import { MongoSessionService } from '@/common/providers/mongo-session.service'
+import { MongoSessionService } from '@app/common'
 import {
 	CartTemplate,
 	CartTemplateDocument,
-} from '@schema/cart-template.schema'
-import { ProductOption } from '@schema/product-option.schema'
-import { Product, ProductDocument } from '@schema/product.schema'
+	Product,
+	ProductDocument,
+	ProductOption,
+} from '@app/database'
 import {
 	BadRequestException,
 	Injectable,

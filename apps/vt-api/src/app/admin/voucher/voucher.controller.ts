@@ -1,15 +1,15 @@
-import { CurrentUser } from '@/app/authentication/decorators/current-user.decorator'
-import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
-import { ObjectIdPipe } from '@/common/pipes/object-id.pipe'
+import { CurrentUser } from '@app/authentication'
 import {
+	ApiSuccessResponse,
+	FileService,
+	ImageMulterOption,
+	MongoSessionService,
 	NotEmptyObjectPipe,
+	ObjectIdPipe,
+	ParseFile,
 	RemoveNullishObjectPipe,
-} from '@/common/pipes/object.pipe'
-import { ParseFile } from '@/common/pipes/parse-file.pipe'
-import { MongoSessionService } from '@/common/providers/mongo-session.service'
-import { ImageMulterOption } from '@/common/validations/file.validator'
-import { BooleanResponseDTO } from '@/types/swagger'
-import { FileService } from '@module/file/file.service'
+} from '@app/common'
+import { BooleanResponseDTO } from '@app/types'
 import {
 	Body,
 	Controller,
@@ -67,7 +67,7 @@ export class VoucherController {
 	}
 
 	@Patch(':id/image')
-	@UseInterceptors(FileInterceptor('image', ImageMulterOption(2, 1)))
+	@UseInterceptors(FileInterceptor('image'))
 	@ApiConsumes('multipart/form-data')
 	@ApiResponse({ type: BooleanResponseDTO, status: 200 })
 	async updateVoucherImage(
@@ -134,7 +134,7 @@ export class VoucherController {
 	}
 
 	@Patch(':id/slider')
-	@UseInterceptors(FileInterceptor('image', ImageMulterOption(2, 1)))
+	@UseInterceptors(FileInterceptor('image'))
 	@ApiConsumes('multipart/form-data')
 	@ApiResponse({ type: BooleanResponseDTO, status: 200 })
 	async updateVoucherSlider(

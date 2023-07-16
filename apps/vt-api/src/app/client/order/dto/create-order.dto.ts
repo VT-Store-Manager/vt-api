@@ -13,7 +13,7 @@ import {
 	ValidateNested,
 } from 'class-validator'
 
-import { PaymentType, ShippingMethod } from '@/common/constants'
+import { PaymentType, ShippingMethod } from '@app/common'
 
 import { ShortProductInCartDTO } from './check-voucher.dto'
 

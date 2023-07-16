@@ -1,8 +1,10 @@
-import { FileService } from '@module/file/file.service'
-import { ParseFile } from '@/common/pipes/parse-file.pipe'
-import { ImageMulterOption } from '@/common/validations/file.validator'
-import { MongoSessionService } from '@/common/providers/mongo-session.service'
-import { BooleanResponseDTO } from '@/types/swagger'
+import {
+	FileService,
+	ImageMulterOption,
+	MongoSessionService,
+	ParseFile,
+} from '@app/common'
+import { BooleanResponseDTO } from '@app/types'
 import {
 	Body,
 	Controller,
@@ -29,7 +31,7 @@ export class PromotionCategoryController {
 	) {}
 
 	@Post('create')
-	@UseInterceptors(FileInterceptor('image', ImageMulterOption(2, 1)))
+	@UseInterceptors(FileInterceptor('image'))
 	@ApiConsumes('multipart/form-data')
 	@ApiResponse({ type: BooleanResponseDTO, status: 201 })
 	async createPromotionCategory(

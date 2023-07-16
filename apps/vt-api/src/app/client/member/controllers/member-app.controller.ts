@@ -1,12 +1,10 @@
-import { JwtAccess } from '@/app/authentication/decorators/jwt.decorator'
-import { Role } from '@/common/constants'
-import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
+import { CurrentUser, JwtAccess } from '@app/authentication'
+import { ApiSuccessResponse, Role } from '@app/common'
 import { Controller, Get } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
 import { AppBarDTO } from '../dto/response.dto'
 import { MemberService } from '../member.service'
-import { CurrentUser } from '@/app/authentication/decorators/current-user.decorator'
 
 @Controller({
 	path: 'member/app',

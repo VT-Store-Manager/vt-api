@@ -1,4 +1,5 @@
 import { Response } from 'express'
+import { MongoError, MongoServerError } from 'mongodb'
 import { Error } from 'mongoose'
 
 import {
@@ -7,8 +8,6 @@ import {
 	ExceptionFilter,
 	HttpStatus,
 } from '@nestjs/common'
-
-import { MongoError, MongoServerError } from 'mongodb'
 
 @Catch(MongoError, Error.ValidationError)
 export class MongoExceptionFilter implements ExceptionFilter {

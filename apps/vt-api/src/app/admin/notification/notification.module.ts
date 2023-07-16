@@ -1,11 +1,16 @@
 import { FileService } from '@/app/modules/file/file.service'
 import { SettingModule } from '@/app/modules/setting/setting.module'
-import { MongoSessionService } from '@/common/providers/mongo-session.service'
+import { MongoSessionService } from '@app/common'
+import {
+	MemberData,
+	MemberDataSchema,
+	Notification,
+	NotificationSchema,
+	Order,
+	OrderSchema,
+} from '@app/database'
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
-import { MemberData, MemberDataSchema } from '@schema/member-data.schema'
-import { Notification, NotificationSchema } from '@schema/notification.schema'
-import { Order, OrderSchema } from '@schema/order.schema'
 
 import { NotificationController } from './notification.controller'
 import { NotificationService } from './notification.service'

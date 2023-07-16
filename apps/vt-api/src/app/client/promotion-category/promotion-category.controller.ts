@@ -1,4 +1,4 @@
-import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
+import { ApiSuccessResponse } from '@app/common'
 import { Controller, Get } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 

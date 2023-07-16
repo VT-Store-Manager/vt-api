@@ -1,9 +1,6 @@
 import { Model } from 'mongoose'
 
-import {
-	PromotionCategory,
-	PromotionCategoryDocument,
-} from '@schema/promotion-category.schema'
+import { PromotionCategory, PromotionCategoryDocument } from '@app/database'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 

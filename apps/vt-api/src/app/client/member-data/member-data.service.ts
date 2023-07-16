@@ -1,12 +1,13 @@
 import { orderBy } from 'lodash'
 import { Model, Types } from 'mongoose'
 
-import { OrderState } from '@/common/constants'
+import { OrderState } from '@app/common'
 import {
 	MemberPromotionHistory,
 	MemberPromotionHistoryDocument,
-} from '@schema/member-promotion-history.schema'
-import { Order, OrderDocument } from '@schema/order.schema'
+	Order,
+	OrderDocument,
+} from '@app/database'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 

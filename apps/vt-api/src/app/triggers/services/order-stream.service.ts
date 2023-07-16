@@ -6,26 +6,32 @@ import {
 } from 'mongodb'
 import { Model } from 'mongoose'
 
-import { NotificationType, OrderBuyer, OrderState } from '@/common/constants'
-import { MongoSessionService } from '@/common/providers/mongo-session.service'
-import { SettingMemberAppService } from '@module/setting/services/setting-member-app.service'
-import { Injectable, OnModuleInit } from '@nestjs/common'
-import { InjectModel } from '@nestjs/mongoose'
-import { MemberData, MemberDataDocument } from '@schema/member-data.schema'
-import { MemberNotification } from '@schema/member-notification.schema'
-import { MemberRank, MemberRankDocument } from '@schema/member-rank.schema'
 import {
-	MemberVoucherHistory,
-	MemberVoucherHistoryDocument,
-	ShortVoucherData,
-} from '@schema/member-voucher-history.schema'
+	MongoSessionService,
+	NotificationType,
+	OrderBuyer,
+	OrderState,
+	SettingMemberAppService,
+} from '@app/common'
 import {
+	MemberData,
+	MemberDataDocument,
+	MemberNotification,
+	MemberRank,
+	MemberRankDocument,
 	MemberVoucher,
 	MemberVoucherDocument,
-} from '@schema/member-voucher.schema'
-import { OrderMember, OrderMemberDocument } from '@schema/order-member.schema'
-import { Order, OrderDocument } from '@schema/order.schema'
-import { SettingMemberApp } from '@schema/setting-member-app.schema'
+	MemberVoucherHistory,
+	MemberVoucherHistoryDocument,
+	Order,
+	OrderDocument,
+	OrderMember,
+	OrderMemberDocument,
+	SettingMemberApp,
+	ShortVoucherData,
+} from '@app/database'
+import { Injectable, OnModuleInit } from '@nestjs/common'
+import { InjectModel } from '@nestjs/mongoose'
 
 import { StreamHelperService } from './stream-helper.service'
 

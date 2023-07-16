@@ -1,8 +1,11 @@
-import { FileService } from '@module/file/file.service'
-import { ParseFileField } from '@/common/pipes/parse-file.pipe'
-import { ImageMulterOption } from '@/common/validations/file.validator'
-import { MongoSessionService } from '@/common/providers/mongo-session.service'
-import { Rank } from '@schema/rank.schema'
+import {
+	ApiSuccessResponse,
+	FileService,
+	ImageMulterOption,
+	MongoSessionService,
+	ParseFileField,
+} from '@app/common'
+import { Rank } from '@app/database'
 import {
 	Body,
 	Controller,
@@ -13,11 +16,10 @@ import {
 } from '@nestjs/common'
 import { FileFieldsInterceptor } from '@nestjs/platform-express'
 import { ApiConsumes, ApiTags } from '@nestjs/swagger'
-import { CreateRankDTO } from './dto/create-rank.dto'
 
-import { RankService } from './rank.service'
-import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
+import { CreateRankDTO } from './dto/create-rank.dto'
 import { RankItemDTO } from './dto/response.dto'
+import { RankService } from './rank.service'
 
 @Controller({
 	path: 'admin/rank',

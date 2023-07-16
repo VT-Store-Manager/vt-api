@@ -1,8 +1,5 @@
-import { CurrentUser } from '@/app/authentication/decorators/current-user.decorator'
-import { JwtAccess } from '@/app/authentication/decorators/jwt.decorator'
-import { OrderState, Role } from '@/common/constants'
-import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
-import { EnumPipe } from '@/common/pipes/enum.pipe'
+import { CurrentUser, JwtAccess } from '@app/authentication'
+import { ApiSuccessResponse, EnumPipe, OrderState, Role } from '@app/common'
 import { Controller, Get, Param, Query } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 

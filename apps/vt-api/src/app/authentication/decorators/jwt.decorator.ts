@@ -1,5 +1,5 @@
-import { Role } from 'common/constants'
-
+import { RolesGuard } from '@app/authentication'
+import { Role } from '@app/common'
 import { applyDecorators, SetMetadata, UseGuards } from '@nestjs/common'
 import { ApiBearerAuth } from '@nestjs/swagger'
 
@@ -8,7 +8,6 @@ import {
 	JwtAccessOptionalGuard,
 } from '../guards/jwt-access.guard'
 import { JwtRefreshGuard } from '../guards/jwt-refresh.guard'
-import { RolesGuard } from '@/app/authentication/guards/roles.guard'
 
 export const ROLES_KEY = 'roles'
 export const JWT_OPTIONAL = 'is_jwt_optional'

@@ -55,7 +55,7 @@ const getRequestData = (req: Request, _res: Response): string => {
 	)
 }
 
-export default (app: INestApplication) => {
+export const morganConfig = (app: INestApplication) => {
 	morgan.token('request-data', getRequestData)
 
 	morgan.token('response-data', (req: Request, res: Response) => {

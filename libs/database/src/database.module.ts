@@ -1,4 +1,4 @@
-import { envConfiguration, envValidationSchema } from '@/config/configuration'
+import { envConfiguration, envValidationSchema } from '@app/config'
 import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { MongooseModule, MongooseModuleOptions } from '@nestjs/mongoose'

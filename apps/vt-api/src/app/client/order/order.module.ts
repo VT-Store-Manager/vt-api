@@ -1,29 +1,30 @@
-import { SettingModule } from '@/app/modules/setting/setting.module'
 import { VoucherModule } from '@/app/client/voucher/voucher.module'
-import { OrderBuyer } from '@/common/constants'
-import { MongoSessionService } from '@/common/providers/mongo-session.service'
-import { Module } from '@nestjs/common'
-import { MongooseModule } from '@nestjs/mongoose'
-import { MemberData, MemberDataSchema } from '@schema/member-data.schema'
-import { MemberRank, MemberRankSchema } from '@schema/member-rank.schema'
+import { SettingModule } from '@/app/modules/setting/setting.module'
+import { MongoSessionService, OrderBuyer } from '@app/common'
 import {
+	MemberData,
+	MemberDataSchema,
+	MemberRank,
+	MemberRankSchema,
+	MemberVoucher,
 	MemberVoucherHistory,
 	MemberVoucherHistorySchema,
-} from '@schema/member-voucher-history.schema'
-import {
-	MemberVoucher,
 	MemberVoucherSchema,
-} from '@schema/member-voucher.schema'
-import { OrderCustomerSchema } from '@schema/order-customer.schema'
-import { OrderMemberSchema } from '@schema/order-member.schema'
-import { Order, OrderSchema } from '@schema/order.schema'
-import {
+	Order,
+	OrderCustomerSchema,
+	OrderMemberSchema,
+	OrderSchema,
+	Product,
 	ProductOption,
 	ProductOptionSchema,
-} from '@schema/product-option.schema'
-import { Product, ProductSchema } from '@schema/product.schema'
-import { Store, StoreSchema } from '@schema/store.schema'
-import { Voucher, VoucherSchema } from '@schema/voucher.schema'
+	ProductSchema,
+	Store,
+	StoreSchema,
+	Voucher,
+	VoucherSchema,
+} from '@app/database'
+import { Module } from '@nestjs/common'
+import { MongooseModule } from '@nestjs/mongoose'
 
 import { OrderStateController } from './controllers/order-state.controller'
 import { OrderController } from './controllers/order.controller'

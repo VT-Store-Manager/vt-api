@@ -1,9 +1,6 @@
-import { CurrentUser } from '@/app/authentication/decorators/current-user.decorator'
-import { JwtAccess } from '@/app/authentication/decorators/jwt.decorator'
-import { Role } from '@/common/constants'
-import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
-import { ObjectIdPipe } from '@/common/pipes/object-id.pipe'
-import { BooleanResponseDTO } from '@/types/swagger'
+import { CurrentUser, JwtAccess } from '@app/authentication'
+import { ApiSuccessResponse, ObjectIdPipe, Role } from '@app/common'
+import { BooleanResponseDTO } from '@app/types'
 import { Body, Controller, Get, Param, Post } from '@nestjs/common'
 import { ApiResponse, ApiTags } from '@nestjs/swagger'
 

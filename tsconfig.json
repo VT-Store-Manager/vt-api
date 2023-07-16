@@ -18,7 +18,7 @@
     "noFallthroughCasesInSwitch": false,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "baseUrl": "./src",
+    "baseUrl": ".",
     "preserveSymlinks": true,
     "paths": {
       "@/*": [
@@ -47,6 +47,12 @@
       ],
       "@app/types/*": [
         "libs/types/src/*"
+      ],
+      "@app/authentication": [
+        "libs/authentication/src"
+      ],
+      "@app/authentication/*": [
+        "libs/authentication/src/*"
       ]
     }
   }

@@ -1,4 +1,4 @@
-import { Role } from '@/common/constants'
+import { Role } from '@app/common'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class TokenPayload {

@@ -1,20 +1,22 @@
 import { FileService } from '@/app/modules/file/file.service'
 import { SettingModule } from '@/app/modules/setting/setting.module'
-import { MongoSessionService } from '@/common/providers/mongo-session.service'
-import { Module } from '@nestjs/common'
-import { MongooseModule } from '@nestjs/mongoose'
+import { MongoSessionService } from '@app/common'
 import {
 	MemberPromotionHistory,
 	MemberPromotionHistorySchema,
-} from '@schema/member-promotion-history.schema'
-import { MemberRank, MemberRankSchema } from '@schema/member-rank.schema'
-import {
+	MemberRank,
+	MemberRankSchema,
 	MemberVoucher,
 	MemberVoucherSchema,
-} from '@schema/member-voucher.schema'
-import { Promotion, PromotionSchema } from '@schema/promotion.schema'
-import { Rank, RankSchema } from '@schema/rank.schema'
-import { Voucher, VoucherSchema } from '@schema/voucher.schema'
+	Promotion,
+	PromotionSchema,
+	Rank,
+	RankSchema,
+	Voucher,
+	VoucherSchema,
+} from '@app/database'
+import { Module } from '@nestjs/common'
+import { MongooseModule } from '@nestjs/mongoose'
 
 import { PromotionController } from './promotion.controller'
 import { PromotionService } from './promotion.service'

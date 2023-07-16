@@ -1,15 +1,21 @@
 import { ClientSession, Model, Types } from 'mongoose'
 
 import {
+	Member,
+	MemberData,
+	MemberDataDocument,
+	MemberDocument,
+	MemberRank,
+	MemberRankDocument,
+	Rank,
+	RankDocument,
+} from '@app/database'
+import {
 	BadRequestException,
 	Injectable,
 	UnauthorizedException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-import { MemberData, MemberDataDocument } from '@schema/member-data.schema'
-import { MemberRank, MemberRankDocument } from '@schema/member-rank.schema'
-import { Member, MemberDocument } from '@schema/member.schema'
-import { Rank, RankDocument } from '@schema/rank.schema'
 
 import { RegisterMemberDTO } from './dto/register-member.dto'
 

@@ -1,7 +1,7 @@
-import { Product, ProductSchema } from '@/database/schemas/product.schema'
-import { Store, StoreSchema } from '@/database/schemas/store.schema'
+import { Product, ProductSchema, Store, StoreSchema } from '@app/database'
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
+
 import { ProductController } from './product.controller'
 import { ProductService } from './product.service'
 

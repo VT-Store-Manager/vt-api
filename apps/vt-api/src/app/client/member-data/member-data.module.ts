@@ -1,10 +1,11 @@
-import { Module } from '@nestjs/common'
-import { MongooseModule } from '@nestjs/mongoose'
 import {
 	MemberPromotionHistory,
 	MemberPromotionHistorySchema,
-} from '@schema/member-promotion-history.schema'
-import { Order, OrderSchema } from '@schema/order.schema'
+	Order,
+	OrderSchema,
+} from '@app/database'
+import { Module } from '@nestjs/common'
+import { MongooseModule } from '@nestjs/mongoose'
 
 import { MemberDataController } from './member-data.controller'
 import { MemberDataService } from './member-data.service'

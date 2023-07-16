@@ -1,7 +1,10 @@
-import { SettingType } from '@/common/constants'
-import { SettingGeneralSchema } from '@schema/setting-general.schema'
-import { SettingMemberAppSchema } from '@schema/setting-member-app.schema'
-import { Setting, SettingSchema } from '@schema/setting.schema'
+import { SettingType } from '@app/common'
+import {
+	Setting,
+	SettingGeneralSchema,
+	SettingMemberAppSchema,
+	SettingSchema,
+} from '@app/database'
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 

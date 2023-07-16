@@ -1,18 +1,20 @@
 import { SettingModule } from '@/app/modules/setting/setting.module'
-import { Module } from '@nestjs/common'
-import { MongooseModule } from '@nestjs/mongoose'
-import { MemberData, MemberDataSchema } from '@schema/member-data.schema'
-import { MemberRank, MemberRankSchema } from '@schema/member-rank.schema'
 import {
+	MemberData,
+	MemberDataSchema,
+	MemberRank,
+	MemberRankSchema,
+	MemberVoucher,
 	MemberVoucherHistory,
 	MemberVoucherHistorySchema,
-} from '@schema/member-voucher-history.schema'
-import {
-	MemberVoucher,
 	MemberVoucherSchema,
-} from '@schema/member-voucher.schema'
-import { Notification, NotificationSchema } from '@schema/notification.schema'
-import { Voucher, VoucherSchema } from '@schema/voucher.schema'
+	Notification,
+	NotificationSchema,
+	Voucher,
+	VoucherSchema,
+} from '@app/database'
+import { Module } from '@nestjs/common'
+import { MongooseModule } from '@nestjs/mongoose'
 
 import { MemberVoucherController } from './member-voucher.controller'
 import { MemberVoucherService } from './member-voucher.service'

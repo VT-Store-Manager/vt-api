@@ -1,5 +1,6 @@
-import { ApiPropertyFile } from '@/common/decorators/file-swagger.decorator'
 import { IsJSON } from 'class-validator'
+
+import { ApiPropertyFile } from '@app/common'
 
 export class UploadFileDTO {
 	@ApiPropertyFile()

@@ -1,8 +1,18 @@
 import { difference } from 'lodash'
 import { Model, Types, UpdateQuery } from 'mongoose'
 
-import { MongoSessionService } from '@/common/providers/mongo-session.service'
-import { SettingMemberAppService } from '@module/setting/services/setting-member-app.service'
+import { MongoSessionService, SettingMemberAppService } from '@app/common'
+import {
+	CartTemplate,
+	CartTemplateDocument,
+	Member,
+	MemberAddress,
+	MemberData,
+	MemberDataDocument,
+	MemberDocument,
+	MemberVoucher,
+	MemberVoucherDocument,
+} from '@app/database'
 import {
 	BadRequestException,
 	Injectable,
@@ -10,17 +20,6 @@ import {
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { InjectModel } from '@nestjs/mongoose'
-import {
-	CartTemplate,
-	CartTemplateDocument,
-} from '@schema/cart-template.schema'
-import { MemberAddress } from '@schema/member-address.schema'
-import { MemberData, MemberDataDocument } from '@schema/member-data.schema'
-import {
-	MemberVoucher,
-	MemberVoucherDocument,
-} from '@schema/member-voucher.schema'
-import { Member, MemberDocument } from '@schema/member.schema'
 
 import { CreateMemberAddressDTO } from './dto/create-member-address.dto'
 import {

@@ -1,7 +1,17 @@
 import { ClientSession, Model, Types } from 'mongoose'
 
-import { s3KeyPattern } from '@/common/constants'
-import { SettingGeneralService } from '@module/setting/services/setting-general.service'
+import { s3KeyPattern, SettingGeneralService } from '@app/common'
+import {
+	MemberPromotionHistory,
+	MemberPromotionHistoryDocument,
+	MemberRank,
+	MemberRankDocument,
+	MemberVoucher,
+	MemberVoucherDocument,
+	Promotion,
+	PromotionDocument,
+	ShortPromotion,
+} from '@app/database'
 import {
 	BadRequestException,
 	Injectable,
@@ -9,20 +19,6 @@ import {
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { InjectModel } from '@nestjs/mongoose'
-import {
-	MemberPromotionHistory,
-	MemberPromotionHistoryDocument,
-} from '@schema/member-promotion-history.schema'
-import { MemberRank, MemberRankDocument } from '@schema/member-rank.schema'
-import {
-	MemberVoucher,
-	MemberVoucherDocument,
-} from '@schema/member-voucher.schema'
-import {
-	Promotion,
-	PromotionDocument,
-	ShortPromotion,
-} from '@schema/promotion.schema'
 
 import { PromotionItemDTO } from './dto/response.dto'
 

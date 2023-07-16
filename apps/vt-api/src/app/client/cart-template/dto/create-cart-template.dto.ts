@@ -13,8 +13,8 @@ import {
 	ValidateNested,
 } from 'class-validator'
 
-import { optionItemKeyLength } from '@/common/helpers/key.helper'
-import { CartProduct, CartTemplate } from '@schema/cart-template.schema'
+import { optionItemKeyLength } from '@app/common'
+import { CartProduct, CartTemplate } from '@app/database'
 import { PickType } from '@nestjs/swagger'
 
 export class CreateCartTemplateDTO extends PickType(CartTemplate, [

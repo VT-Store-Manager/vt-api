@@ -1,7 +1,7 @@
 import { Document } from 'mongoose'
 import mongooseLeanVirtuals from 'mongoose-lean-virtuals'
 
-import { ContactType, SettingType } from '@/common/constants'
+import { ContactType, SettingType } from '@app/common'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 
 export type VirtualData = {

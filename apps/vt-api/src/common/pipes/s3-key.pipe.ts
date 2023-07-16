@@ -1,6 +1,6 @@
 import { ValidationError } from 'class-validator'
 
-import Joi from '@/common/validations/joi.validator'
+import { Joi } from '@app/common'
 import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common'
 
 @Injectable()

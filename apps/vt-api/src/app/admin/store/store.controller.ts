@@ -1,11 +1,14 @@
 import { ProductCategoryService } from '@/app/admin/product-category/product-category.service'
 import { ProductOptionService } from '@/app/admin/product-option/product-option.service'
 import { ProductService } from '@/app/admin/product/product.service'
-import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
-import { ParseFile } from '@/common/pipes/parse-file.pipe'
-import { MongoSessionService } from '@/common/providers/mongo-session.service'
-import { ImageMulterOption } from '@/common/validations/file.validator'
-import { FileService } from '@module/file/file.service'
+import {
+	ApiSuccessResponse,
+	FileService,
+	ImageMulterOption,
+	MongoSessionService,
+	ParseFile,
+} from '@app/common'
+import { Store } from '@app/database'
 import {
 	BadRequestException,
 	Body,
@@ -18,7 +21,6 @@ import {
 } from '@nestjs/common'
 import { FilesInterceptor } from '@nestjs/platform-express'
 import { ApiConsumes, ApiTags } from '@nestjs/swagger'
-import { Store } from '@schema/store.schema'
 
 import { CreateStoreDTO } from './dto/create-store.dto'
 import { GetListStoreDTO } from './dto/get-list-store.dto'
@@ -41,9 +43,7 @@ export class StoreController {
 	) {}
 
 	@Post('create')
-	@UseInterceptors(
-		FilesInterceptor('images', undefined, ImageMulterOption(2, 4))
-	)
+	@UseInterceptors(FilesInterceptor('images', undefined))
 	@ApiConsumes('multipart/form-data')
 	@ApiSuccessResponse(Store, 201)
 	async createStore(

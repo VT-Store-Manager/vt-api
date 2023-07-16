@@ -1,14 +1,13 @@
+import { Model } from 'mongoose'
 import { ExtractJwt, Strategy } from 'passport-jwt'
 
-import { Role } from '@/common/constants'
-import { TokenPayload } from '@/types/token'
+import { Role } from '@app/common'
+import { Member, MemberDocument, Store, StoreDocument } from '@app/database'
+import { TokenPayload } from '@app/types'
 import { ForbiddenException, Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { PassportStrategy } from '@nestjs/passport'
 import { InjectModel } from '@nestjs/mongoose'
-import { Store, StoreDocument } from '@/database/schemas/store.schema'
-import { Model } from 'mongoose'
-import { Member, MemberDocument } from '@/database/schemas/member.schema'
+import { PassportStrategy } from '@nestjs/passport'
 
 @Injectable()
 export class JwtAccessStrategy extends PassportStrategy(

@@ -1,17 +1,22 @@
 import { Model, Types } from 'mongoose'
 
 import {
+	colorHexToInt,
 	DEFAULT_POINT_NAME,
 	IS_ZERO_POINT_MESSAGE,
 	RANK_MESSAGE_SPLIT,
-} from '@/common/constants'
-import { colorHexToInt } from '@/common/helpers/color.helper'
+} from '@app/common'
+import {
+	Member,
+	MemberDocument,
+	MemberRank,
+	MemberRankDocument,
+	Rank,
+	RankDocument,
+} from '@app/database'
 import { Injectable, InternalServerErrorException } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { InjectModel } from '@nestjs/mongoose'
-import { MemberRank, MemberRankDocument } from '@schema/member-rank.schema'
-import { Member, MemberDocument } from '@schema/member.schema'
-import { Rank, RankDocument } from '@schema/rank.schema'
 
 import { MemberRankCardDTO } from './dto/response.dto'
 

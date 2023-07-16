@@ -1,8 +1,7 @@
 import { Model } from 'mongoose'
 
-import { SettingType } from '@/common/constants'
-import { SettingGeneralDocument } from '@schema/setting-general.schema'
-import { SettingMemberApp } from '@schema/setting-member-app.schema'
+import { SettingType } from '@app/common'
+import { SettingGeneralDocument, SettingMemberApp } from '@app/database'
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 

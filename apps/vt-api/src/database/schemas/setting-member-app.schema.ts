@@ -1,6 +1,7 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { Document, Types } from 'mongoose'
-import { OrderStatus, SettingType } from '@/common/constants'
+
+import { OrderStatus, SettingType } from '@app/common'
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 
 export type SettingMemberAppDocument = Document & SettingMemberApp
 

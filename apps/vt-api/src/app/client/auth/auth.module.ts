@@ -1,16 +1,26 @@
-import { TokenService } from '@/app/authentication/services/token.service'
-import { JwtAccessStrategy } from '@/app/authentication/strategies/jwt-access.strategy'
-import { JwtRefreshStrategy } from '@/app/authentication/strategies/jwt-refresh.strategy'
-import { MongoSessionService } from '@/common/providers/mongo-session.service'
-import { Store, StoreSchema } from '@/database/schemas/store.schema'
+import {
+	JwtAccessStrategy,
+	JwtRefreshStrategy,
+	TokenService,
+} from '@app/authentication'
+import { MongoSessionService } from '@app/common'
+import {
+	Member,
+	MemberData,
+	MemberDataSchema,
+	MemberRank,
+	MemberRankSchema,
+	MemberSchema,
+	Rank,
+	RankSchema,
+	RefreshToken,
+	RefreshTokenSchema,
+	Store,
+	StoreSchema,
+} from '@app/database'
 import { Module } from '@nestjs/common'
 import { JwtModule } from '@nestjs/jwt'
 import { MongooseModule } from '@nestjs/mongoose'
-import { MemberData, MemberDataSchema } from '@schema/member-data.schema'
-import { MemberRank, MemberRankSchema } from '@schema/member-rank.schema'
-import { Member, MemberSchema } from '@schema/member.schema'
-import { Rank, RankSchema } from '@schema/rank.schema'
-import { RefreshToken, RefreshTokenSchema } from '@schema/refresh-token.schema'
 
 import { SmsService } from '../../authentication/services/sms.service'
 import { AuthController } from './auth.controller'

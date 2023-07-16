@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator'
 
-import { Member } from '@schema/member.schema'
+import { Member } from '@app/database'
 import { PartialType, PickType } from '@nestjs/swagger'
 
 export class UpdateProfileDTO extends PartialType(

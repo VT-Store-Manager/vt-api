@@ -1,14 +1,20 @@
 import { ChangeStreamInsertDocument } from 'mongodb'
 import { Model, Types } from 'mongoose'
 
-import { NotificationType } from '@/common/constants'
+import { NotificationType } from '@app/common'
+import {
+	MemberData,
+	MemberDataDocument,
+	MemberNotification,
+	MemberRank,
+	MemberRankDocument,
+	Notification,
+	NotificationDocument,
+	Promotion,
+	PromotionDocument,
+} from '@app/database'
 import { Injectable, OnModuleInit } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-import { MemberData, MemberDataDocument } from '@schema/member-data.schema'
-import { MemberNotification } from '@schema/member-notification.schema'
-import { MemberRank, MemberRankDocument } from '@schema/member-rank.schema'
-import { Notification, NotificationDocument } from '@schema/notification.schema'
-import { Promotion, PromotionDocument } from '@schema/promotion.schema'
 
 import { StreamHelperService } from './stream-helper.service'
 

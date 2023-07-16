@@ -1,7 +1,7 @@
 import {
-	S3Client,
-	ListBucketsCommand,
 	CreateBucketCommand,
+	ListBucketsCommand,
+	S3Client,
 } from '@aws-sdk/client-s3'
 import { Logger } from '@nestjs/common'
 

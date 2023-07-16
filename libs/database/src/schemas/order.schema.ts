@@ -6,7 +6,7 @@ import {
 	OrderState,
 	PaymentType,
 	ShippingMethod,
-} from '@/common/constants'
+} from '@app/common'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 
 import { OrderInfoItem, OrderInfoItemSchema } from './order-info-item.schema'

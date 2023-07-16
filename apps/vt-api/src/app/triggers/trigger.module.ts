@@ -1,29 +1,33 @@
-import { MongoSessionService } from '@/common/providers/mongo-session.service'
-import { Module } from '@nestjs/common'
-import { MongooseModule } from '@nestjs/mongoose'
-import { MemberData, MemberDataSchema } from '@schema/member-data.schema'
-import { MemberRank, MemberRankSchema } from '@schema/member-rank.schema'
+import { MongoSessionService } from '@app/common'
 import {
+	MemberData,
+	MemberDataSchema,
+	MemberRank,
+	MemberRankSchema,
+	MemberVoucher,
 	MemberVoucherHistory,
 	MemberVoucherHistorySchema,
-} from '@schema/member-voucher-history.schema'
-import {
-	MemberVoucher,
 	MemberVoucherSchema,
-} from '@schema/member-voucher.schema'
-import { Notification, NotificationSchema } from '@schema/notification.schema'
-import { Order, OrderSchema } from '@schema/order.schema'
-import { Promotion, PromotionSchema } from '@schema/promotion.schema'
-import { Rank, RankSchema } from '@schema/rank.schema'
+	Notification,
+	NotificationSchema,
+	Order,
+	OrderSchema,
+	Promotion,
+	PromotionSchema,
+	Rank,
+	RankSchema,
+} from '@app/database'
+import { Module } from '@nestjs/common'
+import { MongooseModule } from '@nestjs/mongoose'
 
 import { SettingModule } from '../modules/setting/setting.module'
+import { MemberDataStreamService } from './services/member-data-stream.service'
 import { MemberRankStreamService } from './services/member-rank-stream.service'
 import { MemberVoucherStreamService } from './services/member-voucher-stream.service'
 import { NotificationStreamService } from './services/notification-stream.service'
 import { OrderStreamService } from './services/order-stream.service'
 import { PromotionStreamService } from './services/promotion-stream.service'
 import { StreamHelperService } from './services/stream-helper.service'
-import { MemberDataStreamService } from './services/member-data-stream.service'
 
 @Module({
 	imports: [

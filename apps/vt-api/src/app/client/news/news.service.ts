@@ -1,9 +1,9 @@
 import { Model } from 'mongoose'
 
+import { News, NewsDocument } from '@app/database'
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { InjectModel } from '@nestjs/mongoose'
-import { News, NewsDocument } from '@schema/news.schema'
 
 import { NewsListByTagItemDTO } from './dto/response.dto'
 

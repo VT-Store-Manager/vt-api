@@ -1,6 +1,7 @@
-import { Types, Document } from 'mongoose'
-import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose'
-import { optionItemKeyLength } from '@/common/helpers/key.helper'
+import { Document, Types } from 'mongoose'
+
+import { optionItemKeyLength } from '@app/common'
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 
 export type CartTemplateDocument = Document & CartTemplate
 

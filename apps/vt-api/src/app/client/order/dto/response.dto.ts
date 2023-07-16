@@ -1,4 +1,4 @@
-import { OrderState, PaymentType, ShippingMethod } from '@/common/constants'
+import { OrderState, PaymentType, ShippingMethod } from '@app/common'
 
 export class GetProductPriceApplyingVoucherDTO {
 	fee: number

@@ -1,9 +1,7 @@
-import { CurrentUser } from '@/app/authentication/decorators/current-user.decorator'
-import { JwtAccess } from '@/app/authentication/decorators/jwt.decorator'
-import { Role } from '@/common/constants'
-import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
-import { MongoSessionService } from '@/common/providers/mongo-session.service'
-import { Order } from '@/database/schemas/order.schema'
+import { CurrentUser, JwtAccess } from '@app/authentication'
+import { ApiSuccessResponse, MongoSessionService, Role } from '@app/common'
+import { Order } from '@app/database'
+import { BooleanResponseDTO } from '@app/types'
 import {
 	Body,
 	Controller,
@@ -15,9 +13,8 @@ import { ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import { CreateOrderDTO } from '../dto/create-order.dto'
 import { CreateOrderResponseDTO } from '../dto/response.dto'
-import { OrderService } from '../services/order.service'
-import { BooleanResponseDTO } from '@/types/swagger'
 import { UpdateOrderStateDTO } from '../dto/update-order-state.dto'
+import { OrderService } from '../services/order.service'
 
 @Controller({
 	path: 'sale/cart',

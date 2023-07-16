@@ -1,13 +1,17 @@
+import { Model, Types } from 'mongoose'
+
 import {
+	Product,
 	ProductCategory,
 	ProductCategoryDocument,
-} from '@/database/schemas/product-category.schema'
-import { Product, ProductDocument } from '@/database/schemas/product.schema'
-import { Store, StoreDocument } from '@/database/schemas/store.schema'
+	ProductDocument,
+	Store,
+	StoreDocument,
+} from '@app/database'
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { InjectModel } from '@nestjs/mongoose'
-import { Model, Types } from 'mongoose'
+
 import { ProductCategoryItemDTO } from './dto/response.dto'
 
 @Injectable()

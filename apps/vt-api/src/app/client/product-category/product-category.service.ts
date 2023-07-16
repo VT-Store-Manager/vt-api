@@ -1,15 +1,17 @@
 import { Model, Types } from 'mongoose'
 
-import { s3KeyPattern } from '@/common/constants'
+import { s3KeyPattern } from '@app/common'
+import {
+	Product,
+	ProductCategory,
+	ProductCategoryDocument,
+	ProductDocument,
+	Store,
+	StoreDocument,
+} from '@app/database'
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { InjectModel } from '@nestjs/mongoose'
-import {
-	ProductCategory,
-	ProductCategoryDocument,
-} from '@schema/product-category.schema'
-import { Product, ProductDocument } from '@schema/product.schema'
-import { Store, StoreDocument } from '@schema/store.schema'
 
 import { ProductCategoryDTO } from './dto/response.dto'
 

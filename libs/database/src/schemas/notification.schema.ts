@@ -1,7 +1,7 @@
 import { isNumber } from 'lodash'
 import { Types } from 'mongoose'
 
-import { cronTimePattern, NotificationType } from '@/common/constants'
+import { cronTimePattern, NotificationType } from '@app/common'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 
 export type NotificationDocument = Notification & Document

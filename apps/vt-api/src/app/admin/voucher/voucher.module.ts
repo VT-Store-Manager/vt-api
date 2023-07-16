@@ -1,14 +1,17 @@
 import { FileService } from '@/app/modules/file/file.service'
-import { MongoSessionService } from '@/common/providers/mongo-session.service'
-import { Module } from '@nestjs/common'
-import { MongooseModule } from '@nestjs/mongoose'
-import { MemberRank, MemberRankSchema } from '@schema/member-rank.schema'
+import { MongoSessionService } from '@app/common'
 import {
+	MemberRank,
+	MemberRankSchema,
+	Product,
 	ProductOption,
 	ProductOptionSchema,
-} from '@schema/product-option.schema'
-import { Product, ProductSchema } from '@schema/product.schema'
-import { Voucher, VoucherSchema } from '@schema/voucher.schema'
+	ProductSchema,
+	Voucher,
+	VoucherSchema,
+} from '@app/database'
+import { Module } from '@nestjs/common'
+import { MongooseModule } from '@nestjs/mongoose'
 
 import { VoucherController } from './voucher.controller'
 import { VoucherService } from './voucher.service'

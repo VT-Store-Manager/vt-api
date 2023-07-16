@@ -2,8 +2,12 @@
 import { ChangeStreamUpdateDocument } from 'mongodb'
 import { Model } from 'mongoose'
 
-import { MemberRank, MemberRankDocument } from '@schema/member-rank.schema'
-import { Rank, RankDocument } from '@schema/rank.schema'
+import {
+	MemberRank,
+	MemberRankDocument,
+	Rank,
+	RankDocument,
+} from '@app/database'
 import { Injectable, OnModuleInit } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 

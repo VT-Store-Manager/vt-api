@@ -1,6 +1,7 @@
+import { Twilio } from 'twilio'
+
 import { BadRequestException, Injectable, Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { Twilio } from 'twilio'
 
 @Injectable()
 export class SmsService {

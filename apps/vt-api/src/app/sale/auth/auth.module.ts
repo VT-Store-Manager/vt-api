@@ -1,21 +1,21 @@
+import { JwtAccessStrategy, TokenService } from '@app/authentication'
+import { HashService } from '@app/common'
 import {
 	AccountSale,
 	AccountSaleSchema,
-} from '@/database/schemas/account-sale.schema'
-import { Module } from '@nestjs/common'
-import { MongooseModule } from '@nestjs/mongoose'
-import { AuthService } from './auth.service'
-import { AuthController } from './auth.controller'
-import { HashService } from '@/common/providers/hash.service'
-import { TokenService } from '@/app/authentication/services/token.service'
-import {
+	Member,
+	MemberSchema,
 	RefreshToken,
 	RefreshTokenSchema,
-} from '@/database/schemas/refresh-token.schema'
+	Store,
+	StoreSchema,
+} from '@app/database'
+import { Module } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
-import { Store, StoreSchema } from '@/database/schemas/store.schema'
-import { JwtAccessStrategy } from '@/app/authentication/strategies/jwt-access.strategy'
-import { Member, MemberSchema } from '@/database/schemas/member.schema'
+import { MongooseModule } from '@nestjs/mongoose'
+
+import { AuthController } from './auth.controller'
+import { AuthService } from './auth.service'
 
 @Module({
 	imports: [

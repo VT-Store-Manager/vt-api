@@ -1,14 +1,16 @@
 import { ChangeStreamInsertDocument } from 'mongodb'
 import { Model } from 'mongoose'
 
-import { NotificationType } from '@/common/constants'
-import { MemberData, MemberDataDocument } from '@schema/member-data.schema'
-import { MemberNotification } from '@schema/member-notification.schema'
+import { NotificationType } from '@app/common'
 import {
+	MemberData,
+	MemberDataDocument,
+	MemberNotification,
 	MemberVoucher,
 	MemberVoucherDocument,
-} from '@schema/member-voucher.schema'
-import { Notification, NotificationDocument } from '@schema/notification.schema'
+	Notification,
+	NotificationDocument,
+} from '@app/database'
 import { Injectable, OnModuleInit } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 

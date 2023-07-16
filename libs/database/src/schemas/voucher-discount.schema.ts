@@ -1,4 +1,4 @@
-import { optionItemKeyLength } from '@/common/helpers/key.helper'
+import { optionItemKeyLength } from '@app/common'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { Types } from 'mongoose'
 

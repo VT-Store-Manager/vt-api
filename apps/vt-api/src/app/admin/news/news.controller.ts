@@ -1,4 +1,10 @@
-import { ImageMulterOption } from '@/common/validations/file.validator'
+import {
+	ApiSuccessResponse,
+	FileService,
+	ImageMulterOption,
+	MongoSessionService,
+} from '@app/common'
+import { News } from '@app/database'
 import {
 	Body,
 	Controller,
@@ -11,12 +17,8 @@ import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiConsumes, ApiTags } from '@nestjs/swagger'
 
 import { CreateNewsDTO } from './dto/create-news.dto'
-import { NewsService } from './news.service'
-import { FileService } from '@module/file/file.service'
-import { MongoSessionService } from '@/common/providers/mongo-session.service'
-import { News } from '@schema/news.schema'
-import { ApiSuccessResponse } from '@/common/decorators/api-success-response.decorator'
 import { CreateNewsResultDTO } from './dto/response.dto'
+import { NewsService } from './news.service'
 
 @Controller({
 	path: 'admin/news',
@@ -31,7 +33,7 @@ export class NewsController {
 	) {}
 
 	@Post('create')
-	@UseInterceptors(FileInterceptor('image', ImageMulterOption()))
+	@UseInterceptors(FileInterceptor('image'))
 	@ApiConsumes('multipart/form-data')
 	@ApiSuccessResponse(CreateNewsResultDTO, 201)
 	async createNews(

@@ -1,14 +1,17 @@
 import { SettingModule } from '@/app/modules/setting/setting.module'
-import { MongoSessionService } from '@/common/providers/mongo-session.service'
-import { Module } from '@nestjs/common'
-import { MongooseModule } from '@nestjs/mongoose'
-import { CartTemplate, CartTemplateSchema } from '@schema/cart-template.schema'
-import { MemberData, MemberDataSchema } from '@schema/member-data.schema'
+import { MongoSessionService } from '@app/common'
 import {
+	CartTemplate,
+	CartTemplateSchema,
+	Member,
+	MemberData,
+	MemberDataSchema,
+	MemberSchema,
 	MemberVoucher,
 	MemberVoucherSchema,
-} from '@schema/member-voucher.schema'
-import { Member, MemberSchema } from '@schema/member.schema'
+} from '@app/database'
+import { Module } from '@nestjs/common'
+import { MongooseModule } from '@nestjs/mongoose'
 
 import { MemberAppController } from './controllers/member-app.controller'
 import { MemberSettingController } from './controllers/member-setting.controller'

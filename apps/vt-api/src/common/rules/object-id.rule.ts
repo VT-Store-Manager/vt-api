@@ -2,9 +2,9 @@ import {
 	ValidatorConstraint,
 	ValidatorConstraintInterface,
 } from 'class-validator'
+import { isObjectIdOrHexString } from 'mongoose'
 
 import { Injectable } from '@nestjs/common'
-import { isObjectIdOrHexString } from 'mongoose'
 
 @ValidatorConstraint({ name: 'ObjectIdRule' })
 @Injectable()

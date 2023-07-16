@@ -12,7 +12,7 @@ import {
 	ValidateNested,
 } from 'class-validator'
 
-import { ShippingMethod } from '@/common/constants'
+import { ShippingMethod } from '@app/common'
 
 export class CheckVoucherDTO {
 	@IsOptional()

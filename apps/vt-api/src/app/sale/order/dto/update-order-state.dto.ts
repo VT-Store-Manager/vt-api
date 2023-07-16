@@ -1,5 +1,6 @@
-import { OrderState } from '@/common/constants'
 import { IsEnum, IsMongoId } from 'class-validator'
+
+import { OrderState } from '@app/common'
 
 export class UpdateOrderStateDTO {
 	@IsMongoId()

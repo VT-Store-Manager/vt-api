@@ -1,5 +1,3 @@
-import { MemberAddress } from '@schema/member-address.schema'
-import { PickType } from '@nestjs/swagger'
 import {
 	IsNotEmpty,
 	IsNumber,
@@ -7,6 +5,9 @@ import {
 	IsPhoneNumber,
 	IsString,
 } from 'class-validator'
+
+import { MemberAddress } from '@app/database'
+import { PickType } from '@nestjs/swagger'
 
 export class CreateMemberAddressDTO extends PickType(MemberAddress, [
 	'name',

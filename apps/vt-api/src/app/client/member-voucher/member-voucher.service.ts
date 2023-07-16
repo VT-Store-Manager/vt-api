@@ -1,26 +1,26 @@
 import { Model, Types } from 'mongoose'
 
-import { s3KeyPattern } from '@/common/constants'
-import { SettingGeneralService } from '@module/setting/services/setting-general.service'
-import { Injectable } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
-import { InjectModel } from '@nestjs/mongoose'
 import {
-	MemberVoucherHistory,
-	MemberVoucherHistoryDocument,
-} from '@schema/member-voucher-history.schema'
+	s3KeyPattern,
+	SettingGeneralService,
+	SettingMemberAppService,
+} from '@app/common'
 import {
 	MemberVoucher,
 	MemberVoucherDocument,
-} from '@schema/member-voucher.schema'
-import { SettingGeneral } from '@schema/setting-general.schema'
+	MemberVoucherHistory,
+	MemberVoucherHistoryDocument,
+	SettingGeneral,
+	SettingMemberApp,
+} from '@app/database'
+import { Injectable } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import { InjectModel } from '@nestjs/mongoose'
 
 import {
 	AvailableMemberVoucherDTO,
 	UsedMemberVoucherDTO,
 } from './dto/response.dto'
-import { SettingMemberAppService } from '@module/setting/services/setting-member-app.service'
-import { SettingMemberApp } from '@/database/schemas/setting-member-app.schema'
 
 @Injectable()
 export class MemberVoucherService {

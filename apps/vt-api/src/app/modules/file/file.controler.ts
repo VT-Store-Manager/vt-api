@@ -1,28 +1,27 @@
 import { Response } from 'express'
 
-import { S3KeyPipe } from '@/common/pipes/s3-key.pipe'
-import { ImageMulterOption } from '@/common/validations/file.validator'
+import { FormDataPipe, ImageMulterOption } from '@app/common'
+import { S3KeyPipe } from '@app/common3-key.pipe'
 import {
+	Body,
 	Controller,
 	Delete,
 	Get,
+	Param,
 	Post,
 	Put,
 	Query,
-	Body,
 	Res,
 	UploadedFile,
 	UploadedFiles,
 	UseInterceptors,
-	Param,
 } from '@nestjs/common'
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express'
 import { ApiBody, ApiConsumes, ApiResponse, ApiTags } from '@nestjs/swagger'
 
-import { FileService } from './file.service'
-import { UploadFileResponseDTO, UploadFileDTO } from './dto/upload-file.dto'
+import { UploadFileDTO, UploadFileResponseDTO } from './dto/upload-file.dto'
 import { UploadMultiFileDTO } from './dto/upload-multi-file.dto'
-import { FormDataPipe } from '@/common/pipes/form-data.pipe'
+import { FileService } from './file.service'
 
 @ApiTags('file')
 @Controller({
@@ -33,7 +32,7 @@ export class FileController {
 	constructor(private readonly fileService: FileService) {}
 
 	@Post('upload')
-	@UseInterceptors(FileInterceptor('file', ImageMulterOption()))
+	@UseInterceptors(FileInterceptor('file'))
 	@ApiConsumes('multipart/form-data')
 	@ApiResponse({ type: UploadFileResponseDTO })
 	async uploadFile(
@@ -51,9 +50,7 @@ export class FileController {
 	}
 
 	@Post('upload-multi')
-	@UseInterceptors(
-		FilesInterceptor('files', undefined, ImageMulterOption(2, 6))
-	)
+	@UseInterceptors(FilesInterceptor('files', undefined))
 	@ApiConsumes('multipart/form-data')
 	@ApiResponse({ type: [UploadFileResponseDTO] })
 	async uploadMultiFiles(
@@ -73,7 +70,7 @@ export class FileController {
 	}
 
 	@Put('override')
-	@UseInterceptors(FileInterceptor('file', ImageMulterOption()))
+	@UseInterceptors(FileInterceptor('file'))
 	@ApiConsumes('multipart/form-data')
 	@ApiBody({ type: UploadFileDTO })
 	@ApiResponse({ type: UploadFileResponseDTO })

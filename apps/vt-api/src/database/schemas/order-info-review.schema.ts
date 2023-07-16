@@ -1,7 +1,6 @@
 import { Types } from 'mongoose'
 
-import { StoreCriterion } from '@/common/constants'
-import Joi from '@/common/validations/joi.validator'
+import { Joi, StoreCriterion } from '@app/common'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 
 @Schema({ versionKey: false })

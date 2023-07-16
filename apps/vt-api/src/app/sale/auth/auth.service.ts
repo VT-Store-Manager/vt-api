@@ -1,13 +1,16 @@
+import { Model, Types } from 'mongoose'
+
+import { HashService } from '@app/common'
 import {
 	AccountSale,
 	AccountSaleDocument,
-} from '@/database/schemas/account-sale.schema'
+	Store,
+	StoreDocument,
+} from '@app/database'
 import { BadRequestException, Injectable } from '@nestjs/common'
-import { Model, Types } from 'mongoose'
-import { LoginDTO } from './dto/login.dto'
 import { InjectModel } from '@nestjs/mongoose'
-import { HashService } from '@/common/providers/hash.service'
-import { Store, StoreDocument } from '@/database/schemas/store.schema'
+
+import { LoginDTO } from './dto/login.dto'
 
 @Injectable()
 export class AuthService {
