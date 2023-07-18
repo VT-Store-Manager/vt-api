@@ -3,9 +3,11 @@ import { join } from 'path'
 
 import {
 	ClassValidatorExceptionFilter,
+	CounterModule,
 	FileModule,
 	HttpExceptionFilter,
 	MongoExceptionFilter,
+	SettingModule,
 	TransformInterceptor,
 } from '@app/common'
 import { envConfiguration, envValidationSchema } from '@app/config'
@@ -19,12 +21,15 @@ import {
 } from '@nestjs/mongoose'
 import { ServeStaticModule } from '@nestjs/serve-static'
 
+import { AuthModule } from './auth/auth.module'
+import { CartTemplateModule } from './cart-template/cart-template.module'
+import { MemberDataModule } from './member-data/member-data.module'
+import { MemberRankModule } from './member-rank/member-rank.module'
 import { MemberVoucherModule } from './member-voucher/member-voucher.module'
 import { MemberModule } from './member/member.module'
 import { NewsModule } from './news/news.module'
 import { NotificationModule } from './notification/notification.module'
 import { OrderModule } from './order/order.module'
-import { PartnerModule } from './partner/partner.module'
 import { ProductCategoryModule } from './product-category/product-category.module'
 import { ProductOptionModule } from './product-option/product-option.module'
 import { ProductModule } from './product/product.module'
@@ -32,7 +37,7 @@ import { PromotionCategoryModule } from './promotion-category/promotion-category
 import { PromotionModule } from './promotion/promotion.module'
 import { RankModule } from './rank/rank.module'
 import { StoreModule } from './store/store.module'
-import { TagModule } from './tag/tag.module'
+import { TriggerModule } from './triggers/trigger.module'
 import { VoucherModule } from './voucher/voucher.module'
 
 @Module({
@@ -60,12 +65,17 @@ import { VoucherModule } from './voucher/voucher.module'
 			},
 		}),
 		FileModule,
+		CounterModule,
+		SettingModule,
+		AuthModule,
+		CartTemplateModule,
 		MemberModule,
+		MemberDataModule,
+		MemberRankModule,
 		MemberVoucherModule,
 		NewsModule,
 		NotificationModule,
 		OrderModule,
-		PartnerModule,
 		ProductModule,
 		ProductCategoryModule,
 		ProductOptionModule,
@@ -73,7 +83,7 @@ import { VoucherModule } from './voucher/voucher.module'
 		PromotionCategoryModule,
 		RankModule,
 		StoreModule,
-		TagModule,
+		TriggerModule,
 		VoucherModule,
 	],
 	controllers: [],
@@ -96,7 +106,7 @@ import { VoucherModule } from './voucher/voucher.module'
 		},
 	],
 })
-export class AdminApiModule {
+export class ClientApiModule {
 	constructor(@InjectConnection() private readonly connection: Connection) {
 		const connectedLog = () => {
 			Logger.debug('Database connected', 'MongoDBServer')

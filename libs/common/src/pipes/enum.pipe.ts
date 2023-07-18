@@ -2,7 +2,7 @@ import { ValidationError } from 'class-validator'
 
 import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common'
 
-import { Joi } from '../validations/joi.validator'
+import { Joi } from '@app/common'
 
 @Injectable()
 export class EnumPipe implements PipeTransform {
