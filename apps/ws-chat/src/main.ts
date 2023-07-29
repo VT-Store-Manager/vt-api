@@ -2,6 +2,7 @@ import { IoAdapter } from '@nestjs/platform-socket.io'
 import { NestFactory } from '@nestjs/core'
 
 import { AppModule } from './app.module'
+import { Logger } from '@nestjs/common'
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule)
@@ -12,5 +13,7 @@ async function bootstrap() {
 	})
 
 	await app.listen(80)
+	Logger.debug(`Nest application: http://localhost`, 'NestApplication')
+	Logger.debug(`Websocket server: ws://localhost:9000`, 'NestApplication')
 }
 bootstrap()

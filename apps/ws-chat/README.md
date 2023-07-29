@@ -11,7 +11,7 @@ pnpm start:dev ws-chat
 
 Chạy client demo ws-chat:
 ```bash
-cd ws-chat/client
+cd apps/ws-chat/client
 pnpm install
 pnpm dev
 ```
