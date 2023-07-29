@@ -1,32 +1,31 @@
-import { Logger } from '@nestjs/common'
+import { Server, Socket } from 'socket.io'
+
 import {
 	ConnectedSocket,
 	MessageBody,
-	OnGatewayConnection,
 	SubscribeMessage,
 	WebSocketGateway,
 	WebSocketServer,
 } from '@nestjs/websockets'
-import { Server, Socket } from 'socket.io'
 
-@WebSocketGateway(8083)
-export class ChatGateway implements OnGatewayConnection {
+import { SOCKET_PORT } from '../../config/constant'
+import { UseFilters } from '@nestjs/common'
+import { WebsocketExceptionsFilter } from '../../filter/ws-exception.filter'
+
+export type Message = {
+	id: string
+	message: string
+	time: number
+}
+
+@UseFilters(new WebsocketExceptionsFilter())
+@WebSocketGateway(SOCKET_PORT)
+export class ChatGateway {
 	@WebSocketServer()
 	server: Server
 
-	handleConnection(client: Socket) {
-		console.log(client.id)
-		console.log(this.server.sockets)
-		this.server.sockets.emit('connected', client.id)
-	}
-
-	@SubscribeMessage('events')
-	handleEvent(@MessageBody() data: string, @ConnectedSocket() client: Socket) {
-		Logger.debug(client.id)
-	}
-
 	@SubscribeMessage('send_message')
-	listenForMessages(@MessageBody() data: string) {
-		this.server.sockets.emit('receive_message', data)
+	async handleSendMessage(@MessageBody() [roomId, message]: [string, Message]) {
+		this.server.to(roomId).emit('receive_message', [message.id, message])
 	}
 }
