@@ -3,6 +3,7 @@ export const RANK_MESSAGE_SPLIT = '|'
 export const IS_ZERO_POINT_MESSAGE = 'Chưa tích điểm.'
 export const DEFAULT_POINT_NAME = 'BEAN'
 export const DEFAULT_MAX_CART_TEMPLATE = 10
+export const ONE_DAY_DURATION = 1000 * 60 * 60 * 24
 
 // Pattern
 export const cronTimePattern =

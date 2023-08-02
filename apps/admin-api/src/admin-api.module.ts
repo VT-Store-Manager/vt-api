@@ -31,6 +31,7 @@ import { ProductModule } from './product/product.module'
 import { PromotionCategoryModule } from './promotion-category/promotion-category.module'
 import { PromotionModule } from './promotion/promotion.module'
 import { RankModule } from './rank/rank.module'
+import { StatisticModule } from './statistic/statistic.module'
 import { StoreModule } from './store/store.module'
 import { TagModule } from './tag/tag.module'
 import { VoucherModule } from './voucher/voucher.module'
@@ -72,6 +73,7 @@ import { VoucherModule } from './voucher/voucher.module'
 		PromotionModule,
 		PromotionCategoryModule,
 		RankModule,
+		StatisticModule,
 		StoreModule,
 		TagModule,
 		VoucherModule,
