@@ -1,4 +1,4 @@
-import { ClientSession, Model } from 'mongoose'
+import { ClientSession, Model, Types } from 'mongoose'
 
 import { CounterService, Status } from '@app/common'
 import {
@@ -7,11 +7,12 @@ import {
 	ProductCategoryDocument,
 	ProductDocument,
 } from '@app/database'
-import { Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 
 import { GetProductCategoryPaginationDTO } from './dto/get-product-category-pagination'
 import {
+	ProductCategoryDetailDTO,
 	ProductCategoryListItemDTO,
 	ProductCategoryListPaginationDTO,
 	ProductCategorySelectDataDTO,
@@ -189,5 +190,34 @@ export class ProductCategoryService {
 				},
 			])
 			.exec()
+	}
+
+	async getDetail(categoryId: string): Promise<ProductCategoryDetailDTO> {
+		const categories = await this.productCategoryModel
+			.aggregate<ProductCategoryDetailDTO>([
+				{
+					$match: {
+						_id: new Types.ObjectId(categoryId),
+					},
+				},
+				{
+					$addFields: {
+						id: '$_id',
+					},
+				},
+				{
+					$project: {
+						_id: false,
+						code: false,
+					},
+				},
+			])
+			.exec()
+
+		if (!categories.length) {
+			throw new BadRequestException('Category not found')
+		}
+
+		return categories[0]
 	}
 }

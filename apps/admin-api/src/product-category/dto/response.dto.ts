@@ -1,5 +1,7 @@
 import { StatusText } from '@app/common'
+import { ProductCategory } from '@app/database'
 import { SelectDataModel } from '@app/types'
+import { OmitType } from '@nestjs/swagger'
 
 export class ProductCategoryListPaginationDTO {
 	totalCount: number
@@ -22,4 +24,11 @@ export class ProductCategoryListItemDTO {
 
 export class ProductCategorySelectDataDTO extends SelectDataModel {
 	image: string
+}
+
+export class ProductCategoryDetailDTO extends OmitType(ProductCategory, [
+	'_id',
+	'code',
+]) {
+	id: string
 }

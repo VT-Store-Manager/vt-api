@@ -1,13 +1,14 @@
-import { ClientSession, Model } from 'mongoose'
+import { ClientSession, Model, Types } from 'mongoose'
 
 import { CounterService, Status } from '@app/common'
 import { Product, ProductDocument } from '@app/database'
-import { Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 
 import { CreateProductDTO } from './dto/create-product.dto'
 import { GetProductListQueryDTO } from './dto/get-product-list-query.dto'
 import {
+	ProductDetailDataDTO,
 	ProductListItemDTO,
 	ProductListPaginationDTO,
 } from './dto/response.dto'
@@ -138,5 +139,31 @@ export class ProductService {
 		return listIds.filter(
 			id => !products.some(product => id === product._id.toString())
 		)
+	}
+
+	async getProductDetailData(productId: string): Promise<ProductDetailDataDTO> {
+		const products = await this.productModel
+			.aggregate<ProductDetailDataDTO>([
+				{
+					$match: {
+						_id: new Types.ObjectId(productId),
+					},
+				},
+				{
+					$addFields: {
+						id: '$_id',
+					},
+				},
+				{
+					$project: {
+						_id: false,
+					},
+				},
+			])
+			.exec()
+		if (!products.length) {
+			throw new BadRequestException('Product not found')
+		}
+		return products[0]
 	}
 }

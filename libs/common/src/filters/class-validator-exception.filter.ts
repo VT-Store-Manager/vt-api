@@ -18,7 +18,7 @@ export class ClassValidatorExceptionFilter implements ExceptionFilter {
 		}
 
 		const responseData = {
-			statusCode: response.statusCode,
+			statusCode: response.statusCode >= 400 ? response.statusCode : 400,
 			error: `Validation error${exception.length > 1 ? 's' : ''}`,
 			message: exception
 				.reduce((res, cur) => {

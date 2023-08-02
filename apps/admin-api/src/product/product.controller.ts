@@ -1,9 +1,5 @@
-import {
-	ApiSuccessResponse,
-	FileService,
-	ImageMulterOption,
-	ParseFile,
-} from '@app/common'
+import { ObjectIdPipe } from '@/libs/common/src/pipes/object-id.pipe'
+import { ApiSuccessResponse, FileService, ParseFile } from '@app/common'
 import { MongoSessionService, Product } from '@app/database'
 import { BooleanResponseDTO } from '@app/types'
 import {
@@ -23,6 +19,7 @@ import { ProductOptionService } from '../product-option/product-option.service'
 import { CreateProductDTO } from './dto/create-product.dto'
 import { GetProductListQueryDTO } from './dto/get-product-list-query.dto'
 import { ProductListPaginationDTO } from './dto/response-products.dto'
+import { ProductDetailDataDTO } from './dto/response.dto'
 import { ProductService } from './product.service'
 
 @ApiTags('admin-app > product')
@@ -74,5 +71,11 @@ export class ProductController {
 	@ApiSuccessResponse(ProductListPaginationDTO)
 	async getProductListPagination(@Query() query: GetProductListQueryDTO) {
 		return await this.productService.getList(query)
+	}
+
+	@Get('detail')
+	@ApiSuccessResponse(ProductDetailDataDTO)
+	async getProductDetail(@Query('id', ObjectIdPipe) productId: string) {
+		return await this.productService.getProductDetailData(productId)
 	}
 }

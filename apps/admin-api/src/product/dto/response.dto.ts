@@ -1,6 +1,6 @@
 import { Status } from '@app/common'
 import { Product, ProductCategory, ProductOption } from '@app/database'
-import { PickType } from '@nestjs/swagger'
+import { OmitType, PickType } from '@nestjs/swagger'
 
 class ShortProductCategory extends PickType(ProductCategory, ['code', 'name']) {
 	id: string
@@ -36,4 +36,31 @@ export class ProductListItemDTO extends PickType(Product, [
 export class ProductListPaginationDTO {
 	totalCount: number
 	items: ProductListItemDTO[]
+}
+
+export class ProductCategoryShortDataDTO extends PickType(ProductCategory, [
+	'name',
+	'image',
+]) {
+	id: string
+}
+
+export class ProductOptionsShortDataDTO extends PickType(ProductOption, [
+	'name',
+	'range',
+	'items',
+	'disabled',
+	'deleted',
+]) {
+	id: string
+}
+
+export class ProductDetailDataDTO extends OmitType(Product, [
+	'_id',
+	'category',
+	'options',
+]) {
+	id: string
+	category: ProductCategoryShortDataDTO
+	options: ProductOptionsShortDataDTO[]
 }
