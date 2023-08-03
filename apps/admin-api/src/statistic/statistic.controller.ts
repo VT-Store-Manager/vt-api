@@ -1,8 +1,8 @@
 import { Controller, Get, Query } from '@nestjs/common'
 
-import { GetUserAmountDTO } from './dto/get-user-amount.dto'
 import { StatisticService } from './statistic.service'
 import { ApiTags } from '@nestjs/swagger'
+import { StatisticAmountDurationDTO } from './dto/statistic-amount-duration.dto'
 
 @Controller({
 	path: 'admin/statistic',
@@ -13,7 +13,12 @@ export class StatisticController {
 	constructor(private readonly statisticService: StatisticService) {}
 
 	@Get('member-amount')
-	async getMemberAmount(@Query() query: GetUserAmountDTO) {
+	async getMemberAmount(@Query() query: StatisticAmountDurationDTO) {
 		return await this.statisticService.getMemberAmount(query)
+	}
+
+	@Get('order-amount')
+	async getOrderAmount(@Query() query: StatisticAmountDurationDTO) {
+		return await this.statisticService.getOrderAmount(query)
 	}
 }

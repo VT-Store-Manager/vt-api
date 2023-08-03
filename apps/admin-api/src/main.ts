@@ -48,10 +48,10 @@ async function bootstrap() {
 	await app.listen(port, () => {
 		if (nodeEnv === NodeEnv.DEVELOPMENT) {
 			Logger.debug(
-				`Nest application runs at ${host}:${port}`,
+				`Nest application runs at http://${host}:${port}`,
 				'NestApplication'
 			)
-			Logger.debug(`Swagger viewed at ${host}:${port}/api`, 'OpenAPI')
+			Logger.debug(`Swagger viewed at http://${host}:${port}/api`, 'OpenAPI')
 		}
 	})
 }

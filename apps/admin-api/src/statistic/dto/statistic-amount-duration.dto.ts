@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer'
-import { IsOptional, IsPositive } from 'class-validator'
+import { IsPositive, IsOptional } from 'class-validator'
 
-export class GetUserAmountDTO {
+export class StatisticAmountDurationDTO {
 	@Type(() => Number)
 	@IsPositive()
 	@IsOptional()

@@ -1,17 +1,19 @@
 import { Model } from 'mongoose'
 
-import { ONE_DAY_DURATION } from '@app/common'
-import { Member, MemberDocument } from '@app/database'
+import { DAY_DURATION, OrderState } from '@app/common'
+import { Member, MemberDocument, Order, OrderDocument } from '@app/database'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 
-import { GetUserAmountDTO } from './dto/get-user-amount.dto'
+import { StatisticAmountDurationDTO } from './dto/statistic-amount-duration.dto'
 
 @Injectable()
 export class StatisticService {
 	constructor(
 		@InjectModel(Member.name)
-		private readonly memberModel: Model<MemberDocument>
+		private readonly memberModel: Model<MemberDocument>,
+		@InjectModel(Order.name)
+		private readonly orderModel: Model<OrderDocument>
 	) {}
 
 	private getToday() {
@@ -19,7 +21,7 @@ export class StatisticService {
 		return new Date(date.getFullYear(), date.getMonth(), date.getDate())
 	}
 
-	async getMemberAmount(query: GetUserAmountDTO) {
+	async getMemberAmount(query: StatisticAmountDurationDTO) {
 		const members = await this.memberModel
 			.aggregate<{
 				deleted: boolean
@@ -43,7 +45,7 @@ export class StatisticService {
 			.exec()
 
 		const startDuration =
-			this.getToday().getTime() - query.duration * ONE_DAY_DURATION
+			this.getToday().getTime() - query.duration * DAY_DURATION
 
 		const increasing = members.filter(member => {
 			return new Date(member.createdAt).getTime() >= startDuration
@@ -58,9 +60,50 @@ export class StatisticService {
 		}).length
 
 		return {
-			count: members.length,
+			totalCount: members.length,
 			increasing,
 			decreasing,
+		}
+	}
+
+	async getOrderAmount(query: StatisticAmountDurationDTO) {
+		const todayUnix = this.getToday().getTime()
+		const orders = await this.orderModel
+			.aggregate<Pick<Order, '_id' | 'createdAt'>>([
+				{
+					$match: {
+						state: OrderState.DONE,
+					},
+				},
+				{
+					$project: {
+						createdAt: true,
+					},
+				},
+				{
+					$sort: {
+						createdAt: 1,
+					},
+				},
+			])
+			.exec()
+		const thisTimeOrders = orders.filter(order => {
+			return (
+				order.createdAt.getTime() >= todayUnix - query.duration * DAY_DURATION
+			)
+		})
+		const previousTimeOrders = orders.filter(order => {
+			return (
+				order.createdAt.getTime() < todayUnix - query.duration * DAY_DURATION &&
+				order.createdAt.getTime() >=
+					todayUnix - query.duration * 2 * DAY_DURATION
+			)
+		})
+
+		return {
+			totalCount: orders.length,
+			thisTime: thisTimeOrders.length,
+			previousTime: previousTimeOrders.length,
 		}
 	}
 }
