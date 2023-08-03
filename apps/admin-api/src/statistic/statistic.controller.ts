@@ -21,4 +21,9 @@ export class StatisticController {
 	async getOrderAmount(@Query() query: StatisticAmountDurationDTO) {
 		return await this.statisticService.getOrderAmount(query)
 	}
+
+	@Get('income-amount')
+	async getIncomeAmount(@Query() query: StatisticAmountDurationDTO) {
+		return await this.statisticService.getIncomeAmount(query)
+	}
 }
