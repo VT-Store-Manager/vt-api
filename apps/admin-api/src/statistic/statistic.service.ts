@@ -8,6 +8,9 @@ import { InjectModel } from '@nestjs/mongoose'
 import { StatisticAmountDurationDTO } from './dto/statistic-amount-duration.dto'
 
 type OrderPrice = Pick<Order, '_id' | 'createdAt' | 'totalProductPrice'>
+type OrderSoldAmount = Pick<Order, '_id' | 'createdAt'> & {
+	soldAmount: number
+}
 
 @Injectable()
 export class StatisticService {
@@ -24,6 +27,8 @@ export class StatisticService {
 	}
 
 	async getMemberAmount(query: StatisticAmountDurationDTO) {
+		const todayUnix = this.getToday().getTime()
+
 		const members = await this.memberModel
 			.aggregate<{
 				deleted: boolean
@@ -33,43 +38,42 @@ export class StatisticService {
 				{
 					$match: {
 						notVerified: null,
+						deleted: false,
 					},
 				},
 				{
 					$project: {
 						_id: false,
-						deleted: true,
-						deletedAt: true,
 						createdAt: true,
 					},
 				},
 			])
 			.exec()
 
-		const startDuration =
-			this.getToday().getTime() - query.duration * DAY_DURATION
-
-		const increasing = members.filter(member => {
-			return new Date(member.createdAt).getTime() >= startDuration
-		}).length
-
-		const decreasing = members.filter(member => {
+		const thisTimeMembers = members.filter(member => {
 			return (
-				member.deleted &&
-				member.deletedAt &&
-				new Date(member.deletedAt).getTime() >= startDuration
+				member.createdAt.getTime() >= todayUnix - query.duration * DAY_DURATION
 			)
-		}).length
+		})
+		const previousTimeMembers = members.filter(member => {
+			return (
+				member.createdAt.getTime() <
+					todayUnix - query.duration * DAY_DURATION &&
+				member.createdAt.getTime() >=
+					todayUnix - query.duration * 2 * DAY_DURATION
+			)
+		})
 
 		return {
 			totalCount: members.length,
-			increasing,
-			decreasing,
+			thisTime: thisTimeMembers.length,
+			previousTime: previousTimeMembers.length,
 		}
 	}
 
 	async getOrderAmount(query: StatisticAmountDurationDTO) {
 		const todayUnix = this.getToday().getTime()
+
 		const orders = await this.orderModel
 			.aggregate<Pick<Order, '_id' | 'createdAt'>>([
 				{
@@ -109,7 +113,7 @@ export class StatisticService {
 		}
 	}
 
-	async getIncomeAmount(query: StatisticAmountDurationDTO) {
+	async getRevenue(query: StatisticAmountDurationDTO) {
 		const todayUnix = this.getToday().getTime()
 
 		const orders = await this.orderModel
@@ -145,16 +149,69 @@ export class StatisticService {
 			)
 		})
 
-		const getSumIncome = (arr: OrderPrice[]) => {
+		const getRevenue = (arr: OrderPrice[]) => {
 			return arr.reduce((sum, order) => {
 				return sum + (order.totalProductPrice || 0)
 			}, 0)
 		}
 
 		return {
-			totalCount: getSumIncome(orders),
-			thisTime: getSumIncome(thisTimeOrders),
-			previousTime: getSumIncome(previousTimeOrders),
+			totalCount: getRevenue(orders),
+			thisTime: getRevenue(thisTimeOrders),
+			previousTime: getRevenue(previousTimeOrders),
+		}
+	}
+
+	async getSaleAmount(query: StatisticAmountDurationDTO) {
+		const todayUnix = this.getToday().getTime()
+
+		const orders = await this.orderModel
+			.aggregate<OrderSoldAmount>([
+				{
+					$match: {
+						state: OrderState.DONE,
+					},
+				},
+				{
+					$project: {
+						soldAmount: {
+							$reduce: {
+								input: '$items',
+								initialValue: 0,
+								in: {
+									$add: ['$$value', '$$this.quantity'],
+								},
+							},
+						},
+						createdAt: true,
+					},
+				},
+			])
+			.exec()
+
+		const thisTimeOrders = orders.filter(order => {
+			return (
+				order.createdAt.getTime() >= todayUnix - query.duration * DAY_DURATION
+			)
+		})
+		const previousTimeOrders = orders.filter(order => {
+			return (
+				order.createdAt.getTime() < todayUnix - query.duration * DAY_DURATION &&
+				order.createdAt.getTime() >=
+					todayUnix - query.duration * 2 * DAY_DURATION
+			)
+		})
+
+		const getSoldAmount = (arr: OrderSoldAmount[]) => {
+			return arr.reduce((sum, order) => {
+				return sum + (order.soldAmount || 0)
+			}, 0)
+		}
+
+		return {
+			totalCount: getSoldAmount(orders),
+			thisTime: getSoldAmount(thisTimeOrders),
+			previousTime: getSoldAmount(previousTimeOrders),
 		}
 	}
 }

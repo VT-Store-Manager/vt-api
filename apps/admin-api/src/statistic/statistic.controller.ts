@@ -12,18 +12,15 @@ import { StatisticAmountDurationDTO } from './dto/statistic-amount-duration.dto'
 export class StatisticController {
 	constructor(private readonly statisticService: StatisticService) {}
 
-	@Get('member-amount')
-	async getMemberAmount(@Query() query: StatisticAmountDurationDTO) {
-		return await this.statisticService.getMemberAmount(query)
-	}
+	@Get('total-amount')
+	async getStatisticAmount(@Query() query: StatisticAmountDurationDTO) {
+		const [member, order, revenue, sale] = await Promise.all([
+			this.statisticService.getMemberAmount(query),
+			this.statisticService.getOrderAmount(query),
+			this.statisticService.getRevenue(query),
+			this.statisticService.getSaleAmount(query),
+		])
 
-	@Get('order-amount')
-	async getOrderAmount(@Query() query: StatisticAmountDurationDTO) {
-		return await this.statisticService.getOrderAmount(query)
-	}
-
-	@Get('income-amount')
-	async getIncomeAmount(@Query() query: StatisticAmountDurationDTO) {
-		return await this.statisticService.getIncomeAmount(query)
+		return { member, order, revenue, sale }
 	}
 }
