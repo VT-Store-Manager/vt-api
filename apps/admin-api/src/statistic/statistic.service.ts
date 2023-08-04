@@ -8,6 +8,9 @@ import { InjectModel } from '@nestjs/mongoose'
 import { StatisticAmountDurationDTO } from './dto/statistic-amount-duration.dto'
 
 type OrderPrice = Pick<Order, '_id' | 'createdAt' | 'totalProductPrice'>
+type OrderSoldAmount = Pick<Order, '_id' | 'createdAt'> & {
+	soldAmount: number
+}
 
 @Injectable()
 export class StatisticService {
@@ -148,6 +151,59 @@ export class StatisticService {
 		const getSumIncome = (arr: OrderPrice[]) => {
 			return arr.reduce((sum, order) => {
 				return sum + (order.totalProductPrice || 0)
+			}, 0)
+		}
+
+		return {
+			totalCount: getSumIncome(orders),
+			thisTime: getSumIncome(thisTimeOrders),
+			previousTime: getSumIncome(previousTimeOrders),
+		}
+	}
+
+	async getSoldProductAmount(query: StatisticAmountDurationDTO) {
+		const todayUnix = this.getToday().getTime()
+
+		const orders = await this.orderModel
+			.aggregate<OrderSoldAmount>([
+				{
+					$match: {
+						state: OrderState.DONE,
+					},
+				},
+				{
+					$project: {
+						soldAmount: {
+							$reduce: {
+								input: '$items',
+								initialValue: 0,
+								in: {
+									$add: ['$$value', '$$this.quantity'],
+								},
+							},
+						},
+						createdAt: true,
+					},
+				},
+			])
+			.exec()
+
+		const thisTimeOrders = orders.filter(order => {
+			return (
+				order.createdAt.getTime() >= todayUnix - query.duration * DAY_DURATION
+			)
+		})
+		const previousTimeOrders = orders.filter(order => {
+			return (
+				order.createdAt.getTime() < todayUnix - query.duration * DAY_DURATION &&
+				order.createdAt.getTime() >=
+					todayUnix - query.duration * 2 * DAY_DURATION
+			)
+		})
+
+		const getSumIncome = (arr: OrderSoldAmount[]) => {
+			return arr.reduce((sum, order) => {
+				return sum + (order.soldAmount || 0)
 			}, 0)
 		}
 
