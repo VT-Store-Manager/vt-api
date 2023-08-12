@@ -116,3 +116,10 @@ export enum SortOrder {
 	ASC,
 	DESC,
 }
+
+export enum RangeTimeType {
+	DAY = 'day',
+	WEEK = 'week',
+	MONTH = 'month',
+	YEAR = 'year',
+}

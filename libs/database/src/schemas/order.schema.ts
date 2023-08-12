@@ -58,7 +58,7 @@ export class Order {
 		default: OrderBuyer.CUSTOMER,
 		required: true,
 	})
-	buyer: string
+	buyer: OrderBuyer
 
 	@Prop({ type: OrderInfoReceiverSchema })
 	receiver?: OrderInfoReceiver
