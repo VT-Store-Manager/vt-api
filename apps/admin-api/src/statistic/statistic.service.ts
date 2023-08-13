@@ -4,6 +4,7 @@ import {
 	DAY_DURATION,
 	OrderBuyer,
 	OrderState,
+	RangeTimeType,
 	ShippingMethod,
 } from '@app/common'
 import { Member, MemberDocument, Order, OrderDocument } from '@app/database'
@@ -11,21 +12,15 @@ import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 
 import { StatisticAmountDurationDTO } from './dto/statistic-amount-duration.dto'
+import { StatisticSaleVolumeDTO } from './dto/statistic-sale-volume.dto'
+import {
+	ProductSaleStatisticItemDTO,
+	StatisticOrderDataItem,
+} from './dto/response.dto'
 
 type OrderPrice = Pick<Order, '_id' | 'createdAt' | 'totalProductPrice'>
 type OrderSoldAmount = Pick<Order, '_id' | 'createdAt'> & {
 	soldAmount: number
-}
-
-type OrderTypeCount = {
-	id: string
-	inStoreCount: number
-	pickupCount: number
-	deliveryCount: number
-	totalCount: number
-	memberOrderCount: number
-	totalProfit: number
-	totalDeliveryOrderProfit: number
 }
 
 @Injectable()
@@ -242,7 +237,7 @@ export class StatisticService {
 
 	async getOrderData() {
 		const orderAmountHistoryByDay = await this.orderModel
-			.aggregate<OrderTypeCount>([
+			.aggregate<StatisticOrderDataItem>([
 				{
 					$match: {
 						state: OrderState.DONE,
@@ -327,7 +322,9 @@ export class StatisticService {
 
 			// Add to order month
 			const month = order.id.slice(0, 7)
-			const orderByMonth: OrderTypeCount = orderHistoryByMonth[month] || {
+			const orderByMonth: StatisticOrderDataItem = orderHistoryByMonth[
+				month
+			] || {
 				id: month,
 				inStoreCount: 0,
 				pickupCount: 0,
@@ -350,7 +347,7 @@ export class StatisticService {
 
 			// Add to order year
 			const year = order.id.slice(0, 4)
-			const orderByYear: OrderTypeCount = orderHistoryByYear[year] || {
+			const orderByYear: StatisticOrderDataItem = orderHistoryByYear[year] || {
 				id: year,
 				inStoreCount: 0,
 				pickupCount: 0,
@@ -377,5 +374,101 @@ export class StatisticService {
 			month: this.sortObjectByKey(orderHistoryByMonth),
 			day: this.sortObjectByKey(orderHistoryByDay),
 		}
+	}
+
+	async getSaleRanking({
+		timePeriod,
+	}: StatisticSaleVolumeDTO): Promise<ProductSaleStatisticItemDTO[]> {
+		let startTime = this.getToday()
+		if (!timePeriod) {
+			startTime = new Date(0, 0, 0)
+		} else if (timePeriod === RangeTimeType.YEAR) {
+			startTime.setFullYear(startTime.getFullYear() - 1)
+		} else if (timePeriod === RangeTimeType.QUARTER) {
+			startTime.setMonth(startTime.getMonth() - 3)
+		} else if (timePeriod === RangeTimeType.MONTH) {
+			startTime.setMonth(startTime.getMonth() - 1)
+		} else if (timePeriod === RangeTimeType.WEEK) {
+			startTime.setDate(startTime.getDate() - 7)
+		}
+
+		const productStatisticData = await this.orderModel
+			.aggregate<ProductSaleStatisticItemDTO>([
+				{
+					$match: {
+						createdAt: {
+							$gte: startTime,
+						},
+						state: OrderState.DONE,
+					},
+				},
+				{
+					$unwind: {
+						path: '$items',
+					},
+				},
+				{
+					$group: {
+						_id: '$items.productId',
+						saleVolume: {
+							$sum: '$items.quantity',
+						},
+						profit: {
+							$sum: {
+								$multiply: [
+									'$items.quantity',
+									{
+										$subtract: ['$items.unitPrice', '$items.unitSalePrice'],
+									},
+								],
+							},
+						},
+					},
+				},
+				{
+					$lookup: {
+						from: 'products',
+						localField: '_id',
+						foreignField: '_id',
+						as: 'product',
+						pipeline: [
+							{
+								$match: {
+									deleted: false,
+								},
+							},
+							{
+								$project: {
+									name: true,
+									image: { $first: '$images' },
+								},
+							},
+						],
+					},
+				},
+				{
+					$unwind: {
+						path: '$product',
+					},
+				},
+				{
+					$project: {
+						id: '$_id',
+						_id: false,
+						saleVolume: true,
+						profit: true,
+						name: '$product.name',
+						image: '$product.image',
+					},
+				},
+				{
+					$sort: {
+						saleVolume: -1,
+					},
+				},
+			])
+			.exec()
+
+		return productStatisticData
 	}
 }
