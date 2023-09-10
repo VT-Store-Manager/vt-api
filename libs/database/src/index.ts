@@ -1,5 +1,8 @@
 // export * from './database.module'
 
+export * from './schemas/account-admin-permission.schema'
+export * from './schemas/account-admin-role.schema'
+export * from './schemas/account-admin.schema'
 export * from './schemas/account-sale.schema'
 export * from './schemas/cart-template.schema'
 export * from './schemas/counter.schema'

@@ -46,6 +46,13 @@ export class OrderInfoMember {
 		minlength: 1,
 	})
 	rankName: string
+
+	@Prop({
+		type: String,
+		required: true,
+		minlength: 1,
+	})
+	rankColor: string
 }
 
 export const OrderInfoMemberSchema =

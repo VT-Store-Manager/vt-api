@@ -3,13 +3,14 @@ import { Controller, Get, Query } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
 import {
-	ProductSaleStatisticItemDTO,
+	SaleStatisticItemDTO,
 	StatisticAmountDTO,
 	StatisticOrderInPeriodDTO,
+	StatisticRankAmountDTO,
 } from './dto/response.dto'
 import { StatisticAmountDurationDTO } from './dto/statistic-amount-duration.dto'
 import { StatisticService } from './statistic.service'
-import { StatisticSaleVolumeDTO } from './dto/statistic-sale-volume.dto'
+import { StatisticSaleQueryDTO } from './dto/statistic-sale-query.dto'
 
 @Controller({
 	path: 'admin/statistic',
@@ -39,8 +40,20 @@ export class StatisticController {
 	}
 
 	@Get('sale-ranking')
-	@ApiSuccessResponse(ProductSaleStatisticItemDTO, 200, true)
-	async getSaleVolumeRanking(@Query() query: StatisticSaleVolumeDTO) {
+	@ApiSuccessResponse(SaleStatisticItemDTO, 200, true)
+	async getSaleRanking(@Query() query: StatisticSaleQueryDTO) {
 		return await this.statisticService.getSaleRanking(query)
+	}
+
+	@Get('category-sale')
+	@ApiSuccessResponse(SaleStatisticItemDTO, 200, true)
+	async getCategorySale(@Query() query: StatisticSaleQueryDTO) {
+		return await this.statisticService.getSaleProductCategory(query)
+	}
+
+	@Get('rank-data')
+	@ApiSuccessResponse(StatisticRankAmountDTO, 200, true)
+	async getStatisticRankData() {
+		return await this.statisticService.getMemberRankData()
 	}
 }

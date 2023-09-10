@@ -10,4 +10,6 @@ s3KeyUid.setDictionary('number')
 const orderKeyUid = new ShortUniqueId({ length: 8 })
 orderKeyUid.setDictionary('alphanum_upper')
 
-export { optionItemKeyUid, s3KeyUid, orderKeyUid }
+const adminPasswordUid = new ShortUniqueId({ length: 12 })
+
+export { optionItemKeyUid, s3KeyUid, orderKeyUid, adminPasswordUid }

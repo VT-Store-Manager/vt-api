@@ -10,7 +10,7 @@ import { AdminApiModule } from './admin-api.module'
 
 async function bootstrap() {
 	const app = await NestFactory.create(AdminApiModule, {
-		logger: ['error', 'warn', 'debug', 'verbose'],
+		// logger: ['error', 'warn', 'debug', 'verbose'],
 	})
 	const configService = app.get(ConfigService)
 

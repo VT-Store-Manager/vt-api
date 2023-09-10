@@ -1,7 +1,13 @@
 import { Response } from 'express'
 
-import { FormDataPipe, ImageMulterOption, S3KeyPipe } from '@app/common'
 import {
+	FormDataPipe,
+	ImageMulterOption,
+	S3KeyPipe,
+	ObjectIdPipe,
+} from '@app/common'
+import {
+	BadRequestException,
 	Body,
 	Controller,
 	Delete,
@@ -21,6 +27,8 @@ import { ApiBody, ApiConsumes, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { UploadFileDTO, UploadFileResponseDTO } from './dto/upload-file.dto'
 import { UploadMultiFileDTO } from './dto/upload-multi-file.dto'
 import { FileService } from './file.service'
+import pluralize from 'pluralize'
+import snakeCase from 'lodash/snakeCase'
 
 @ApiTags('file')
 @Controller({
@@ -114,6 +122,20 @@ export class FileController {
 		return result.reduce((res, exist, index) => {
 			return Object.assign(res, { [keys[index]]: exist })
 		}, {})
+	}
+
+	@Get('main-image/:type/:id')
+	async getMainImageOfType(
+		@Param('type') type: string,
+		@Param('id', ObjectIdPipe) id: string,
+		@Res() res: Response
+	) {
+		if (!type || !id) {
+			throw new BadRequestException('Type or id is invalid')
+		}
+		const collectionName = pluralize(snakeCase(type))
+		const imageKey = await this.fileService.getMainImage(collectionName, id)
+		await this.render(imageKey, res)
 	}
 
 	@Get(':key(*)')

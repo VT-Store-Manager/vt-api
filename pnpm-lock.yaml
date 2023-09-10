@@ -85,6 +85,9 @@ dependencies:
   passport-jwt:
     specifier: ^4.0.1
     version: 4.0.1
+  pluralize:
+    specifier: ^8.0.0
+    version: 8.0.0
   reflect-metadata:
     specifier: ^0.1.13
     version: 0.1.13
@@ -7061,7 +7064,6 @@ packages:
   /pluralize@8.0.0:
     resolution: {integrity: sha512-Nc3IT5yHzflTfbjgqWcCPpo7DaKy4FnpB0l/zCAW0Tc7jxAiuqSxHasntB3D7887LSrA93kDJ9IXovxJYxyLCA==}
     engines: {node: '>=4'}
-    dev: true
 
   /prelude-ls@1.2.1:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}

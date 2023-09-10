@@ -35,6 +35,7 @@ import { StatisticModule } from './statistic/statistic.module'
 import { StoreModule } from './store/store.module'
 import { TagModule } from './tag/tag.module'
 import { VoucherModule } from './voucher/voucher.module'
+import { AccountAdminModule } from './account-admin/account-admin.module'
 
 @Module({
 	imports: [
@@ -61,6 +62,7 @@ import { VoucherModule } from './voucher/voucher.module'
 			},
 		}),
 		FileModule,
+		AccountAdminModule,
 		MemberModule,
 		MemberVoucherModule,
 		NewsModule,

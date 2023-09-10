@@ -333,6 +333,7 @@ export class OrderService {
 							{
 								$addFields: {
 									'member.rankName': '$rank.name',
+									'member.rankColor': '$rank.appearance.color',
 								},
 							},
 						])
@@ -590,7 +591,7 @@ export class OrderService {
 		memberVoucher?.voucher &&
 			(memberVoucher.voucher.discountPrice = voucherDiscountAmount)
 
-		const orderData: Order = member
+		const orderData: Order | OrderMember = member
 			? ({
 					type: ShippingMethod.IN_STORE,
 					buyer: OrderBuyer.MEMBER,

@@ -1,4 +1,13 @@
-import { Member, MemberSchema, Order, OrderSchema } from '@app/database'
+import {
+	Member,
+	MemberSchema,
+	Order,
+	OrderSchema,
+	ProductCategory,
+	ProductCategorySchema,
+	Rank,
+	RankSchema,
+} from '@app/database'
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 
@@ -9,10 +18,9 @@ import { StatisticService } from './statistic.service'
 	imports: [
 		MongooseModule.forFeature([
 			{ name: Member.name, schema: MemberSchema },
-			{
-				name: Order.name,
-				schema: OrderSchema,
-			},
+			{ name: Rank.name, schema: RankSchema },
+			{ name: Order.name, schema: OrderSchema },
+			{ name: ProductCategory.name, schema: ProductCategorySchema },
 		]),
 	],
 	controllers: [StatisticController],

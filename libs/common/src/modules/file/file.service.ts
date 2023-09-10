@@ -1,3 +1,4 @@
+import { Connection, Types } from 'mongoose'
 import { v4 as uuidv4 } from 'uuid'
 
 import { getFileExtension } from '@app/common'
@@ -18,13 +19,17 @@ import {
 	NotFoundException,
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
+import { InjectConnection } from '@nestjs/mongoose'
 
 @Injectable()
 export class FileService {
 	private s3: S3Client
 	private bucketName: string
 
-	constructor(private configService: ConfigService) {
+	constructor(
+		@InjectConnection() private readonly connection: Connection,
+		private configService: ConfigService
+	) {
 		this.s3 = new S3Client({
 			credentials: {
 				accessKeyId: configService.get<string>('aws.accessKeyId'),
@@ -176,5 +181,23 @@ export class FileService {
 			if (throwError) throw new NotFoundException('File not found')
 			else return false
 		}
+	}
+
+	async getMainImage(collectionName: string, id: string) {
+		const data = await this.connection
+			.collection(collectionName)
+			.findOne({ _id: new Types.ObjectId(id) })
+
+		if (!data) {
+			throw new NotFoundException(`Data is not found`)
+		}
+		const mainImage = data.image || data.images?.[0]
+
+		if (!mainImage) {
+			throw new NotFoundException(
+				`Image of collection ${collectionName} is not found`
+			)
+		}
+		return mainImage
 	}
 }

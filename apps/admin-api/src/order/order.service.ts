@@ -1,7 +1,7 @@
 import uniq from 'lodash/uniq'
 import { FilterQuery, Model, Types } from 'mongoose'
 
-import { SortOrder } from '@app/common'
+import { SortOrder, keyCodePattern } from '@app/common'
 import { Order, OrderDocument } from '@app/database'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
@@ -122,5 +122,22 @@ export class OrderService {
 			totalCount,
 			items: orders,
 		}
+	}
+
+	async getOrderDetail(orderId: string): Promise<Order> {
+		const order = await this.orderModel
+			.findOne(
+				keyCodePattern.test(orderId)
+					? {
+							code: orderId,
+					  }
+					: {
+							_id: new Types.ObjectId(orderId),
+					  }
+			)
+			.select('-_id')
+			.lean()
+			.exec()
+		return order
 	}
 }

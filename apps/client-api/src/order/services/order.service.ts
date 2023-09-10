@@ -335,6 +335,7 @@ export class OrderService {
 					{
 						$addFields: {
 							'member.rankName': '$rank.name',
+							'member.rankColor': '$rank.appearance.color',
 						},
 					},
 				])
