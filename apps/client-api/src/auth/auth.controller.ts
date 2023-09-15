@@ -77,7 +77,7 @@ export class AuthController {
 				])
 				tokens = await this.tokenService.signToken(
 					{ role: Role.MEMBER, sub: memberId },
-					session
+					{ session }
 				)
 			}
 		)

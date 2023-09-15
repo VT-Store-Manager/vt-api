@@ -5,10 +5,7 @@ import { TokenPayload } from '@app/types'
 import { ForbiddenException, Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { PassportStrategy } from '@nestjs/passport'
-import { InjectModel } from '@nestjs/mongoose'
-import { Store, StoreDocument } from '@app/database'
-import { Model } from 'mongoose'
-import { Member, MemberDocument } from '@app/database'
+import { AuthService } from '../services/auth.service'
 
 @Injectable()
 export class JwtAccessStrategy extends PassportStrategy(
@@ -16,10 +13,8 @@ export class JwtAccessStrategy extends PassportStrategy(
 	'jwt-access'
 ) {
 	constructor(
-		@InjectModel(Store.name) private readonly storeModel: Model<StoreDocument>,
-		@InjectModel(Member.name)
-		private readonly memberModel: Model<MemberDocument>,
-		private readonly configService: ConfigService
+		private readonly configService: ConfigService,
+		private readonly authService: AuthService
 	) {
 		super({
 			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -30,26 +25,25 @@ export class JwtAccessStrategy extends PassportStrategy(
 
 	async validate(payload: TokenPayload) {
 		if (payload.role === Role.MEMBER) {
-			const { tokenValidTime: validTime } = await this.memberModel
-				.findById(payload.sub)
-				.orFail(new ForbiddenException('User not found'))
-				.select('tokenValidTime')
-				.lean()
-				.exec()
-			// const validTime = await this.memberAuthService.getTokenValidTime(
-			// 	payload.sub
-			// )
+			const validTime = await this.authService.getTokenValidTimeMember(
+				payload.sub
+			)
 			if (validTime.getTime() > payload.iat * 1000) {
 				throw new ForbiddenException('Detected an abnormal action or data')
 			}
 			return payload
 		} else if (payload.role === Role.SALESPERSON) {
-			const store = await this.storeModel.count({ _id: payload.sub }).exec()
-			if (!store) {
+			if (!(await this.authService.checkStoreExist(payload.sub))) {
 				throw new ForbiddenException('Store not found')
 			}
 			return payload
-		} else {
+		} else if (payload.role.includes(Role.ADMIN)) {
+			const validTime = await this.authService.getTokenValidTimeAdmin(
+				payload.sub
+			)
+			if (validTime.getTime() > payload.iat * 1000) {
+				throw new ForbiddenException('Detected an abnormal action or data')
+			}
 			return payload
 		}
 	}

@@ -21,6 +21,7 @@ import { GetProductListQueryDTO } from './dto/get-product-list-query.dto'
 import { ProductListPaginationDTO } from './dto/response-products.dto'
 import { ProductDetailDataDTO } from './dto/response.dto'
 import { ProductService } from './product.service'
+import { JwtAccess } from '../auth/decorators/jwt.decorator'
 
 @ApiTags('admin-app > product')
 @Controller({
@@ -68,6 +69,7 @@ export class ProductController {
 	}
 
 	@Get('list')
+	@JwtAccess()
 	@ApiSuccessResponse(ProductListPaginationDTO)
 	async getProductListPagination(@Query() query: GetProductListQueryDTO) {
 		return await this.productService.getList(query)

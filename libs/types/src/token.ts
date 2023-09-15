@@ -1,9 +1,9 @@
 import { Role } from '@app/common'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, OmitType } from '@nestjs/swagger'
 
 export class TokenPayload {
 	@ApiProperty({ description: "'member', 'admin', 'salesperson'" })
-	role: Role[] | Role
+	role: Role[] | Role | string | string[]
 
 	@ApiProperty({ description: 'User ID' })
 	sub: string
@@ -16,3 +16,5 @@ export class TokenPayload {
 }
 
 export class UserPayload extends TokenPayload {}
+
+export class AccountAdminPayload extends OmitType(TokenPayload, ['role']) {}

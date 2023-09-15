@@ -1,15 +1,11 @@
-import { JwtAccessStrategy, TokenService } from '@app/authentication'
+import { TokenService } from '@app/authentication'
 import {
 	AccountAdmin,
+	AccountAdminRole,
+	AccountAdminRoleSchema,
 	AccountAdminSchema,
-	AccountSale,
-	AccountSaleSchema,
-	Member,
-	MemberSchema,
 	RefreshToken,
 	RefreshTokenSchema,
-	Store,
-	StoreSchema,
 } from '@app/database'
 import { Module } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
@@ -17,25 +13,24 @@ import { MongooseModule } from '@nestjs/mongoose'
 
 import { AuthController } from './auth.controller'
 import { AuthService } from './auth.service'
-import { AuthService as CommonAuthService } from '@app/authentication'
+import { JwtAccessAdminStrategy } from './strategies/jwt-access.strategy'
+import { JwtRefreshAdminStrategy } from './strategies/jwt-refresh.strategy'
 
 @Module({
 	imports: [
 		MongooseModule.forFeature([
-			{ name: AccountSale.name, schema: AccountSaleSchema },
-			{ name: RefreshToken.name, schema: RefreshTokenSchema },
-			{ name: Store.name, schema: StoreSchema },
-			{ name: Member.name, schema: MemberSchema },
 			{ name: AccountAdmin.name, schema: AccountAdminSchema },
+			{ name: AccountAdminRole.name, schema: AccountAdminRoleSchema },
+			{ name: RefreshToken.name, schema: RefreshTokenSchema },
 		]),
 	],
 	controllers: [AuthController],
 	providers: [
 		AuthService,
 		TokenService,
+		JwtAccessAdminStrategy,
+		JwtRefreshAdminStrategy,
 		JwtService,
-		JwtAccessStrategy,
-		CommonAuthService,
 	],
 })
 export class AuthModule {}

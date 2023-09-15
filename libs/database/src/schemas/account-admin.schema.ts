@@ -13,11 +13,17 @@ export class AccountAdmin {
 	@Prop({ type: String, required: true })
 	password: string
 
-	@Prop({ type: Types.ObjectId, required: true })
-	role: Types.ObjectId[]
+	@Prop({ type: Types.ObjectId, required: true, ref: 'AccountAdminRole' })
+	roles: Types.ObjectId[]
 
 	@Prop({ type: [Types.ObjectId], default: () => [], ref: 'Store' })
 	stores: Types.ObjectId[]
+
+	@Prop({ type: Boolean, default: false })
+	forceUpdatePassword?: boolean
+
+	@Prop({ type: Date, default: Date.now() })
+	tokenValidTime?: Date
 
 	createdAt?: Date
 	updatedAt?: Date

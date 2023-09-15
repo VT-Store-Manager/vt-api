@@ -1,11 +1,12 @@
 import { ClientSession, Model, Types } from 'mongoose'
 
-import { TokenPayload } from '@app/types'
+import { AccountAdminPayload, TokenPayload, UserPayload } from '@app/types'
 import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { JwtService, JwtSignOptions } from '@nestjs/jwt'
 import { InjectModel } from '@nestjs/mongoose'
 import { RefreshToken, RefreshTokenDocument } from '@app/database'
+import { Role } from '@app/common'
 
 @Injectable()
 export class TokenService {
@@ -16,9 +17,13 @@ export class TokenService {
 		private readonly configService: ConfigService
 	) {}
 
-	private resignToken(payload): string {
+	private resignToken(payload, type: Role): string {
 		return this.jwtService.sign(payload, {
-			secret: this.configService.get<string>('jwt.refreshTokenSecret'),
+			secret: this.configService.get<string>(
+				type === Role.ADMIN
+					? 'jwt.refreshTokenAdminSecret'
+					: 'jwt.refreshTokenSecret'
+			),
 		})
 	}
 
@@ -39,16 +44,26 @@ export class TokenService {
 			.exec()
 	}
 
-	async signToken(payload: TokenPayload, session?: ClientSession) {
+	async signToken(
+		payload: UserPayload | AccountAdminPayload,
+		options: {
+			session?: ClientSession
+			type?: Role
+		} = {}
+	) {
 		const { sub, exp: _exp, iat: _iat, ...payloadWithoutSubject } = payload
+		const [accessSecretConfigKey, refreshSecretConfigKey] =
+			options.type === Role.ADMIN
+				? ['jwt.accessTokenAdminSecret', 'jwt.refreshTokenAdminSecret']
+				: ['jwt.accessTokenSecret', 'jwt.refreshTokenSecret']
 		const tokens = {
 			accessToken: this.jwtService.sign(payloadWithoutSubject, {
-				secret: this.configService.get<string>('jwt.accessTokenSecret'),
+				secret: this.configService.get<string>(accessSecretConfigKey),
 				expiresIn: this.configService.get<string>('jwt.accessTokenExpiresIn'),
 				subject: sub,
 			} as JwtSignOptions),
 			refreshToken: this.jwtService.sign(payloadWithoutSubject, {
-				secret: this.configService.get<string>('jwt.refreshTokenSecret'),
+				secret: this.configService.get<string>(refreshSecretConfigKey),
 				expiresIn: this.configService.get<string>('jwt.refreshTokenExpiresIn'),
 				subject: sub,
 			} as JwtSignOptions),
@@ -61,14 +76,17 @@ export class TokenService {
 					value: tokens.refreshToken,
 				},
 			],
-			session ? { session } : {}
+			options.session ? { session: options.session } : {}
 		)
 		return tokens
 	}
 
-	async getRefreshToken(payload: TokenPayload): Promise<RefreshToken> {
+	async getRefreshToken(
+		payload: TokenPayload | AccountAdminPayload,
+		options: { type?: Role } = {}
+	): Promise<RefreshToken> {
 		return await this.refreshTokenModel
-			.findOne({ value: this.resignToken(payload) })
+			.findOne({ value: this.resignToken(payload, options.type) })
 			.orFail(new UnauthorizedException('Refresh token not found'))
 			.lean()
 			.exec()

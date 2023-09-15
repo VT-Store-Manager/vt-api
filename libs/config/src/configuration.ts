@@ -30,6 +30,8 @@ export const envConfiguration = () => {
 		jwt: {
 			accessTokenSecret: process.env.ACCESS_TOKEN_SECRET_KEY,
 			refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET_KEY,
+			accessTokenAdminSecret: process.env.ACCESS_TOKEN_ADMIN_SECRET_KEY,
+			refreshTokenAdminSecret: process.env.REFRESH_TOKEN_ADMIN_SECRET_KEY,
 			accessTokenExpiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN,
 			refreshTokenExpiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN,
 		},

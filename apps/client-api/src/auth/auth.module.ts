@@ -6,6 +6,8 @@ import {
 	TokenService,
 } from '@app/authentication'
 import {
+	AccountAdmin,
+	AccountAdminSchema,
 	Member,
 	MemberData,
 	MemberDataSchema,
@@ -36,6 +38,8 @@ import { AuthService as ClientAuthService } from './auth.service'
 			{ name: MemberRank.name, schema: MemberRankSchema },
 			{ name: Rank.name, schema: RankSchema },
 			{ name: Store.name, schema: StoreSchema },
+			{ name: Store.name, schema: StoreSchema },
+			{ name: AccountAdmin.name, schema: AccountAdminSchema },
 		]),
 		JwtModule.register({}),
 	],

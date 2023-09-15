@@ -111,7 +111,7 @@ export class AccountAdminService {
 			if (roleIds.length === 0) {
 				throw new BadRequestException('Roles is empty or not existed')
 			}
-			updateData.role = roleIds
+			updateData.roles = roleIds
 		}
 		if (data.stores) {
 			updateData.stores = await this.getStoreIds(data.stores)
