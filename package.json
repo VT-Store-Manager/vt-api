@@ -92,8 +92,10 @@
 		"eslint-plugin-prettier": "^4.0.0",
 		"husky": "^8.0.3",
 		"jest": "28.1.2",
+		"lint-staged": ">=10",
 		"morgan": "^1.10.0",
 		"prettier": "^2.3.2",
+		"sort-package-json": "^2.5.1",
 		"source-map-support": "^0.5.20",
 		"supertest": "^6.1.3",
 		"ts-jest": "28.0.5",
@@ -129,5 +131,10 @@
 			"^@app/types(|/.*)$": "<rootDir>/libs/types/src/$1",
 			"^@app/authentication(|/.*)$": "<rootDir>/libs/authentication/src/$1"
 		}
+	},
+	"lint-staged": {
+		"*.{ts,js}": "eslint --cache --fix --max-warnings=0",
+		"*.{json,md}": "prettier --write",
+		"package.json": "npx sort-package-json"
 	}
 }
