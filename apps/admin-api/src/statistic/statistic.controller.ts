@@ -1,3 +1,4 @@
+import { JwtAccess } from '@admin/authentication/decorators/jwt.decorator'
 import { ApiSuccessResponse } from '@app/common'
 import { Controller, Get, Query } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
@@ -9,9 +10,8 @@ import {
 	StatisticRankAmountDTO,
 } from './dto/response.dto'
 import { StatisticAmountDurationDTO } from './dto/statistic-amount-duration.dto'
-import { StatisticService } from './statistic.service'
 import { StatisticSaleQueryDTO } from './dto/statistic-sale-query.dto'
-import { JwtAccess } from '../../authentication/decorators/jwt.decorator'
+import { StatisticService } from './statistic.service'
 
 @Controller('admin/statistic')
 @ApiTags('admin-app > statistic')

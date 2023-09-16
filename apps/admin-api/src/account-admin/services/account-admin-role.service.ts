@@ -38,4 +38,21 @@ export class AccountAdminRoleService {
 
 		return createdPermission
 	}
+
+	async getList() {
+		return await this.accountAdminRoleModel
+			.aggregate([
+				{
+					$addFields: {
+						id: { $toString: '$_id' },
+					},
+				},
+				{
+					$project: {
+						_id: false,
+					},
+				},
+			])
+			.exec()
+	}
 }

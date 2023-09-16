@@ -49,47 +49,6 @@ export class AccountAdminService {
 		return countAccount > 0
 	}
 
-	private async getExistRoleIds(roles: string[]) {
-		const roleIds = roles.map(role => new Types.ObjectId(role))
-
-		const roleDocuments = await this.accountAdminRoleModel
-			.aggregate<{ _id: Types.ObjectId }>([
-				{
-					$match: {
-						_id: { $in: roleIds },
-					},
-				},
-				{
-					$project: {
-						_id: true,
-					},
-				},
-			])
-			.exec()
-		return roleDocuments.map(doc => doc._id)
-	}
-
-	private async getStoreIds(stores: string[]) {
-		const storeIds = stores.map(store => new Types.ObjectId(store))
-
-		const storeDocuments = await this.storeModel
-			.aggregate<{ _id: Types.ObjectId }>([
-				{
-					$match: {
-						_id: { $in: storeIds },
-					},
-				},
-				{
-					$project: {
-						_id: true,
-					},
-				},
-			])
-			.exec()
-
-		return storeDocuments.map(doc => doc._id)
-	}
-
 	async createAccountAdmin(data: CreateAccountAdminDTO) {
 		const createdAccount = await this.accountAdminModel.create({
 			username: data.username,
@@ -99,6 +58,72 @@ export class AccountAdminService {
 			stores: data.stores,
 		})
 		return createdAccount
+	}
+
+	async getList() {
+		const accounts = await this.accountAdminModel
+			.aggregate([
+				// {
+				// 	$lookup: {
+				// 		from: 'account_admin_roles',
+				// 		localField: 'roles',
+				// 		foreignField: '_id',
+				// 		as: 'roles',
+				// 		pipeline: [
+				// 			{
+				// 				$project: {
+				// 					_id: false,
+				// 					id: {
+				// 						$toString: '$_id',
+				// 					},
+				// 					name: true,
+				// 				},
+				// 			},
+				// 		],
+				// 	},
+				// },
+				// {
+				// 	$lookup: {
+				// 		from: 'stores',
+				// 		localField: 'stores',
+				// 		foreignField: '_id',
+				// 		as: 'stores',
+				// 		pipeline: [
+				// 			{
+				// 				$project: {
+				// 					_id: false,
+				// 					id: {
+				// 						$toString: '$_id',
+				// 					},
+				// 					name: true,
+				// 					image: {
+				// 						$first: '$images',
+				// 					},
+				// 					disabled: true,
+				// 					deleted: true,
+				// 				},
+				// 			},
+				// 		],
+				// 	},
+				// },
+				{
+					$project: {
+						id: {
+							$toString: '$_id',
+						},
+						_id: false,
+						username: true,
+						name: true,
+						roles: true,
+						stores: true,
+						createdAt: true,
+						updatedAt: true,
+					},
+				},
+			])
+			.exec()
+
+		return accounts
 	}
 
 	async updateAccountAdmin(adminId: string, data: UpdateAccountAdminDTO) {

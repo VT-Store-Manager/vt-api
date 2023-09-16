@@ -1,35 +1,64 @@
 {
 	"name": "vt-api",
 	"version": "0.0.1",
-	"description": "",
-	"author": "quanqvinh",
 	"private": true,
+	"description": "",
 	"license": "UNLICENSED",
-	"engines": {
-		"node": ">=16.x",
-		"pnpm": ">=8.x"
-	},
+	"author": "quanqvinh",
 	"scripts": {
 		"prebuild": "rimraf dist",
 		"build": "nest build",
 		"build-all": "concurrently \"pnpm build admin-api\" \"pnpm build sale-api\" \"pnpm build client-api\"",
 		"format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
-		"start": "nest start",
-		"start:dev": "nest start --watch",
-		"start:dev:ADMIN": "nest start --watch admin-api",
-		"start:dev:SALE": "nest start --watch sale-api",
-		"start:dev:CLIENT": "nest start --watch client-api",
-		"start:dev-all": "concurrently -c auto \"pnpm:start:dev:*\"",
-		"start:debug": "nest start --debug --watch",
-		"start:prod": "node dist/apps/client-api/main",
 		"lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix --cache --max-warnings=0",
+		"migrate": "migrate -f ./src/database/migrations/config.ts -m ./src/database/migrations",
+		"prepare": "husky install",
+		"start": "nest start",
+		"start:debug": "nest start --debug --watch",
+		"start:dev": "nest start --watch",
+		"start:dev-all": "concurrently -c auto \"pnpm:start:dev:*\"",
+		"start:dev:ADMIN": "nest start --watch admin-api",
+		"start:dev:CLIENT": "nest start --watch client-api",
+		"start:dev:SALE": "nest start --watch sale-api",
+		"start:prod": "node dist/apps/client-api/main",
 		"test": "jest",
-		"test:watch": "jest --watch",
 		"test:cov": "jest --coverage",
 		"test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
 		"test:e2e": "jest --config ./apps/vt-api/test/jest-e2e.json",
-		"prepare": "husky install",
-		"migrate": "migrate -f ./src/database/migrations/config.ts -m ./src/database/migrations"
+		"test:watch": "jest --watch"
+	},
+	"lint-staged": {
+		"*.{ts,js}": "eslint --cache --fix --max-warnings=0",
+		"*.{json,md}": "prettier --write",
+		"package.json": "npx sort-package-json"
+	},
+	"jest": {
+		"collectCoverageFrom": [
+			"**/*.(t|j)s"
+		],
+		"coverageDirectory": "./coverage",
+		"moduleFileExtensions": [
+			"js",
+			"json",
+			"ts"
+		],
+		"moduleNameMapper": {
+			"^@app/database(|/.*)$": "<rootDir>/libs/database/src/$1",
+			"^@app/common(|/.*)$": "<rootDir>/libs/common/src/$1",
+			"^@app/config(|/.*)$": "<rootDir>/libs/config/src/$1",
+			"^@app/types(|/.*)$": "<rootDir>/libs/types/src/$1",
+			"^@app/authentication(|/.*)$": "<rootDir>/libs/authentication/src/$1"
+		},
+		"rootDir": ".",
+		"roots": [
+			"<rootDir>/libs/",
+			"<rootDir>/apps/"
+		],
+		"testEnvironment": "node",
+		"testRegex": ".*\\.spec\\.ts$",
+		"transform": {
+			"^.+\\.(t|j)s$": "ts-jest"
+		}
 	},
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.282.0",
@@ -104,37 +133,8 @@
 		"tsconfig-paths": "4.0.0",
 		"typescript": "^5.1.6"
 	},
-	"jest": {
-		"moduleFileExtensions": [
-			"js",
-			"json",
-			"ts"
-		],
-		"rootDir": ".",
-		"testRegex": ".*\\.spec\\.ts$",
-		"transform": {
-			"^.+\\.(t|j)s$": "ts-jest"
-		},
-		"collectCoverageFrom": [
-			"**/*.(t|j)s"
-		],
-		"coverageDirectory": "./coverage",
-		"testEnvironment": "node",
-		"roots": [
-			"<rootDir>/libs/",
-			"<rootDir>/apps/"
-		],
-		"moduleNameMapper": {
-			"^@app/database(|/.*)$": "<rootDir>/libs/database/src/$1",
-			"^@app/common(|/.*)$": "<rootDir>/libs/common/src/$1",
-			"^@app/config(|/.*)$": "<rootDir>/libs/config/src/$1",
-			"^@app/types(|/.*)$": "<rootDir>/libs/types/src/$1",
-			"^@app/authentication(|/.*)$": "<rootDir>/libs/authentication/src/$1"
-		}
-	},
-	"lint-staged": {
-		"*.{ts,js}": "eslint --cache --fix --max-warnings=0",
-		"*.{json,md}": "prettier --write",
-		"package.json": "npx sort-package-json"
+	"engines": {
+		"node": ">=16.x",
+		"pnpm": ">=8.x"
 	}
 }
