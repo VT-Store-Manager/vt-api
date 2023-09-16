@@ -6,10 +6,7 @@ import { GetMemberListPaginationDTO } from './dto/get-member-list-pagination.dto
 import { MemberListPaginationDTO } from './dto/response.dto'
 import { MemberService } from './member.service'
 
-@Controller({
-	version: '1',
-	path: 'admin/member',
-})
+@Controller('admin/member')
 @ApiTags('admin-app > member')
 export class MemberController {
 	constructor(private readonly memberService: MemberService) {}

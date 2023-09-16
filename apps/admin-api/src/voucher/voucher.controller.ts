@@ -35,10 +35,7 @@ import { UpdateVoucherInfoDTO } from './dto/update-voucher-info.dto'
 import { UpdateVoucherSliderDTO } from './dto/update-voucher-slider.dto'
 import { VoucherService } from './voucher.service'
 
-@Controller({
-	path: 'admin/voucher',
-	version: '1',
-})
+@Controller('admin/voucher')
 @ApiTags('admin-app > voucher')
 // TODO: Turn on authen admin
 // @JwtAccess(Role.ADMIN)

@@ -25,10 +25,7 @@ import { UpdateProductOptionDTO } from './dto/update-product-option.dto'
 import { ProductOptionService } from './product-option.service'
 
 @ApiTags('admin-app > product-option')
-@Controller({
-	path: 'admin/product-option',
-	version: '1',
-})
+@Controller('admin/product-option')
 export class ProductOptionController {
 	constructor(
 		private readonly productOptionService: ProductOptionService,

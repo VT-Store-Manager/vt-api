@@ -1,19 +1,29 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { Types } from 'mongoose'
 import { UpdatedBySchema, UpdatedBy } from './updated-by.schema'
+import {
+	AdminFeature,
+	AdminFeaturePermission,
+} from '@/apps/admin-api/constants'
 
 export type AccountAdminRoleDocument = AccountAdminRole & Document
 
-@Schema({ versionKey: false })
+@Schema({ versionKey: false, _id: false })
 export class SelectedPermissionItem {
-	@Prop({ type: Types.ObjectId, set: (v: string) => new Types.ObjectId(v) })
-	_id: Types.ObjectId
+	@Prop({ type: String, enum: Object.values(AdminFeature), required: true })
+	featureName: string
 
-	@Prop({
-		type: [Types.ObjectId],
-		default: () => [],
-		set: (v: string[]) => v.map(_v => new Types.ObjectId(_v)),
-	})
+	@Prop([
+		{
+			type: [
+				{
+					type: String,
+					enum: Object.values(AdminFeaturePermission),
+				},
+			],
+			default: () => [],
+		},
+	])
 	scopes: Types.ObjectId[]
 }
 export const SelectedPermissionItemSchema = SchemaFactory.createForClass(

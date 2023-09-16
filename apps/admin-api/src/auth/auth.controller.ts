@@ -5,14 +5,14 @@ import { Body, Controller, Get, Post } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
 import { AuthService } from './auth.service'
-import { CurrentAdmin } from './decorators/current-admin.decorator'
-import { JwtAccess, JwtRefresh } from './decorators/jwt.decorator'
+import { CurrentAdmin } from '../../authentication/decorators/current-admin.decorator'
+import {
+	JwtAccess,
+	JwtRefresh,
+} from '../../authentication/decorators/jwt.decorator'
 import { LoginAdminDTO } from './dto/login.dto'
 
-@Controller({
-	path: 'admin/auth',
-	version: '1',
-})
+@Controller('admin/auth')
 @ApiTags('admin-app > auth')
 export class AuthController {
 	constructor(
@@ -32,7 +32,10 @@ export class AuthController {
 		return {
 			tokens,
 			user: {
+				id: account._id.toString(),
 				username: account.username,
+				name: account.name,
+				avatar: account.avatar,
 				role: account.roles.map(role => role.name),
 				updatePassword: !!account.forceUpdatePassword,
 			},

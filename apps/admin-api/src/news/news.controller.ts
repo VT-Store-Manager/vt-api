@@ -15,10 +15,7 @@ import { CreateNewsDTO } from './dto/create-news.dto'
 import { CreateNewsResultDTO } from './dto/response.dto'
 import { NewsService } from './news.service'
 
-@Controller({
-	path: 'admin/news',
-	version: '1',
-})
+@Controller('admin/news')
 @ApiTags('admin-app > news')
 export class NewsController {
 	constructor(

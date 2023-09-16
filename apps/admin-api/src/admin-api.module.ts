@@ -37,7 +37,7 @@ import { TagModule } from './tag/tag.module'
 import { VoucherModule } from './voucher/voucher.module'
 import { AccountAdminModule } from './account-admin/account-admin.module'
 import { AuthModule } from './auth/auth.module'
-import { JwtAccessAdminGuard } from './auth/guards/jwt-access.guard'
+import { JwtAccessAdminGuard } from '../authentication/guards/jwt-access.guard'
 
 @Module({
 	imports: [

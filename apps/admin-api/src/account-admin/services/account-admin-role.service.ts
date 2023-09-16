@@ -28,10 +28,7 @@ export class AccountAdminRoleService {
 
 		const createdPermission = await this.accountAdminRoleModel.create({
 			name: data.name,
-			items: data.permissions.map(p => ({
-				_id: p.id,
-				scope: p.scopes,
-			})),
+			items: data.permissions,
 			updatedBy: {
 				accountId: adminId,
 				accountUsername: adminData.username,

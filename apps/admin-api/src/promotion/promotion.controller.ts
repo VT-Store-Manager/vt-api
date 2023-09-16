@@ -18,10 +18,7 @@ import { GetPromotionListDTO } from './dto/get-promotion-list.dto'
 import { PromotionListPaginationDTO } from './dto/response.dto'
 import { PromotionService } from './promotion.service'
 
-@Controller({
-	path: 'admin/promotion',
-	version: '1',
-})
+@Controller('admin/promotion')
 @ApiTags('admin-app > promotion')
 export class PromotionController {
 	constructor(

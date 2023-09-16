@@ -14,10 +14,7 @@ import { ApiConsumes, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { CreatePartnerDTO } from './dto/create_partner.dto'
 import { PartnerService } from './partner.service'
 
-@Controller({
-	path: 'admin/partner',
-	version: '1',
-})
+@Controller('admin/partner')
 @ApiTags('admin-app > partner')
 export class PartnerController {
 	constructor(

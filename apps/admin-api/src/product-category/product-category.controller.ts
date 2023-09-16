@@ -29,10 +29,7 @@ import {
 import { ProductCategoryService } from './product-category.service'
 
 @ApiTags('admin-app > product-category')
-@Controller({
-	path: 'admin/product-category',
-	version: '1',
-})
+@Controller('admin/product-category')
 export class ProductCategoryController {
 	constructor(
 		private readonly productCategoryService: ProductCategoryService,

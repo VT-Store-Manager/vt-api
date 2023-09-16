@@ -14,10 +14,7 @@ import { ApiConsumes, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { CreatePromotionCategoryDTO } from './dto/create-promotion-category.dto'
 import { PromotionCategoryService } from './promotion-category.service'
 
-@Controller({
-	path: 'admin/promotion-category',
-	version: '1',
-})
+@Controller('admin/promotion-category')
 @ApiTags('admin-app > promotion-category')
 export class PromotionCategoryController {
 	constructor(

@@ -5,6 +5,9 @@ export class CreateAccountAdminDTO {
 	@Matches(/[a-zA-Z0-9_.-]{3,}/)
 	username: string
 
+	@IsString()
+	name: string
+
 	@IsMongoId()
 	role?: string
 

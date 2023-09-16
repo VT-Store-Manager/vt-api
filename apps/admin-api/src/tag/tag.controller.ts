@@ -4,10 +4,7 @@ import { ApiTags } from '@nestjs/swagger'
 import { CreateTagDTO } from './dto/create-tag.dto'
 import { TagService } from './tag.service'
 
-@Controller({
-	path: 'admin/tag',
-	version: '1',
-})
+@Controller('admin/tag')
 @ApiTags('admin-app > tag')
 export class TagController {
 	constructor(private readonly tagService: TagService) {}

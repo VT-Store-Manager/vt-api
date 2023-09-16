@@ -23,10 +23,7 @@ import { ApiConsumes, ApiTags } from '@nestjs/swagger'
 import { CreateNotificationDTO } from './dto/create-notification.dto'
 import { NotificationService } from './notification.service'
 
-@Controller({
-	path: 'admin/notification',
-	version: '1',
-})
+@Controller('admin/notification')
 @ApiTags('admin-app > notification')
 export class NotificationController {
 	constructor(

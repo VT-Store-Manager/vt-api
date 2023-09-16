@@ -9,10 +9,7 @@ import { GetOrderHistoryPaginationDTO } from './dto/get-order-history.dto'
 import { GetOrderDetailDTO } from './dto/response.dto'
 import { OrderService } from './order.service'
 
-@Controller({
-	path: 'admin/order',
-	version: '1',
-})
+@Controller('admin/order')
 @ApiTags('admin-app > order')
 export class OrderController {
 	constructor(private readonly orderService: OrderService) {}

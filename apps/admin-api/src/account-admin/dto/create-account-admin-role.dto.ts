@@ -1,18 +1,16 @@
-import { Type } from 'class-transformer'
 import {
-	IsMongoId,
-	IsOptional,
-	IsString,
-	ValidateNested,
-} from 'class-validator'
+	AdminFeature,
+	AdminFeaturePermission,
+} from '@/apps/admin-api/constants'
+import { Type } from 'class-transformer'
+import { IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator'
 
 export class PermissionSelectedItem {
-	@IsMongoId()
-	id: string
+	@IsEnum(AdminFeature)
+	featureName: AdminFeature
 
-	@IsOptional()
-	@IsMongoId({ each: true })
-	scopes?: string[] = []
+	@IsEnum(AdminFeaturePermission, { each: true })
+	permissions: AdminFeaturePermission[]
 }
 
 export class CreateAccountAdminRoleDTO {

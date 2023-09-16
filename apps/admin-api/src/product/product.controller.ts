@@ -21,13 +21,10 @@ import { GetProductListQueryDTO } from './dto/get-product-list-query.dto'
 import { ProductListPaginationDTO } from './dto/response-products.dto'
 import { ProductDetailDataDTO } from './dto/response.dto'
 import { ProductService } from './product.service'
-import { JwtAccess } from '../auth/decorators/jwt.decorator'
+import { JwtAccess } from '../../authentication/decorators/jwt.decorator'
 
 @ApiTags('admin-app > product')
-@Controller({
-	path: 'admin/product',
-	version: '1',
-})
+@Controller('admin/product')
 export class ProductController {
 	constructor(
 		private readonly productService: ProductService,

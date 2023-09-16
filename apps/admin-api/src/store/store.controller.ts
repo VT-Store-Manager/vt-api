@@ -27,10 +27,7 @@ import { ResponseStoreListDTO } from './dto/response-store-item.dto'
 import { StoreService } from './store.service'
 
 @ApiTags('admin-app > store')
-@Controller({
-	path: 'admin/store',
-	version: '1',
-})
+@Controller('admin/store')
 export class StoreController {
 	constructor(
 		private readonly storeService: StoreService,

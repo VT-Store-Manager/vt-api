@@ -13,8 +13,8 @@ import { MongooseModule } from '@nestjs/mongoose'
 
 import { AuthController } from './auth.controller'
 import { AuthService } from './auth.service'
-import { JwtAccessAdminStrategy } from './strategies/jwt-access.strategy'
-import { JwtRefreshAdminStrategy } from './strategies/jwt-refresh.strategy'
+import { JwtAccessAdminStrategy } from '../../authentication/strategies/jwt-access.strategy'
+import { JwtRefreshAdminStrategy } from '../../authentication/strategies/jwt-refresh.strategy'
 
 @Module({
 	imports: [

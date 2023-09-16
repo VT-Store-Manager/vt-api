@@ -14,6 +14,9 @@ export const s3KeyPattern =
 
 export const keyCodePattern = /^[A-Z0-9]+$/
 
+export const adminPasswordPattern =
+	/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[~!@#\$%^&\*\_,\.\?])[A-Za-z\d~!@#\$%^&\*\_,\.\?]{8,}$/
+
 // Enums
 export enum NodeEnv {
 	PRODUCTION = 'production',

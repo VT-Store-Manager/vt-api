@@ -20,10 +20,7 @@ import { CreateRankDTO } from './dto/create-rank.dto'
 import { RankItemDTO } from './dto/response.dto'
 import { RankService } from './rank.service'
 
-@Controller({
-	path: 'admin/rank',
-	version: '1',
-})
+@Controller('admin/rank')
 @ApiTags('admin-app > rank')
 export class RankController {
 	constructor(

@@ -11,12 +11,9 @@ import {
 import { StatisticAmountDurationDTO } from './dto/statistic-amount-duration.dto'
 import { StatisticService } from './statistic.service'
 import { StatisticSaleQueryDTO } from './dto/statistic-sale-query.dto'
-import { JwtAccess } from '../auth/decorators/jwt.decorator'
+import { JwtAccess } from '../../authentication/decorators/jwt.decorator'
 
-@Controller({
-	path: 'admin/statistic',
-	version: '1',
-})
+@Controller('admin/statistic')
 @ApiTags('admin-app > statistic')
 @JwtAccess()
 export class StatisticController {

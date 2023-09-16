@@ -6,10 +6,7 @@ import { AssignVoucherDTO } from './dto/create-member-voucher.dto'
 import { CreateMemberVoucherDTO } from './dto/response.dto'
 import { MemberVoucherService } from './member-voucher.service'
 
-@Controller({
-	path: 'admin/member-voucher',
-	version: '1',
-})
+@Controller('admin/member-voucher')
 @ApiTags('admin-app > member-voucher')
 export class MemberVoucherController {
 	constructor(

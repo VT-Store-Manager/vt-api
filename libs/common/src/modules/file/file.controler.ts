@@ -1,11 +1,6 @@
 import { Response } from 'express'
 
-import {
-	FormDataPipe,
-	ImageMulterOption,
-	S3KeyPipe,
-	ObjectIdPipe,
-} from '@app/common'
+import { FormDataPipe, S3KeyPipe, ObjectIdPipe } from '@app/common'
 import {
 	BadRequestException,
 	Body,
@@ -31,10 +26,7 @@ import pluralize from 'pluralize'
 import snakeCase from 'lodash/snakeCase'
 
 @ApiTags('file')
-@Controller({
-	path: 'file',
-	version: '1',
-})
+@Controller('file')
 export class FileController {
 	constructor(private readonly fileService: FileService) {}
 
