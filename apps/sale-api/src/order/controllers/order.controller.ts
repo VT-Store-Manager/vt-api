@@ -16,10 +16,7 @@ import { CreateOrderResponseDTO } from '../dto/response.dto'
 import { UpdateOrderStateDTO } from '../dto/update-order-state.dto'
 import { OrderService } from '../services/order.service'
 
-@Controller({
-	path: 'sale/cart',
-	version: '1',
-})
+@Controller('sale/cart')
 @ApiTags('sale-app > cart')
 export class OrderController {
 	constructor(

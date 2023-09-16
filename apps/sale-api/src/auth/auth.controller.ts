@@ -13,10 +13,7 @@ import { AuthService } from './auth.service'
 import { LoginDTO } from './dto/login.dto'
 import { TokenDTO } from './dto/token.dto'
 
-@Controller({
-	path: 'sale/auth',
-	version: '1',
-})
+@Controller('sale/auth')
 @ApiTags('sale-app > auth')
 export class AuthController {
 	constructor(

@@ -7,10 +7,7 @@ import { GetOrderByStateDTO } from '../dto/get-order-by-state.dto'
 import { OrderByStateResultDTO, OrderStateItemDTO } from '../dto/response.dto'
 import { OrderStateService } from '../services/order-state.service'
 
-@Controller({
-	path: 'sale/cart-status',
-	version: '1',
-})
+@Controller('sale/cart-status')
 @ApiTags('sale-app > order-state')
 export class OrderStateController {
 	constructor(private readonly orderStateService: OrderStateService) {}

@@ -6,10 +6,7 @@ import { ApiTags } from '@nestjs/swagger'
 import { GetAllProductOptionDTO } from './dto/response.dto'
 import { ProductOptionService } from './product-option.service'
 
-@Controller({
-	path: 'sale/product-option',
-	version: '1',
-})
+@Controller('sale/product-option')
 @ApiTags('sale-app > product-option')
 export class ProductOptionController {
 	constructor(private readonly productOptionService: ProductOptionService) {}

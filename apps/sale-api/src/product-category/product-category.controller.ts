@@ -6,10 +6,7 @@ import { ApiTags } from '@nestjs/swagger'
 import { ProductCategoryItemDTO } from './dto/response.dto'
 import { ProductCategoryService } from './product-category.service'
 
-@Controller({
-	path: 'sale/category',
-	version: '1',
-})
+@Controller('sale/category')
 @ApiTags('sale-app > category')
 export class ProductCategoryController {
 	constructor(

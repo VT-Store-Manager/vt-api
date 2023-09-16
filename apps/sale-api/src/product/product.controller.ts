@@ -5,10 +5,7 @@ import { ApiTags } from '@nestjs/swagger'
 
 import { ProductService } from './product.service'
 
-@Controller({
-	path: 'sale/product',
-	version: '1',
-})
+@Controller('sale/product')
 @ApiTags('sale-app > product')
 export class ProductController {
 	constructor(private readonly productService: ProductService) {}
