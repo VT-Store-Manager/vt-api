@@ -12,10 +12,7 @@ import {
 } from './dto/response.dto'
 import { ProductService } from './product.service'
 
-@Controller({
-	path: 'member/product',
-	version: '1',
-})
+@Controller('member/product')
 @ApiTags('member-app > product')
 export class ProductMemberController {
 	constructor(private readonly productService: ProductService) {}

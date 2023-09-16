@@ -8,10 +8,7 @@ import { ApiResponse, ApiTags } from '@nestjs/swagger'
 import { PromotionItemDTO } from './dto/response.dto'
 import { PromotionService } from './promotion.service'
 
-@Controller({
-	path: 'member/promotion',
-	version: '1',
-})
+@Controller('member/promotion')
 @ApiTags('member-app > promotion')
 export class PromotionController {
 	constructor(

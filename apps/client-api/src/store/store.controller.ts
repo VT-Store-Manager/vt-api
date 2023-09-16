@@ -7,10 +7,7 @@ import { ApiResponse, ApiTags } from '@nestjs/swagger'
 import { ShortStoreItemDTO, StoreDetailDTO } from './dto/response.dto'
 import { StoreService } from './store.service'
 
-@Controller({
-	path: 'member/store',
-	version: '1',
-})
+@Controller('member/store')
 @ApiTags('member-app > store')
 export class StoreController {
 	constructor(private readonly storeMemberService: StoreService) {}

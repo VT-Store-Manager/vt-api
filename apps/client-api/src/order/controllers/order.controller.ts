@@ -13,10 +13,7 @@ import {
 import { ReviewOrderDTO } from '../dto/review-order.dto'
 import { OrderService } from '../services/order.service'
 
-@Controller({
-	path: 'member/cart',
-	version: '1',
-})
+@Controller('member/cart')
 @ApiTags('member-app > order')
 export class OrderController {
 	constructor(private readonly orderService: OrderService) {}

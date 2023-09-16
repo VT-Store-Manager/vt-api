@@ -18,10 +18,7 @@ import { RegisterMemberDTO } from './dto/register-member.dto'
 import { TokenDTO } from './dto/response.dto'
 import { VerifySmsOtpDTO } from './dto/verify-sms-otp.dto'
 
-@Controller({
-	path: 'member/auth',
-	version: '1',
-})
+@Controller('member/auth')
 @ApiTags('member-app > auth')
 export class AuthController {
 	private disableSMS: boolean

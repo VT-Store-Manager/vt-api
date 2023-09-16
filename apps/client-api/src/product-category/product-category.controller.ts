@@ -6,10 +6,7 @@ import { GetProductCategoryDTO } from './dto/get-product-category.dto'
 import { ProductCategoryDTO } from './dto/response.dto'
 import { ProductCategoryService } from './product-category.service'
 
-@Controller({
-	path: 'member/product-category',
-	version: '1',
-})
+@Controller('member/product-category')
 @ApiTags('member-app > product-category')
 export class ProductCategoryController {
 	constructor(

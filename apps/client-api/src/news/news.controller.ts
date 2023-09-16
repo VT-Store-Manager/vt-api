@@ -5,10 +5,7 @@ import { ApiTags } from '@nestjs/swagger'
 import { NewsListByTagItemDTO } from './dto/response.dto'
 import { NewsService } from './news.service'
 
-@Controller({
-	path: 'member/news',
-	version: '1',
-})
+@Controller('member/news')
 @ApiTags('member-app > news')
 export class NewsController {
 	constructor(private readonly newsService: NewsService) {}

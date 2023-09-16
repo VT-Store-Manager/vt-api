@@ -6,10 +6,7 @@ import { ApiTags } from '@nestjs/swagger'
 import { AppBarDTO } from '../dto/response.dto'
 import { MemberService } from '../member.service'
 
-@Controller({
-	path: 'member/app',
-	version: '1',
-})
+@Controller('member/app')
 @ApiTags('member-app > app')
 export class MemberAppController {
 	constructor(private readonly memberService: MemberService) {}

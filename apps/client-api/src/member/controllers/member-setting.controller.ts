@@ -29,10 +29,7 @@ import { UpdateMemberAddressDTO } from '../dto/update-member-address.dto'
 import { UpdateProfileDTO } from '../dto/update-profile.dto'
 import { MemberService } from '../member.service'
 
-@Controller({
-	path: 'member/setting',
-	version: '1',
-})
+@Controller('member/setting')
 @ApiTags('member-app > setting')
 export class MemberSettingController {
 	constructor(private readonly memberService: MemberService) {}

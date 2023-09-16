@@ -9,10 +9,7 @@ import {
 } from './dto/response.dto'
 import { MemberVoucherService } from './member-voucher.service'
 
-@Controller({
-	path: 'member/voucher',
-	version: '1',
-})
+@Controller('member/voucher')
 @ApiTags('member-app > member-voucher')
 export class MemberVoucherController {
 	constructor(private readonly memberVoucherService: MemberVoucherService) {}

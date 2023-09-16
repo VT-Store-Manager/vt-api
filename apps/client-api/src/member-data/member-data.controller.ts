@@ -7,10 +7,7 @@ import { GetPointHistoryDTO } from './dto/get-point-history.dto'
 import { PointHistoryResultDTO } from './dto/response.dto'
 import { MemberDataService } from './member-data.service'
 
-@Controller({
-	path: 'member-data',
-	version: '1',
-})
+@Controller('member-data')
 @ApiTags('member-app > member-data')
 export class MemberDataController {
 	constructor(private readonly memberDataService: MemberDataService) {}

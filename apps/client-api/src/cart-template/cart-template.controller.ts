@@ -32,10 +32,7 @@ import {
 	GetAllCartTemplateResponseDTO,
 } from './dto/response.dto'
 
-@Controller({
-	path: 'member/cart-template',
-	version: '1',
-})
+@Controller('member/cart-template')
 @ApiTags('member-app > cart-template')
 export class CartTemplateController {
 	constructor(

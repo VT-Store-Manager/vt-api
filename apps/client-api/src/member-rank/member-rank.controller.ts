@@ -5,10 +5,7 @@ import { ApiTags } from '@nestjs/swagger'
 
 import { MemberRankService } from './member_rank.service'
 
-@Controller({
-	path: 'member/member-rank',
-	version: '1',
-})
+@Controller('member/member-rank')
 @ApiTags('member-app > member-rank')
 export class MemberRankController {
 	constructor(private readonly memberRankService: MemberRankService) {}

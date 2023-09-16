@@ -7,10 +7,7 @@ import { ApiResponse, ApiTags } from '@nestjs/swagger'
 import { MemberNotificationItemDTO } from './dto/response.dto'
 import { NotificationService } from './notification.service'
 
-@Controller({
-	path: 'member/notification',
-	version: '1',
-})
+@Controller('member/notification')
 @ApiTags('member-app > notification')
 export class NotificationController {
 	constructor(private readonly notificationService: NotificationService) {}
