@@ -13,18 +13,16 @@ export class SelectedPermissionItem {
 	@Prop({ type: String, enum: Object.values(AdminFeature), required: true })
 	featureName: string
 
-	@Prop([
-		{
-			type: [
-				{
-					type: String,
-					enum: Object.values(AdminFeaturePermission),
-				},
-			],
-			default: () => [],
-		},
-	])
-	scopes: Types.ObjectId[]
+	@Prop({
+		type: [
+			{
+				type: String,
+				enum: Object.values(AdminFeaturePermission),
+			},
+		],
+		default: () => [],
+	})
+	scopes: string[]
 }
 export const SelectedPermissionItemSchema = SchemaFactory.createForClass(
 	SelectedPermissionItem

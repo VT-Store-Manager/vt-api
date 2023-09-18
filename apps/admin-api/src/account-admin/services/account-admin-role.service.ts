@@ -1,13 +1,21 @@
+import { Model, Types } from 'mongoose'
+
+import { AdminFeature, AdminFeaturePermission } from '@admin/constants'
 import {
 	AccountAdmin,
 	AccountAdminDocument,
 	AccountAdminRole,
 	AccountAdminRoleDocument,
 } from '@app/database'
-import { BadGatewayException, Injectable } from '@nestjs/common'
+import {
+	BadGatewayException,
+	BadRequestException,
+	Injectable,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-import { Model } from 'mongoose'
+
 import { CreateAccountAdminRoleDTO } from '../dto/create-account-admin-role.dto'
+import { UpdateRoleDTO } from '../dto/update-role.dto'
 
 @Injectable()
 export class AccountAdminRoleService {
@@ -54,5 +62,41 @@ export class AccountAdminRoleService {
 				},
 			])
 			.exec()
+	}
+
+	getRolePermissions() {
+		return {
+			nameKeys: Object.values(AdminFeature),
+			permissionKeys: Object.values(AdminFeaturePermission),
+		}
+	}
+
+	async updateRole(adminId: string, data: UpdateRoleDTO) {
+		const accountAdmin = await this.accountAdminModel
+			.findById(adminId)
+			.orFail(new BadRequestException('Admin not found'))
+			.lean()
+			.exec()
+
+		const updateData: AccountAdminRole = {
+			name: data.name,
+			permissions: data.permissions.map(p => {
+				return {
+					featureName: p.featureName,
+					scopes: p.scopes,
+				}
+			}),
+			updatedBy: {
+				accountId: accountAdmin._id,
+				accountUsername: accountAdmin.username,
+				time: new Date(),
+			},
+		}
+
+		const updateResult = await this.accountAdminRoleModel
+			.updateOne({ _id: new Types.ObjectId(data.id) }, { $set: updateData })
+			.exec()
+
+		return updateResult.matchedCount > 0
 	}
 }

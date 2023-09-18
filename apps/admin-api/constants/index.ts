@@ -9,7 +9,7 @@ export enum AdminFeature {
 }
 
 export enum AdminFeaturePermission {
-	MANAGE = 'manage',
 	VIEW = 'view',
+	UPDATE = 'update',
 	STATISTIC = 'statistic',
 }

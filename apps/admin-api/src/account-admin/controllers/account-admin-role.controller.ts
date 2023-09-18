@@ -1,10 +1,11 @@
 import { CurrentAdmin } from '@admin/authentication/decorators/current-admin.decorator'
 import { JwtAccess } from '@admin/authentication/decorators/jwt.decorator'
-import { Body, Controller, Get, Post } from '@nestjs/common'
+import { Body, Controller, Get, Post, Put } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
 import { CreateAccountAdminRoleDTO } from '../dto/create-account-admin-role.dto'
 import { AccountAdminRoleService } from '../services/account-admin-role.service'
+import { UpdateRoleDTO } from '../dto/update-role.dto'
 
 @Controller('admin/account-admin/role')
 @ApiTags('admin-app > account-admin-role')
@@ -25,5 +26,18 @@ export class AccountAdminRoleController {
 	@Get('list')
 	async getRoleList() {
 		return await this.accountAdminRoleService.getList()
+	}
+
+	@Get('permission')
+	getPermissionList() {
+		return this.accountAdminRoleService.getRolePermissions()
+	}
+
+	@Put('update')
+	async updateRole(
+		@CurrentAdmin('sub') adminId: string,
+		@Body() body: UpdateRoleDTO
+	) {
+		return await this.accountAdminRoleService.updateRole(adminId, body)
 	}
 }
