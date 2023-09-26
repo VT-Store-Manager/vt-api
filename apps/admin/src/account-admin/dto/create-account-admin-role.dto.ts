@@ -1,7 +1,7 @@
 import {
 	AdminFeature,
 	AdminFeaturePermission,
-} from '@/apps/admin-api/constants'
+} from '@/apps/admin/constants'
 import { Type } from 'class-transformer'
 import { IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator'
 

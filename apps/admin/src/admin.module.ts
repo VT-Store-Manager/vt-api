@@ -11,7 +11,7 @@ import {
 import { envConfiguration, envValidationSchema } from '@app/config'
 import { Logger, Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
-import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core'
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core'
 import {
 	InjectConnection,
 	MongooseModule,
@@ -37,7 +37,6 @@ import { TagModule } from './tag/tag.module'
 import { VoucherModule } from './voucher/voucher.module'
 import { AccountAdminModule } from './account-admin/account-admin.module'
 import { AuthModule } from './auth/auth.module'
-import { JwtAccessAdminGuard } from '../authentication/guards/jwt-access.guard'
 
 @Module({
 	imports: [

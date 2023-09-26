@@ -22,7 +22,7 @@
 		"preserveSymlinks": true,
 		"paths": {
 			"@/*": ["./*"],
-			"@admin/*": ["apps/admin-api/*"],
+			"@admin/*": ["apps/admin/*"],
 			"@app/database": ["libs/database/src"],
 			"@app/database/*": ["libs/database/src/*"],
 			"@app/common": ["libs/common/src"],

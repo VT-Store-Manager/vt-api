@@ -4,7 +4,7 @@ import { UpdatedBySchema, UpdatedBy } from './updated-by.schema'
 import {
 	AdminFeature,
 	AdminFeaturePermission,
-} from '@/apps/admin-api/constants'
+} from '@/apps/admin/constants'
 import MongooseDelete, { SoftDeleteDocument } from 'mongoose-delete'
 
 export type AccountAdminRoleDocument = AccountAdminRole &
