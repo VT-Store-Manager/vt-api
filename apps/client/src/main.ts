@@ -6,7 +6,7 @@ import { Logger, ValidationPipe, VersioningType } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { NestFactory } from '@nestjs/core'
 
-import { ClientApiModule } from './client-api.module'
+import { ClientApiModule } from './client.module'
 
 async function bootstrap() {
 	const app = await NestFactory.create(ClientApiModule)
