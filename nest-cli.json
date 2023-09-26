@@ -74,13 +74,13 @@
 				"tsConfigPath": "libs/authentication/tsconfig.lib.json"
 			}
 		},
-		"sale-api": {
+		"sale": {
 			"type": "application",
-			"root": "apps/sale-api",
+			"root": "apps/sale",
 			"entryFile": "main",
-			"sourceRoot": "apps/sale-api/src",
+			"sourceRoot": "apps/sale/src",
 			"compilerOptions": {
-				"tsConfigPath": "apps/sale-api/tsconfig.app.json"
+				"tsConfigPath": "apps/sale/tsconfig.app.json"
 			}
 		},
 		"ws-chat": {
