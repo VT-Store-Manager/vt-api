@@ -1,11 +1,21 @@
 import { CurrentAdmin } from '@admin/authentication/decorators/current-admin.decorator'
 import { JwtAccess } from '@admin/authentication/decorators/jwt.decorator'
-import { Body, Controller, Get, Post, Put } from '@nestjs/common'
+import {
+	Body,
+	Controller,
+	Delete,
+	Get,
+	Post,
+	Put,
+	Param,
+	Patch,
+} from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
 import { CreateAccountAdminRoleDTO } from '../dto/create-account-admin-role.dto'
 import { AccountAdminRoleService } from '../services/account-admin-role.service'
 import { UpdateRoleDTO } from '../dto/update-role.dto'
+import { ObjectIdPipe } from '@/libs/common/src'
 
 @Controller('admin/account-admin/role')
 @ApiTags('admin-app > account-admin-role')
@@ -39,5 +49,18 @@ export class AccountAdminRoleController {
 		@Body() body: UpdateRoleDTO
 	) {
 		return await this.accountAdminRoleService.updateRole(adminId, body)
+	}
+
+	@Delete(':id/disable')
+	async disableRole(
+		@CurrentAdmin('sub') adminId: string,
+		@Param('id', ObjectIdPipe) roleId: string
+	) {
+		return await this.accountAdminRoleService.disableRole(adminId, roleId)
+	}
+
+	@Patch(':id/restore')
+	async restoreRole(@Param('id', ObjectIdPipe) roleId: string) {
+		return await this.accountAdminRoleService.restoreRole(roleId)
 	}
 }

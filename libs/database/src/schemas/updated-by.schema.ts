@@ -3,10 +3,10 @@ import { Types } from 'mongoose'
 
 @Schema({ versionKey: false, _id: false })
 export class UpdatedBy {
-	@Prop({ type: Types.ObjectId, required: true, unique: 1 })
+	@Prop({ type: Types.ObjectId, required: true, index: 1 })
 	accountId: Types.ObjectId
 
-	@Prop({ type: String, required: true })
+	@Prop({ type: String, required: true, index: 1 })
 	accountUsername: string
 
 	@Prop({ type: Date, required: true, default: () => new Date() })

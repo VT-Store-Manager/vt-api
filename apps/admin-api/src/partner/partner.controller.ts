@@ -13,9 +13,11 @@ import { ApiConsumes, ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import { CreatePartnerDTO } from './dto/create_partner.dto'
 import { PartnerService } from './partner.service'
+import { JwtAccess } from '../../authentication/decorators/jwt.decorator'
 
 @Controller('admin/partner')
 @ApiTags('admin-app > partner')
+@JwtAccess()
 export class PartnerController {
 	constructor(
 		private readonly partnerService: PartnerService,

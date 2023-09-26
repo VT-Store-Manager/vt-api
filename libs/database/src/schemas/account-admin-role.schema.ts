@@ -5,8 +5,11 @@ import {
 	AdminFeature,
 	AdminFeaturePermission,
 } from '@/apps/admin-api/constants'
+import MongooseDelete, { SoftDeleteDocument } from 'mongoose-delete'
 
-export type AccountAdminRoleDocument = AccountAdminRole & Document
+export type AccountAdminRoleDocument = AccountAdminRole &
+	Document &
+	SoftDeleteDocument
 
 @Schema({ versionKey: false, _id: false })
 export class SelectedPermissionItem {
@@ -49,9 +52,18 @@ export class AccountAdminRole {
 	@Prop({ type: UpdatedBySchema, required: true })
 	updatedBy: UpdatedBy
 
+	deleted?: boolean
+	deletedAt?: Date
+	deletedBy?: Types.ObjectId
 	createdAt?: Date
 	updatedAt?: Date
 }
 
 export const AccountAdminRoleSchema =
 	SchemaFactory.createForClass(AccountAdminRole)
+
+AccountAdminRoleSchema.plugin(MongooseDelete, {
+	deletedBy: true,
+	deletedAt: true,
+	overrideMethods: 'all',
+})

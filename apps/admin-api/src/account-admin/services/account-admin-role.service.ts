@@ -16,12 +16,14 @@ import { InjectModel } from '@nestjs/mongoose'
 
 import { CreateAccountAdminRoleDTO } from '../dto/create-account-admin-role.dto'
 import { UpdateRoleDTO } from '../dto/update-role.dto'
+import { SoftDeleteModel } from 'mongoose-delete'
+import { UpdateResult } from 'mongodb'
 
 @Injectable()
 export class AccountAdminRoleService {
 	constructor(
 		@InjectModel(AccountAdminRole.name)
-		private readonly accountAdminRoleModel: Model<AccountAdminRoleDocument>,
+		private readonly accountAdminRoleModel: SoftDeleteModel<AccountAdminRoleDocument>,
 		@InjectModel(AccountAdmin.name)
 		private readonly accountAdminModel: Model<AccountAdminDocument>
 	) {}
@@ -36,7 +38,7 @@ export class AccountAdminRoleService {
 
 		const createdPermission = await this.accountAdminRoleModel.create({
 			name: data.name,
-			items: data.permissions,
+			permissions: data.permissions,
 			updatedBy: {
 				accountId: adminId,
 				accountUsername: adminData.username,
@@ -98,5 +100,21 @@ export class AccountAdminRoleService {
 			.exec()
 
 		return updateResult.matchedCount > 0
+	}
+
+	async disableRole(adminId: string, roleId: string) {
+		const deleteResult: UpdateResult = (await this.accountAdminRoleModel
+			.deleteById(roleId, adminId)
+			.exec()) as any
+
+		return !!deleteResult.modifiedCount
+	}
+
+	async restoreRole(roleId: string) {
+		const updateResult = await this.accountAdminRoleModel.restore({
+			_id: new Types.ObjectId(roleId),
+		})
+
+		return !!updateResult.modifiedCount
 	}
 }

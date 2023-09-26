@@ -47,6 +47,17 @@ export class AccountAdminController {
 		return await this.accountAdminService.updateAccountPassword(adminId, body)
 	}
 
+	@Patch('reset-password')
+	async resetPassword(
+		@Body('accountId', ObjectIdPipe) targetId: string,
+		@CurrentAdmin('sub') adminId: string
+	) {
+		return await this.accountAdminService.resetAccountPassword(
+			adminId,
+			targetId
+		)
+	}
+
 	@Patch('update-role')
 	async updateRole(
 		@Body() body: UpdateAccountRoleDTO,

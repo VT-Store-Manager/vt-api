@@ -63,49 +63,6 @@ export class AccountAdminService {
 	async getList() {
 		const accounts = await this.accountAdminModel
 			.aggregate([
-				// {
-				// 	$lookup: {
-				// 		from: 'account_admin_roles',
-				// 		localField: 'roles',
-				// 		foreignField: '_id',
-				// 		as: 'roles',
-				// 		pipeline: [
-				// 			{
-				// 				$project: {
-				// 					_id: false,
-				// 					id: {
-				// 						$toString: '$_id',
-				// 					},
-				// 					name: true,
-				// 				},
-				// 			},
-				// 		],
-				// 	},
-				// },
-				// {
-				// 	$lookup: {
-				// 		from: 'stores',
-				// 		localField: 'stores',
-				// 		foreignField: '_id',
-				// 		as: 'stores',
-				// 		pipeline: [
-				// 			{
-				// 				$project: {
-				// 					_id: false,
-				// 					id: {
-				// 						$toString: '$_id',
-				// 					},
-				// 					name: true,
-				// 					image: {
-				// 						$first: '$images',
-				// 					},
-				// 					disabled: true,
-				// 					deleted: true,
-				// 				},
-				// 			},
-				// 		],
-				// 	},
-				// },
 				{
 					$project: {
 						id: {
@@ -172,6 +129,10 @@ export class AccountAdminService {
 		return updateResult.modifiedCount > 0
 	}
 
+	async resetAccountPassword(adminId: string, targetId) {
+		throw new BadRequestException()
+	}
+
 	async updateAccountRole(id: string, data: UpdateAccountRoleDTO) {
 		const updateData: Partial<Pick<AccountAdmin, 'roles' | 'stores'>> = {}
 
@@ -188,7 +149,7 @@ export class AccountAdminService {
 					},
 					{
 						$project: {
-							id: { toString: '$_id' },
+							id: { $toString: '$_id' },
 						},
 					},
 				])
@@ -218,7 +179,7 @@ export class AccountAdminService {
 						},
 						{
 							$project: {
-								id: { toString: '$_id' },
+								id: { $toString: '$_id' },
 							},
 						},
 					])

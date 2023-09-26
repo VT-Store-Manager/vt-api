@@ -25,6 +25,7 @@ import { JwtAccess } from '../../authentication/decorators/jwt.decorator'
 
 @ApiTags('admin-app > product')
 @Controller('admin/product')
+@JwtAccess()
 export class ProductController {
 	constructor(
 		private readonly productService: ProductService,

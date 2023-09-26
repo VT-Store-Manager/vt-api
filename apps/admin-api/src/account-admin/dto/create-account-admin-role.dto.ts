@@ -10,7 +10,7 @@ export class PermissionSelectedItem {
 	featureName: AdminFeature
 
 	@IsEnum(AdminFeaturePermission, { each: true })
-	permissions: AdminFeaturePermission[]
+	scopes: AdminFeaturePermission[]
 }
 
 export class CreateAccountAdminRoleDTO {
