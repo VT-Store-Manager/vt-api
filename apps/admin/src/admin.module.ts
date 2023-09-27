@@ -37,6 +37,7 @@ import { TagModule } from './tag/tag.module'
 import { VoucherModule } from './voucher/voucher.module'
 import { AccountAdminModule } from './account-admin/account-admin.module'
 import { AuthModule } from './auth/auth.module'
+import { CaslModule } from './casl/casl.module'
 
 @Module({
 	imports: [
@@ -81,6 +82,7 @@ import { AuthModule } from './auth/auth.module'
 		StoreModule,
 		TagModule,
 		VoucherModule,
+		CaslModule,
 	],
 	controllers: [],
 	providers: [

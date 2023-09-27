@@ -1,9 +1,10 @@
+import { ExtractJwt, Strategy } from 'passport-jwt'
+
+import { AuthService } from '@admin/src/auth/auth.service'
 import { AccountAdminPayload } from '@app/types'
-import { ForbiddenException, Injectable } from '@nestjs/common'
+import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { PassportStrategy } from '@nestjs/passport'
-import { ExtractJwt, Strategy } from 'passport-jwt'
-import { AuthService } from '../../src/auth/auth.service'
 
 @Injectable()
 export class JwtAccessAdminStrategy extends PassportStrategy(
@@ -25,9 +26,10 @@ export class JwtAccessAdminStrategy extends PassportStrategy(
 		const admin = await this.authService.getAccountAdmin(payload.sub)
 
 		if (admin.tokenValidTime.getTime() > payload.iat * 1000) {
-			throw new ForbiddenException('Detected an abnormal action or data')
+			throw new UnauthorizedException('DANGER', {
+				description: 'Detected an abnormal action or data',
+			})
 		}
-
 		return payload
 	}
 }

@@ -1,15 +1,15 @@
 import { AccountAdminPayload } from '@/libs/types/src'
+import { CurrentAdmin } from '@admin/authentication/decorators/current-admin.decorator'
+import {
+	JwtAccess,
+	JwtRefresh,
+} from '@admin/authentication/decorators/jwt.decorator'
 import { TokenService } from '@app/authentication'
 import { Role } from '@app/common'
 import { Body, Controller, Get, Post } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
 import { AuthService } from './auth.service'
-import { CurrentAdmin } from '../../authentication/decorators/current-admin.decorator'
-import {
-	JwtAccess,
-	JwtRefresh,
-} from '../../authentication/decorators/jwt.decorator'
 import { LoginAdminDTO } from './dto/login.dto'
 
 @Controller('admin/auth')

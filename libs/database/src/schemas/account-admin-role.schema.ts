@@ -1,10 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { Types } from 'mongoose'
 import { UpdatedBySchema, UpdatedBy } from './updated-by.schema'
-import {
-	AdminFeature,
-	AdminFeaturePermission,
-} from '@/apps/admin/constants'
+import { AdminFeature, Actions } from '@admin/constants'
 import MongooseDelete, { SoftDeleteDocument } from 'mongoose-delete'
 
 export type AccountAdminRoleDocument = AccountAdminRole &
@@ -14,18 +11,18 @@ export type AccountAdminRoleDocument = AccountAdminRole &
 @Schema({ versionKey: false, _id: false })
 export class SelectedPermissionItem {
 	@Prop({ type: String, enum: Object.values(AdminFeature), required: true })
-	featureName: string
+	featureName: AdminFeature
 
 	@Prop({
 		type: [
 			{
 				type: String,
-				enum: Object.values(AdminFeaturePermission),
+				enum: Object.values(Actions),
 			},
 		],
 		default: () => [],
 	})
-	scopes: string[]
+	scopes: Actions[]
 }
 export const SelectedPermissionItemSchema = SchemaFactory.createForClass(
 	SelectedPermissionItem

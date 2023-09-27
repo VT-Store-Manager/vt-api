@@ -8,7 +8,7 @@
 	"scripts": {
 		"prebuild": "rimraf dist",
 		"build": "nest build",
-		"build-all": "concurrently \"pnpm build admin\" \"pnpm build sale\" \"pnpm build client\"",
+		"build-all": "concurrently -c auto \"pnpm build admin\" \"pnpm build sale\" \"pnpm build client\"",
 		"format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
 		"lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix --cache --max-warnings=0",
 		"migrate": "migrate -f ./src/database/migrations/config.ts -m ./src/database/migrations",
@@ -62,6 +62,7 @@
 	},
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.282.0",
+		"@casl/ability": "^6.5.0",
 		"@joi/date": "^2.1.0",
 		"@nestjs/common": "10.0.5",
 		"@nestjs/config": "^2.3.4",

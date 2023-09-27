@@ -1,6 +1,6 @@
 import { Model, Types } from 'mongoose'
 
-import { AdminFeature, AdminFeaturePermission } from '@admin/constants'
+import { AdminFeature, Actions } from '@admin/constants'
 import {
 	AccountAdmin,
 	AccountAdminDocument,
@@ -69,7 +69,7 @@ export class AccountAdminRoleService {
 	getRolePermissions() {
 		return {
 			nameKeys: Object.values(AdminFeature),
-			permissionKeys: Object.values(AdminFeaturePermission),
+			permissionKeys: Object.values(Actions),
 		}
 	}
 
@@ -84,8 +84,8 @@ export class AccountAdminRoleService {
 			name: data.name,
 			permissions: data.permissions.map(p => {
 				return {
-					featureName: p.featureName,
-					scopes: p.scopes,
+					featureName: p.featureName as AdminFeature,
+					scopes: p.scopes as Actions[],
 				}
 			}),
 			updatedBy: {

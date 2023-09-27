@@ -13,6 +13,9 @@ import { UpdateAccountAdminPasswordDTO } from '../dto/update-account-admin-passw
 import { UpdateAccountAdminDTO } from '../dto/update-account-admin.dto'
 import { UpdateAccountRoleDTO } from '../dto/update-account-role.dto'
 import { AccountAdminService } from '../services/account-admin.service'
+import { CheckPolicies } from '@admin/authentication/decorators/check-policies.decorator'
+import { AdminAbility } from '../../casl/casl-ability.factory'
+import { AdminFeature, Actions } from '@admin/constants'
 
 @Controller('admin/account-admin')
 @ApiTags('admin-app > account-admin')
@@ -21,16 +24,25 @@ export class AccountAdminController {
 	constructor(private readonly accountAdminService: AccountAdminService) {}
 
 	@Post('create')
+	@CheckPolicies((ability: AdminAbility) =>
+		ability.can(Actions.UPDATE, AdminFeature.ACCOUNT)
+	)
 	async createAccountAdmin(@Body() body: CreateAccountAdminDTO) {
 		return await this.accountAdminService.createAccountAdmin(body)
 	}
 
 	@Get('list')
+	@CheckPolicies((ability: AdminAbility) => {
+		return ability.can(Actions.VIEW, AdminFeature.ACCOUNT)
+	})
 	async getAccountAdminList() {
 		return await this.accountAdminService.getList()
 	}
 
 	@Patch('update-info')
+	@CheckPolicies((ability: AdminAbility) =>
+		ability.can(Actions.UPDATE, AdminFeature.ACCOUNT)
+	)
 	async updateInfo(
 		@Body(RemoveNullishObjectPipe, NotEmptyObjectPipe)
 		body: UpdateAccountAdminDTO,

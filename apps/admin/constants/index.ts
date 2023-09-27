@@ -8,7 +8,7 @@ export enum AdminFeature {
 	SETTING = 'SETTING',
 }
 
-export enum AdminFeaturePermission {
+export enum Actions {
 	VIEW = 'view',
 	UPDATE = 'update',
 	STATISTIC = 'statistic',
