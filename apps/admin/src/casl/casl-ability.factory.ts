@@ -35,7 +35,7 @@ export class CaslAbilityFactory {
 	) {}
 
 	async createForAccount(payload: AccountAdminPayload) {
-		const accountData = await this.getAccountData(payload.sub)
+		const accountData = await this.getAbilitiesOfAdmin(payload.sub)
 
 		const { can, build } = new AbilityBuilder(
 			createMongoAbility<PossibleAbilities, Conditions>
@@ -48,7 +48,7 @@ export class CaslAbilityFactory {
 			switch (feature) {
 				case AdminFeature.STORE:
 					scopes.forEach(scope => {
-						if ([Actions.UPDATE, Actions.STATISTIC].includes(scope)) {
+						if ([Actions.MODIFY, Actions.ANALYSE].includes(scope)) {
 							if (accountData.stores.length) {
 								can(scope, Store, {
 									_id: { $in: accountData.stores },
@@ -66,7 +66,7 @@ export class CaslAbilityFactory {
 
 				case AdminFeature.ORDER:
 					scopes.forEach(scope => {
-						if ([Actions.UPDATE, Actions.STATISTIC].includes(scope)) {
+						if ([Actions.MODIFY, Actions.ANALYSE].includes(scope)) {
 							if (accountData.stores.length) {
 								can(scope, Order, {
 									['store.id' as any]: { $in: accountData.stores },
@@ -96,7 +96,7 @@ export class CaslAbilityFactory {
 		})
 	}
 
-	private async getAccountData(accountId: string) {
+	async getAbilitiesOfAdmin(accountId: string) {
 		const [accountData] = await this.accountAdminModel
 			.aggregate<{
 				id: Types.ObjectId

@@ -24,7 +24,7 @@ export class OrderStateService {
 		return [
 			{
 				id: OrderState.PENDING,
-				name: 'Chờ xác nhận',
+				name: 'Chờ thanh toán',
 			},
 			{
 				id: OrderState.PROCESSING,

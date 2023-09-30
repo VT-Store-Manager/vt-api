@@ -129,7 +129,7 @@ export class AccountAdminService {
 		return updateResult.modifiedCount > 0
 	}
 
-	async resetAccountPassword(adminId: string, targetId) {
+	async resetAccountPassword(_adminId: string, _targetId) {
 		throw new BadRequestException()
 	}
 

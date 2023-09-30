@@ -1,10 +1,8 @@
 import { envConfiguration, envValidationSchema } from '@app/config'
 import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
-import { APP_FILTER } from '@nestjs/core'
 import { MongooseModule, MongooseModuleOptions } from '@nestjs/mongoose'
 
-import { WebsocketExceptionsFilter } from '../filter/ws-exception.filter'
 import { EventsModule } from './events/events.module'
 import { UserModule } from './user/user.module'
 

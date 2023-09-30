@@ -14,18 +14,24 @@ import { UpdateAccountAdminDTO } from '../dto/update-account-admin.dto'
 import { UpdateAccountRoleDTO } from '../dto/update-account-role.dto'
 import { AccountAdminService } from '../services/account-admin.service'
 import { CheckPolicies } from '@admin/authentication/decorators/check-policies.decorator'
-import { AdminAbility } from '../../casl/casl-ability.factory'
+import {
+	AdminAbility,
+	CaslAbilityFactory,
+} from '../../casl/casl-ability.factory'
 import { AdminFeature, Actions } from '@admin/constants'
 
 @Controller('admin/account-admin')
 @ApiTags('admin-app > account-admin')
 @JwtAccess()
 export class AccountAdminController {
-	constructor(private readonly accountAdminService: AccountAdminService) {}
+	constructor(
+		private readonly accountAdminService: AccountAdminService,
+		private readonly caslAbilityFactory: CaslAbilityFactory
+	) {}
 
 	@Post('create')
 	@CheckPolicies((ability: AdminAbility) =>
-		ability.can(Actions.UPDATE, AdminFeature.ACCOUNT)
+		ability.can(Actions.MODIFY, AdminFeature.ACCOUNT)
 	)
 	async createAccountAdmin(@Body() body: CreateAccountAdminDTO) {
 		return await this.accountAdminService.createAccountAdmin(body)
@@ -33,15 +39,20 @@ export class AccountAdminController {
 
 	@Get('list')
 	@CheckPolicies((ability: AdminAbility) => {
-		return ability.can(Actions.VIEW, AdminFeature.ACCOUNT)
+		return ability.can(Actions.READ, AdminFeature.ACCOUNT)
 	})
 	async getAccountAdminList() {
 		return await this.accountAdminService.getList()
 	}
 
+	@Get('ability')
+	async getAbility(@CurrentAdmin('sub') adminId: string) {
+		return await this.caslAbilityFactory.getAbilitiesOfAdmin(adminId)
+	}
+
 	@Patch('update-info')
 	@CheckPolicies((ability: AdminAbility) =>
-		ability.can(Actions.UPDATE, AdminFeature.ACCOUNT)
+		ability.can(Actions.MODIFY, AdminFeature.ACCOUNT)
 	)
 	async updateInfo(
 		@Body(RemoveNullishObjectPipe, NotEmptyObjectPipe)

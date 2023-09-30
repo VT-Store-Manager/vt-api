@@ -1,7 +1,6 @@
-import { Server, Socket } from 'socket.io'
+import { Server } from 'socket.io'
 
 import {
-	ConnectedSocket,
 	MessageBody,
 	SubscribeMessage,
 	WebSocketGateway,
