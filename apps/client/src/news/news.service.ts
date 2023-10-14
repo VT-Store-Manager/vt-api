@@ -36,6 +36,7 @@ export class NewsService {
 								image: {
 									$concat: [this.imageUrl, '$image'],
 								},
+								content: '$content',
 								url:
 									this.configService.get<string>('host') +
 									'/assets/html/coming-soon.html',

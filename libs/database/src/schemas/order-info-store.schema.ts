@@ -12,6 +12,12 @@ export class OrderInfoStore {
 
 	@Prop({ type: String, required: true, minlength: 1 })
 	address: string
+
+	@Prop({ type: Number, required: true })
+	lat: number
+
+	@Prop({ type: Number, required: true })
+	lng: number
 }
 
 export const OrderInfoStoreSchema = SchemaFactory.createForClass(OrderInfoStore)

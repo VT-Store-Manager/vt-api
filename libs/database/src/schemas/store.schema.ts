@@ -103,6 +103,12 @@ export class Store {
 	})
 	address: Address
 
+	@Prop({ type: Number, default: 0 })
+	lat?: number
+
+	@Prop({ type: Number, default: 0 })
+	lng?: number
+
 	@Prop({
 		type: UnavailableGoodsSchema,
 		_id: false,

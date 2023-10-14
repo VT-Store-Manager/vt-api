@@ -40,6 +40,9 @@ export class OrderInfoReview {
 
 	@Prop({ type: [Types.ObjectId], default: [] })
 	likeItems?: Array<Types.ObjectId | string>
+
+	@Prop({ type: [Types.ObjectId], default: [] })
+	dislikeItems?: Array<Types.ObjectId | string>
 }
 
 export const OrderInfoReviewSchema =

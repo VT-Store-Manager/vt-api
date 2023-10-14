@@ -1,7 +1,7 @@
 import { CurrentUser, JwtAccess } from '@app/authentication'
 import { ApiSuccessResponse, ObjectIdPipe, Role } from '@app/common'
 import { BooleanResponseDTO } from '@app/types'
-import { Body, Controller, Get, Param, Post } from '@nestjs/common'
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common'
 import { ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import { CheckVoucherDTO } from '../dto/check-voucher.dto'
@@ -77,6 +77,16 @@ export class OrderController {
 		@Body() body: ReviewOrderDTO
 	) {
 		return await this.orderService.createOrderReview(memberId, orderId, body)
+	}
+
+	@Patch(':orderId/cancel')
+	@JwtAccess(Role.MEMBER)
+	@ApiResponse({ type: BooleanResponseDTO, status: 200 })
+	async cancelOrder(
+		@CurrentUser('sub') memberId: string,
+		@Param('orderId', ObjectIdPipe) orderId: string
+	) {
+		return await this.orderService.cancelOrder(memberId, orderId)
 	}
 
 	@Get(':orderId')

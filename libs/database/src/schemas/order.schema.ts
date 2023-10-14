@@ -15,6 +15,7 @@ import {
 	OrderInfoReceiverSchema,
 } from './order-info-receiver.schema'
 import { OrderInfoStore, OrderInfoStoreSchema } from './order-info-store.schema'
+import { TimeLog, TimeLogSchema } from './time-log.schema'
 
 export type OrderDocument = Order & Document
 
@@ -113,8 +114,9 @@ export class Order {
 	})
 	state?: OrderState = OrderState.PENDING
 
-	// TODO: Implement order process
-	process?: any[]
+	@Prop({ type: [TimeLogSchema], default: () => [] })
+	timeLog?: TimeLog[]
+
 	createdAt?: Date
 }
 

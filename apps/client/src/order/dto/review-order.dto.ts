@@ -1,5 +1,12 @@
 import { Type } from 'class-transformer'
-import { IsOptional, IsPositive, IsString, Max, Min } from 'class-validator'
+import {
+	IsMongoId,
+	IsOptional,
+	IsPositive,
+	IsString,
+	Max,
+	Min,
+} from 'class-validator'
 
 export class ReviewOrderDTO {
 	@Type(() => Number)
@@ -11,4 +18,12 @@ export class ReviewOrderDTO {
 	@IsOptional()
 	@IsString()
 	review?: string = ''
+
+	@IsOptional()
+	@IsMongoId({ each: true })
+	like?: string[] = []
+
+	@IsOptional()
+	@IsMongoId({ each: true })
+	dislike?: string[] = []
 }

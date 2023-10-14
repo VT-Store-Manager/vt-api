@@ -46,6 +46,7 @@ import {
 import { CreateOrderDTO } from '../dto/create-order.dto'
 import { GetOrderDetailDTO } from '../dto/response.dto'
 import { ReviewOrderDTO } from '../dto/review-order.dto'
+import { getDistance } from '@app/common'
 
 type ShortProductValidationData = {
 	_id: string
@@ -93,6 +94,9 @@ type MemberRankShort = {
 
 type ValidatedProduct = ArrElement<ValidatedCart['products']>
 
+type StoreDataType = OrderInfoStore &
+	Pick<Store, 'unavailableGoods' | 'openTime'>
+
 @Injectable()
 export class OrderService {
 	constructor(
@@ -117,21 +121,20 @@ export class OrderService {
 		data: CreateOrderDTO
 	) {
 		const [
-			storeData,
+			[storeData],
 			products,
 			productOptions,
 			memberRank,
 			memberVoucher,
 			memberAppSetting,
 		] = await Promise.all([
-			data.storeId
+			data.categoryId !== ShippingMethod.DELIVERY
 				? this.storeModel
-						.aggregate<
-							OrderInfoStore & Pick<Store, 'unavailableGoods' | 'disabled'>
-						>([
+						.aggregate<StoreDataType>([
 							{
 								$match: {
 									_id: new Types.ObjectId(data.storeId),
+									disabled: false,
 									deleted: false,
 								},
 							},
@@ -183,13 +186,16 @@ export class OrderService {
 											},
 										],
 									},
+									openTime: true,
+									lat: true,
+									lng: true,
 									unavailableGoods: true,
 									disabled: true,
 								},
 							},
 						])
 						.exec()
-				: null,
+				: this.getNearestStore({ lat: data.addressLat, lng: data.addressLng }),
 			this.productModel
 				.aggregate<ShortProductValidationData>([
 					{
@@ -405,12 +411,22 @@ export class OrderService {
 			}),
 		])
 
-		if (storeData) {
-			if (storeData.length === 0) {
+		if (data.categoryId !== ShippingMethod.DELIVERY) {
+			if (!storeData) {
 				throw new BadRequestException('Store not found')
 			}
-			if (storeData[0].disabled) {
-				throw new BadRequestException('Store is disabled')
+			const currentTime = new Date()
+				.toLocaleTimeString(undefined, { hour12: false })
+				.slice(0, 5)
+			if (
+				(storeData as StoreDataType).openTime.start > currentTime ||
+				(storeData as StoreDataType).openTime.end >= currentTime
+			) {
+				throw new BadRequestException('Store closed')
+			}
+		} else {
+			if (!storeData) {
+				throw new BadRequestException('No store is available')
 			}
 		}
 
@@ -428,7 +444,7 @@ export class OrderService {
 			dtoProductMap: new Map(
 				data.products.map(product => [product.id, product])
 			),
-			store: storeData[0],
+			store: storeData,
 			productMap: new Map(
 				products.map(product => [product._id.toString(), product])
 			),
@@ -438,15 +454,6 @@ export class OrderService {
 			memberRank: memberRank[0],
 			memberVoucher: memberVoucher ? memberVoucher[0] : null,
 			memberAppSetting,
-		}
-
-		if (storeData) {
-			if (storeData.length === 0) {
-				throw new BadRequestException('Store not found')
-			}
-			if (storeData[0].disabled) {
-				throw new BadRequestException('Store is disabled')
-			}
 		}
 
 		const validatedProducts = await (data.voucherId
@@ -687,6 +694,102 @@ export class OrderService {
 			memberVoucher: memberVoucherData[0],
 			store: storeData ? storeData[0] : null,
 		}
+	}
+
+	private async getNearestStore(userLocation: { lat: number; lng: number }) {
+		const nowTime = new Date()
+			.toLocaleTimeString(undefined, { hour12: false })
+			.slice(0, 5)
+		const allStores = await this.storeModel
+			.aggregate<OrderInfoStore & Pick<Store, 'unavailableGoods'>>([
+				{
+					$addFields: {
+						compareOpenTime: {
+							$strcasecmp: ['$openTime.start', nowTime],
+						},
+						compareCloseTime: {
+							$strcasecmp: ['$openTime.end', nowTime],
+						},
+						address: {
+							$reduce: {
+								input: {
+									$filter: {
+										input: [
+											'$address.street',
+											'$address.ward',
+											'$address.district',
+											'$address.city',
+											'$address.country',
+										],
+										as: 'data',
+										cond: {
+											$and: [
+												{
+													$ne: ['$$data', ''],
+												},
+												{
+													$ne: ['$$data', null],
+												},
+											],
+										},
+									},
+								},
+								initialValue: '',
+								in: {
+									$concat: ['$$value', '$$this', ', '],
+								},
+							},
+						},
+					},
+				},
+				{
+					$match: {
+						// compareOpenTime: {
+						// 	$lte: 0,
+						// },
+						// compareCloseTime: {
+						// 	$eq: 1,
+						// },
+						deleted: false,
+						disabled: false,
+					},
+				},
+				{
+					$project: {
+						id: '$_id',
+						_id: false,
+						name: true,
+						address: {
+							$substr: [
+								'$address',
+								0,
+								{
+									$add: [
+										{
+											$strLenCP: '$address',
+										},
+										-2,
+									],
+								},
+							],
+						},
+						unavailableGoods: true,
+						lat: true,
+						lng: true,
+					},
+				},
+			])
+			.exec()
+		if (!allStores.length) throw new BadRequestException('No store available')
+
+		const storeCalculatedDistance = allStores.map(store => {
+			return {
+				...store,
+				distance: getDistance(userLocation, { lat: store.lat, lng: store.lng }),
+			}
+		})
+
+		return sortBy(storeCalculatedDistance, o => o.distance)
 	}
 
 	async validateVoucher(memberId: string, data: CheckVoucherDTO) {
@@ -1015,6 +1118,8 @@ export class OrderService {
 		return true
 	}
 
+	private find
+
 	async calculateOrderPoint(
 		orderPrice: number,
 		memberRank: MemberRankShort,
@@ -1038,22 +1143,34 @@ export class OrderService {
 		data: ReviewOrderDTO,
 		session?: ClientSession
 	) {
-		const orders = await this.orderMemberModel
-			.aggregate<Pick<OrderMember, 'state' | 'review'>>([
-				{
-					$match: {
-						_id: new Types.ObjectId(orderId),
-						'member.id': new Types.ObjectId(memberId),
+		const [orders, { point }] = await Promise.all([
+			this.orderMemberModel
+				.aggregate<
+					Pick<OrderMember, 'state' | 'review'> & { productIds: string[] }
+				>([
+					{
+						$match: {
+							_id: new Types.ObjectId(orderId),
+							'member.id': new Types.ObjectId(memberId),
+						},
 					},
-				},
-				{
-					$project: {
-						state: true,
-						review: true,
+					{
+						$project: {
+							productIds: {
+								$map: {
+									input: '$items',
+									as: 'item',
+									in: { $toString: '$$item.productId' },
+								},
+							},
+							state: true,
+							review: true,
+						},
 					},
-				},
-			])
-			.exec()
+				])
+				.exec(),
+			this.settingMemberAppService.getData({ point: true }),
+		])
 
 		if (!orders || orders.length === 0) {
 			throw new BadRequestException('Order not found')
@@ -1066,19 +1183,37 @@ export class OrderService {
 		if (orders[0].review && orders[0].review.rate) {
 			throw new BadRequestException('Order have already reviewed')
 		}
+		const order = orders[0]
+
+		const likeItems = uniq(data.like ?? []).filter(id =>
+			order.productIds.includes(id)
+		)
+		const dislikeItems = uniq(data.dislike ?? []).filter(
+			id => order.productIds.includes(id) && !likeItems.includes(id)
+		)
 
 		const orderReview: OrderInfoReview = {
 			rate: data.rate,
 			content: data.review,
+			likeItems,
+			dislikeItems,
 		}
 
-		const updateResult = await this.orderMemberModel.updateOne(
-			{ _id: new Types.ObjectId(orderId) },
-			{
-				review: orderReview,
-			},
-			session ? { session } : {}
-		)
+		const [updateResult, _] = await Promise.all([
+			this.orderMemberModel.updateOne(
+				{ _id: new Types.ObjectId(orderId) },
+				{
+					review: orderReview,
+				},
+				session ? { session } : {}
+			),
+			this.memberRankModel
+				.updateOne(
+					{ member: new Types.ObjectId(memberId) },
+					{ $inc: { currentPoint: point.reviewBonus } }
+				)
+				.exec(),
+		])
 
 		return updateResult.modifiedCount === 1
 	}
@@ -1087,70 +1222,74 @@ export class OrderService {
 		memberId: string,
 		orderId: string
 	): Promise<GetOrderDetailDTO> {
-		const orders = await this.orderMemberModel
-			.aggregate<GetOrderDetailDTO & { itemNames: string[] }>([
-				{
-					$match: {
-						_id: new Types.ObjectId(orderId),
-						'member.id': new Types.ObjectId(memberId),
+		const [orders, setting] = await Promise.all([
+			this.orderMemberModel
+				.aggregate<GetOrderDetailDTO & { itemNames: string[] }>([
+					{
+						$match: {
+							_id: new Types.ObjectId(orderId),
+							'member.id': new Types.ObjectId(memberId),
+						},
 					},
-				},
-				{
-					$project: {
-						id: '$_id',
-						_id: false,
-						code: true,
-						name: '',
-						itemNames: {
-							$map: {
-								input: '$items',
-								as: 'item',
-								in: '$$item.name',
-							},
-						},
-						categoryId: '$type',
-						fee: {
-							$subtract: ['$deliveryPrice', '$deliveryDiscount'],
-						},
-						originalFee: '$deliveryPrice',
-						cost: {
-							$sum: [
-								'$totalProductPrice',
-								{ $subtract: ['$deliveryPrice', '$deliveryDiscount'] },
-							],
-						},
-						payType: '$payment',
-						time: { $toLong: '$createdAt' },
-						phone: '$receiver.phone',
-						receiver: '$receiver.name',
-						voucherId: '$voucher.id',
-						voucherDiscount: '$voucher.discountPrice',
-						voucherName: '$voucher.title',
-						addressName: '$receiver.address',
-						products: {
-							$map: {
-								input: '$items',
-								as: 'item',
-								in: {
-									id: '$$item.productId',
-									name: '$$item.name',
-									cost: {
-										$subtract: ['$$item.unitPrice', '$$item.unitSalePrice'],
-									},
-									amount: '$$item.quantity',
-									note: '$$item.note',
-									options: '$$item.options',
+					{
+						$project: {
+							id: '$_id',
+							_id: false,
+							code: true,
+							name: '',
+							itemNames: {
+								$map: {
+									input: '$items',
+									as: 'item',
+									in: '$$item.name',
 								},
 							},
+							categoryId: '$type',
+							fee: {
+								$subtract: ['$deliveryPrice', '$deliveryDiscount'],
+							},
+							originalFee: '$deliveryPrice',
+							cost: {
+								$sum: [
+									'$totalProductPrice',
+									{ $subtract: ['$deliveryPrice', '$deliveryDiscount'] },
+								],
+							},
+							payType: '$payment',
+							time: { $toLong: '$createdAt' },
+							phone: '$receiver.phone',
+							receiver: '$receiver.name',
+							voucherId: '$voucher.id',
+							voucherDiscount: '$voucher.discountPrice',
+							voucherName: '$voucher.title',
+							addressName: '$receiver.address',
+							products: {
+								$map: {
+									input: '$items',
+									as: 'item',
+									in: {
+										id: '$$item.productId',
+										name: '$$item.name',
+										cost: {
+											$subtract: ['$$item.unitPrice', '$$item.unitSalePrice'],
+										},
+										amount: '$$item.quantity',
+										note: '$$item.note',
+										options: '$$item.options',
+									},
+								},
+							},
+							'review.rate': '$review.rate',
+							'review.review': '$review.content',
+							point: '$point',
+							status: '$state',
+							timeLog: '$timeLog',
 						},
-						'review.rate': '$review.rate',
-						'review.review': '$review.content',
-						point: '$point',
-						status: '$state',
 					},
-				},
-			])
-			.exec()
+				])
+				.exec(),
+			this.settingMemberAppService.getData({ point: true }),
+		])
 
 		if (!orders || orders.length === 0) {
 			throw new BadRequestException('Order not found')
@@ -1168,9 +1307,36 @@ export class OrderService {
 			}
 		})()
 		order.time = new Date(order.time).getTime()
+		order.reviewBonus = setting.point.reviewBonus
+		order.reviewShipperBonus = setting.point.reviewShipperBonus
 
 		delete order.itemNames
 
 		return order
+	}
+
+	async cancelOrder(memberId: string, orderId: string) {
+		const order = await this.orderMemberModel
+			.findOne({
+				_id: new Types.ObjectId(orderId),
+				'member.id': new Types.ObjectId(memberId),
+			})
+			.orFail(new BadRequestException('Order not found'))
+			.select('state')
+			.lean()
+			.exec()
+
+		if (order.state !== OrderState.PENDING) {
+			throw new BadRequestException('Cannot cancel processing order')
+		}
+
+		const updateResult = await this.orderMemberModel
+			.updateOne(
+				{ _id: new Types.ObjectId(orderId) },
+				{ $set: { state: OrderState.CANCELED } }
+			)
+			.exec()
+
+		return updateResult.modifiedCount === 1
 	}
 }

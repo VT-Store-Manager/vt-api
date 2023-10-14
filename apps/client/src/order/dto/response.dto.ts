@@ -1,4 +1,5 @@
 import { OrderState, PaymentType, ShippingMethod } from '@app/common'
+import { TimeLog } from '@app/database'
 
 export class GetProductPriceApplyingVoucherDTO {
 	fee: number
@@ -56,6 +57,9 @@ export class GetOrderDetailDTO {
 	review: OrderReviewDTO
 	point: number
 	status: OrderState
+	timeLog: TimeLog[]
+	reviewBonus?: number
+	reviewShipperBonus?: number
 }
 
 export class OrderProductItemDTO {

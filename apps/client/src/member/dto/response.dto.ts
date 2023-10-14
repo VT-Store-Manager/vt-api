@@ -27,6 +27,8 @@ export class MemberAddressItemDTO {
 	name: string
 	icon: string
 	address: string
+	lat: number
+	lng: number
 	note?: string
 	receiver: string
 	phone: string

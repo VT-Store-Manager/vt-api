@@ -62,6 +62,8 @@ export class StoreService {
 						},
 					},
 					address: true,
+					lat: true,
+					lng: true,
 				})
 				.lean({ virtuals: true })
 				.exec(),
@@ -73,13 +75,15 @@ export class StoreService {
 						.exec()
 				: null,
 		])
+
 		if (memberData) {
 			return stores.map(store => ({
 				id: store._id.toString(),
 				name: store.name,
 				image: store.images?.[0] || null,
 				address: store.fullAddress,
-				distance: +(Math.random() * 20).toFixed(1),
+				lat: store.lat,
+				lng: store.lng,
 				isFavorite:
 					memberData.favoriteStores.findIndex(
 						id => id.toString() === store._id.toString()
@@ -91,7 +95,8 @@ export class StoreService {
 				name: store.name,
 				image: store.images?.[0] || null,
 				address: store.fullAddress,
-				distance: Math.floor(Math.random() * 10000),
+				lat: store.lat,
+				lng: store.lng,
 				isFavorite: false,
 			}))
 		}

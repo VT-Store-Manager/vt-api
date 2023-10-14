@@ -10,6 +10,7 @@ import {
 	IsPhoneNumber,
 	IsString,
 	Min,
+	ValidateIf,
 	ValidateNested,
 } from 'class-validator'
 
@@ -18,6 +19,7 @@ import { PaymentType, ShippingMethod } from '@app/common'
 import { ShortProductInCartDTO } from './check-voucher.dto'
 
 export class CreateOrderDTO {
+	@ValidateIf((o: CreateOrderDTO) => o.categoryId !== ShippingMethod.DELIVERY)
 	@IsOptional()
 	@IsMongoId()
 	storeId?: string
@@ -51,6 +53,16 @@ export class CreateOrderDTO {
 	@IsString()
 	@IsNotEmpty()
 	addressName?: string
+
+	@ValidateIf((o: CreateOrderDTO) => o.categoryId === ShippingMethod.DELIVERY)
+	@Type(() => Number)
+	@IsNumber()
+	addressLat?: number
+
+	@ValidateIf((o: CreateOrderDTO) => o.categoryId === ShippingMethod.DELIVERY)
+	@Type(() => Number)
+	@IsNumber()
+	addressLng?: number
 
 	@IsArray()
 	@ArrayMinSize(1)

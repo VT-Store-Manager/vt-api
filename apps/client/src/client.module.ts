@@ -39,6 +39,7 @@ import { RankModule } from './rank/rank.module'
 import { StoreModule } from './store/store.module'
 import { TriggerModule } from './triggers/trigger.module'
 import { VoucherModule } from './voucher/voucher.module'
+import { SlideModule } from './slide/slide.module'
 
 @Module({
 	imports: [
@@ -82,6 +83,7 @@ import { VoucherModule } from './voucher/voucher.module'
 		PromotionModule,
 		PromotionCategoryModule,
 		RankModule,
+		SlideModule,
 		StoreModule,
 		TriggerModule,
 		VoucherModule,

@@ -35,6 +35,8 @@ export class SettingMemberApp {
 			startMilestone: { type: Number, min: 1 },
 			pointPerUnit: { type: Number, min: 1 },
 			unitStep: { type: Number, min: 1 },
+			reviewBonus: { type: Number, min: 1 },
+			reviewShipperBonus: { type: Number, min: 1 },
 		},
 		_id: false,
 	})
@@ -43,6 +45,8 @@ export class SettingMemberApp {
 		startMilestone: number
 		pointPerUnit: number
 		unitStep: number
+		reviewBonus: number
+		reviewShipperBonus: number
 	}
 
 	@Prop({

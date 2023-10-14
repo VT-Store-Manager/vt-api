@@ -8,6 +8,7 @@ export class NewsListItemDTO {
 	id: string
 	name: string
 	image: string
+	content: string
 	url: string
 	time: number
 }

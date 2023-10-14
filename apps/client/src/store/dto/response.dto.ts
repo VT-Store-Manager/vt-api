@@ -3,7 +3,8 @@ export class ShortStoreItemDTO {
 	name: string
 	image: string
 	address: string
-	distance: number
+	lat: number
+	lng: number
 	brandName?: string
 	isFavorite: boolean
 }
