@@ -14,6 +14,10 @@ import {
 	OrderInfoReceiver,
 	OrderInfoReceiverSchema,
 } from './order-info-receiver.schema'
+import {
+	OrderInfoShipper,
+	OrderInfoShipperSchema,
+} from './order-info-shipper.schema'
 import { OrderInfoStore, OrderInfoStoreSchema } from './order-info-store.schema'
 import { TimeLog, TimeLogSchema } from './time-log.schema'
 
@@ -116,6 +120,9 @@ export class Order {
 
 	@Prop({ type: [TimeLogSchema], default: () => [] })
 	timeLog?: TimeLog[]
+
+	@Prop({ type: OrderInfoShipperSchema })
+	shipper?: OrderInfoShipper
 
 	createdAt?: Date
 }

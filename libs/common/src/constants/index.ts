@@ -93,10 +93,10 @@ export enum OrderBuyer {
 }
 
 export enum StoreCriterion {
-	SERVICE,
-	PRODUCT,
-	APPLICATION,
-	SPACE,
+	SERVICE = 'service',
+	PRODUCT = 'product',
+	APPLICATION = 'application',
+	SPACE = 'space',
 }
 
 export enum OrderState {

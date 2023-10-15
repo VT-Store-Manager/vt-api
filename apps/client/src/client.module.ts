@@ -40,6 +40,7 @@ import { StoreModule } from './store/store.module'
 import { TriggerModule } from './triggers/trigger.module'
 import { VoucherModule } from './voucher/voucher.module'
 import { SlideModule } from './slide/slide.module'
+import { ShipperModule } from './shipper/shipper.module';
 
 @Module({
 	imports: [
@@ -87,6 +88,7 @@ import { SlideModule } from './slide/slide.module'
 		StoreModule,
 		TriggerModule,
 		VoucherModule,
+		ShipperModule,
 	],
 	controllers: [],
 	providers: [

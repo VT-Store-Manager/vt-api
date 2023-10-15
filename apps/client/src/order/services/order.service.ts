@@ -47,6 +47,7 @@ import { CreateOrderDTO } from '../dto/create-order.dto'
 import { GetOrderDetailDTO } from '../dto/response.dto'
 import { ReviewOrderDTO } from '../dto/review-order.dto'
 import { getDistance } from '@app/common'
+import { ReviewShipperDTO } from '../dto/review-shipper.dto'
 
 type ShortProductValidationData = {
 	_id: string
@@ -1118,8 +1119,6 @@ export class OrderService {
 		return true
 	}
 
-	private find
-
 	async calculateOrderPoint(
 		orderPrice: number,
 		memberRank: MemberRankShort,
@@ -1218,6 +1217,62 @@ export class OrderService {
 		return updateResult.modifiedCount === 1
 	}
 
+	async createShipperReview(
+		memberId: string,
+		orderId: string,
+		data: ReviewShipperDTO,
+		session?: ClientSession
+	) {
+		const [order, { point }] = await Promise.all([
+			this.orderMemberModel
+				.findOne({
+					_id: new Types.ObjectId(orderId),
+					'member.id': new Types.ObjectId(memberId),
+				})
+				.orFail(new BadRequestException('Order not found'))
+				.select('type state shipper')
+				.lean()
+				.exec(),
+			this.settingMemberAppService.getData({ point: true }),
+		])
+
+		if (order.type !== ShippingMethod.DELIVERY) {
+			throw new BadRequestException('Only review shipper in delivery order')
+		}
+		if (order.state !== OrderState.DONE) {
+			throw new BadRequestException('Only review when order is done')
+		}
+		if (!order.shipper || !order.shipper.id) {
+			throw new BadRequestException('Not have shipper data for reviewing')
+		}
+		if (order.shipper.review) {
+			throw new BadRequestException("Shipper's order is reviewed")
+		}
+
+		const updateResult = await this.orderMemberModel.updateOne(
+			{ _id: new Types.ObjectId(orderId) },
+			{
+				$set: {
+					shipper: {
+						review: {
+							rate: data.rate,
+							content: data.review,
+						},
+					},
+				},
+			},
+			session ? { session } : {}
+		)
+		this.memberRankModel.updateOne(
+			{ member: new Types.ObjectId(memberId) },
+			{
+				$inc: { currentPoint: point.reviewShipperBonus },
+			}
+		)
+
+		return updateResult.modifiedCount === 1
+	}
+
 	async getOrderDetail(
 		memberId: string,
 		orderId: string
@@ -1281,6 +1336,10 @@ export class OrderService {
 							},
 							'review.rate': '$review.rate',
 							'review.review': '$review.content',
+							'review.likeItems': '$review.likeItems',
+							'review.dislikeItems': '$review.dislikeItems',
+							'reviewShipper.rate': '$shipper.review.rate',
+							'reviewShipper.review': '$shipper.review.content',
 							point: '$point',
 							status: '$state',
 							timeLog: '$timeLog',
@@ -1307,8 +1366,8 @@ export class OrderService {
 			}
 		})()
 		order.time = new Date(order.time).getTime()
-		order.reviewBonus = setting.point.reviewBonus
-		order.reviewShipperBonus = setting.point.reviewShipperBonus
+		order.reviewPoint = setting.point.reviewBonus
+		order.reviewShipperPoint = setting.point.reviewShipperBonus
 
 		delete order.itemNames
 

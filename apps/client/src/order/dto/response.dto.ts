@@ -58,8 +58,8 @@ export class GetOrderDetailDTO {
 	point: number
 	status: OrderState
 	timeLog: TimeLog[]
-	reviewBonus?: number
-	reviewShipperBonus?: number
+	reviewPoint?: number
+	reviewShipperPoint?: number
 }
 
 export class OrderProductItemDTO {

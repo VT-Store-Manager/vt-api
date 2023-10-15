@@ -12,6 +12,7 @@ import {
 } from '../dto/response.dto'
 import { ReviewOrderDTO } from '../dto/review-order.dto'
 import { OrderService } from '../services/order.service'
+import { ReviewShipperDTO } from '../dto/review-shipper.dto'
 
 @Controller('member/cart')
 @ApiTags('member-app > order')
@@ -77,6 +78,17 @@ export class OrderController {
 		@Body() body: ReviewOrderDTO
 	) {
 		return await this.orderService.createOrderReview(memberId, orderId, body)
+	}
+
+	@Post(':orderId/review-shipper')
+	@JwtAccess(Role.MEMBER)
+	@ApiResponse({ type: BooleanResponseDTO, status: 201 })
+	async reviewShipper(
+		@CurrentUser('sub') memberId: string,
+		@Param('orderId', ObjectIdPipe) orderId: string,
+		@Body() body: ReviewShipperDTO
+	) {
+		return await this.orderService.createShipperReview(memberId, orderId, body)
 	}
 
 	@Patch(':orderId/cancel')
