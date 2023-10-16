@@ -1,16 +1,27 @@
 import { isNumber, sortBy } from 'lodash'
 import { Model, Types } from 'mongoose'
 
-import { ShippingMethod } from '@app/common'
+import {
+	s3KeyPattern,
+	SettingGeneralService,
+	SettingMemberAppService,
+	ShippingMethod,
+} from '@app/common'
 import {
 	MemberRank,
 	MemberRankDocument,
+	MemberVoucher,
+	MemberVoucherDocument,
 	Rank,
+	SettingGeneral,
+	SettingMemberApp,
 	VoucherCondition,
 	VoucherDiscount,
 } from '@app/database'
 import { BadRequestException, Injectable } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import { InjectModel } from '@nestjs/mongoose'
+import { AvailableUserVoucherDTO } from './dto/response.dto'
 
 export type ValidatedCart = {
 	shippingMethod: ShippingMethod
@@ -41,10 +52,18 @@ export type ApplyVoucherResult = {
 }
 @Injectable()
 export class VoucherService {
+	private readonly imageUrl: string
 	constructor(
 		@InjectModel(MemberRank.name)
-		private readonly memberRankModel: Model<MemberRankDocument>
-	) {}
+		private readonly memberRankModel: Model<MemberRankDocument>,
+		@InjectModel(MemberVoucher.name)
+		private readonly memberVoucherModel: Model<MemberVoucherDocument>,
+		private readonly settingGeneralService: SettingGeneralService,
+		private readonly settingMemberAppService: SettingMemberAppService,
+		private readonly configService: ConfigService
+	) {
+		this.imageUrl = configService.get<string>('imageUrl')
+	}
 
 	validateVoucherWithCart(condition: VoucherCondition, cart: ValidatedCart) {
 		// Validate min quantity
@@ -313,5 +332,117 @@ export class VoucherService {
 		}
 
 		return result
+	}
+
+	async getUserAvailableVouchers(userId: string) {
+		const { defaultImages } = await this.settingMemberAppService.getData<
+			Pick<SettingMemberApp, 'defaultImages'>
+		>({
+			defaultImages: true,
+		})
+		const now = new Date()
+
+		const [{ brand }, availableVouchers] = await Promise.all([
+			this.settingGeneralService.getData<Pick<SettingGeneral, 'brand'>>({
+				brand: true,
+			}),
+			this.memberVoucherModel
+				.aggregate<AvailableUserVoucherDTO>([
+					{
+						$lookup: {
+							from: 'vouchers',
+							localField: 'voucher',
+							foreignField: '_id',
+							as: 'voucher',
+						},
+					},
+					{
+						$unwind: {
+							path: '$voucher',
+						},
+					},
+					{
+						$match: {
+							'voucher.disabled': false,
+							'voucher.deleted': false,
+							member: new Types.ObjectId(userId),
+							startTime: { $lte: now },
+							finishTime: { $gt: now },
+							disabled: false,
+							$and: [
+								{
+									$or: [
+										{ 'voucher.activeStartTime': null },
+										{ 'voucher.activeStartTime': { $lte: now } },
+									],
+								},
+								{
+									$or: [
+										{ 'voucher.activeFinishTime': null },
+										{ 'voucher.activeFinishTime': { $gt: now } },
+									],
+								},
+							],
+							'voucher.condition.shippingMethod': {
+								$in: [null, ShippingMethod.IN_STORE],
+							},
+						},
+					},
+					{
+						$lookup: {
+							from: 'partners',
+							localField: 'partner',
+							foreignField: '_id',
+							as: 'partner',
+						},
+					},
+					{
+						$unwind: {
+							path: '$partner',
+							preserveNullAndEmptyArrays: true,
+						},
+					},
+					{
+						$project: {
+							id: '$voucher._id',
+							_id: false,
+							code: '$voucher.code',
+							name: '$voucher.title',
+							image: {
+								$cond: [
+									{
+										$regexMatch: {
+											input: '$voucher.image',
+											regex: s3KeyPattern,
+										},
+									},
+									{ $concat: [this.imageUrl, '$voucher.image'] },
+									{ $concat: [this.imageUrl, defaultImages.voucher] },
+								],
+							},
+							partner: '$voucher.partner.name',
+							from: { $toLong: '$startTime' },
+							to: { $toLong: '$finishTime' },
+							description: '$voucher.description',
+						},
+					},
+					{
+						$sort: {
+							to: 1,
+							from: 1,
+						},
+					},
+				])
+				.exec(),
+		])
+
+		return availableVouchers.map(voucher => ({
+			...voucher,
+			...(voucher.partner
+				? {}
+				: {
+						partner: brand.name,
+				  }),
+		}))
 	}
 }

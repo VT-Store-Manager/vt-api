@@ -1,7 +1,14 @@
-import { FileService } from '@app/common'
+import {
+	FileService,
+	SettingGeneralService,
+	SettingMemberAppService,
+	SettingModule,
+} from '@app/common'
 import {
 	MemberRank,
 	MemberRankSchema,
+	MemberVoucher,
+	MemberVoucherSchema,
 	MongoSessionService,
 	Product,
 	ProductOption,
@@ -32,7 +39,12 @@ import { VoucherService } from './voucher.service'
 				name: MemberRank.name,
 				schema: MemberRankSchema,
 			},
+			{
+				name: MemberVoucher.name,
+				schema: MemberVoucherSchema,
+			},
 		]),
+		SettingModule,
 	],
 	controllers: [VoucherController],
 	providers: [VoucherService, FileService, MongoSessionService],

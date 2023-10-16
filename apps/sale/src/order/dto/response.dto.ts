@@ -76,3 +76,16 @@ export class OrderReviewDTO {
 	rate: number
 	review: string
 }
+
+export class SuggestVoucherItemDTO {
+	voucherId: string
+	cost: number
+	voucherDiscount: number
+	products: SuggestVoucherProductItemDTO[]
+}
+
+export class SuggestVoucherProductItemDTO {
+	id: string
+	cost: number
+	discount: number
+}

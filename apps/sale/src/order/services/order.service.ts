@@ -44,6 +44,8 @@ import {
 } from '../dto/check-voucher.dto'
 import { CreateOrderDTO } from '../dto/create-order.dto'
 import { UpdateOrderStateDTO } from '../dto/update-order-state.dto'
+import { GetSuggestVoucherDTO } from '../dto/get-suggest-voucher.dto'
+import { SuggestVoucherItemDTO } from '../dto/response.dto'
 
 type ShortProductValidationData = {
 	_id: string
@@ -1039,5 +1041,64 @@ export class OrderService {
 			)
 			.exec()
 		return updateResult.matchedCount > 0
+	}
+
+	async getAvailableVoucherList(memberId: string) {
+		const availableVouchers =
+			await this.voucherService.getUserAvailableVouchers(memberId)
+		return availableVouchers.map(voucher => voucher.id)
+	}
+
+	async getSuggestVoucherList(
+		voucherIds: string[],
+		storeId: string,
+		data: GetSuggestVoucherDTO
+	): Promise<SuggestVoucherItemDTO[]> {
+		const applyVoucherResult = await Promise.all(
+			voucherIds.map(voucherId => {
+				const validateVoucherData: CheckVoucherDTO = {
+					storeId,
+					voucherId,
+					categoryId: ShippingMethod.IN_STORE,
+					products: data.products,
+				}
+				return (async (): Promise<ApplyVoucherResult | null> => {
+					try {
+						return await this.validateVoucher(data.userId, validateVoucherData)
+					} catch {
+						return null
+					}
+				})()
+			})
+		)
+
+		return applyVoucherResult
+			.map((result, index) => {
+				if (!result) return null
+				const totalCost = result.products.reduce((res, product) => {
+					const productPrice =
+						product.quantity * (product.mainPrice + product.extraPrice) -
+						product.discountPrice
+					return res + productPrice
+				}, 0)
+				const voucherDiscount =
+					result.totalDiscount ||
+					result.products.reduce((res, product) => {
+						return res + product.discountPrice
+					}, 0)
+				const products = result.products.map(product => ({
+					id: product.id,
+					cost: (product.mainPrice + product.extraPrice) * product.quantity,
+					discount: product.discountPrice,
+				}))
+
+				return {
+					voucherId: voucherIds[index],
+					cost: totalCost,
+					voucherDiscount,
+					products,
+				}
+			})
+			.filter(v => !!v)
 	}
 }
