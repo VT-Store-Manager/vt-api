@@ -1,4 +1,4 @@
-import { Gender } from '@app/common'
+import { Gender, Joi } from '@app/common'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { isNumber } from 'lodash'
 import { Types } from 'mongoose'
@@ -13,8 +13,21 @@ export class Employee {
 	@Prop({ type: Types.ObjectId, ref: 'Store', required: true })
 	store: Types.ObjectId
 
-	@Prop({ type: Types.ObjectId })
-	email?: string
+	@Prop({
+		type: String,
+		required: true,
+		unique: true,
+		validate: (v: string) => {
+			const error = Joi.string().phoneNumber({ strict: true }).validate(v).error
+			if (error)
+				throw new Error(
+					error.message ||
+						error.details.map(detail => detail.message).join(', ')
+				)
+			return true
+		},
+	})
+	phone: string
 
 	@Prop({ type: String, required: true })
 	name: string

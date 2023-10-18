@@ -24,6 +24,12 @@ export class OrderInfoReceiver {
 	@Prop({ type: String, required: true })
 	address: string
 
+	@Prop({ type: Number, default: 0 })
+	lat?: number
+
+	@Prop({ type: Number, default: 0 })
+	lng?: number
+
 	@Prop({ type: Date })
 	timer?: Date
 }

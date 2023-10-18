@@ -1,7 +1,7 @@
 import { uniq } from 'lodash'
-import { Model, Types } from 'mongoose'
+import { FilterQuery, Model, Types } from 'mongoose'
 
-import { OrderState } from '@app/common'
+import { OrderState, QueryTime } from '@app/common'
 import { Order, OrderDocument } from '@app/database'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
@@ -46,20 +46,34 @@ export class OrderStateService {
 		state: OrderState | 'all',
 		query: GetOrderByStateDTO
 	): Promise<OrderByStateResultDTO> {
+		const time = (() => {
+			const current = new Date()
+			const today = new Date(
+				current.getFullYear(),
+				current.getMonth(),
+				current.getDate()
+			)
+			if (query.time === QueryTime.TODAY) return today
+			if (query.time === QueryTime.WEEK) {
+				return new Date(today.setDate(today.getDate() - today.getDay()))
+			}
+			if (query.time === QueryTime.MONTH) {
+				return new Date(today.setDate(1))
+			}
+			return new Date(0, 0, 0)
+		})()
+		const queryCondition: FilterQuery<OrderDocument> = {
+			'store.id': new Types.ObjectId(storeId),
+			...(state !== 'all' ? { state } : {}),
+			createdAt: { $gte: time },
+		}
+
 		const [count, orders] = await Promise.all([
-			this.orderModel
-				.countDocuments({
-					'store.id': new Types.ObjectId(storeId),
-					...(state !== 'all' ? { state } : {}),
-				})
-				.exec(),
+			this.orderModel.countDocuments(queryCondition).exec(),
 			this.orderModel
 				.aggregate<OrderCartItemDTO>([
 					{
-						$match: {
-							'store.id': new Types.ObjectId(storeId),
-							...(state !== 'all' ? { state } : {}),
-						},
+						$match: queryCondition,
 					},
 					{
 						$project: {

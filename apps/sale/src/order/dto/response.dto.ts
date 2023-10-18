@@ -1,4 +1,5 @@
 import { OrderState, PaymentType, ShippingMethod } from '@app/common'
+import { TimeLog } from '@app/database'
 
 export class GetProductPriceApplyingVoucherDTO {
 	fee: number
@@ -51,16 +52,39 @@ export class GetOrderDetailDTO {
 	cost: number
 	payType: PaymentType
 	time: number
-	phone: string
-	receiver: string
-	voucherId: string
-	voucherDiscount: number
-	voucherName: string
-	addressName: string
+	voucher?: OrderVoucherInfo
+	member?: OrderMemberInfo
+	receiver?: OrderReceiverInfo
 	products: OrderProductItemDTO[]
-	review: OrderReviewDTO
+	review?: OrderReviewDTO
+	reviewShipper?: OrderReviewShipperDTO
 	point: number
 	status: OrderState
+	timeLog: TimeLog[]
+	employee?: OrderEmployeeInfo
+	shipper?: OrderShipperInfo
+}
+
+export class OrderVoucherInfo {
+	id: string
+	discount: number
+	name: string
+}
+
+export class OrderMemberInfo {
+	id: string
+	phone: string
+	name: string
+	rankName: string
+	rankColor: string
+}
+
+export class OrderReceiverInfo {
+	name: string
+	phone: string
+	addressName: string
+	lat: number
+	lng: number
 }
 
 export class OrderProductItemDTO {
@@ -75,6 +99,29 @@ export class OrderProductItemDTO {
 export class OrderReviewDTO {
 	rate: number
 	review: string
+	like: string[]
+	dislike: string[]
+}
+
+export class OrderReviewShipperDTO {
+	rate: number
+	review: string
+}
+
+export class OrderEmployeeInfo {
+	id: string
+	phone: string
+	name: string
+	avatar: string
+	isDeleted: boolean
+}
+
+export class OrderShipperInfo {
+	id: string
+	phone: string
+	name: string
+	avatar: string
+	isDeleted: boolean
 }
 
 export class SuggestVoucherItemDTO {

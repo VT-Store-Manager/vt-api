@@ -129,3 +129,10 @@ export enum RangeTimeType {
 	QUARTER = 'quarter',
 	YEAR = 'year',
 }
+
+export enum QueryTime {
+	EVERY_TIME,
+	TODAY,
+	WEEK,
+	MONTH,
+}

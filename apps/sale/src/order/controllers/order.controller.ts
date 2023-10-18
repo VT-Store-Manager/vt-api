@@ -1,11 +1,18 @@
 import { CurrentUser, JwtAccess } from '@app/authentication'
-import { ApiSuccessResponse, Role, ShippingMethod } from '@app/common'
+import {
+	ApiSuccessResponse,
+	ObjectIdPipe,
+	Role,
+	ShippingMethod,
+} from '@app/common'
 import { MongoSessionService, Order } from '@app/database'
 import { BooleanResponseDTO } from '@app/types'
 import {
 	Body,
 	Controller,
+	Get,
 	InternalServerErrorException,
+	Param,
 	Patch,
 	Post,
 } from '@nestjs/common'
@@ -14,6 +21,7 @@ import { ApiResponse, ApiTags, OmitType } from '@nestjs/swagger'
 import { CreateOrderDTO } from '../dto/create-order.dto'
 import {
 	CreateOrderResponseDTO,
+	GetOrderDetailDTO,
 	SuggestVoucherItemDTO,
 } from '../dto/response.dto'
 import { UpdateOrderStateDTO } from '../dto/update-order-state.dto'
@@ -112,5 +120,15 @@ export class OrderController {
 			voucherDiscount,
 			products,
 		}
+	}
+
+	@Get(':id')
+	@JwtAccess(Role.SALESPERSON)
+	@ApiSuccessResponse(GetOrderDetailDTO)
+	async getCartDetail(
+		@CurrentUser('sub') storeId: string,
+		@Param('id', ObjectIdPipe) orderId: string
+	) {
+		return await this.orderService.getOrderDetail(storeId, orderId)
 	}
 }

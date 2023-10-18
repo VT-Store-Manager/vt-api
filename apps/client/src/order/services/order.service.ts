@@ -1342,7 +1342,17 @@ export class OrderService {
 							'reviewShipper.review': '$shipper.review.content',
 							point: '$point',
 							status: '$state',
-							timeLog: '$timeLog',
+							timeLog: {
+								$map: {
+									input: '$timeLog',
+									as: 'log',
+									in: {
+										time: { $toLong: '$$log.time' },
+										title: '$$log.title',
+										description: '$$log.description',
+									},
+								},
+							},
 						},
 					},
 				])

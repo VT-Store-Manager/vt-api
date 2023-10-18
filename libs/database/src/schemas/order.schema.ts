@@ -20,6 +20,10 @@ import {
 } from './order-info-shipper.schema'
 import { OrderInfoStore, OrderInfoStoreSchema } from './order-info-store.schema'
 import { TimeLog, TimeLogSchema } from './time-log.schema'
+import {
+	OrderInfoEmployee,
+	OrderInfoEmployeeSchema,
+} from './order-info-employee.schema'
 
 export type OrderDocument = Order & Document
 
@@ -123,6 +127,9 @@ export class Order {
 
 	@Prop({ type: OrderInfoShipperSchema })
 	shipper?: OrderInfoShipper
+
+	@Prop({ type: OrderInfoEmployeeSchema })
+	employee?: OrderInfoEmployee
 
 	createdAt?: Date
 }

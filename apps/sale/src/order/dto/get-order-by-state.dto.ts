@@ -1,5 +1,6 @@
+import { QueryTime } from '@app/common'
 import { Type } from 'class-transformer'
-import { IsOptional, IsPositive } from 'class-validator'
+import { IsEnum, IsOptional, IsPositive } from 'class-validator'
 
 export class GetOrderByStateDTO {
 	@IsOptional()
@@ -11,4 +12,9 @@ export class GetOrderByStateDTO {
 	@Type(() => Number)
 	@IsPositive()
 	limit?: number = 20
+
+	@IsOptional()
+	@Type(() => Number)
+	@IsEnum(QueryTime)
+	time?: QueryTime = QueryTime.EVERY_TIME
 }

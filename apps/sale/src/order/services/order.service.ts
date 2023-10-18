@@ -1,4 +1,4 @@
-import { intersection, sortBy } from 'lodash'
+import { intersection, sortBy, uniq } from 'lodash'
 import { ClientSession, Model, Types } from 'mongoose'
 
 import {
@@ -45,7 +45,7 @@ import {
 import { CreateOrderDTO } from '../dto/create-order.dto'
 import { UpdateOrderStateDTO } from '../dto/update-order-state.dto'
 import { GetSuggestVoucherDTO } from '../dto/get-suggest-voucher.dto'
-import { SuggestVoucherItemDTO } from '../dto/response.dto'
+import { GetOrderDetailDTO, SuggestVoucherItemDTO } from '../dto/response.dto'
 
 type ShortProductValidationData = {
 	_id: string
@@ -1100,5 +1100,208 @@ export class OrderService {
 				}
 			})
 			.filter(v => !!v)
+	}
+
+	async getOrderDetail(
+		storeId: string,
+		orderId: string
+	): Promise<GetOrderDetailDTO> {
+		const [order] = await this.orderModel
+			.aggregate<GetOrderDetailDTO & { itemNames: string[] }>([
+				{
+					$match: {
+						_id: new Types.ObjectId(orderId),
+						'store.id': new Types.ObjectId(storeId),
+					},
+				},
+				{
+					$lookup: {
+						from: 'employees',
+						localField: 'employee.id',
+						foreignField: '_id',
+						as: 'employeeData',
+						pipeline: [
+							{
+								$project: {
+									deleted: true,
+								},
+							},
+						],
+					},
+				},
+				{
+					$unwind: {
+						path: '$employeeData',
+						preserveNullAndEmptyArrays: true,
+					},
+				},
+				{
+					$lookup: {
+						from: 'shippers',
+						localField: 'shipper.id',
+						foreignField: '_id',
+						as: 'shipperData',
+						pipeline: [
+							{
+								$project: {
+									avatar: true,
+									deleted: true,
+								},
+							},
+						],
+					},
+				},
+				{
+					$unwind: {
+						path: '$shipperData',
+						preserveNullAndEmptyArrays: true,
+					},
+				},
+				{
+					$project: {
+						id: '$_id',
+						_id: false,
+						code: true,
+						name: '',
+						itemNames: {
+							$map: {
+								input: '$items',
+								as: 'item',
+								in: '$$item.name',
+							},
+						},
+						categoryId: '$type',
+						fee: {
+							$subtract: ['$deliveryPrice', '$deliveryDiscount'],
+						},
+						originalFee: '$deliveryPrice',
+						cost: {
+							$sum: [
+								'$totalProductPrice',
+								{
+									$subtract: ['$deliveryPrice', '$deliveryDiscount'],
+								},
+							],
+						},
+						payType: '$payment',
+						time: {
+							$toLong: '$createdAt',
+						},
+						voucher: {
+							id: '$voucher.id',
+							name: '$voucher.title',
+							discount: '$voucher.discountPrice',
+						},
+						member: {
+							id: '$member.id',
+							phone: '$member.phone',
+							name: '$member.name',
+							rankName: '$member.rankName',
+							rankColor: '$member.rankColor',
+						},
+						receiver: {
+							name: '$receiver.name',
+							phone: '$receiver.phone',
+							addressName: '$receiver.address',
+							lat: {
+								$ifNull: ['$receiver.lat', 0],
+							},
+							lng: {
+								$ifNull: ['$receiver.lng', 0],
+							},
+						},
+						products: {
+							$map: {
+								input: '$items',
+								as: 'item',
+								in: {
+									id: '$$item.productId',
+									name: '$$item.name',
+									cost: {
+										$subtract: ['$$item.unitPrice', '$$item.unitSalePrice'],
+									},
+									amount: '$$item.quantity',
+									note: '$$item.note',
+									options: '$$item.options',
+								},
+							},
+						},
+						review: {
+							rate: '$review.rate',
+							review: '$review.content',
+							likeItems: {
+								$ifNull: ['$review.likeItems', []],
+							},
+							dislikeItems: {
+								$ifNull: ['$review.dislikeItems', []],
+							},
+						},
+						reviewShipper: {
+							rate: '$shipper.review.rate',
+							review: '$shipper.review.content',
+						},
+						point: '$point',
+						status: '$state',
+						timeLog: {
+							$map: {
+								input: '$timeLog',
+								as: 'log',
+								in: {
+									time: {
+										$toLong: '$$log.time',
+									},
+									title: '$$log.title',
+									description: '$$log.description',
+								},
+							},
+						},
+						employee: {
+							id: '$employee.id',
+							name: '$employee.name',
+							phone: '$employee.phone',
+							avatar: '$employee.avatar',
+							isDeleted: {
+								$ifNull: ['$employeeData.deleted', true],
+							},
+						},
+						shipper: {
+							id: '$shipper.id',
+							phone: '$shipper.phone',
+							name: '$shipper.name',
+							avatar: {
+								$ifNull: ['$shipperData.avatar', ''],
+							},
+							isDeleted: {
+								$ifNull: ['$shipperData.deleted', true],
+							},
+						},
+					},
+				},
+			])
+			.exec()
+
+		if (!order) {
+			throw new BadRequestException('Order not found')
+		}
+		if (!order?.voucher?.id) delete order.voucher
+		if (!order?.member?.id) delete order.member
+		if (!order?.review.rate) delete order.review
+		if (!order?.reviewShipper?.rate) delete order.reviewShipper
+		if (!order?.receiver?.name) delete order.receiver
+		if (!order?.employee?.id) delete order.employee
+		if (!order?.shipper?.id) delete order.shipper
+		order.name = (() => {
+			const nameSet = uniq(order.itemNames)
+			if (nameSet.length < 3) {
+				return nameSet.slice(0, 2).join(', ')
+			} else {
+				return `${nameSet.slice(0, 2).join(', ')} +${
+					nameSet.length - 2
+				} sản phẩm khác`
+			}
+		})()
+
+		delete order.itemNames
+		return order
 	}
 }
