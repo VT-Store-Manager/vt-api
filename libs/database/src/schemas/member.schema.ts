@@ -21,6 +21,7 @@ export class Member {
 		type: String,
 		required: true,
 		unique: true,
+		index: 'text',
 		validate: (v: string) => {
 			const error = Joi.string().phoneNumber({ strict: true }).validate(v).error
 			if (error)
@@ -33,16 +34,16 @@ export class Member {
 	})
 	phone: string
 
-	@Prop({ type: String, index: 1 })
+	@Prop({ type: String, index: 'text' })
 	email?: string
 
 	@Prop({ type: String })
 	avatar?: string
 
-	@Prop({ type: String, required: true })
+	@Prop({ type: String, required: true, index: 'text' })
 	firstName: string
 
-	@Prop({ type: String, required: true })
+	@Prop({ type: String, required: true, index: 'text' })
 	lastName: string
 
 	@Prop({
