@@ -1,5 +1,7 @@
 import { OrderBuyer, SettingModule } from '@app/common'
 import {
+	Employee,
+	EmployeeSchema,
 	MemberData,
 	MemberDataSchema,
 	MemberRank,
@@ -50,6 +52,7 @@ import { OrderService } from './services/order.service'
 			{ name: Store.name, schema: StoreSchema },
 			{ name: ProductOption.name, schema: ProductOptionSchema },
 			{ name: MemberVoucherHistory.name, schema: MemberVoucherHistorySchema },
+			{ name: Employee.name, schema: EmployeeSchema },
 		]),
 		VoucherModule,
 		SettingModule,

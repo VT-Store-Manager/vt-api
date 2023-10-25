@@ -8,6 +8,8 @@ import {
 	ShippingMethod,
 } from '@app/common'
 import {
+	Employee,
+	EmployeeDocument,
 	MemberRank,
 	MemberRankDocument,
 	MemberVoucher,
@@ -46,6 +48,7 @@ import { CreateOrderDTO } from '../dto/create-order.dto'
 import { UpdateOrderStateDTO } from '../dto/update-order-state.dto'
 import { GetSuggestVoucherDTO } from '../dto/get-suggest-voucher.dto'
 import { GetOrderDetailDTO, SuggestVoucherItemDTO } from '../dto/response.dto'
+import { OrderInfoEmployee } from '@app/database'
 
 type ShortProductValidationData = {
 	_id: string
@@ -108,6 +111,8 @@ export class OrderService {
 		private readonly productOptionModel: Model<ProductOptionDocument>,
 		@InjectModel(Order.name)
 		private readonly orderModel: Model<OrderDocument>,
+		@InjectModel(Employee.name)
+		private readonly employeeModel: Model<EmployeeDocument>,
 		private readonly voucherService: VoucherService,
 		private readonly settingMemberAppService: SettingMemberAppService
 	) {}
@@ -124,6 +129,7 @@ export class OrderService {
 			memberRank,
 			memberVoucher,
 			memberAppSetting,
+			employee,
 		] = await Promise.all([
 			this.storeModel
 				.aggregate<
@@ -399,6 +405,24 @@ export class OrderService {
 			this.settingMemberAppService.getData<Pick<SettingMemberApp, 'point'>>({
 				point: 1,
 			}),
+			data.employeeId
+				? this.employeeModel
+						.aggregate<OrderInfoEmployee>([
+							{
+								$match: new Types.ObjectId(data.employeeId),
+							},
+							{
+								$project: {
+									id: '$_id',
+									_id: false,
+									phone: true,
+									name: true,
+									avatar: true,
+								},
+							},
+						])
+						.exec()
+				: undefined,
 		])
 
 		if (storeData) {
@@ -421,6 +445,9 @@ export class OrderService {
 		if (memberVoucher && memberVoucher[0].disabled) {
 			throw new BadRequestException(`Voucher ${data.voucherId} is disabled now`)
 		}
+		if (employee && employee.length === 0) {
+			throw new BadRequestException('Employee not found')
+		}
 		const result = {
 			dtoProductMap: new Map(
 				data.products.map(product => [product.id, product])
@@ -435,6 +462,7 @@ export class OrderService {
 			memberRank: memberRank?.[0],
 			memberVoucher: memberVoucher?.[0],
 			memberAppSetting,
+			employee: employee?.[0],
 		}
 
 		if (storeData) {
@@ -481,6 +509,7 @@ export class OrderService {
 			memberVoucher,
 			memberAppSetting,
 			validatedProducts,
+			employee,
 		} = await this.getRelatedDataToCreateOrder(
 			storeId,
 			data,
@@ -608,6 +637,7 @@ export class OrderService {
 						memberAppSetting.point
 					),
 					state: OrderState.PROCESSING,
+					...(employee ? { employee } : {}),
 			  } as OrderMember)
 			: {
 					type: ShippingMethod.IN_STORE,
@@ -616,6 +646,7 @@ export class OrderService {
 					...orderItems,
 					payment: data.payType,
 					state: OrderState.PROCESSING,
+					...(employee ? { employee } : {}),
 			  }
 
 		const createdOrder = await this.orderModel.create(
@@ -1030,6 +1061,40 @@ export class OrderService {
 	}
 
 	async updateState(data: UpdateOrderStateDTO) {
+		const [order, employee] = await Promise.all([
+			this.orderModel
+				.aggregate<Pick<Order, 'employee'>>([
+					{ $match: new Types.ObjectId(data.id) },
+					{ $project: { employee: true } },
+				])
+				.exec(),
+			data.employeeId
+				? this.employeeModel
+						.aggregate<OrderInfoEmployee>([
+							{
+								$match: new Types.ObjectId(data.employeeId),
+							},
+							{
+								$project: {
+									id: '$_id',
+									_id: false,
+									phone: true,
+									name: true,
+									avatar: true,
+								},
+							},
+						])
+						.exec()
+				: undefined,
+		])
+
+		if (order.length === 0) {
+			throw new BadRequestException('Order not found')
+		}
+		if (order[0].employee && employee?.length === 0) {
+			throw new BadRequestException('Employee not found')
+		}
+
 		const updateResult = await this.orderModel
 			.updateOne(
 				{
@@ -1037,6 +1102,7 @@ export class OrderService {
 				},
 				{
 					state: data.status,
+					...(order[0].employee ? {} : { employee: employee[0] }),
 				}
 			)
 			.exec()

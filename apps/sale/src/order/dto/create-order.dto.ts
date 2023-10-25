@@ -28,6 +28,10 @@ export class CreateOrderDTO {
 	@IsEnum(PaymentType)
 	payType?: PaymentType = PaymentType.CAST
 
+	@IsOptional()
+	@IsMongoId()
+	employeeId?: string
+
 	@IsArray()
 	@ArrayMinSize(1)
 	@Type(() => CreateOrderItemDTO)

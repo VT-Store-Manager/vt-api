@@ -1,4 +1,4 @@
-import { IsEnum, IsMongoId } from 'class-validator'
+import { IsEnum, IsMongoId, IsOptional } from 'class-validator'
 
 import { OrderState } from '@app/common'
 
@@ -8,4 +8,8 @@ export class UpdateOrderStateDTO {
 
 	@IsEnum(OrderState)
 	status: OrderState
+
+	@IsOptional()
+	@IsMongoId()
+	employeeId?: string
 }
