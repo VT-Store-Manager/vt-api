@@ -2,6 +2,7 @@ import { Document, Types } from 'mongoose'
 import mongooseDelete from 'mongoose-delete'
 import mongooseLeanVirtuals from 'mongoose-lean-virtuals'
 
+import { Joi } from '@app/common'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 
 export type StoreDocument = Store &
@@ -97,6 +98,21 @@ export class Store {
 	openTime: OpenTime
 
 	@Prop({
+		type: String,
+		required: true,
+		validate: (v: string) => {
+			const error = Joi.string().phoneNumber({ strict: true }).validate(v).error
+			if (error)
+				throw new Error(
+					error.message ||
+						error.details.map(detail => detail.message).join(', ')
+				)
+			return true
+		},
+	})
+	phone: string
+
+	@Prop({
 		type: AddressSchema,
 		_id: false,
 		required: true,
@@ -134,6 +150,7 @@ StoreSchema.plugin(mongooseLeanVirtuals)
 StoreSchema.plugin(mongooseDelete, {
 	deletedAt: true,
 	indexFields: 'all',
+	overrideMethods: 'all',
 })
 
 StoreSchema.virtual('fullAddress').get(function () {

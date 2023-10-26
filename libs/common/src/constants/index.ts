@@ -51,6 +51,7 @@ export enum Role {
 	MEMBER = 'member',
 	ADMIN = 'admin',
 	SALESPERSON = 'salesperson',
+	SHIPPER = 'shipper',
 }
 
 export enum SettingType {
@@ -104,6 +105,11 @@ export enum OrderState {
 	PROCESSING = 'processing',
 	DONE = 'done',
 	CANCELED = 'canceled',
+}
+
+export enum ShipperOrderState {
+	TOOK_AWAY = 1,
+	DELIVERED = 2,
 }
 
 export enum NotificationType {

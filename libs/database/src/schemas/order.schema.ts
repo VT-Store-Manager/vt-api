@@ -24,8 +24,9 @@ import {
 	OrderInfoEmployee,
 	OrderInfoEmployeeSchema,
 } from './order-info-employee.schema'
+import { SoftDeleteDocument } from 'mongoose-delete'
 
-export type OrderDocument = Order & Document
+export type OrderDocument = Order & Document & SoftDeleteDocument
 
 const generateOrderCode = (time = Date.now()) => {
 	return Math.floor(time * (1 + Math.random()))

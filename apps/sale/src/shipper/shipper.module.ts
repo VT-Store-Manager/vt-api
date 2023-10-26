@@ -9,14 +9,10 @@ import {
 	AccountAdmin,
 	AccountAdminSchema,
 	Member,
-	MemberData,
-	MemberDataSchema,
-	MemberRank,
-	MemberRankSchema,
 	MemberSchema,
 	MongoSessionService,
-	Rank,
-	RankSchema,
+	Order,
+	OrderSchema,
 	RefreshToken,
 	RefreshTokenSchema,
 	Shipper,
@@ -25,36 +21,36 @@ import {
 	StoreSchema,
 } from '@app/database'
 import { Module } from '@nestjs/common'
-import { JwtModule } from '@nestjs/jwt'
+import { JwtService } from '@nestjs/jwt'
 import { MongooseModule } from '@nestjs/mongoose'
 
-import { AuthController } from './auth.controller'
-import { AuthService as ClientAuthService } from './auth.service'
+import { ShipperAuthController } from './controllers/auth.controller'
+import { ShipperOrderController } from './controllers/order.controller'
+import { ShipperAuthService } from './services/auth.service'
+import { ShipperOrderService } from './services/order.service'
 
 @Module({
 	imports: [
 		MongooseModule.forFeature([
-			{ name: Member.name, schema: MemberSchema },
+			{ name: Shipper.name, schema: ShipperSchema },
+			{ name: Order.name, schema: OrderSchema },
 			{ name: RefreshToken.name, schema: RefreshTokenSchema },
-			{ name: MemberData.name, schema: MemberDataSchema },
-			{ name: MemberRank.name, schema: MemberRankSchema },
-			{ name: Rank.name, schema: RankSchema },
-			{ name: Store.name, schema: StoreSchema },
+			{ name: Member.name, schema: MemberSchema },
 			{ name: Store.name, schema: StoreSchema },
 			{ name: AccountAdmin.name, schema: AccountAdminSchema },
-			{ name: Shipper.name, schema: ShipperSchema },
 		]),
-		JwtModule.register({}),
 	],
-	controllers: [AuthController],
+	controllers: [ShipperAuthController, ShipperOrderController],
 	providers: [
-		AuthService,
-		ClientAuthService,
 		SmsService,
+		ShipperAuthService,
+		ShipperOrderService,
+		AuthService,
 		TokenService,
 		MongoSessionService,
+		JwtService,
 		JwtAccessStrategy,
 		JwtRefreshStrategy,
 	],
 })
-export class AuthModule {}
+export class ShipperModule {}

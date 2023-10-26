@@ -5,20 +5,25 @@ import {
 	AccountAdminDocument,
 	Member,
 	MemberDocument,
+	Shipper,
+	ShipperDocument,
 	Store,
 	StoreDocument,
 } from '@app/database'
 import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
+import { SoftDeleteModel } from 'mongoose-delete'
 
 @Injectable()
 export class AuthService {
 	constructor(
 		@InjectModel(Member.name)
-		private readonly memberModel: Model<MemberDocument>,
+		private readonly memberModel: SoftDeleteModel<MemberDocument>,
 		@InjectModel(Store.name) private readonly storeModel: Model<StoreDocument>,
 		@InjectModel(AccountAdmin.name)
-		private readonly accountAdminModel: Model<AccountAdminDocument>
+		private readonly accountAdminModel: Model<AccountAdminDocument>,
+		@InjectModel(Shipper.name)
+		private readonly shipperModel: SoftDeleteModel<ShipperDocument>
 	) {}
 
 	async updateTokenValidTime(uid: string, session?: ClientSession) {
@@ -34,7 +39,7 @@ export class AuthService {
 
 	async getTokenValidTimeMember(id: string) {
 		const member = await this.memberModel
-			.findById(id)
+			.findOne({ _id: new Types.ObjectId(id) })
 			.orFail(new UnauthorizedException('User not found'))
 			.select('tokenValidTime')
 			.lean()
@@ -57,5 +62,13 @@ export class AuthService {
 			.lean()
 			.exec()
 		return member.tokenValidTime
+	}
+
+	async checkShipperExist(id: string) {
+		const countShipper = await this.shipperModel
+			.count({ _id: new Types.ObjectId(id) })
+			.exec()
+
+		return countShipper > 0
 	}
 }

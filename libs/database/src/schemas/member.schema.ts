@@ -1,6 +1,6 @@
 import { isNumber } from 'lodash'
 import { Document, Types } from 'mongoose'
-import mongooseDelete from 'mongoose-delete'
+import MongooseDelete, { SoftDeleteDocument } from 'mongoose-delete'
 import mongooseLeanVirtuals from 'mongoose-lean-virtuals'
 
 import { Gender } from '@app/common'
@@ -11,7 +11,10 @@ export type MemberVirtual = {
 	fullName: string
 }
 
-export type MemberDocument = Member & Document & MemberVirtual
+export type MemberDocument = Member &
+	Document &
+	MemberVirtual &
+	SoftDeleteDocument
 
 @Schema({ versionKey: false, timestamps: true })
 export class Member {
@@ -70,7 +73,10 @@ export class Member {
 
 export const MemberSchema = SchemaFactory.createForClass(Member)
 
-MemberSchema.plugin(mongooseDelete)
+MemberSchema.plugin(MongooseDelete, {
+	deletedAt: true,
+	overrideMethods: 'all',
+})
 MemberSchema.plugin(mongooseLeanVirtuals)
 
 MemberSchema.virtual('fullName').get(function () {

@@ -27,6 +27,7 @@ import { ProductModule } from './product/product.module'
 import { VoucherModule } from './voucher/voucher.module'
 import { EmployeeModule } from './employee/employee.module';
 import { MemberModule } from './member/member.module';
+import { ShipperModule } from './shipper/shipper.module';
 
 @Module({
 	imports: [
@@ -61,6 +62,7 @@ import { MemberModule } from './member/member.module';
 		VoucherModule,
 		EmployeeModule,
 		MemberModule,
+		ShipperModule,
 	],
 	controllers: [],
 	providers: [

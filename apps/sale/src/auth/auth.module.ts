@@ -8,6 +8,8 @@ import {
 	MemberSchema,
 	RefreshToken,
 	RefreshTokenSchema,
+	Shipper,
+	ShipperSchema,
 	Store,
 	StoreSchema,
 } from '@app/database'
@@ -27,6 +29,7 @@ import { AuthService as CommonAuthService } from '@app/authentication'
 			{ name: Store.name, schema: StoreSchema },
 			{ name: Member.name, schema: MemberSchema },
 			{ name: AccountAdmin.name, schema: AccountAdminSchema },
+			{ name: Shipper.name, schema: ShipperSchema },
 		]),
 	],
 	controllers: [AuthController],

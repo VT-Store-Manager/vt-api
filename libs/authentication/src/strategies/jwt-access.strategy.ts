@@ -45,6 +45,11 @@ export class JwtAccessStrategy extends PassportStrategy(
 				throw new ForbiddenException('Detected an abnormal action or data')
 			}
 			return payload
+		} else if (payload.role === Role.SHIPPER) {
+			if (!(await this.authService.checkShipperExist(payload.sub))) {
+				throw new ForbiddenException('Shipper not found')
+			}
+			return payload
 		}
 	}
 }
