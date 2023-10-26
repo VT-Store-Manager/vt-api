@@ -34,6 +34,7 @@ export class Employee {
 
 	@Prop({ type: String, required: true })
 	avatar: string
+
 	@Prop({
 		type: Number,
 		enum: Object.values(Gender).filter(e => isNumber(e)),

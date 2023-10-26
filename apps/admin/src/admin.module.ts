@@ -38,6 +38,8 @@ import { VoucherModule } from './voucher/voucher.module'
 import { AccountAdminModule } from './account-admin/account-admin.module'
 import { AuthModule } from './auth/auth.module'
 import { CaslModule } from './casl/casl.module'
+import { ShipperModule } from './shipper/shipper.module';
+import { EmployeeModule } from './employee/employee.module';
 
 @Module({
 	imports: [
@@ -83,6 +85,8 @@ import { CaslModule } from './casl/casl.module'
 		TagModule,
 		VoucherModule,
 		CaslModule,
+		ShipperModule,
+		EmployeeModule,
 	],
 	controllers: [],
 	providers: [
