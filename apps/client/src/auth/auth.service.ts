@@ -18,6 +18,7 @@ import {
 import { InjectModel } from '@nestjs/mongoose'
 
 import { RegisterMemberDTO } from './dto/register-member.dto'
+import { getListVnPhone, validateAndTransformPhone } from '@app/common'
 
 @Injectable()
 export class AuthService {
@@ -33,10 +34,11 @@ export class AuthService {
 	) {}
 
 	async createTemporaryMember(dto: RegisterMemberDTO, session?: ClientSession) {
+		const phone = validateAndTransformPhone(dto.phone)
 		const member = await this.memberModel.create(
 			[
 				{
-					phone: dto.phone,
+					phone,
 					firstName: dto.firstName,
 					lastName: dto.lastName,
 					gender: dto.gender,
@@ -50,7 +52,7 @@ export class AuthService {
 
 	async checkAccount(phone: string) {
 		const member = await this.memberModel
-			.findOne({ phone })
+			.findOne({ phone: { $in: getListVnPhone(phone) } })
 			.orFail(new BadRequestException('The account does not exist'))
 			.select('deleted')
 			.lean()
@@ -66,7 +68,7 @@ export class AuthService {
 	): Promise<string> {
 		const [member, rank] = await Promise.all([
 			this.memberModel
-				.findOne({ phone })
+				.findOne({ phone: { $in: getListVnPhone(phone) } })
 				.orFail(new BadRequestException('Account not found'))
 				.select('_id notVerified')
 				.lean()

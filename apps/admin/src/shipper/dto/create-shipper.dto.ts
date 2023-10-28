@@ -1,15 +1,17 @@
-import { ApiPropertyFile, Gender } from '@app/common'
+import { ApiPropertyFile, Gender, vnPhoneNumberPattern } from '@app/common'
+import { Type } from 'class-transformer'
 import {
 	IsEnum,
 	IsNumber,
-	IsPhoneNumber,
 	IsString,
+	Matches,
 	Min,
 	MinLength,
 } from 'class-validator'
 
 export class CreateShipperDTO {
-	@IsPhoneNumber()
+	@IsString()
+	@Matches(vnPhoneNumberPattern)
 	phone: string
 
 	@IsString()
@@ -20,9 +22,11 @@ export class CreateShipperDTO {
 	avatar?: any
 
 	@IsEnum(Gender)
-	gender: Gender
+	@Type(() => Number)
+	gender: Gender = Gender.MALE
 
 	@IsNumber()
+	@Type(() => Number)
 	@Min(0)
 	dob: number
 }

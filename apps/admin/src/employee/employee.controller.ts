@@ -1,5 +1,5 @@
 import { ApiSuccessResponse, FileService, ParseFile } from '@app/common'
-import { Employee, MongoSessionService, Shipper } from '@app/database'
+import { Employee, MongoSessionService } from '@app/database'
 import {
 	Body,
 	Controller,
@@ -23,18 +23,18 @@ export class EmployeeController {
 	) {}
 
 	@Post('create')
-	@UseInterceptors(FileInterceptor('image'))
+	@UseInterceptors(FileInterceptor('avatar'))
 	@ApiConsumes('multipart/form-data')
-	@ApiSuccessResponse(Shipper, 201)
+	@ApiSuccessResponse(Employee, 201)
 	async createEmployee(
-		@UploadedFile(ParseFile) image: Express.Multer.File,
+		@UploadedFile(ParseFile) avatarImage: Express.Multer.File,
 		@Body() body: CreateEmployeeDTO
 	) {
 		let imageKey = ''
-		if (image) {
+		if (avatarImage) {
 			imageKey = this.fileService.createObjectKey(
 				['employee'],
-				image.originalname
+				avatarImage.originalname
 			)
 		}
 		body.avatar = imageKey
@@ -43,8 +43,12 @@ export class EmployeeController {
 		const { error } = await this.mongoSessionService.execTransaction(
 			async session => {
 				const [_, employee] = await Promise.all([
-					image
-						? this.fileService.upload(image.buffer, imageKey, abortController)
+					avatarImage
+						? this.fileService.upload(
+								avatarImage.buffer,
+								imageKey,
+								abortController
+						  )
 						: null,
 					this.employeeService.createEmployee(body, session),
 				])

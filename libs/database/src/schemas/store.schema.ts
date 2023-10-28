@@ -2,7 +2,7 @@ import { Document, Types } from 'mongoose'
 import mongooseDelete from 'mongoose-delete'
 import mongooseLeanVirtuals from 'mongoose-lean-virtuals'
 
-import { Joi } from '@app/common'
+import { vnPhoneNumberPattern } from '@app/common'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 
 export type StoreDocument = Store &
@@ -101,12 +101,8 @@ export class Store {
 		type: String,
 		required: true,
 		validate: (v: string) => {
-			const error = Joi.string().phoneNumber({ strict: true }).validate(v).error
-			if (error)
-				throw new Error(
-					error.message ||
-						error.details.map(detail => detail.message).join(', ')
-				)
+			const check = vnPhoneNumberPattern.test(v)
+			if (!check) throw new Error('Phone number is not valid')
 			return true
 		},
 	})

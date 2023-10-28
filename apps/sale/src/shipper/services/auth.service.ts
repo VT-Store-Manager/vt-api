@@ -1,18 +1,20 @@
+import { SoftDeleteModel } from 'mongoose-delete'
+
+import { getListVnPhone } from '@app/common'
 import { Shipper, ShipperDocument } from '@app/database'
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-import { Model } from 'mongoose'
 
 @Injectable()
 export class ShipperAuthService {
 	constructor(
 		@InjectModel(Shipper.name)
-		private readonly shipperModel: Model<ShipperDocument>
+		private readonly shipperModel: SoftDeleteModel<ShipperDocument>
 	) {}
 
 	async checkAccount(phone: string) {
 		const countShipper = await this.shipperModel
-			.count({ phone, deleted: false })
+			.count({ phone: { $in: getListVnPhone(phone) } })
 			.orFail(new BadRequestException('Phone number is incorrect'))
 			.exec()
 
@@ -21,7 +23,7 @@ export class ShipperAuthService {
 
 	async getShipperId(phone: string): Promise<string> {
 		const shipper = await this.shipperModel
-			.findOne({ phone, deleted: false })
+			.findOne({ phone: { $in: getListVnPhone(phone) } })
 			.orFail(new BadRequestException('Phone number is incorrect'))
 			.select('_id')
 			.lean()

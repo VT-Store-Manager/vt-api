@@ -22,18 +22,18 @@ export class ShipperController {
 	) {}
 
 	@Post('create')
-	@UseInterceptors(FileInterceptor('image'))
+	@UseInterceptors(FileInterceptor('avatar'))
 	@ApiConsumes('multipart/form-data')
 	@ApiSuccessResponse(Shipper, 201)
 	async createShipper(
-		@UploadedFile(ParseFile) image: Express.Multer.File,
+		@UploadedFile(ParseFile) avatarImage: Express.Multer.File,
 		@Body() body: CreateShipperDTO
 	) {
 		let imageKey = ''
-		if (image) {
+		if (avatarImage) {
 			imageKey = this.fileService.createObjectKey(
 				['shipper'],
-				image.originalname
+				avatarImage.originalname
 			)
 		}
 		body.avatar = imageKey
@@ -42,8 +42,12 @@ export class ShipperController {
 		const { error } = await this.mongoSessionService.execTransaction(
 			async session => {
 				const [_, shipper] = await Promise.all([
-					image
-						? this.fileService.upload(image.buffer, imageKey, abortController)
+					avatarImage
+						? this.fileService.upload(
+								avatarImage.buffer,
+								imageKey,
+								abortController
+						  )
 						: null,
 					this.shipperService.createShipper(body, session),
 				])

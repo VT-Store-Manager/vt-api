@@ -2,19 +2,21 @@ import {
 	IsEnum,
 	IsMongoId,
 	IsNumber,
-	IsPhoneNumber,
 	IsString,
+	Matches,
 	Min,
 	MinLength,
 } from 'class-validator'
 
-import { ApiPropertyFile, Gender } from '@app/common'
+import { ApiPropertyFile, Gender, vnPhoneNumberPattern } from '@app/common'
+import { Type } from 'class-transformer'
 
 export class CreateEmployeeDTO {
 	@IsMongoId()
 	store: string
 
-	@IsPhoneNumber()
+	@IsString()
+	@Matches(vnPhoneNumberPattern)
 	phone: string
 
 	@IsString()
@@ -25,9 +27,11 @@ export class CreateEmployeeDTO {
 	avatar?: any
 
 	@IsEnum(Gender)
+	@Type(() => Number)
 	gender: Gender
 
 	@IsNumber()
+	@Type(() => Number)
 	@Min(0)
 	dob: number
 }

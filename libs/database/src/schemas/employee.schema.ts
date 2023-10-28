@@ -1,4 +1,4 @@
-import { Gender, Joi } from '@app/common'
+import { Gender, vnPhoneNumberPattern } from '@app/common'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { isNumber } from 'lodash'
 import { Types } from 'mongoose'
@@ -18,12 +18,8 @@ export class Employee {
 		required: true,
 		unique: true,
 		validate: (v: string) => {
-			const error = Joi.string().phoneNumber({ strict: true }).validate(v).error
-			if (error)
-				throw new Error(
-					error.message ||
-						error.details.map(detail => detail.message).join(', ')
-				)
+			const check = vnPhoneNumberPattern.test(v)
+			if (!check) throw new Error('Phone number is not valid')
 			return true
 		},
 	})

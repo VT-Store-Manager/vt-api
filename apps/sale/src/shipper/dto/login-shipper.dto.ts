@@ -1,6 +1,8 @@
-import { IsPhoneNumber } from 'class-validator'
+import { vnPhoneNumberPattern } from '@/libs/common/src'
+import { IsString, Matches } from 'class-validator'
 
 export class LoginDTO {
-	@IsPhoneNumber()
+	@IsString()
+	@Matches(vnPhoneNumberPattern)
 	phone: string
 }

@@ -1,13 +1,11 @@
-import { IsNumberString, IsPhoneNumber, Matches } from 'class-validator'
+import { IsNumberString, IsString, Matches } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
+import { vnPhoneNumberPattern } from '@app/common'
 
 export class VerifySmsOtpDTO {
-	@IsPhoneNumber()
-	@ApiProperty({
-		description:
-			'Phone number of account - must have Country code (Vietnam code is +84)',
-	})
+	@IsString()
+	@Matches(vnPhoneNumberPattern)
 	phone: string
 
 	@IsNumberString()

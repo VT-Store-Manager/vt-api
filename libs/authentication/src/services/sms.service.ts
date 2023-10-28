@@ -1,6 +1,8 @@
+import { Twilio } from 'twilio'
+
+import { validateAndTransformPhone } from '@app/common'
 import { BadRequestException, Injectable, Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { Twilio } from 'twilio'
 
 @Injectable()
 export class SmsService {
@@ -16,12 +18,16 @@ export class SmsService {
 	}
 
 	async initiatePhoneNumberVerification(phoneNumber: string) {
+		phoneNumber = validateAndTransformPhone(phoneNumber)
+
 		return await this.twilioClient.verify.v2
 			.services(this.serviceSid)
 			.verifications.create({ to: phoneNumber, channel: 'sms', locale: 'vi' })
 	}
 
 	async confirmPhoneNumber(phoneNumber: string, verificationCode: string) {
+		phoneNumber = validateAndTransformPhone(phoneNumber)
+
 		try {
 			const result = await this.twilioClient.verify.v2
 				.services(this.serviceSid)

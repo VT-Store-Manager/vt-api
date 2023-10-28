@@ -1,7 +1,9 @@
+import { Model } from 'mongoose'
+
+import { getListVnPhone } from '@app/common'
 import { Member, MemberDocument } from '@app/database'
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-import { Model } from 'mongoose'
 
 @Injectable()
 export class UserService {
@@ -12,7 +14,7 @@ export class UserService {
 
 	async getUserInfo(phone: string) {
 		const member = await this.memberModel
-			.findOne({ $or: [{ phone }, { phone: phone.replace(/^0/, '+84') }] })
+			.findOne({ phone: { $in: getListVnPhone(phone) } })
 			.orFail(new BadRequestException('Member not found'))
 			.select({
 				firstName: true,
