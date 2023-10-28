@@ -1,11 +1,16 @@
+import { Transform } from 'class-transformer'
 import {
 	IsNotEmpty,
 	IsNumber,
 	IsOptional,
-	IsPhoneNumber,
 	IsString,
+	Matches,
 } from 'class-validator'
 
+import {
+	validateAndTransformPhone,
+	vnPhoneNumberPattern,
+} from '@/libs/common/src'
 import { MemberAddress } from '@app/database'
 import { PickType } from '@nestjs/swagger'
 
@@ -29,7 +34,9 @@ export class CreateMemberAddressDTO extends PickType(MemberAddress, [
 	@IsNotEmpty()
 	receiver: string
 
-	@IsPhoneNumber()
+	@IsString()
+	@Matches(vnPhoneNumberPattern)
+	@Transform(({ value }) => validateAndTransformPhone(value))
 	@IsNotEmpty()
 	phone: string
 

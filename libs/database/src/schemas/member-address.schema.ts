@@ -1,6 +1,6 @@
 import { Types } from 'mongoose'
 
-import { Joi } from '@app/common'
+import { validateVnPhoneNumber } from '@app/common'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 
 @Schema({ versionKey: false })
@@ -44,15 +44,7 @@ export class MemberAddress {
 	@Prop({
 		type: String,
 		required: true,
-		validate: (v: string) => {
-			const error = Joi.string().phoneNumber({ strict: true }).validate(v).error
-			if (error)
-				throw new Error(
-					error.message ||
-						error.details.map(detail => detail.message).join(', ')
-				)
-			return true
-		},
+		validate: validateVnPhoneNumber,
 	})
 	phone: string
 }

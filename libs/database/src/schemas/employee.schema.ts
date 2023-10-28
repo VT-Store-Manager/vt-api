@@ -1,8 +1,9 @@
-import { Gender, vnPhoneNumberPattern } from '@app/common'
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { isNumber } from 'lodash'
 import { Types } from 'mongoose'
 import MongooseDelete, { SoftDeleteDocument } from 'mongoose-delete'
+
+import { Gender, validateVnPhoneNumber } from '@app/common'
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 
 export type EmployeeDocument = Employee & Document & SoftDeleteDocument
 
@@ -17,11 +18,7 @@ export class Employee {
 		type: String,
 		required: true,
 		unique: true,
-		validate: (v: string) => {
-			const check = vnPhoneNumberPattern.test(v)
-			if (!check) throw new Error('Phone number is not valid')
-			return true
-		},
+		validate: validateVnPhoneNumber,
 	})
 	phone: string
 

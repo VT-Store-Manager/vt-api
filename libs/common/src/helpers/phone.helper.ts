@@ -1,15 +1,24 @@
 import { BadRequestException } from '@nestjs/common'
 import { vnPhoneNumberPattern } from '../constants'
 
+export const validateVnPhoneNumber = (
+	phone: string,
+	err: Error | null = new Error('Phone number is not valid')
+): boolean => {
+	const check = vnPhoneNumberPattern.test(phone)
+	if (err === null) return false
+	if (!check) throw err
+	return true
+}
+
 export const getListVnPhone = (
 	phone: string,
 	err: Error = new BadRequestException(
 		`This phone ${phone} is not Vietnam phone number`
 	)
 ): string[] => {
-	if (!vnPhoneNumberPattern.test(phone)) {
-		throw err
-	}
+	validateVnPhoneNumber(phone, err)
+
 	if (phone.startsWith('+84')) {
 		phone = phone.slice(3)
 	} else if (phone.startsWith('84')) {
@@ -23,13 +32,12 @@ export const getListVnPhone = (
 
 export const validateAndTransformPhone = (
 	phoneNumber: string,
-	err: Error = new BadRequestException(
+	err: Error | null = new BadRequestException(
 		`This phone '${phoneNumber}' is not Vietnam phone number`
 	)
 ): string => {
-	if (!vnPhoneNumberPattern.test(phoneNumber)) {
-		throw err
-	}
+	validateVnPhoneNumber(phoneNumber, err)
+
 	if (phoneNumber.startsWith('0')) {
 		phoneNumber = '+84' + phoneNumber.slice(1)
 	} else if (phoneNumber.startsWith('84')) {

@@ -3,8 +3,7 @@ import { Document, Types } from 'mongoose'
 import MongooseDelete, { SoftDeleteDocument } from 'mongoose-delete'
 import mongooseLeanVirtuals from 'mongoose-lean-virtuals'
 
-import { Gender } from '@app/common'
-import { Joi } from '@app/common'
+import { Gender, validateVnPhoneNumber } from '@app/common'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 
 export type MemberVirtual = {
@@ -25,15 +24,7 @@ export class Member {
 		required: true,
 		unique: true,
 		index: 'text',
-		validate: (v: string) => {
-			const error = Joi.string().phoneNumber({ strict: true }).validate(v).error
-			if (error)
-				throw new Error(
-					error.message ||
-						error.details.map(detail => detail.message).join(', ')
-				)
-			return true
-		},
+		validate: validateVnPhoneNumber,
 	})
 	phone: string
 

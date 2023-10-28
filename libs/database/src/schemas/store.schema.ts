@@ -2,7 +2,7 @@ import { Document, Types } from 'mongoose'
 import mongooseDelete from 'mongoose-delete'
 import mongooseLeanVirtuals from 'mongoose-lean-virtuals'
 
-import { vnPhoneNumberPattern } from '@app/common'
+import { validateVnPhoneNumber } from '@app/common'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 
 export type StoreDocument = Store &
@@ -100,11 +100,7 @@ export class Store {
 	@Prop({
 		type: String,
 		required: true,
-		validate: (v: string) => {
-			const check = vnPhoneNumberPattern.test(v)
-			if (!check) throw new Error('Phone number is not valid')
-			return true
-		},
+		validate: validateVnPhoneNumber,
 	})
 	phone: string
 

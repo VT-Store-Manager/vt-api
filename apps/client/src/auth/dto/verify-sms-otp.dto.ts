@@ -1,9 +1,16 @@
-import { IsNumberString, IsPhoneNumber, Matches } from 'class-validator'
+import { Transform } from 'class-transformer'
+import { IsNumberString, IsString, Matches } from 'class-validator'
 
+import {
+	validateAndTransformPhone,
+	vnPhoneNumberPattern,
+} from '@/libs/common/src'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class VerifySmsOtpDTO {
-	@IsPhoneNumber()
+	@IsString()
+	@Matches(vnPhoneNumberPattern)
+	@Transform(({ value }) => validateAndTransformPhone(value))
 	@ApiProperty({
 		description:
 			'Phone number of account - must have Country code (Vietnam code is +84)',
