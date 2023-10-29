@@ -35,6 +35,9 @@ export const envConfiguration = () => {
 			accessTokenExpiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN,
 			refreshTokenExpiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN,
 		},
+		ws: {
+			httpSecret: process.env.WS_HTTP_SECRET_KEY,
+		},
 		flag: {
 			disableSMS:
 				process.env.DISABLE_SMS === 'true' || +process.env.DISABLE_SMS === 1,
@@ -45,14 +48,19 @@ export const envConfiguration = () => {
 }
 
 export const envValidationSchema = Joi.object({
+	// Database
 	MONGODB_URL: Joi.string().required(),
+	MONGODB_DB: Joi.string().min(1).required(),
+	// AWS
 	AWS_REGION: Joi.string().required(),
 	AWS_ACCESS_KEY_ID: Joi.string().required(),
 	AWS_SECRET_ACCESS_KEY: Joi.string().required(),
 	AWS_PUBLIC_BUCKET_NAME: Joi.string().required(),
+	// Twilio
 	TWILIO_ACCOUNT_SID: Joi.string().token().required(),
 	TWILIO_AUTH_TOKEN: Joi.string().token().required(),
 	TWILIO_VERIFICATION_SERVICE_SID: Joi.string().token().required(),
+	// JWT
 	ACCESS_TOKEN_SECRET_KEY: Joi.string().token().required(),
 	ACCESS_TOKEN_EXPIRES_IN: Joi.string()
 		.pattern(/^\d+(m|d)$/)
@@ -61,6 +69,11 @@ export const envValidationSchema = Joi.object({
 	REFRESH_TOKEN_EXPIRES_IN: Joi.string()
 		.pattern(/^\d+(m|d)$/)
 		.required(),
+	ACCESS_TOKEN_ADMIN_SECRET_KEY: Joi.string().token().required(),
+	REFRESH_TOKEN_ADMIN_SECRET_KEY: Joi.string().token().required(),
+	// WS
+	WS_HTTP_SECRET_KEY: Joi.string().token().required(),
+	// Flag
 	DISABLE_SMS: Joi.string()
 		.allow('true', 'false', true, false, '0', '1', 0, 1)
 		.default(false),

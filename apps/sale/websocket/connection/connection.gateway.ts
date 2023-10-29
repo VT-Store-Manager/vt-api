@@ -7,7 +7,11 @@ import {
 	JwtAccessStrategy,
 	WsAuth,
 } from '@app/authentication'
-import { Role, WebsocketExceptionsFilter } from '@app/common'
+import {
+	HTTP_HEADER_SECRET_KEY_NAME,
+	Role,
+	WebsocketExceptionsFilter,
+} from '@app/common'
 import {
 	AccountAdmin,
 	AccountAdminDocument,
@@ -41,6 +45,7 @@ import {
 import {
 	AUTHENTICATED_USER_DATA,
 	AUTHENTICATION_KEY,
+	IS_HTTP_SERVER_KEY,
 } from '@sale/config/constant'
 
 import { AuthenticateClientDTO } from './dto/authenticate-client.dto'
@@ -71,6 +76,7 @@ export class ConnectionGateway implements OnGatewayConnection {
 
 	handleConnection(@ConnectedSocket() client: Socket) {
 		this.authenticate(client)
+		this.validateHttpServerClient(client)
 	}
 
 	@SubscribeMessage('authenticate')
@@ -81,6 +87,16 @@ export class ConnectionGateway implements OnGatewayConnection {
 		client.handshake.headers['authorization'] = body.token
 		const authenticated = await this.authenticate(client)
 		if (!authenticated) throw new UnauthorizedException()
+	}
+
+	@WsAuth()
+	@SubscribeMessage('check_authenticated')
+	checkAuthenticated(
+		@CurrentClient() auth: TokenPayload,
+		@CurrentClientData() userData: any
+	): WsResponse<TokenPayload> {
+		this.logger.log(userData)
+		return { event: 'authenticated', data: auth }
 	}
 
 	private async authenticate(client: Socket): Promise<boolean> {
@@ -118,16 +134,6 @@ export class ConnectionGateway implements OnGatewayConnection {
 		return true
 	}
 
-	@WsAuth()
-	@SubscribeMessage('check_authenticated')
-	checkAuthenticated(
-		@CurrentClient() auth: TokenPayload,
-		@CurrentClientData() userData: any
-	): WsResponse<TokenPayload> {
-		this.logger.log(userData)
-		return { event: 'authenticated', data: auth }
-	}
-
 	private async getAuthenticatedUser(id: string, role: Role | Role[]) {
 		const roles: Role[] = Array.isArray(role) ? role : [role]
 
@@ -161,5 +167,16 @@ export class ConnectionGateway implements OnGatewayConnection {
 				.lean()
 				.exec()
 		}
+	}
+
+	private validateHttpServerClient(client: Socket): boolean {
+		const clientHttpSecretKey =
+			client.handshake.headers[HTTP_HEADER_SECRET_KEY_NAME]
+		const secretKey = this.configService.get<string>('ws.httpSecret')
+
+		const isHttpServer = clientHttpSecretKey === secretKey
+
+		client[IS_HTTP_SERVER_KEY] = isHttpServer
+		return isHttpServer
 	}
 }

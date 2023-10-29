@@ -1,5 +1,6 @@
 export * from './decorators/current-user.decorator'
 export * from './decorators/jwt.decorator'
+export * from './decorators/ws-is-http-server.decorator'
 export * from './guards/jwt-access.guard'
 export * from './guards/jwt-refresh.guard'
 export * from './guards/roles.guard'

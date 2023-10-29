@@ -41,19 +41,20 @@ const getExceptionData = (
 		}
 	}
 	if (isHttpException) {
-		if (exception.getStatus() >= 500) {
+		const status = exception.getStatus()
+		if (status >= 500) {
 			return {
 				error: INTERNAL_SERVER_ERROR_NAME,
 				message: error.message,
 			}
-		} else if (exception.getStatus() === 401) {
+		} else if (status === 401) {
 			client.emit('unauthorized')
 			return
 		}
 	}
 
 	return {
-		error: error.name,
+		error: error.name || COMMON_WS_EXCEPTION_NAME,
 		message: error.message,
 	}
 }
