@@ -8,7 +8,8 @@ import {
 	JwtAccessOptionalGuard,
 } from '../guards/jwt-access.guard'
 import { JwtRefreshGuard } from '../guards/jwt-refresh.guard'
-import { RolesGuard } from '@app/authentication'
+import { RolesGuard, WsAuthExpireCheckGuard } from '@app/authentication'
+import { WsRoleGuard } from '../guards/ws-role.guard'
 
 export const ROLES_KEY = 'roles'
 export const JWT_OPTIONAL = 'is_jwt_optional'
@@ -44,6 +45,15 @@ export function JwtRefresh(...roles: Role[]) {
 		UseGuards(JwtRefreshGuard),
 		...(roles.length > 0
 			? [SetMetadata(ROLES_KEY, roles), UseGuards(RolesGuard)]
+			: [])
+	)
+}
+
+export function WsAuth(...roles: Role[]) {
+	return applyDecorators(
+		UseGuards(WsAuthExpireCheckGuard),
+		...(roles.length > 0
+			? [SetMetadata(ROLES_KEY, roles), UseGuards(WsRoleGuard)]
 			: [])
 	)
 }

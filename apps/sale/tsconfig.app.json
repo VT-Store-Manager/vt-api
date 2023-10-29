@@ -4,6 +4,6 @@
 		"declaration": false,
 		"outDir": "../../dist/apps/sale"
 	},
-	"include": ["src/**/*"],
+	"include": ["src/**/*", "config/**/*", "websocket/**/*"],
 	"exclude": ["node_modules", "dist", "test", "**/*spec.ts"]
 }

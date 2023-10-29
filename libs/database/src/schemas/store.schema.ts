@@ -1,5 +1,5 @@
 import { Document, Types } from 'mongoose'
-import mongooseDelete from 'mongoose-delete'
+import mongooseDelete, { SoftDeleteDocument } from 'mongoose-delete'
 import mongooseLeanVirtuals from 'mongoose-lean-virtuals'
 
 import { validateVnPhoneNumber } from '@app/common'
@@ -8,7 +8,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 export type StoreDocument = Store &
 	Document & {
 		fullAddress: string
-	}
+	} & SoftDeleteDocument
 
 export class OpenTime {
 	start: string

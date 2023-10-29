@@ -23,6 +23,7 @@
 		"paths": {
 			"@/*": ["./*"],
 			"@admin/*": ["apps/admin/*"],
+			"@sale/*": ["apps/sale/*"],
 			"@app/database": ["libs/database/src"],
 			"@app/database/*": ["libs/database/src/*"],
 			"@app/common": ["libs/common/src"],

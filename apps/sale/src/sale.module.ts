@@ -25,9 +25,10 @@ import { ProductCategoryModule } from './product-category/product-category.modul
 import { ProductOptionModule } from './product-option/product-option.module'
 import { ProductModule } from './product/product.module'
 import { VoucherModule } from './voucher/voucher.module'
-import { EmployeeModule } from './employee/employee.module';
-import { MemberModule } from './member/member.module';
-import { ShipperModule } from './shipper/shipper.module';
+import { EmployeeModule } from './employee/employee.module'
+import { MemberModule } from './member/member.module'
+import { ShipperModule } from './shipper/shipper.module'
+import { WebSocketModule } from '../websocket/websocket.module'
 
 @Module({
 	imports: [
@@ -53,6 +54,7 @@ import { ShipperModule } from './shipper/shipper.module';
 				cacheControl: true,
 			},
 		}),
+		WebSocketModule,
 		FileModule,
 		AuthModule,
 		ProductCategoryModule,

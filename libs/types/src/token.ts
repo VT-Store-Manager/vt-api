@@ -2,7 +2,7 @@ import { Role } from '@app/common'
 import { ApiProperty, OmitType } from '@nestjs/swagger'
 
 export class TokenPayload {
-	@ApiProperty({ description: "'member', 'admin', 'salesperson'" })
+	@ApiProperty({ description: "'member', 'admin', 'salesperson', 'shipper'" })
 	role: Role[] | Role | string | string[]
 
 	@ApiProperty({ description: 'User ID' })

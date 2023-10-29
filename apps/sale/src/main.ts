@@ -7,12 +7,14 @@ import { ConfigService } from '@nestjs/config'
 import { NestFactory } from '@nestjs/core'
 
 import { SaleApiModule } from './sale.module'
+import { IoAdapter } from '@nestjs/platform-socket.io'
+import { SOCKET_PORT } from '../config/constant'
 
 async function bootstrap() {
-	const app = await NestFactory.create(SaleApiModule, {
-		logger: ['error', 'warn', 'debug', 'verbose'],
-	})
+	const app = await NestFactory.create(SaleApiModule)
 	const configService = app.get(ConfigService)
+
+	app.useWebSocketAdapter(new IoAdapter(app))
 
 	app.enableCors({ origin: '*' })
 	app.use(compression())
@@ -53,6 +55,10 @@ async function bootstrap() {
 				'NestApplication'
 			)
 			Logger.debug(`Swagger viewed at http://${host}:${port}/api`, 'OpenAPI')
+			Logger.debug(
+				`WebSocket server runs at http://${host}:${SOCKET_PORT}`,
+				'WebSocket'
+			)
 		}
 	})
 }

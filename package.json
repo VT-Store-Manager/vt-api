@@ -21,44 +21,13 @@
 		"start:dev:CLIENT": "nest start --watch client",
 		"start:dev:SALE": "nest start --watch sale",
 		"start:prod": "node dist/apps/client/main",
-		"test": "jest",
-		"test:cov": "jest --coverage",
-		"test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-		"test:e2e": "jest --config ./apps/vt-api/test/jest-e2e.json",
-		"test:watch": "jest --watch"
+		"start:prod:ADMIN": "node dist/apps/admin/main",
+		"start:prod:SALE": "node dist/apps/sale/main"
 	},
 	"lint-staged": {
 		"*.{ts,js}": "eslint --cache --fix --max-warnings=0",
 		"*.{json,md}": "prettier --write",
 		"package.json": "npx sort-package-json"
-	},
-	"jest": {
-		"collectCoverageFrom": [
-			"**/*.(t|j)s"
-		],
-		"coverageDirectory": "./coverage",
-		"moduleFileExtensions": [
-			"js",
-			"json",
-			"ts"
-		],
-		"moduleNameMapper": {
-			"^@app/database(|/.*)$": "<rootDir>/libs/database/src/$1",
-			"^@app/common(|/.*)$": "<rootDir>/libs/common/src/$1",
-			"^@app/config(|/.*)$": "<rootDir>/libs/config/src/$1",
-			"^@app/types(|/.*)$": "<rootDir>/libs/types/src/$1",
-			"^@app/authentication(|/.*)$": "<rootDir>/libs/authentication/src/$1"
-		},
-		"rootDir": ".",
-		"roots": [
-			"<rootDir>/libs/",
-			"<rootDir>/apps/"
-		],
-		"testEnvironment": "node",
-		"testRegex": ".*\\.spec\\.ts$",
-		"transform": {
-			"^.+\\.(t|j)s$": "ts-jest"
-		}
 	},
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.282.0",
