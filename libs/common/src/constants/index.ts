@@ -26,6 +26,12 @@ export enum NodeEnv {
 	DEVELOPMENT = 'development',
 }
 
+export enum WsNamespace {
+	MEMBER = 'member',
+	STORE = 'store',
+	SHIPPER = 'shipper',
+}
+
 export enum Gender {
 	FEMALE,
 	MALE,

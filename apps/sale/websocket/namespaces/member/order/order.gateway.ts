@@ -2,7 +2,7 @@ import { Server } from 'socket.io'
 
 import { TokenPayload } from '@/libs/types/src'
 import { CurrentClient, WsAuth } from '@app/authentication'
-import { WebsocketExceptionsFilter } from '@app/common'
+import { WebsocketExceptionsFilter, WsNamespace } from '@app/common'
 import { UseFilters, UsePipes, ValidationPipe } from '@nestjs/common'
 import {
 	MessageBody,
@@ -11,7 +11,6 @@ import {
 	WebSocketServer,
 	WsResponse,
 } from '@nestjs/websockets'
-import { WsNamespace } from '@sale/config/constant'
 
 import { MemberNewOrderDTO } from './dto/member-new-order.dto'
 

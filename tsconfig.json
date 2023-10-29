@@ -1,40 +1,74 @@
 {
-	"compilerOptions": {
-		"module": "commonjs",
-		"declaration": true,
-		"removeComments": true,
-		"emitDecoratorMetadata": true,
-		"experimentalDecorators": true,
-		"allowSyntheticDefaultImports": true,
-		"target": "es2021",
-		"sourceMap": true,
-		"outDir": "./dist",
-		"incremental": true,
-		"skipLibCheck": true,
-		"strictNullChecks": false,
-		"noImplicitAny": false,
-		"strictBindCallApply": false,
-		"forceConsistentCasingInFileNames": false,
-		"noFallthroughCasesInSwitch": false,
-		"resolveJsonModule": true,
-		"esModuleInterop": true,
-		"baseUrl": ".",
-		"preserveSymlinks": true,
-		"paths": {
-			"@/*": ["./*"],
-			"@admin/*": ["apps/admin/*"],
-			"@sale/*": ["apps/sale/*"],
-			"@websocket/*": ["apps/sale/websocket/*"],
-			"@app/database": ["libs/database/src"],
-			"@app/database/*": ["libs/database/src/*"],
-			"@app/common": ["libs/common/src"],
-			"@app/common/*": ["libs/common/src/*"],
-			"@app/config": ["libs/config/src"],
-			"@app/config/*": ["libs/config/src/*"],
-			"@app/types": ["libs/types/src"],
-			"@app/types/*": ["libs/types/src/*"],
-			"@app/authentication": ["libs/authentication/src"],
-			"@app/authentication/*": ["libs/authentication/src/*"]
-		}
-	}
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "es2021",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "incremental": true,
+    "skipLibCheck": true,
+    "strictNullChecks": false,
+    "noImplicitAny": false,
+    "strictBindCallApply": false,
+    "forceConsistentCasingInFileNames": false,
+    "noFallthroughCasesInSwitch": false,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "baseUrl": ".",
+    "preserveSymlinks": true,
+    "paths": {
+      "@/*": [
+        "./*"
+      ],
+      "@admin/*": [
+        "apps/admin/*"
+      ],
+      "@sale/*": [
+        "apps/sale/*"
+      ],
+      "@websocket/*": [
+        "apps/sale/websocket/*"
+      ],
+      "@app/database": [
+        "libs/database/src"
+      ],
+      "@app/database/*": [
+        "libs/database/src/*"
+      ],
+      "@app/common": [
+        "libs/common/src"
+      ],
+      "@app/common/*": [
+        "libs/common/src/*"
+      ],
+      "@app/config": [
+        "libs/config/src"
+      ],
+      "@app/config/*": [
+        "libs/config/src/*"
+      ],
+      "@app/types": [
+        "libs/types/src"
+      ],
+      "@app/types/*": [
+        "libs/types/src/*"
+      ],
+      "@app/authentication": [
+        "libs/authentication/src"
+      ],
+      "@app/authentication/*": [
+        "libs/authentication/src/*"
+      ],
+      "@app/socket-client": [
+        "libs/socket-client/src"
+      ],
+      "@app/socket-client/*": [
+        "libs/socket-client/src/*"
+      ]
+    }
+  }
 }

@@ -22,6 +22,7 @@ import {
 	Voucher,
 	VoucherSchema,
 } from '@app/database'
+import { MemberSocketClientService } from '@app/socket-client'
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 
@@ -55,6 +56,11 @@ import { OrderService } from './services/order.service'
 		SettingModule,
 	],
 	controllers: [OrderController, OrderStateController],
-	providers: [OrderService, OrderStateService, MongoSessionService],
+	providers: [
+		OrderService,
+		OrderStateService,
+		MongoSessionService,
+		MemberSocketClientService,
+	],
 })
 export class OrderModule {}

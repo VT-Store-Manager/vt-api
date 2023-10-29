@@ -1,3 +1,5 @@
+import { capitalize } from 'lodash'
+import { Types } from 'mongoose'
 import { SoftDeleteModel } from 'mongoose-delete'
 import { Server, Socket } from 'socket.io'
 
@@ -37,6 +39,7 @@ import {
 	ConnectedSocket,
 	MessageBody,
 	OnGatewayConnection,
+	OnGatewayDisconnect,
 	SubscribeMessage,
 	WebSocketGateway,
 	WebSocketServer,
@@ -49,12 +52,13 @@ import {
 } from '@sale/config/constant'
 
 import { AuthenticateClientDTO } from './dto/authenticate-client.dto'
-import { Types } from 'mongoose'
 
 @UseFilters(new WebsocketExceptionsFilter())
 @UsePipes(new ValidationPipe())
 @WebSocketGateway({ cors: '*', namespace: /.*/ })
-export class ConnectionGateway implements OnGatewayConnection {
+export class ConnectionGateway
+	implements OnGatewayConnection, OnGatewayDisconnect
+{
 	private logger = new Logger('ConnectionGateway')
 
 	constructor(
@@ -76,7 +80,36 @@ export class ConnectionGateway implements OnGatewayConnection {
 
 	handleConnection(@ConnectedSocket() client: Socket) {
 		this.authenticate(client)
-		this.validateHttpServerClient(client)
+		const isHttpServer = this.validateHttpServerClient(client)
+		if (isHttpServer) {
+			this.logger.log(
+				`HTTP Server ${client.id} (nsp: ${client.nsp.name}) connected`
+			)
+			return
+		}
+
+		this.logger.log(`Client ${client.id} connected`)
+	}
+
+	handleDisconnect(@ConnectedSocket() client: Socket) {
+		const userData = client[AUTHENTICATED_USER_DATA]
+		if (userData) {
+			this.logger.log(
+				`${capitalize(userData.role)} ${client.id} - ${userData.name} - UID ${
+					userData.id
+				} disconnected`
+			)
+			return
+		}
+
+		const isHttpServer = client[IS_HTTP_SERVER_KEY]
+		if (isHttpServer) {
+			this.logger.log(
+				`HTTP Server ${client.id} (nsp: ${client.nsp.name}) disconnected`
+			)
+			return
+		}
+		this.logger.log(`Client ${client.id} disconnected`)
 	}
 
 	@SubscribeMessage('authenticate')
@@ -87,6 +120,12 @@ export class ConnectionGateway implements OnGatewayConnection {
 		client.handshake.headers['authorization'] = body.token
 		const authenticated = await this.authenticate(client)
 		if (!authenticated) throw new UnauthorizedException()
+		const userData = client[AUTHENTICATED_USER_DATA]
+		this.logger.log(
+			`${capitalize(userData.role)} ${client.id} - ${userData.name} - UID ${
+				userData.id
+			} authenticated`
+		)
 	}
 
 	@WsAuth()
@@ -147,23 +186,48 @@ export class ConnectionGateway implements OnGatewayConnection {
 						id: { $toString: '$_id' },
 						_id: false,
 						name: { $concat: ['$firstName', ' ', '$lastName'] },
+						role: Role.MEMBER,
 					}
 				)
 				.lean()
 				.exec()
 		} else if (roles.includes(Role.SALESPERSON)) {
 			return await this.storeModel
-				.findOne({ _id }, { id: { $toString: '$_id' }, _id: false, name: true })
+				.findOne(
+					{ _id },
+					{
+						id: { $toString: '$_id' },
+						_id: false,
+						name: true,
+						role: Role.SALESPERSON,
+					}
+				)
 				.lean()
 				.exec()
 		} else if (roles.includes(Role.SHIPPER)) {
 			return await this.shipperModel
-				.findOne({ _id }, { id: { $toString: '$_id' }, _id: false, name: true })
+				.findOne(
+					{ _id },
+					{
+						id: { $toString: '$_id' },
+						_id: false,
+						name: true,
+						role: Role.SHIPPER,
+					}
+				)
 				.lean()
 				.exec()
 		} else if (roles.includes(Role.ADMIN)) {
 			return await this.accountAdminModel
-				.findOne({ _id }, { id: { $toString: '$_id' }, _id: false, name: true })
+				.findOne(
+					{ _id },
+					{
+						id: { $toString: '$_id' },
+						_id: false,
+						name: true,
+						role: Role.ADMIN,
+					}
+				)
 				.lean()
 				.exec()
 		}
@@ -171,7 +235,8 @@ export class ConnectionGateway implements OnGatewayConnection {
 
 	private validateHttpServerClient(client: Socket): boolean {
 		const clientHttpSecretKey =
-			client.handshake.headers[HTTP_HEADER_SECRET_KEY_NAME]
+			client.handshake.headers[HTTP_HEADER_SECRET_KEY_NAME] ||
+			client.handshake.auth[HTTP_HEADER_SECRET_KEY_NAME]
 		const secretKey = this.configService.get<string>('ws.httpSecret')
 
 		const isHttpServer = clientHttpSecretKey === secretKey

@@ -2,6 +2,7 @@ import { intersection, sortBy, uniq } from 'lodash'
 import { ClientSession, Model, Types } from 'mongoose'
 
 import {
+	getDistance,
 	OrderBuyer,
 	OrderState,
 	PaymentType,
@@ -30,6 +31,7 @@ import {
 	StoreDocument,
 	Voucher,
 } from '@app/database'
+import { MemberSocketClientService } from '@app/socket-client'
 import { ArrElement } from '@app/types'
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
@@ -46,7 +48,6 @@ import {
 import { CreateOrderDTO } from '../dto/create-order.dto'
 import { GetOrderDetailDTO } from '../dto/response.dto'
 import { ReviewOrderDTO } from '../dto/review-order.dto'
-import { getDistance } from '@app/common'
 import { ReviewShipperDTO } from '../dto/review-shipper.dto'
 
 type ShortProductValidationData = {
@@ -114,7 +115,8 @@ export class OrderService {
 		@InjectModel(ProductOption.name)
 		private readonly productOptionModel: Model<ProductOptionDocument>,
 		private readonly voucherService: VoucherService,
-		private readonly settingMemberAppService: SettingMemberAppService
+		private readonly settingMemberAppService: SettingMemberAppService,
+		private readonly socketClient: MemberSocketClientService
 	) {}
 
 	private async getRelatedDataToCreateOrder(

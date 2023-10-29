@@ -37,6 +37,7 @@ export const envConfiguration = () => {
 		},
 		ws: {
 			httpSecret: process.env.WS_HTTP_SECRET_KEY,
+			host: process.env.WS_HOST,
 		},
 		flag: {
 			disableSMS:
@@ -73,6 +74,7 @@ export const envValidationSchema = Joi.object({
 	REFRESH_TOKEN_ADMIN_SECRET_KEY: Joi.string().token().required(),
 	// WS
 	WS_HTTP_SECRET_KEY: Joi.string().token().required(),
+	WS_HOST: Joi.string().uri().required(),
 	// Flag
 	DISABLE_SMS: Joi.string()
 		.allow('true', 'false', true, false, '0', '1', 0, 1)
