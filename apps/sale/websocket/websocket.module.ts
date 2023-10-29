@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common'
-import { MemberOrderModule } from './member/order/order.module'
-import { MemberConnectionModule } from './member/connection/connection.module'
+
+import { MemberConnectionModule } from './connection/connection.module'
+import { MemberOrderModule } from './namespaces/member/order/order.module'
 
 @Module({
-	imports: [MemberOrderModule, MemberConnectionModule],
+	imports: [MemberConnectionModule, MemberOrderModule],
 })
 export class WebSocketModule {}

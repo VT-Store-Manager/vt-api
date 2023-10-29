@@ -24,6 +24,7 @@
 			"@/*": ["./*"],
 			"@admin/*": ["apps/admin/*"],
 			"@sale/*": ["apps/sale/*"],
+			"@websocket/*": ["apps/sale/websocket/*"],
 			"@app/database": ["libs/database/src"],
 			"@app/database/*": ["libs/database/src/*"],
 			"@app/common": ["libs/common/src"],

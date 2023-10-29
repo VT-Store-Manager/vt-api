@@ -12,7 +12,7 @@ import { Module } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { MongooseModule } from '@nestjs/mongoose'
 
-import { MemberConnectionGateway } from './connection.gateway'
+import { ConnectionGateway } from './connection.gateway'
 import { AuthService, JwtAccessStrategy } from '@/libs/authentication/src'
 
 @Module({
@@ -24,11 +24,6 @@ import { AuthService, JwtAccessStrategy } from '@/libs/authentication/src'
 			{ name: AccountAdmin.name, schema: AccountAdminSchema },
 		]),
 	],
-	providers: [
-		MemberConnectionGateway,
-		JwtService,
-		JwtAccessStrategy,
-		AuthService,
-	],
+	providers: [ConnectionGateway, JwtService, JwtAccessStrategy, AuthService],
 })
 export class MemberConnectionModule {}

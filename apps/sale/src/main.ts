@@ -8,7 +8,6 @@ import { NestFactory } from '@nestjs/core'
 
 import { SaleApiModule } from './sale.module'
 import { IoAdapter } from '@nestjs/platform-socket.io'
-import { SOCKET_PORT } from '../config/constant'
 
 async function bootstrap() {
 	const app = await NestFactory.create(SaleApiModule)
@@ -55,10 +54,7 @@ async function bootstrap() {
 				'NestApplication'
 			)
 			Logger.debug(`Swagger viewed at http://${host}:${port}/api`, 'OpenAPI')
-			Logger.debug(
-				`WebSocket server runs at http://${host}:${SOCKET_PORT}`,
-				'WebSocket'
-			)
+			Logger.debug(`WebSocket server runs at ws://${host}:${port}`, 'WebSocket')
 		}
 	})
 }

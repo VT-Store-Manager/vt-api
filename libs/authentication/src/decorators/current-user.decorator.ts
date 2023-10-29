@@ -3,7 +3,10 @@ import { Request } from 'express'
 import { TokenPayload, UserPayload } from '@app/types'
 import { createParamDecorator, ExecutionContext } from '@nestjs/common'
 import { Socket } from 'socket.io'
-import { AUTHENTICATION_KEY } from '@sale/config/constant'
+import {
+	AUTHENTICATED_USER_DATA,
+	AUTHENTICATION_KEY,
+} from '@sale/config/constant'
 
 export const CurrentUser = createParamDecorator(
 	(data: keyof UserPayload, context: ExecutionContext) => {
@@ -23,5 +26,16 @@ export const CurrentClient = createParamDecorator(
 
 		if (authKey) return clientAuth[authKey]
 		return clientAuth
+	}
+)
+
+export const CurrentClientData = createParamDecorator(
+	(key: string, context: ExecutionContext) => {
+		const client = context.switchToWs().getClient<Socket>()
+
+		const userData: TokenPayload = client[AUTHENTICATED_USER_DATA]
+
+		if (key) return userData[key]
+		return userData
 	}
 )
