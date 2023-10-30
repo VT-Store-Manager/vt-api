@@ -59,5 +59,6 @@ import { OrderService } from './services/order.service'
 	],
 	controllers: [OrderStateController, OrderController],
 	providers: [OrderStateService, OrderService, MongoSessionService],
+	exports: [OrderService],
 })
 export class OrderModule {}

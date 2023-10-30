@@ -1,3 +1,4 @@
+import { AuthService, JwtAccessStrategy } from '@/libs/authentication/src'
 import {
 	AccountAdmin,
 	AccountAdminSchema,
@@ -13,7 +14,6 @@ import { JwtService } from '@nestjs/jwt'
 import { MongooseModule } from '@nestjs/mongoose'
 
 import { ConnectionGateway } from './connection.gateway'
-import { AuthService, JwtAccessStrategy } from '@/libs/authentication/src'
 
 @Module({
 	imports: [

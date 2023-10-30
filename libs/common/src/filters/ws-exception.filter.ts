@@ -48,6 +48,7 @@ const getExceptionData = (
 				message: error.message,
 			}
 		} else if (status === 401) {
+			client.rooms.clear()
 			client.emit('unauthorized')
 			return
 		}

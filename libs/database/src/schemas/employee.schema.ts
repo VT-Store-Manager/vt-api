@@ -11,7 +11,12 @@ export type EmployeeDocument = Employee & Document & SoftDeleteDocument
 export class Employee {
 	_id: Types.ObjectId
 
-	@Prop({ type: Types.ObjectId, ref: 'Store', required: true })
+	@Prop({
+		type: Types.ObjectId,
+		ref: 'Store',
+		required: true,
+		set: (v: string) => new Types.ObjectId(v.toString()),
+	})
 	store: Types.ObjectId
 
 	@Prop({

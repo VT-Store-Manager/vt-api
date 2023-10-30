@@ -13,6 +13,7 @@ import {
 	HTTP_HEADER_SECRET_KEY_NAME,
 	Role,
 	WebsocketExceptionsFilter,
+	getClientRoom,
 } from '@app/common'
 import {
 	AccountAdmin,
@@ -159,10 +160,10 @@ export class ConnectionGateway
 		client.join(payload.sub)
 		if (Array.isArray(payload.role)) {
 			;(payload.role as []).forEach(role => {
-				client.join(`${role}-${payload.sub}`)
+				client.join(getClientRoom(role, payload.sub))
 			})
 		} else {
-			client.join(`${payload.role}-${payload.sub}`)
+			client.join(getClientRoom(payload.role as Role, payload.sub))
 		}
 
 		client[AUTHENTICATION_KEY] = payload

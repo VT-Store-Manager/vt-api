@@ -27,9 +27,9 @@ export enum NodeEnv {
 }
 
 export enum WsNamespace {
-	MEMBER = 'member',
-	STORE = 'store',
-	SHIPPER = 'shipper',
+	MEMBER = '/member',
+	STORE = '/store',
+	SHIPPER = '/shipper',
 }
 
 export enum Gender {

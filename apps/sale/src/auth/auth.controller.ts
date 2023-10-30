@@ -41,7 +41,7 @@ export class AuthController {
 	}
 
 	@Get('what-store')
-	@JwtAccess()
+	@JwtAccess(Role.SALESPERSON)
 	async whatStore(@CurrentUser('sub') storeId: string) {
 		return await this.accountSaleService.getStore(storeId)
 	}
