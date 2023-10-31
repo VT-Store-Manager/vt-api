@@ -1,5 +1,10 @@
 import { CurrentUser, JwtAccess } from '@app/authentication'
-import { ApiSuccessResponse, ObjectIdPipe, Role } from '@app/common'
+import {
+	ApiSuccessResponse,
+	MemberSocketClientService,
+	ObjectIdPipe,
+	Role,
+} from '@app/common'
 import { BooleanResponseDTO } from '@app/types'
 import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common'
 import { ApiResponse, ApiTags } from '@nestjs/swagger'
@@ -17,7 +22,10 @@ import { ReviewShipperDTO } from '../dto/review-shipper.dto'
 @Controller('member/cart')
 @ApiTags('member-app > order')
 export class OrderController {
-	constructor(private readonly orderService: OrderService) {}
+	constructor(
+		private readonly orderService: OrderService,
+		private readonly socketClient: MemberSocketClientService
+	) {}
 
 	@Post('check-voucher')
 	@JwtAccess(Role.MEMBER)
@@ -66,6 +74,10 @@ export class OrderController {
 			memberId,
 			body
 		)
+		this.socketClient.getSocket().emit('member:new_order', {
+			storeId: createdOrder.store.id.toString(),
+			orderId: createdOrder._id.toString(),
+		})
 		return { id: createdOrder._id }
 	}
 

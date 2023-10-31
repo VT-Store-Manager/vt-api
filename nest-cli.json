@@ -1,119 +1,110 @@
 {
-  "$schema": "https://json.schemastore.org/nest-cli",
-  "collection": "@nestjs/schematics",
-  "sourceRoot": "apps/client/src",
-  "compilerOptions": {
-    "plugins": [
-      {
-        "name": "@nestjs/swagger",
-        "options": {
-          "dtoFileNameSuffix": [
-            ".dto.ts",
-            ".schema.ts"
-          ],
-          "controllerFileNameSuffix": ".controller.ts",
-          "dtoKeyOfComment": "description",
-          "controllerKeyOfComment": "description",
-          "classValidatorShim": false,
-          "introspectComments": true
-        }
-      }
-    ],
-    "webpack": true,
-    "tsConfigPath": "apps/client/tsconfig.app.json"
-  },
-  "projects": {
-    "database": {
-      "type": "library",
-      "root": "libs/database",
-      "entryFile": "index",
-      "sourceRoot": "libs/database/src",
-      "compilerOptions": {
-        "tsConfigPath": "libs/database/tsconfig.lib.json"
-      }
-    },
-    "common": {
-      "type": "library",
-      "root": "libs/common",
-      "entryFile": "index",
-      "sourceRoot": "libs/common/src",
-      "compilerOptions": {
-        "tsConfigPath": "libs/common/tsconfig.lib.json"
-      }
-    },
-    "config": {
-      "type": "library",
-      "root": "libs/config",
-      "entryFile": "index",
-      "sourceRoot": "libs/config/src",
-      "compilerOptions": {
-        "tsConfigPath": "libs/config/tsconfig.lib.json"
-      }
-    },
-    "types": {
-      "type": "library",
-      "root": "libs/types",
-      "entryFile": "index",
-      "sourceRoot": "libs/types/src",
-      "compilerOptions": {
-        "tsConfigPath": "libs/types/tsconfig.lib.json"
-      }
-    },
-    "admin": {
-      "type": "application",
-      "root": "apps/admin",
-      "entryFile": "main",
-      "sourceRoot": "apps/admin/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/admin/tsconfig.app.json"
-      }
-    },
-    "authentication": {
-      "type": "library",
-      "root": "libs/authentication",
-      "entryFile": "index",
-      "sourceRoot": "libs/authentication/src",
-      "compilerOptions": {
-        "tsConfigPath": "libs/authentication/tsconfig.lib.json"
-      }
-    },
-    "sale": {
-      "type": "application",
-      "root": "apps/sale",
-      "entryFile": "main",
-      "sourceRoot": "apps/sale/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/sale/tsconfig.app.json"
-      }
-    },
-    "ws-chat": {
-      "type": "application",
-      "root": "apps/ws-chat",
-      "entryFile": "main",
-      "sourceRoot": "apps/ws-chat/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/ws-chat/tsconfig.app.json"
-      }
-    },
-    "client": {
-      "type": "application",
-      "root": "apps/client",
-      "entryFile": "main",
-      "sourceRoot": "apps/client/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/client/tsconfig.app.json"
-      }
-    },
-    "socket-client": {
-      "type": "library",
-      "root": "libs/socket-client",
-      "entryFile": "index",
-      "sourceRoot": "libs/socket-client/src",
-      "compilerOptions": {
-        "tsConfigPath": "libs/socket-client/tsconfig.lib.json"
-      }
-    }
-  },
-  "monorepo": true,
-  "root": "apps/client"
+	"$schema": "https://json.schemastore.org/nest-cli",
+	"collection": "@nestjs/schematics",
+	"sourceRoot": "apps/client/src",
+	"compilerOptions": {
+		"plugins": [
+			{
+				"name": "@nestjs/swagger",
+				"options": {
+					"dtoFileNameSuffix": [
+						".dto.ts",
+						".schema.ts"
+					],
+					"controllerFileNameSuffix": ".controller.ts",
+					"dtoKeyOfComment": "description",
+					"controllerKeyOfComment": "description",
+					"classValidatorShim": false,
+					"introspectComments": true
+				}
+			}
+		],
+		"webpack": true,
+		"tsConfigPath": "apps/client/tsconfig.app.json"
+	},
+	"projects": {
+		"database": {
+			"type": "library",
+			"root": "libs/database",
+			"entryFile": "index",
+			"sourceRoot": "libs/database/src",
+			"compilerOptions": {
+				"tsConfigPath": "libs/database/tsconfig.lib.json"
+			}
+		},
+		"common": {
+			"type": "library",
+			"root": "libs/common",
+			"entryFile": "index",
+			"sourceRoot": "libs/common/src",
+			"compilerOptions": {
+				"tsConfigPath": "libs/common/tsconfig.lib.json"
+			}
+		},
+		"config": {
+			"type": "library",
+			"root": "libs/config",
+			"entryFile": "index",
+			"sourceRoot": "libs/config/src",
+			"compilerOptions": {
+				"tsConfigPath": "libs/config/tsconfig.lib.json"
+			}
+		},
+		"types": {
+			"type": "library",
+			"root": "libs/types",
+			"entryFile": "index",
+			"sourceRoot": "libs/types/src",
+			"compilerOptions": {
+				"tsConfigPath": "libs/types/tsconfig.lib.json"
+			}
+		},
+		"admin": {
+			"type": "application",
+			"root": "apps/admin",
+			"entryFile": "main",
+			"sourceRoot": "apps/admin/src",
+			"compilerOptions": {
+				"tsConfigPath": "apps/admin/tsconfig.app.json"
+			}
+		},
+		"authentication": {
+			"type": "library",
+			"root": "libs/authentication",
+			"entryFile": "index",
+			"sourceRoot": "libs/authentication/src",
+			"compilerOptions": {
+				"tsConfigPath": "libs/authentication/tsconfig.lib.json"
+			}
+		},
+		"sale": {
+			"type": "application",
+			"root": "apps/sale",
+			"entryFile": "main",
+			"sourceRoot": "apps/sale/src",
+			"compilerOptions": {
+				"tsConfigPath": "apps/sale/tsconfig.app.json"
+			}
+		},
+		"ws-chat": {
+			"type": "application",
+			"root": "apps/ws-chat",
+			"entryFile": "main",
+			"sourceRoot": "apps/ws-chat/src",
+			"compilerOptions": {
+				"tsConfigPath": "apps/ws-chat/tsconfig.app.json"
+			}
+		},
+		"client": {
+			"type": "application",
+			"root": "apps/client",
+			"entryFile": "main",
+			"sourceRoot": "apps/client/src",
+			"compilerOptions": {
+				"tsConfigPath": "apps/client/tsconfig.app.json"
+			}
+		}
+	},
+	"monorepo": true,
+	"root": "apps/client"
 }

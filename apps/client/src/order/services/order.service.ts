@@ -31,7 +31,6 @@ import {
 	StoreDocument,
 	Voucher,
 } from '@app/database'
-import { MemberSocketClientService } from '@app/socket-client'
 import { ArrElement } from '@app/types'
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
@@ -115,8 +114,7 @@ export class OrderService {
 		@InjectModel(ProductOption.name)
 		private readonly productOptionModel: Model<ProductOptionDocument>,
 		private readonly voucherService: VoucherService,
-		private readonly settingMemberAppService: SettingMemberAppService,
-		private readonly socketClient: MemberSocketClientService
+		private readonly settingMemberAppService: SettingMemberAppService
 	) {}
 
 	private async getRelatedDataToCreateOrder(
@@ -825,7 +823,7 @@ export class OrderService {
 		memberId: string,
 		data: CreateOrderDTO,
 		session?: ClientSession
-	) {
+	): Promise<OrderMember> {
 		const {
 			dtoProductMap,
 			store,

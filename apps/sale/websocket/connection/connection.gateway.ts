@@ -14,7 +14,7 @@ import {
 	Role,
 	WebsocketExceptionsFilter,
 } from '@app/common'
-import { TokenPayload } from '@app/types'
+import { CommonEventMap, CommonEventNames, TokenPayload } from '@app/types'
 import {
 	UnauthorizedException,
 	UseFilters,
@@ -56,7 +56,7 @@ export class ConnectionGateway
 	) {}
 
 	@WebSocketServer()
-	server: Server
+	server: Server<CommonEventMap>
 
 	handleConnection(@ConnectedSocket() client: Socket) {
 		this.authenticate(client)
@@ -92,7 +92,7 @@ export class ConnectionGateway
 		socketLogger.debug(`[${client.id}] disconnected`)
 	}
 
-	@SubscribeMessage('authenticate')
+	@SubscribeMessage<CommonEventNames>('authenticate')
 	async authenticateClient(
 		@ConnectedSocket() client: Socket,
 		@MessageBody() body: AuthenticateClientDTO
@@ -109,7 +109,7 @@ export class ConnectionGateway
 	}
 
 	@WsAuth()
-	@SubscribeMessage('check_authenticated')
+	@SubscribeMessage<CommonEventNames>('check_authenticated')
 	checkAuthenticated(
 		@CurrentClient() auth: TokenPayload,
 		@CurrentClientData() userData: any

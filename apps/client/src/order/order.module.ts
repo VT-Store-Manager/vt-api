@@ -1,4 +1,8 @@
-import { OrderBuyer, SettingModule } from '@app/common'
+import {
+	MemberSocketClientService,
+	OrderBuyer,
+	SettingModule,
+} from '@app/common'
 import {
 	MemberData,
 	MemberDataSchema,
@@ -22,7 +26,6 @@ import {
 	Voucher,
 	VoucherSchema,
 } from '@app/database'
-import { MemberSocketClientService } from '@app/socket-client'
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 

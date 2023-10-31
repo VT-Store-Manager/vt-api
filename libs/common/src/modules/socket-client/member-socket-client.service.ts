@@ -1,6 +1,7 @@
 import { io, Socket } from 'socket.io-client'
 
 import { HTTP_HEADER_SECRET_KEY_NAME, WsNamespace } from '@app/common'
+import { MemberEventMap } from '@app/types'
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 
@@ -10,7 +11,7 @@ export class MemberSocketClientService {
 		this.connect()
 	}
 
-	private socket: Socket
+	private socket: Socket<MemberEventMap>
 
 	private connect() {
 		this.socket = io(
@@ -24,7 +25,7 @@ export class MemberSocketClientService {
 		)
 	}
 
-	getSocket(): Socket {
+	getSocket() {
 		if (!this.socket) {
 			this.connect()
 		}

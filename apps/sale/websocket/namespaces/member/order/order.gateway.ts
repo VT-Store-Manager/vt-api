@@ -1,4 +1,4 @@
-import { Namespace, Server, Socket } from 'socket.io'
+import { Namespace } from 'socket.io'
 
 import { HttpServer } from '@app/authentication'
 import {
@@ -8,9 +8,14 @@ import {
 	WebsocketExceptionsFilter,
 	WsNamespace,
 } from '@app/common'
+import {
+	MemberEventMap,
+	MemberEventNames,
+	ShipperEventMap,
+	StoreEventMap,
+} from '@app/types'
 import { UseFilters, UsePipes, ValidationPipe } from '@nestjs/common'
 import {
-	ConnectedSocket,
 	MessageBody,
 	SubscribeMessage,
 	WebSocketGateway,
@@ -24,20 +29,24 @@ import { MemberNewOrderDTO } from './dto/member-new-order.dto'
 @UsePipes(new ValidationPipe())
 @WebSocketGateway({ cors: '*', namespace: WsNamespace.MEMBER })
 export class MemberOrderGateway {
-	constructor(private readonly orderService: OrderService) {}
+	constructor(private readonly orderService: OrderService) {
+		this.storeNsp = this.nsp.server.of(WsNamespace.STORE)
+		this.shipperNsp = this.nsp.server.of(WsNamespace.SHIPPER)
+	}
 
 	@WebSocketServer()
-	nsp: Namespace
+	nsp: Namespace<MemberEventMap>
+	storeNsp: Namespace<StoreEventMap>
+	shipperNsp: Namespace<ShipperEventMap>
 
 	@HttpServer()
-	@SubscribeMessage('member:new_order')
+	@SubscribeMessage<MemberEventNames>('member:new_order')
 	async memberNewOrder(@MessageBody() body: MemberNewOrderDTO) {
 		const orderDetail = await this.orderService.getOrderDetail(
 			body.storeId,
 			body.orderId
 		)
-		this.nsp.server
-			.of(WsNamespace.STORE)
+		this.storeNsp
 			.to(getStoreRoom(body.storeId))
 			.emit('store:new_order', orderDetail)
 
@@ -45,9 +54,7 @@ export class MemberOrderGateway {
 			orderDetail.categoryId === ShippingMethod.DELIVERY &&
 			orderDetail.status === OrderState.PROCESSING
 		) {
-			this.nsp.server
-				.of(WsNamespace.SHIPPER)
-				.emit('shipper:new_order', orderDetail)
+			this.shipperNsp.emit('shipper:new_order', orderDetail)
 		}
 	}
 }
