@@ -1,33 +1,21 @@
 import { capitalize } from 'lodash'
-import { Types } from 'mongoose'
-import { SoftDeleteModel } from 'mongoose-delete'
 import { Server, Socket } from 'socket.io'
 
 import {
+	AuthService,
 	CurrentClient,
 	CurrentClientData,
 	JwtAccessStrategy,
 	WsAuth,
 } from '@app/authentication'
 import {
+	getClientRoom,
 	HTTP_HEADER_SECRET_KEY_NAME,
 	Role,
 	WebsocketExceptionsFilter,
-	getClientRoom,
 } from '@app/common'
-import {
-	AccountAdmin,
-	AccountAdminDocument,
-	Member,
-	MemberDocument,
-	Shipper,
-	ShipperDocument,
-	Store,
-	StoreDocument,
-} from '@app/database'
 import { TokenPayload } from '@app/types'
 import {
-	Logger,
 	UnauthorizedException,
 	UseFilters,
 	UsePipes,
@@ -35,7 +23,6 @@ import {
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
-import { InjectModel } from '@nestjs/mongoose'
 import {
 	ConnectedSocket,
 	MessageBody,
@@ -50,6 +37,7 @@ import {
 	AUTHENTICATED_USER_DATA,
 	AUTHENTICATION_KEY,
 	IS_HTTP_SERVER_KEY,
+	socketLogger,
 } from '@sale/config/constant'
 
 import { AuthenticateClientDTO } from './dto/authenticate-client.dto'
@@ -60,20 +48,11 @@ import { AuthenticateClientDTO } from './dto/authenticate-client.dto'
 export class ConnectionGateway
 	implements OnGatewayConnection, OnGatewayDisconnect
 {
-	private logger = new Logger('ConnectionGateway')
-
 	constructor(
 		private readonly jwtService: JwtService,
 		private readonly configService: ConfigService,
 		private readonly jwtAccessStrategy: JwtAccessStrategy,
-		@InjectModel(Member.name)
-		private readonly memberModel: SoftDeleteModel<MemberDocument>,
-		@InjectModel(Store.name)
-		private readonly storeModel: SoftDeleteModel<StoreDocument>,
-		@InjectModel(Shipper.name)
-		private readonly shipperModel: SoftDeleteModel<ShipperDocument>,
-		@InjectModel(AccountAdmin.name)
-		private readonly accountAdminModel: SoftDeleteModel<AccountAdminDocument>
+		private readonly authService: AuthService
 	) {}
 
 	@WebSocketServer()
@@ -83,34 +62,34 @@ export class ConnectionGateway
 		this.authenticate(client)
 		const isHttpServer = this.validateHttpServerClient(client)
 		if (isHttpServer) {
-			this.logger.log(
-				`HTTP Server ${client.id} (nsp: ${client.nsp.name}) connected`
+			socketLogger.debug(
+				`[${client.id}] connected: HTTP Server - Namespace ${client.nsp.name}`
 			)
 			return
 		}
 
-		this.logger.log(`Client ${client.id} connected`)
+		socketLogger.debug(`[${client.id}] connected`)
 	}
 
 	handleDisconnect(@ConnectedSocket() client: Socket) {
 		const userData = client[AUTHENTICATED_USER_DATA]
 		if (userData) {
-			this.logger.log(
-				`${capitalize(userData.role)} ${client.id} - ${userData.name} - UID ${
-					userData.id
-				} disconnected`
+			socketLogger.debug(
+				`[${client.id}] disconnected: ${capitalize(userData.role)} - ${
+					userData.name
+				} - UID ${userData.id}`
 			)
 			return
 		}
 
 		const isHttpServer = client[IS_HTTP_SERVER_KEY]
 		if (isHttpServer) {
-			this.logger.log(
-				`HTTP Server ${client.id} (nsp: ${client.nsp.name}) disconnected`
+			socketLogger.debug(
+				`[${client.id}] disconnected: HTTP Server - Namespace ${client.nsp.name})`
 			)
 			return
 		}
-		this.logger.log(`Client ${client.id} disconnected`)
+		socketLogger.debug(`[${client.id}] disconnected`)
 	}
 
 	@SubscribeMessage('authenticate')
@@ -122,10 +101,10 @@ export class ConnectionGateway
 		const authenticated = await this.authenticate(client)
 		if (!authenticated) throw new UnauthorizedException()
 		const userData = client[AUTHENTICATED_USER_DATA]
-		this.logger.log(
-			`${capitalize(userData.role)} ${client.id} - ${userData.name} - UID ${
-				userData.id
-			} authenticated`
+		socketLogger.debug(
+			`[${client.id}] authenticated:  ${capitalize(userData.role)} - ${
+				userData.name
+			} - UID ${userData.id}`
 		)
 	}
 
@@ -135,7 +114,7 @@ export class ConnectionGateway
 		@CurrentClient() auth: TokenPayload,
 		@CurrentClientData() userData: any
 	): WsResponse<TokenPayload> {
-		this.logger.log(userData)
+		socketLogger.debug(userData)
 		return { event: 'authenticated', data: auth }
 	}
 
@@ -167,71 +146,12 @@ export class ConnectionGateway
 		}
 
 		client[AUTHENTICATION_KEY] = payload
-		client[AUTHENTICATED_USER_DATA] = await this.getAuthenticatedUser(
-			payload.sub,
-			payload.role as any
-		)
+		client[AUTHENTICATED_USER_DATA] =
+			await this.authService.getAuthenticatedUser(
+				payload.sub,
+				payload.role as any
+			)
 		return true
-	}
-
-	private async getAuthenticatedUser(id: string, role: Role | Role[]) {
-		const roles: Role[] = Array.isArray(role) ? role : [role]
-
-		const _id = new Types.ObjectId(id)
-
-		if (roles.includes(Role.MEMBER)) {
-			return await this.memberModel
-				.findOne(
-					{ _id },
-					{
-						id: { $toString: '$_id' },
-						_id: false,
-						name: { $concat: ['$firstName', ' ', '$lastName'] },
-						role: Role.MEMBER,
-					}
-				)
-				.lean()
-				.exec()
-		} else if (roles.includes(Role.SALESPERSON)) {
-			return await this.storeModel
-				.findOne(
-					{ _id },
-					{
-						id: { $toString: '$_id' },
-						_id: false,
-						name: true,
-						role: Role.SALESPERSON,
-					}
-				)
-				.lean()
-				.exec()
-		} else if (roles.includes(Role.SHIPPER)) {
-			return await this.shipperModel
-				.findOne(
-					{ _id },
-					{
-						id: { $toString: '$_id' },
-						_id: false,
-						name: true,
-						role: Role.SHIPPER,
-					}
-				)
-				.lean()
-				.exec()
-		} else if (roles.includes(Role.ADMIN)) {
-			return await this.accountAdminModel
-				.findOne(
-					{ _id },
-					{
-						id: { $toString: '$_id' },
-						_id: false,
-						name: true,
-						role: Role.ADMIN,
-					}
-				)
-				.lean()
-				.exec()
-		}
 	}
 
 	private validateHttpServerClient(client: Socket): boolean {

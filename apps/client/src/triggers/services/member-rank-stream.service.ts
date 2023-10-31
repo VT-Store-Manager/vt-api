@@ -57,7 +57,7 @@ export class MemberRankStreamService implements OnModuleInit {
 			}
 		)
 
-		StreamHelperService.logger.verbose('Member rank stream watching...')
+		StreamHelperService.logger.debug('Member rank stream watching...')
 		changeStream.on(
 			'change',
 			(

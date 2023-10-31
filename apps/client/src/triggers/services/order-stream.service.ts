@@ -96,7 +96,7 @@ export class OrderStreamService implements OnModuleInit {
 			}
 		)
 
-		StreamHelperService.logger.verbose('Order stream watching...')
+		StreamHelperService.logger.debug('Order stream watching...')
 		changeStream.on('change', (data: ChangeStreamDocument) => {
 			switch (data.operationType) {
 				case 'insert':

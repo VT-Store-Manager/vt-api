@@ -1,13 +1,4 @@
 import {
-	AuthService,
-	JwtAccessStrategy,
-	JwtRefreshStrategy,
-	SmsService,
-	TokenService,
-} from '@app/authentication'
-import {
-	AccountAdmin,
-	AccountAdminSchema,
 	Member,
 	MemberData,
 	MemberDataSchema,
@@ -17,12 +8,6 @@ import {
 	MongoSessionService,
 	Rank,
 	RankSchema,
-	RefreshToken,
-	RefreshTokenSchema,
-	Shipper,
-	ShipperSchema,
-	Store,
-	StoreSchema,
 } from '@app/database'
 import { Module } from '@nestjs/common'
 import { JwtModule } from '@nestjs/jwt'
@@ -35,26 +20,13 @@ import { AuthService as ClientAuthService } from './auth.service'
 	imports: [
 		MongooseModule.forFeature([
 			{ name: Member.name, schema: MemberSchema },
-			{ name: RefreshToken.name, schema: RefreshTokenSchema },
 			{ name: MemberData.name, schema: MemberDataSchema },
 			{ name: MemberRank.name, schema: MemberRankSchema },
 			{ name: Rank.name, schema: RankSchema },
-			{ name: Store.name, schema: StoreSchema },
-			{ name: Store.name, schema: StoreSchema },
-			{ name: AccountAdmin.name, schema: AccountAdminSchema },
-			{ name: Shipper.name, schema: ShipperSchema },
 		]),
 		JwtModule.register({}),
 	],
 	controllers: [AuthController],
-	providers: [
-		AuthService,
-		ClientAuthService,
-		SmsService,
-		TokenService,
-		MongoSessionService,
-		JwtAccessStrategy,
-		JwtRefreshStrategy,
-	],
+	providers: [ClientAuthService, MongoSessionService],
 })
 export class AuthModule {}

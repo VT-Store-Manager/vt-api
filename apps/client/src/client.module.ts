@@ -1,6 +1,7 @@
 import { Connection } from 'mongoose'
 import { join } from 'path'
 
+import { CommonAuthModule } from '@/libs/authentication/src'
 import {
 	ClassValidatorExceptionFilter,
 	CounterModule,
@@ -36,11 +37,11 @@ import { ProductModule } from './product/product.module'
 import { PromotionCategoryModule } from './promotion-category/promotion-category.module'
 import { PromotionModule } from './promotion/promotion.module'
 import { RankModule } from './rank/rank.module'
+import { ShipperModule } from './shipper/shipper.module'
+import { SlideModule } from './slide/slide.module'
 import { StoreModule } from './store/store.module'
 import { TriggerModule } from './triggers/trigger.module'
 import { VoucherModule } from './voucher/voucher.module'
-import { SlideModule } from './slide/slide.module'
-import { ShipperModule } from './shipper/shipper.module';
 
 @Module({
 	imports: [
@@ -89,6 +90,7 @@ import { ShipperModule } from './shipper/shipper.module';
 		TriggerModule,
 		VoucherModule,
 		ShipperModule,
+		CommonAuthModule,
 	],
 	controllers: [],
 	providers: [
@@ -113,7 +115,7 @@ import { ShipperModule } from './shipper/shipper.module';
 export class ClientApiModule {
 	constructor(@InjectConnection() private readonly connection: Connection) {
 		const connectedLog = () => {
-			Logger.debug('Database connected', 'MongoDBServer')
+			Logger.log('Database connected', 'MongoDBServer')
 		}
 		switch (this.connection.readyState) {
 			case 0:
@@ -123,11 +125,11 @@ export class ClientApiModule {
 				connectedLog()
 				break
 			case 2:
-				Logger.debug('Database is connecting...', 'MongoDBServer')
+				Logger.log('Database is connecting...', 'MongoDBServer')
 				this.connection.once('connection', connectedLog)
 				break
 			case 3:
-				Logger.debug('Database is disconnecting...', 'MongoDBServer')
+				Logger.log('Database is disconnecting...', 'MongoDBServer')
 				break
 		}
 	}

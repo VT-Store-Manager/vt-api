@@ -58,7 +58,7 @@ export class PromotionStreamService implements OnModuleInit {
 			}
 		)
 
-		StreamHelperService.logger.verbose('Promotion stream watching...')
+		StreamHelperService.logger.debug('Promotion stream watching...')
 		changeStream.on('change', (data: ChangeStreamInsertDocument<Promotion>) => {
 			if (!data.fullDocument) return
 			this.createNewPromotionNotificationTrigger(data.fullDocument)

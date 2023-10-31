@@ -13,6 +13,11 @@ async function bootstrap() {
 	const app = await NestFactory.create(SaleApiModule)
 	const configService = app.get(ConfigService)
 
+	const nodeEnv = configService.get<NodeEnv>('nodeEnv')
+	if (nodeEnv === NodeEnv.PRODUCTION) {
+		app.useLogger(['error', 'warn', 'log'])
+	}
+
 	app.useWebSocketAdapter(new IoAdapter(app))
 
 	app.enableCors({ origin: '*' })
@@ -46,15 +51,14 @@ async function bootstrap() {
 	const host = configService.get<string>('host')
 	const port =
 		configService.get<string>('port') || process.env.SALE_PORT || 8082
-	const nodeEnv = configService.get<string>('nodeEnv')
 	await app.listen(port, () => {
 		if (nodeEnv === NodeEnv.DEVELOPMENT) {
-			Logger.debug(
+			Logger.log(
 				`Nest application runs at http://${host}:${port}`,
 				'NestApplication'
 			)
-			Logger.debug(`Swagger viewed at http://${host}:${port}/api`, 'OpenAPI')
-			Logger.debug(`WebSocket server runs at ws://${host}:${port}`, 'WebSocket')
+			Logger.log(`Swagger viewed at http://${host}:${port}/api`, 'OpenAPI')
+			Logger.log(`SocketIO runs at ws://${host}:${port}`, 'SocketIO')
 		}
 	})
 }

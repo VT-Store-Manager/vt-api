@@ -41,7 +41,7 @@ export class MemberVoucherStreamService implements OnModuleInit {
 				},
 			},
 		])
-		StreamHelperService.logger.verbose('Member voucher stream watching...')
+		StreamHelperService.logger.debug('Member voucher stream watching...')
 		changeStream.on(
 			'change',
 			(data: ChangeStreamInsertDocument<MemberVoucher>) => {

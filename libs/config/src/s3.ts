@@ -23,7 +23,7 @@ export const awsS3Config = async (
 		return
 	}
 	const bucketNames = getBucketsResult.Buckets.map(b => b.Name)
-	Logger.debug(
+	Logger.log(
 		`Successfully connect to ${getBucketsResult.Buckets.length} Bucket${
 			getBucketsResult.Buckets.length > 1 ? 's' : ''
 		}${
@@ -39,6 +39,6 @@ export const awsS3Config = async (
 			Logger.error(`Create Bucket ${bucketName} failed`, 'S3Client')
 			return
 		}
-		Logger.debug(`Create Bucket ${bucketName} successful`, 'S3Client')
+		Logger.log(`Create Bucket ${bucketName} successful`, 'S3Client')
 	}
 }

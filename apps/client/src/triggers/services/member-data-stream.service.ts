@@ -48,7 +48,7 @@ export class MemberDataStreamService implements OnModuleInit {
 			}
 		)
 
-		StreamHelperService.logger.verbose('Member data stream watching...')
+		StreamHelperService.logger.debug('Member data stream watching...')
 		changeStream.on(
 			'change',
 			(data: ChangeStreamUpdateDocument<MemberNotificationAmount>) => {

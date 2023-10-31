@@ -12,6 +12,11 @@ async function bootstrap() {
 	const app = await NestFactory.create(ClientApiModule)
 	const configService = app.get(ConfigService)
 
+	const nodeEnv = configService.get<NodeEnv>('nodeEnv')
+	if (nodeEnv === NodeEnv.PRODUCTION) {
+		app.useLogger(['error', 'warn', 'log'])
+	}
+
 	app.enableCors({ origin: '*' })
 	app.use(compression())
 
@@ -43,14 +48,10 @@ async function bootstrap() {
 	const host = configService.get<string>('host')
 	const port =
 		configService.get<string>('port') || process.env.CLIENT_PORT || 8080
-	const nodeEnv = configService.get<string>('nodeEnv')
 	await app.listen(port, () => {
 		if (nodeEnv === NodeEnv.DEVELOPMENT) {
-			Logger.debug(
-				`Nest application runs at ${host}:${port}`,
-				'NestApplication'
-			)
-			Logger.debug(`Swagger viewed at ${host}:${port}/api`, 'OpenAPI')
+			Logger.log(`Nest application runs at ${host}:${port}`, 'NestApplication')
+			Logger.log(`Swagger viewed at ${host}:${port}/api`, 'OpenAPI')
 		}
 	})
 }

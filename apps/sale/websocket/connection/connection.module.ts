@@ -1,4 +1,4 @@
-import { AuthService, JwtAccessStrategy } from '@/libs/authentication/src'
+import { CommonAuthModule } from '@/libs/authentication/src'
 import {
 	AccountAdmin,
 	AccountAdminSchema,
@@ -10,7 +10,6 @@ import {
 	StoreSchema,
 } from '@app/database'
 import { Module } from '@nestjs/common'
-import { JwtService } from '@nestjs/jwt'
 import { MongooseModule } from '@nestjs/mongoose'
 
 import { ConnectionGateway } from './connection.gateway'
@@ -23,7 +22,8 @@ import { ConnectionGateway } from './connection.gateway'
 			{ name: Shipper.name, schema: ShipperSchema },
 			{ name: AccountAdmin.name, schema: AccountAdminSchema },
 		]),
+		CommonAuthModule,
 	],
-	providers: [ConnectionGateway, JwtService, JwtAccessStrategy, AuthService],
+	providers: [ConnectionGateway],
 })
 export class MemberConnectionModule {}

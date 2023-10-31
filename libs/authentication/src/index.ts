@@ -10,3 +10,5 @@ export * from './services/sms.service'
 export * from './services/token.service'
 export * from './strategies/jwt-access.strategy'
 export * from './strategies/jwt-refresh.strategy'
+
+export * from './common-auth.module'

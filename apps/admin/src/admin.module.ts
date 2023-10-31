@@ -38,8 +38,8 @@ import { VoucherModule } from './voucher/voucher.module'
 import { AccountAdminModule } from './account-admin/account-admin.module'
 import { AuthModule } from './auth/auth.module'
 import { CaslModule } from './casl/casl.module'
-import { ShipperModule } from './shipper/shipper.module';
-import { EmployeeModule } from './employee/employee.module';
+import { ShipperModule } from './shipper/shipper.module'
+import { EmployeeModule } from './employee/employee.module'
 
 @Module({
 	imports: [
@@ -111,7 +111,7 @@ import { EmployeeModule } from './employee/employee.module';
 export class AdminApiModule {
 	constructor(@InjectConnection() private readonly connection: Connection) {
 		const connectedLog = () => {
-			Logger.debug('Database connected', 'MongoDBServer')
+			Logger.log('Database connected', 'MongoDBServer')
 		}
 		switch (this.connection.readyState) {
 			case 0:
@@ -121,11 +121,11 @@ export class AdminApiModule {
 				connectedLog()
 				break
 			case 2:
-				Logger.debug('Database is connecting...', 'MongoDBServer')
+				Logger.log('Database is connecting...', 'MongoDBServer')
 				this.connection.once('connection', connectedLog)
 				break
 			case 3:
-				Logger.debug('Database is disconnecting...', 'MongoDBServer')
+				Logger.log('Database is disconnecting...', 'MongoDBServer')
 				break
 		}
 	}

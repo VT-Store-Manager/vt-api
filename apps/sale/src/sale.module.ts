@@ -1,6 +1,7 @@
 import { Connection } from 'mongoose'
 import { join } from 'path'
 
+import { CommonAuthModule } from '@app/authentication'
 import {
 	ClassValidatorExceptionFilter,
 	FileModule,
@@ -19,16 +20,16 @@ import {
 } from '@nestjs/mongoose'
 import { ServeStaticModule } from '@nestjs/serve-static'
 
+import { WebSocketModule } from '../websocket/websocket.module'
 import { AuthModule } from './auth/auth.module'
+import { EmployeeModule } from './employee/employee.module'
+import { MemberModule } from './member/member.module'
 import { OrderModule } from './order/order.module'
 import { ProductCategoryModule } from './product-category/product-category.module'
 import { ProductOptionModule } from './product-option/product-option.module'
 import { ProductModule } from './product/product.module'
-import { VoucherModule } from './voucher/voucher.module'
-import { EmployeeModule } from './employee/employee.module'
-import { MemberModule } from './member/member.module'
 import { ShipperModule } from './shipper/shipper.module'
-import { WebSocketModule } from '../websocket/websocket.module'
+import { VoucherModule } from './voucher/voucher.module'
 
 @Module({
 	imports: [
@@ -65,6 +66,7 @@ import { WebSocketModule } from '../websocket/websocket.module'
 		EmployeeModule,
 		MemberModule,
 		ShipperModule,
+		CommonAuthModule,
 	],
 	controllers: [],
 	providers: [
@@ -89,7 +91,7 @@ import { WebSocketModule } from '../websocket/websocket.module'
 export class SaleApiModule {
 	constructor(@InjectConnection() private readonly connection: Connection) {
 		const connectedLog = () => {
-			Logger.debug('Database connected', 'MongoDBServer')
+			Logger.log('Database connected', 'MongoDBServer')
 		}
 		switch (this.connection.readyState) {
 			case 0:
@@ -99,11 +101,11 @@ export class SaleApiModule {
 				connectedLog()
 				break
 			case 2:
-				Logger.debug('Database is connecting...', 'MongoDBServer')
+				Logger.log('Database is connecting...', 'MongoDBServer')
 				this.connection.once('connection', connectedLog)
 				break
 			case 3:
-				Logger.debug('Database is disconnecting...', 'MongoDBServer')
+				Logger.log('Database is disconnecting...', 'MongoDBServer')
 				break
 		}
 	}

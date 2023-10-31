@@ -53,7 +53,7 @@ export class NotificationStreamService implements OnModuleInit {
 			},
 		])
 
-		StreamHelperService.logger.verbose('Notification stream watching...')
+		StreamHelperService.logger.debug('Notification stream watching...')
 		changeStream.on(
 			'change',
 			(data: ChangeStreamInsertDocument<Notification>) => {

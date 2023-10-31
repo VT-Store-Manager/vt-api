@@ -13,7 +13,7 @@ async function bootstrap() {
 	})
 
 	await app.listen(80)
-	Logger.debug(`Nest application: http://localhost`, 'NestApplication')
-	Logger.debug(`Websocket server: ws://localhost:9000`, 'NestApplication')
+	Logger.log(`Nest application: http://localhost`, 'NestApplication')
+	Logger.log(`Websocket server: ws://localhost:9000`, 'NestApplication')
 }
 bootstrap()
