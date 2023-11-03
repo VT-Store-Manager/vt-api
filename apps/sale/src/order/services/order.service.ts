@@ -1307,7 +1307,7 @@ export class OrderService {
 							review: '$shipper.review.content',
 						},
 						point: '$point',
-						status: '$state',
+						statusId: '$state',
 						timeLog: {
 							$map: {
 								input: '$timeLog',

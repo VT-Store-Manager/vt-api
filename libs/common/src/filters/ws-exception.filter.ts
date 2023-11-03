@@ -10,11 +10,6 @@ import {
 	socketLogger,
 } from '@sale/config/constant'
 
-type WsExceptionResponse = {
-	error: string
-	message?: string
-}
-
 const COMMON_WS_EXCEPTION_NAME = 'Bad Event'
 const VALIDATION_ERROR_NAME = 'Validation Error'
 const INTERNAL_SERVER_ERROR_NAME = 'Internal Server Error'
@@ -22,7 +17,7 @@ const INTERNAL_SERVER_ERROR_NAME = 'Internal Server Error'
 const getExceptionData = (
 	exception: Error | HttpException | WsException,
 	client: Socket
-): WsExceptionResponse | undefined => {
+): Error | undefined => {
 	const isWsException = exception instanceof WsException
 	const isHttpException = exception instanceof HttpException
 	const userData = client[AUTHENTICATED_USER_DATA]
@@ -37,13 +32,13 @@ const getExceptionData = (
 
 	if (typeof error === 'string') {
 		return {
-			error: COMMON_WS_EXCEPTION_NAME,
+			name: COMMON_WS_EXCEPTION_NAME,
 			message: error,
 		}
 	}
 	if (error.message && Array.isArray(error.message)) {
 		return {
-			error: VALIDATION_ERROR_NAME,
+			name: VALIDATION_ERROR_NAME,
 			message: (error.message as string[])
 				.map(v => v?.toString() || '' + v)
 				.join('\n'),
@@ -53,7 +48,7 @@ const getExceptionData = (
 		const status = exception.getStatus()
 		if (status >= 500) {
 			return {
-				error: INTERNAL_SERVER_ERROR_NAME,
+				name: INTERNAL_SERVER_ERROR_NAME,
 				message: error.message,
 			}
 		} else if (status === 401) {
@@ -76,7 +71,7 @@ const getExceptionData = (
 	}
 
 	return {
-		error: error.name || COMMON_WS_EXCEPTION_NAME,
+		name: error.name || COMMON_WS_EXCEPTION_NAME,
 		message: error.message,
 	}
 }
@@ -89,9 +84,7 @@ export class WebsocketExceptionsFilter extends BaseWsExceptionFilter {
 		const exceptionData = getExceptionData(exception, client)
 
 		if (exceptionData) {
-			client.emit('error', {
-				...exceptionData,
-			})
+			client.emit('error', exceptionData)
 		}
 	}
 }

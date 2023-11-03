@@ -59,7 +59,7 @@ export class GetOrderDetailDTO {
 	review?: OrderReviewDTO
 	reviewShipper?: OrderReviewShipperDTO
 	point: number
-	status: OrderState
+	statusId: OrderState
 	timeLog: TimeLog[]
 	employee?: OrderEmployeeInfo
 	shipper?: OrderShipperInfo

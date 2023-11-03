@@ -16,6 +16,7 @@ export class OrderDetailDTO {
 	store: OrderStoreDTO
 	timelines: OrderTimeLogDTO[]
 	review?: OrderReviewShipperDTO
+	createdAt: number
 }
 
 export class OrderItemDTO {

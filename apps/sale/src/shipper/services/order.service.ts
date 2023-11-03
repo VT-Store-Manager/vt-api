@@ -215,6 +215,12 @@ export class ShipperOrderService {
 									},
 								],
 							},
+							createdAt: { $toLong: '$createdAt' },
+						},
+					},
+					{
+						$sort: {
+							createdAt: -1,
 						},
 					},
 					{

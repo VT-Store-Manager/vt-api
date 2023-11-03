@@ -75,7 +75,6 @@ export class OrderController {
 			body
 		)
 		this.socketClient.getSocket().emit('member:new_order', {
-			storeId: createdOrder.store.id.toString(),
 			orderId: createdOrder._id.toString(),
 		})
 		return { id: createdOrder._id }
@@ -110,7 +109,13 @@ export class OrderController {
 		@CurrentUser('sub') memberId: string,
 		@Param('orderId', ObjectIdPipe) orderId: string
 	) {
-		return await this.orderService.cancelOrder(memberId, orderId)
+		const isDeleted = await this.orderService.cancelOrder(memberId, orderId)
+
+		if (isDeleted) {
+			this.socketClient.getSocket().emit('member:cancel_order', { orderId })
+		}
+
+		return isDeleted
 	}
 
 	@Get(':orderId')

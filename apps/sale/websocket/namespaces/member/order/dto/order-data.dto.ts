@@ -1,9 +1,6 @@
 import { IsMongoId } from 'class-validator'
 
-export class MemberNewOrderDTO {
+export class OrderDataDTO {
 	@IsMongoId()
 	orderId: string
-
-	@IsMongoId()
-	storeId: string
 }
