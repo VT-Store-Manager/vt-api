@@ -24,16 +24,16 @@ import {
 } from '@nestjs/websockets'
 import { OrderService } from '@sale/src/order/services/order.service'
 
-import { WsMemberOrderService } from './order.service'
-import { OrderDataDTO } from './dto/order-data.dto'
+import { OrderDataDTO } from '../dto/order-data.dto'
+import { WsOrderService } from '../order.service'
 
 @UseFilters(new WebsocketExceptionsFilter())
 @UsePipes(new ValidationPipe())
 @WebSocketGateway({ cors: '*', namespace: WsNamespace.MEMBER })
-export class MemberOrderGateway {
+export class OrderMemberGateway {
 	constructor(
 		private readonly orderService: OrderService,
-		private readonly wsMemberOrderService: WsMemberOrderService
+		private readonly wsMemberOrderService: WsOrderService
 	) {}
 
 	@WebSocketServer()

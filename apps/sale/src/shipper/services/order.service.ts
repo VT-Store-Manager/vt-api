@@ -8,11 +8,12 @@ import {
 } from '@app/database'
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-import { FilterQuery, Model, Types } from 'mongoose'
+import { FilterQuery, Model, PipelineStage, Types } from 'mongoose'
 import { GetOrderListDTO } from '../dto/get-order-list.dto'
 import {
 	OrderDetailDTO,
 	OrderListPaginationResultDTO,
+	OrderShortDTO,
 } from '../dto/response.dto'
 import { SoftDeleteModel } from 'mongoose-delete'
 
@@ -24,6 +25,191 @@ export class ShipperOrderService {
 		@InjectModel(Order.name)
 		private readonly orderModel: SoftDeleteModel<OrderDocument>
 	) {}
+
+	getOrderShortInfoPipeline(): PipelineStage[] {
+		return [
+			{
+				$lookup: {
+					from: 'stores',
+					localField: 'store.id',
+					foreignField: '_id',
+					as: 'storeData',
+					pipeline: [
+						{
+							$project: {
+								phone: true,
+							},
+						},
+					],
+				},
+			},
+			{
+				$unwind: {
+					path: '$storeData',
+					preserveNullAndEmptyArrays: true,
+				},
+			},
+			{
+				$project: {
+					id: '$_id',
+					_id: false,
+					quantity: {
+						$reduce: {
+							input: '$items',
+							initialValue: 0,
+							in: {
+								$add: ['$$value', '$$this.quantity'],
+							},
+						},
+					},
+					totalPrice: '$totalProductPrice',
+					shippingFee: {
+						$subtract: ['$deliveryPrice', '$deliveryDiscount'],
+					},
+					paymentType: '$payment',
+					receiver: {
+						name: true,
+						phone: true,
+						address: true,
+						lat: {
+							$ifNull: ['$receiver.lat', 0],
+						},
+						lng: {
+							$ifNull: ['$receiver.lng', 0],
+						},
+					},
+					store: {
+						name: true,
+						phone: {
+							$ifNull: ['$store.phone', '$storeData.phone'],
+						},
+						address: true,
+						lat: {
+							$ifNull: ['$receiver.lat', 0],
+						},
+						lng: {
+							$ifNull: ['$receiver.lng', 0],
+						},
+					},
+					createdAt: { $toLong: '$createdAt' },
+				},
+			},
+		]
+	}
+
+	getOrderDetailPipeline(): PipelineStage[] {
+		return [
+			{
+				$lookup: {
+					from: 'stores',
+					localField: 'store.id',
+					foreignField: '_id',
+					as: 'storeData',
+					pipeline: [
+						{
+							$project: {
+								phone: true,
+							},
+						},
+					],
+				},
+			},
+			{
+				$unwind: {
+					path: '$storeData',
+					preserveNullAndEmptyArrays: true,
+				},
+			},
+			{
+				$project: {
+					id: '$_id',
+					_id: false,
+					code: true,
+					items: {
+						$map: {
+							input: '$items',
+							as: 'item',
+							in: {
+								id: '$$item.productId',
+								name: '$$item.name',
+								amount: '$$item.quantity',
+								note: '$$item.note',
+							},
+						},
+					},
+					quantity: {
+						$reduce: {
+							input: '$items',
+							initialValue: 0,
+							in: {
+								$add: ['$$value', '$$this.quantity'],
+							},
+						},
+					},
+					totalPrice: '$totalProductPrice',
+					shippingFee: {
+						$subtract: ['$deliveryPrice', '$deliveryDiscount'],
+					},
+					paymentType: '$payment',
+					receiver: {
+						name: true,
+						phone: true,
+						address: true,
+						lat: {
+							$ifNull: ['$receiver.lat', 0],
+						},
+						lng: {
+							$ifNull: ['$receiver.lng', 0],
+						},
+					},
+					store: {
+						name: true,
+						phone: {
+							$ifNull: ['$store.phone', '$storeData.phone'],
+						},
+						address: true,
+						lat: {
+							$ifNull: ['$receiver.lat', 0],
+						},
+						lng: {
+							$ifNull: ['$receiver.lng', 0],
+						},
+					},
+					timeLog: {
+						$map: {
+							input: '$timeLog',
+							as: 'log',
+							in: {
+								time: {
+									$toLong: '$$log.time',
+								},
+								title: '$$log.title',
+								description: '$$log.description',
+							},
+						},
+					},
+					review: {
+						$cond: [
+							{
+								$eq: [
+									{
+										$ifNull: ['$shipper.review', null],
+									},
+									null,
+								],
+							},
+							null,
+							{
+								rate: '$shipper.review.rate',
+								description: '$shipper.review.content',
+							},
+						],
+					},
+					createdAt: { $toLong: '$createdAt' },
+				},
+			},
+		]
+	}
 
 	async updateOrderStatus(
 		shipperId: string,
@@ -114,110 +300,11 @@ export class ShipperOrderService {
 		const [totalCountOrder, orders] = await Promise.all([
 			this.orderModel.count(filter).exec(),
 			this.orderModel
-				.aggregate<OrderDetailDTO>([
+				.aggregate<OrderShortDTO>([
 					{
 						$match: filter,
 					},
-					{
-						$lookup: {
-							from: 'stores',
-							localField: 'store.id',
-							foreignField: '_id',
-							as: 'storeData',
-							pipeline: [
-								{
-									$project: {
-										phone: true,
-									},
-								},
-							],
-						},
-					},
-					{
-						$unwind: {
-							path: '$storeData',
-							preserveNullAndEmptyArrays: true,
-						},
-					},
-					{
-						$project: {
-							id: '$_id',
-							_id: false,
-							code: true,
-							items: {
-								$map: {
-									input: '$items',
-									as: 'item',
-									in: {
-										id: '$$item.productId',
-										name: '$$item.name',
-										amount: '$$item.quantity',
-										note: '$$item.note',
-									},
-								},
-							},
-							totalPrice: '$totalProductPrice',
-							shippingFee: {
-								$subtract: ['$deliveryPrice', '$deliveryDiscount'],
-							},
-							paymentType: '$payment',
-							receiver: {
-								name: true,
-								phone: true,
-								address: true,
-								lat: {
-									$ifNull: ['$receiver.lat', 0],
-								},
-								lng: {
-									$ifNull: ['$receiver.lng', 0],
-								},
-							},
-							store: {
-								name: true,
-								phone: {
-									$ifNull: ['$store.phone', '$storeData.phone'],
-								},
-								address: true,
-								lat: {
-									$ifNull: ['$receiver.lat', 0],
-								},
-								lng: {
-									$ifNull: ['$receiver.lng', 0],
-								},
-							},
-							timeLog: {
-								$map: {
-									input: '$timeLog',
-									as: 'log',
-									in: {
-										time: {
-											$toLong: '$$log.time',
-										},
-										title: '$$log.title',
-										description: '$$log.description',
-									},
-								},
-							},
-							review: {
-								$cond: [
-									{
-										$eq: [
-											{
-												$ifNull: ['$shipper.review', null],
-											},
-											null,
-										],
-									},
-									null,
-									{
-										rate: '$shipper.review.rate',
-										description: '$shipper.review.content',
-									},
-								],
-							},
-							createdAt: { $toLong: '$createdAt' },
-						},
-					},
+					...this.getOrderShortInfoPipeline(),
 					{
 						$sort: {
 							createdAt: -1,
@@ -237,5 +324,26 @@ export class ShipperOrderService {
 			maxCount: totalCountOrder,
 			data: orders,
 		}
+	}
+
+	async getOrderDetail(
+		orderId: string,
+		shipperId: string
+	): Promise<OrderDetailDTO> {
+		const [order] = await this.orderModel
+			.aggregate<OrderDetailDTO>([
+				{
+					$match: {
+						_id: new Types.ObjectId(orderId.toString()),
+						'shipper.id': new Types.ObjectId(shipperId.toString()),
+					},
+				},
+				...this.getOrderDetailPipeline(),
+			])
+			.exec()
+
+		if (!order) throw new BadRequestException('Order not found')
+
+		return order
 	}
 }

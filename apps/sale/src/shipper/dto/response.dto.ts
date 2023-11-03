@@ -1,14 +1,16 @@
 import { PaymentType } from '@app/common'
+import { PickType } from '@nestjs/swagger'
 
 export class OrderListPaginationResultDTO {
 	maxCount: number
-	data: OrderDetailDTO[]
+	data: OrderShortDTO[]
 }
 
 export class OrderDetailDTO {
 	id: string
 	code: string
 	items: OrderItemDTO[]
+	quantity: number
 	totalPrice: number
 	shippingFee: number
 	paymentType: PaymentType
@@ -18,6 +20,17 @@ export class OrderDetailDTO {
 	review?: OrderReviewShipperDTO
 	createdAt: number
 }
+
+export class OrderShortDTO extends PickType(OrderDetailDTO, [
+	'id',
+	'receiver',
+	'store',
+	'paymentType',
+	'totalPrice',
+	'shippingFee',
+	'createdAt',
+	'quantity',
+] as const) {}
 
 export class OrderItemDTO {
 	id: string

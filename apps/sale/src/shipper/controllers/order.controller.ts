@@ -5,7 +5,10 @@ import { Body, Controller, Get, Param, Patch, Query } from '@nestjs/common'
 import { ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import { GetOrderListDTO } from '../dto/get-order-list.dto'
-import { OrderListPaginationResultDTO } from '../dto/response.dto'
+import {
+	OrderDetailDTO,
+	OrderListPaginationResultDTO,
+} from '../dto/response.dto'
 import { UpdateShipperOrderStateDTO } from '../dto/update-shipper-order-state.dto'
 import { ShipperOrderService } from '../services/order.service'
 
@@ -13,6 +16,28 @@ import { ShipperOrderService } from '../services/order.service'
 @ApiTags('shipper-app > order')
 export class ShipperOrderController {
 	constructor(private readonly orderService: ShipperOrderService) {}
+
+	@Get('list')
+	@JwtAccess(Role.SHIPPER)
+	@ApiSuccessResponse(OrderListPaginationResultDTO)
+	async getOrderList(
+		@CurrentUser('sub') shipperId: string,
+		@Query() query: GetOrderListDTO
+	): Promise<OrderListPaginationResultDTO> {
+		if (query.page < 1) query.page = 1
+		if (query.limit < 1) query.limit = 20
+		return await this.orderService.getOrderListPagination(shipperId, query)
+	}
+
+	@Get(':orderId/detail')
+	@JwtAccess(Role.SHIPPER)
+	@ApiSuccessResponse(OrderDetailDTO)
+	async getShipperOrderDetail(
+		@CurrentUser('sub') shipperId: string,
+		@Param('orderId', ObjectIdPipe) orderId: string
+	) {
+		return await this.orderService.getOrderDetail(orderId, shipperId)
+	}
 
 	@Patch(':orderId')
 	@JwtAccess(Role.SHIPPER)
@@ -27,17 +52,5 @@ export class ShipperOrderController {
 			orderId,
 			body.status
 		)
-	}
-
-	@Get('list')
-	@JwtAccess(Role.SHIPPER)
-	@ApiSuccessResponse(OrderListPaginationResultDTO)
-	async getOrderList(
-		@CurrentUser('sub') shipperId: string,
-		@Query() query: GetOrderListDTO
-	): Promise<OrderListPaginationResultDTO> {
-		if (query.page < 1) query.page = 1
-		if (query.limit < 1) query.limit = 20
-		return await this.orderService.getOrderListPagination(shipperId, query)
 	}
 }

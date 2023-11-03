@@ -1,8 +1,11 @@
+import {
+	OrderDetailDTO,
+	OrderShortDTO,
+} from '@sale/src/shipper/dto/response.dto'
 import { GetOrderDetailDTO } from '@sale/src/order/dto/response.dto'
 import { AuthenticateClientDTO } from '@websocket/connection/dto/authenticate-client.dto'
-import { OrderDataDTO } from '@websocket/namespaces/member/order/dto/order-data.dto'
-import { OrderStatusChangedDTO } from '@websocket/namespaces/member/order/dto/order-status-changed.dto'
-import { ShippingOrderDataDTO } from '@websocket/namespaces/member/order/dto/shipping-order-data.dto'
+import { OrderDataDTO } from '@websocket/order/dto/order-data.dto'
+import { OrderStatusChangedDTO } from '@websocket/order/dto/order-status-changed.dto'
 
 // Common namespace
 export type CommonEventMap = {
@@ -33,8 +36,12 @@ export type StoreEventNames = keyof StoreEventMap
 // Shipper namespace
 export type ShipperEventMap = {
 	['error']: (error: Error) => void
-	['shipper:new_order']: (dto: ShippingOrderDataDTO) => void
+	['shipper:new_order']: (dto: OrderShortDTO) => void
 	['shipper:cancelled_order']: (dto: OrderDataDTO) => void
+	['shipper:pick_order']: (dto: OrderDataDTO) => void
+	['shipper:pick_order_error']: (dto: OrderDataDTO) => void
+	['shipper:pick_order_success']: (dto: OrderDataDTO) => void
+	['shipper:remove_picked_order']: (dto: OrderDataDTO) => void
 }
 export type ShipperEventNames = keyof ShipperEventMap
 

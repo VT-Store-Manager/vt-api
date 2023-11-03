@@ -24,5 +24,6 @@ import { ShipperOrderService } from './services/order.service'
 	],
 	controllers: [ShipperAuthController, ShipperOrderController],
 	providers: [ShipperAuthService, ShipperOrderService, MongoSessionService],
+	exports: [ShipperOrderService, MongooseModule],
 })
 export class ShipperModule {}
