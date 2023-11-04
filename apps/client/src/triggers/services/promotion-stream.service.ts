@@ -1,7 +1,7 @@
 import { ChangeStreamInsertDocument } from 'mongodb'
 import { Model, Types } from 'mongoose'
 
-import { NotificationType } from '@app/common'
+import { NotificationType, ChangeStreamLogger } from '@app/common'
 import {
 	MemberData,
 	MemberDataDocument,
@@ -15,8 +15,6 @@ import {
 } from '@app/database'
 import { Injectable, OnModuleInit } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-
-import { StreamHelperService } from './stream-helper.service'
 
 @Injectable()
 export class PromotionStreamService implements OnModuleInit {
@@ -58,7 +56,7 @@ export class PromotionStreamService implements OnModuleInit {
 			}
 		)
 
-		StreamHelperService.logger.debug('Promotion stream watching...')
+		ChangeStreamLogger.debug('Promotion stream watching...')
 		changeStream.on('change', (data: ChangeStreamInsertDocument<Promotion>) => {
 			if (!data.fullDocument) return
 			this.createNewPromotionNotificationTrigger(data.fullDocument)
@@ -139,7 +137,7 @@ export class PromotionStreamService implements OnModuleInit {
 			)
 			.exec()
 
-		StreamHelperService.logger.verbose(
+		ChangeStreamLogger.verbose(
 			`Promotion ${data._id.toString()}: Member count ${
 				members.length
 			}, matched ${updateResult.matchedCount}, modified ${

@@ -11,6 +11,7 @@ import {
 	OrderBuyer,
 	OrderState,
 	SettingMemberAppService,
+	ChangeStreamLogger,
 } from '@app/common'
 import {
 	MemberData,
@@ -32,8 +33,6 @@ import {
 } from '@app/database'
 import { Injectable, OnModuleInit } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-
-import { StreamHelperService } from './stream-helper.service'
 
 @Injectable()
 export class OrderStreamService implements OnModuleInit {
@@ -96,7 +95,7 @@ export class OrderStreamService implements OnModuleInit {
 			}
 		)
 
-		StreamHelperService.logger.debug('Order stream watching...')
+		ChangeStreamLogger.debug('Order stream watching...')
 		changeStream.on('change', (data: ChangeStreamDocument) => {
 			switch (data.operationType) {
 				case 'insert':
@@ -145,7 +144,7 @@ export class OrderStreamService implements OnModuleInit {
 				}
 			)
 			.exec()
-			.catch(error => StreamHelperService.logger.error(error?.message || error))
+			.catch(error => ChangeStreamLogger.error(error?.message || error))
 	}
 
 	private async addMemberPointTrigger(
@@ -170,11 +169,11 @@ export class OrderStreamService implements OnModuleInit {
 					}
 				)
 				.exec()
-			StreamHelperService.logger.verbose(
+			ChangeStreamLogger.verbose(
 				`Member ${preData.member.id}: Add ${preData.point} points`
 			)
 		} catch (error) {
-			StreamHelperService.logger.error(error?.message || error)
+			ChangeStreamLogger.error(error?.message || error)
 		}
 	}
 
@@ -201,13 +200,13 @@ export class OrderStreamService implements OnModuleInit {
 						}
 					)
 					.then(updateResult =>
-						StreamHelperService.logger.verbose(
+						ChangeStreamLogger.verbose(
 							`Enable voucher ${
 								updateResult.modifiedCount === 1 ? 'successful' : 'failed'
 							}`
 						)
 					)
-					.catch(error => StreamHelperService.logger.error(error))
+					.catch(error => ChangeStreamLogger.error(error))
 
 				break
 			case OrderState.DONE:
@@ -302,13 +301,13 @@ export class OrderStreamService implements OnModuleInit {
 								{ session }
 							),
 						])
-						StreamHelperService.logger.verbose(
+						ChangeStreamLogger.verbose(
 							'Delete member voucher and insert into voucher history successful'
 						)
 					}
 				)
 				if (error) {
-					StreamHelperService.logger.error(error)
+					ChangeStreamLogger.error(error)
 				}
 				break
 		}
@@ -351,7 +350,7 @@ export class OrderStreamService implements OnModuleInit {
 			)
 			.exec()
 		if (updateResult.modifiedCount) {
-			StreamHelperService.logger.verbose(
+			ChangeStreamLogger.verbose(
 				`Member ${preData.member.id}: Add new notification - type ORDER`
 			)
 		}

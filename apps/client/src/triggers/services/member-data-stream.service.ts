@@ -1,7 +1,7 @@
 import { ChangeStreamUpdateDocument } from 'mongodb'
 import { Model, Types } from 'mongoose'
 
-import { SettingMemberAppService } from '@app/common'
+import { SettingMemberAppService, ChangeStreamLogger } from '@app/common'
 import {
 	MemberData,
 	MemberDataDocument,
@@ -9,8 +9,6 @@ import {
 } from '@app/database'
 import { Injectable, OnModuleInit } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-
-import { StreamHelperService } from './stream-helper.service'
 
 type MemberNotificationAmount = {
 	member: Types.ObjectId
@@ -48,7 +46,7 @@ export class MemberDataStreamService implements OnModuleInit {
 			}
 		)
 
-		StreamHelperService.logger.debug('Member data stream watching...')
+		ChangeStreamLogger.debug('Member data stream watching...')
 		changeStream.on(
 			'change',
 			(data: ChangeStreamUpdateDocument<MemberNotificationAmount>) => {
@@ -100,10 +98,10 @@ export class MemberDataStreamService implements OnModuleInit {
 		)
 
 		if (error) {
-			StreamHelperService.logger.error(error.message)
+			ChangeStreamLogger.error(error.message)
 		} else {
 			const deletedAmount = data.notificationCount - result.notifications.length
-			StreamHelperService.logger.verbose(
+			ChangeStreamLogger.verbose(
 				`Member ${data.member.toString()}: Pop ${deletedAmount} notification${
 					deletedAmount > 1 ? 's' : ''
 				}`

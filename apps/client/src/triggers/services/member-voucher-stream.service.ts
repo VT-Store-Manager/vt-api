@@ -1,7 +1,7 @@
 import { ChangeStreamInsertDocument } from 'mongodb'
 import { Model } from 'mongoose'
 
-import { NotificationType } from '@app/common'
+import { NotificationType, ChangeStreamLogger } from '@app/common'
 import {
 	MemberData,
 	MemberDataDocument,
@@ -13,8 +13,6 @@ import {
 } from '@app/database'
 import { Injectable, OnModuleInit } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-
-import { StreamHelperService } from './stream-helper.service'
 
 @Injectable()
 export class MemberVoucherStreamService implements OnModuleInit {
@@ -41,7 +39,7 @@ export class MemberVoucherStreamService implements OnModuleInit {
 				},
 			},
 		])
-		StreamHelperService.logger.debug('Member voucher stream watching...')
+		ChangeStreamLogger.debug('Member voucher stream watching...')
 		changeStream.on(
 			'change',
 			(data: ChangeStreamInsertDocument<MemberVoucher>) => {
@@ -101,7 +99,7 @@ export class MemberVoucherStreamService implements OnModuleInit {
 			.exec()
 
 		if (updateResult.modifiedCount === 1) {
-			StreamHelperService.logger.verbose(
+			ChangeStreamLogger.verbose(
 				`Member ${data.member}: Push new voucher notification`
 			)
 		}

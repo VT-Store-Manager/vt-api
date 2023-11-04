@@ -2,6 +2,7 @@
 import { ChangeStreamUpdateDocument } from 'mongodb'
 import { Model } from 'mongoose'
 
+import { ChangeStreamLogger } from '@app/common'
 import {
 	MemberRank,
 	MemberRankDocument,
@@ -10,8 +11,6 @@ import {
 } from '@app/database'
 import { Injectable, OnModuleInit } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-
-import { StreamHelperService } from './stream-helper.service'
 
 @Injectable()
 export class MemberRankStreamService implements OnModuleInit {
@@ -57,7 +56,7 @@ export class MemberRankStreamService implements OnModuleInit {
 			}
 		)
 
-		StreamHelperService.logger.debug('Member rank stream watching...')
+		ChangeStreamLogger.debug('Member rank stream watching...')
 		changeStream.on(
 			'change',
 			(
@@ -99,7 +98,7 @@ export class MemberRankStreamService implements OnModuleInit {
 				rank: nextRank._id,
 			}
 		)
-		StreamHelperService.logger.verbose(
+		ChangeStreamLogger.verbose(
 			`Member ${postData.member.toString()}: Rank ${currentRank.name} -> ${
 				nextRank.name
 			}`
