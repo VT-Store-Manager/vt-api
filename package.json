@@ -21,9 +21,9 @@
 		"start:dev:ADMIN": "nest start --watch admin",
 		"start:dev:CLIENT": "nest start --watch client",
 		"start:dev:SALE": "nest start --watch sale",
-		"start:prod": "node dist/apps/client/main",
-		"start:prod:ADMIN": "node dist/apps/admin/main",
-		"start:prod:SALE": "node dist/apps/sale/main"
+		"start:prod": "node dist/client/main",
+		"start:prod:ADMIN": "node dist/admin/main",
+		"start:prod:SALE": "node dist/sale/main"
 	},
 	"lint-staged": {
 		"*.{ts,js}": "eslint --cache --fix --max-warnings=0",

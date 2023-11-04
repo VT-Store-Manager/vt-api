@@ -86,15 +86,6 @@
 				"tsConfigPath": "apps/sale/tsconfig.app.json"
 			}
 		},
-		"ws-chat": {
-			"type": "application",
-			"root": "apps/ws-chat",
-			"entryFile": "main",
-			"sourceRoot": "apps/ws-chat/src",
-			"compilerOptions": {
-				"tsConfigPath": "apps/ws-chat/tsconfig.app.json"
-			}
-		},
 		"client": {
 			"type": "application",
 			"root": "apps/client",
