@@ -1,5 +1,3 @@
-import { Namespace } from 'socket.io'
-
 import { HttpServer } from '@app/authentication'
 import {
 	getShipperRoom,
@@ -9,20 +7,15 @@ import {
 	WebsocketExceptionsFilter,
 	WsNamespace,
 } from '@app/common'
-import {
-	MemberEventMap,
-	MemberEventNames,
-	ShipperEventMap,
-	StoreEventMap,
-} from '@app/types'
+import { MemberEventNames } from '@app/types'
 import { UseFilters, UsePipes, ValidationPipe } from '@nestjs/common'
 import {
 	MessageBody,
 	SubscribeMessage,
 	WebSocketGateway,
-	WebSocketServer,
 } from '@nestjs/websockets'
 import { OrderService } from '@sale/src/order/services/order.service'
+import { ConnectionProvider } from '@websocket/connection/connection.provider'
 
 import { OrderDataDTO } from '../dto/order-data.dto'
 import { WsOrderService } from '../order.service'
@@ -33,30 +26,12 @@ import { WsOrderService } from '../order.service'
 export class OrderMemberGateway {
 	constructor(
 		private readonly orderService: OrderService,
-		private readonly wsMemberOrderService: WsOrderService
+		private readonly wsMemberOrderService: WsOrderService,
+		private readonly connectionProvider: ConnectionProvider
 	) {}
 
-	@WebSocketServer()
-	nsp: Namespace<MemberEventMap>
-	storeNsp: Namespace<StoreEventMap>
-	shipperNsp: Namespace<ShipperEventMap>
-
-	private getStoreNsp(): Namespace<StoreEventMap> {
-		if (!this.storeNsp) {
-			this.storeNsp = this.nsp.server.of(WsNamespace.STORE)
-		}
-		return this.storeNsp
-	}
-
-	private getShipperNsp(): Namespace<ShipperEventMap> {
-		if (!this.shipperNsp) {
-			this.shipperNsp = this.nsp.server.of(WsNamespace.SHIPPER)
-		}
-		return this.shipperNsp
-	}
-
 	@HttpServer()
-	@SubscribeMessage<MemberEventNames>('member:new_order')
+	@SubscribeMessage<MemberEventNames>('member-server:new_order')
 	async memberNewOrder(@MessageBody() body: OrderDataDTO) {
 		const orderCommonData = await this.wsMemberOrderService.getOrderCommonData(
 			body.orderId
@@ -65,7 +40,8 @@ export class OrderMemberGateway {
 			orderCommonData.store.id,
 			body.orderId
 		)
-		this.getStoreNsp()
+		this.connectionProvider
+			.getStoreNsp()
 			.to(getStoreRoom(orderCommonData.store.id))
 			.emit('store:new_order', orderDetail)
 
@@ -77,21 +53,24 @@ export class OrderMemberGateway {
 			const shippingData = await this.wsMemberOrderService.getShippingData(
 				body.orderId
 			)
-			this.getShipperNsp().emit('shipper:new_order', shippingData)
+			this.connectionProvider
+				.getShipperNsp()
+				.emit('shipper:new_order', shippingData)
 		}
 	}
 
 	@HttpServer()
-	@SubscribeMessage<MemberEventNames>('member:paid_order')
+	@SubscribeMessage<MemberEventNames>('member-server:paid_order')
 	async memberPaidOrder(@MessageBody() body: OrderDataDTO) {
 		const [orderCommonData, orderStatus] = await Promise.all([
 			this.wsMemberOrderService.getOrderCommonData(body.orderId),
 			this.wsMemberOrderService.getOrderStatus(body.orderId),
 		])
 
-		this.getStoreNsp()
+		this.connectionProvider
+			.getStoreNsp()
 			.to(getStoreRoom(orderCommonData.store.id))
-			.emit('store:order_status_change', orderStatus)
+			.emit('store:order_status_updated', orderStatus)
 
 		if (
 			orderCommonData.categoryId === ShippingMethod.DELIVERY &&
@@ -101,21 +80,25 @@ export class OrderMemberGateway {
 			const shippingData = await this.wsMemberOrderService.getShippingData(
 				body.orderId
 			)
-			this.getShipperNsp().emit('shipper:new_order', shippingData)
+			this.connectionProvider
+				.getShipperNsp()
+				.emit('shipper:new_order', shippingData)
 		}
 	}
 
 	@HttpServer()
-	@SubscribeMessage<MemberEventNames>('member:cancel_order')
+	@SubscribeMessage<MemberEventNames>('member-server:cancel_order')
 	async memberCancelledOrder(@MessageBody() body: OrderDataDTO) {
 		const orderCommonData = await this.wsMemberOrderService.getOrderCommonData(
 			body.orderId
 		)
-		this.getStoreNsp()
+		this.connectionProvider
+			.getStoreNsp()
 			.to(getStoreRoom(orderCommonData.store.id))
 			.emit('store:cancelled_order', body)
 		if (orderCommonData.shipper) {
-			this.getShipperNsp()
+			this.connectionProvider
+				.getShipperNsp()
 				.to(getShipperRoom(orderCommonData.shipper.id))
 				.emit('shipper:cancelled_order', body)
 		}

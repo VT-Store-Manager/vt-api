@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common'
 
-import { MemberConnectionModule } from './connection/connection.module'
+import { ConnectionModule } from './connection/connection.module'
 import { WsOrderModule } from './order/order.module'
+import { WsStreamModule } from './stream/stream.module'
 
 @Module({
-	imports: [MemberConnectionModule, WsOrderModule],
+	imports: [ConnectionModule, WsStreamModule, WsOrderModule],
 })
 export class WebSocketModule {}

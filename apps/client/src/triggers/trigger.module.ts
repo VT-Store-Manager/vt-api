@@ -1,4 +1,4 @@
-import { SettingModule } from '@app/common'
+import { MemberServerSocketClientService, SettingModule } from '@app/common'
 import {
 	MemberData,
 	MemberDataSchema,
@@ -76,6 +76,7 @@ import { StreamHelperService } from './services/stream-helper.service'
 		NotificationStreamService,
 		PromotionStreamService,
 		OrderStreamService,
+		MemberServerSocketClientService,
 	],
 })
 export class TriggerModule {}

@@ -1,5 +1,5 @@
 import { capitalize } from 'lodash'
-import { Server, Socket } from 'socket.io'
+import { Namespace, Socket } from 'socket.io'
 
 import {
 	AuthService,
@@ -28,6 +28,7 @@ import {
 	MessageBody,
 	OnGatewayConnection,
 	OnGatewayDisconnect,
+	OnGatewayInit,
 	SubscribeMessage,
 	WebSocketGateway,
 	WebSocketServer,
@@ -41,14 +42,16 @@ import {
 } from '@sale/config/constant'
 
 import { AuthenticateClientDTO } from './dto/authenticate-client.dto'
+import { ConnectionProvider } from './connection.provider'
 
 @UseFilters(new WebsocketExceptionsFilter())
 @UsePipes(new ValidationPipe())
 @WebSocketGateway({ cors: '*', namespace: /.*/ })
 export class ConnectionGateway
-	implements OnGatewayConnection, OnGatewayDisconnect
+	implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
 	constructor(
+		private connectionProvider: ConnectionProvider,
 		private readonly jwtService: JwtService,
 		private readonly configService: ConfigService,
 		private readonly jwtAccessStrategy: JwtAccessStrategy,
@@ -56,7 +59,11 @@ export class ConnectionGateway
 	) {}
 
 	@WebSocketServer()
-	server: Server<CommonEventMap>
+	server: Namespace<CommonEventMap>
+
+	afterInit(nsp: Namespace<CommonEventMap>) {
+		this.connectionProvider.server = nsp.server
+	}
 
 	handleConnection(@ConnectedSocket() client: Socket) {
 		this.authenticate(client)

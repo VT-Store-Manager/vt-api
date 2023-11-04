@@ -6,6 +6,7 @@ import {
 	Order,
 	OrderDocument,
 	OrderInfoShipper,
+	OrderInfoStore,
 	Shipper,
 	ShipperDocument,
 	TimeLog,
@@ -17,7 +18,7 @@ import { OrderService } from '@sale/src/order/services/order.service'
 import { OrderShortDTO } from '@sale/src/shipper/dto/response.dto'
 import { ShipperOrderService } from '@sale/src/shipper/services/order.service'
 
-import { OrderStatusChangedDTO } from './dto/order-status-changed.dto'
+import { OrderStatusUpdatedDTO } from './dto/order-status-changed.dto'
 
 type OrderCommonData = {
 	categoryId: ShippingMethod
@@ -38,6 +39,7 @@ type OrderCommonData = {
 type OrderShippingData = {
 	categoryId: ShippingMethod
 	statusId: OrderState
+	store: OrderInfoStore
 	shipper?: OrderInfoShipper
 }
 
@@ -113,9 +115,9 @@ export class WsOrderService {
 		return order
 	}
 
-	async getOrderStatus(orderId: string): Promise<OrderStatusChangedDTO> {
+	async getOrderStatus(orderId: string): Promise<OrderStatusUpdatedDTO> {
 		const [orderStatus] = await this.orderModel
-			.aggregate<OrderStatusChangedDTO>([
+			.aggregate<OrderStatusUpdatedDTO>([
 				{ $match: new Types.ObjectId(orderId.toString()) },
 				{
 					$project: {
@@ -192,6 +194,7 @@ export class WsOrderService {
 					$project: {
 						categoryId: '$type',
 						statusId: '$state',
+						store: true,
 						shipper: { $ifNull: ['$shipper', null] },
 					},
 				},

@@ -1,4 +1,4 @@
-import { CommonAuthModule } from '@/libs/authentication/src'
+import { CommonAuthModule } from '@app/authentication'
 import {
 	AccountAdmin,
 	AccountAdminSchema,
@@ -13,6 +13,7 @@ import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 
 import { ConnectionGateway } from './connection.gateway'
+import { ConnectionProvider } from './connection.provider'
 
 @Module({
 	imports: [
@@ -24,6 +25,7 @@ import { ConnectionGateway } from './connection.gateway'
 		]),
 		CommonAuthModule,
 	],
-	providers: [ConnectionGateway],
+	providers: [ConnectionGateway, ConnectionProvider],
+	exports: [ConnectionProvider],
 })
-export class MemberConnectionModule {}
+export class ConnectionModule {}

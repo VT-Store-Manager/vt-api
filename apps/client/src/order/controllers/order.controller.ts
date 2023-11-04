@@ -1,7 +1,7 @@
 import { CurrentUser, JwtAccess } from '@app/authentication'
 import {
 	ApiSuccessResponse,
-	MemberSocketClientService,
+	MemberServerSocketClientService,
 	ObjectIdPipe,
 	Role,
 } from '@app/common'
@@ -24,7 +24,7 @@ import { ReviewShipperDTO } from '../dto/review-shipper.dto'
 export class OrderController {
 	constructor(
 		private readonly orderService: OrderService,
-		private readonly socketClient: MemberSocketClientService
+		private readonly socketClient: MemberServerSocketClientService
 	) {}
 
 	@Post('check-voucher')
@@ -74,7 +74,7 @@ export class OrderController {
 			memberId,
 			body
 		)
-		this.socketClient.getSocket().emit('member:new_order', {
+		this.socketClient.getSocket().emit('member-server:new_order', {
 			orderId: createdOrder._id.toString(),
 		})
 		return { id: createdOrder._id }
@@ -112,7 +112,7 @@ export class OrderController {
 		const isDeleted = await this.orderService.cancelOrder(memberId, orderId)
 
 		if (isDeleted) {
-			this.socketClient.getSocket().emit('member:cancel_order', { orderId })
+			this.socketClient.getSocket().emit('member-server:cancel_order', { orderId })
 		}
 
 		return isDeleted
