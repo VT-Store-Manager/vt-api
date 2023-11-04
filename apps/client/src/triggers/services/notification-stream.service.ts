@@ -2,7 +2,11 @@ import { uniq } from 'lodash'
 import { ChangeStreamInsertDocument } from 'mongodb'
 import { Model, Types } from 'mongoose'
 
-import { NotificationType, SettingMemberAppService } from '@app/common'
+import {
+	NotificationType,
+	SettingMemberAppService,
+	ChangeStreamLogger,
+} from '@app/common'
 import {
 	MemberData,
 	MemberDataDocument,
@@ -18,8 +22,6 @@ import {
 } from '@app/database'
 import { Injectable, OnModuleInit } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-
-import { StreamHelperService } from './stream-helper.service'
 
 @Injectable()
 export class NotificationStreamService implements OnModuleInit {
@@ -53,7 +55,7 @@ export class NotificationStreamService implements OnModuleInit {
 			},
 		])
 
-		StreamHelperService.logger.debug('Notification stream watching...')
+		ChangeStreamLogger.debug('Notification stream watching...')
 		changeStream.on(
 			'change',
 			(data: ChangeStreamInsertDocument<Notification>) => {
@@ -191,7 +193,7 @@ export class NotificationStreamService implements OnModuleInit {
 			)
 			.exec()
 
-		StreamHelperService.logger.verbose(
+		ChangeStreamLogger.verbose(
 			`Promotion ${data._id.toString()}: Member count ${
 				memberIds.length
 			}, matched ${updateResult.matchedCount}, modified ${

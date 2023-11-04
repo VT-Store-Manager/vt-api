@@ -1,10 +1,14 @@
 import { io, Socket } from 'socket.io-client'
-
-import { HTTP_HEADER_SECRET_KEY_NAME, WsNamespace } from '@app/common'
-import { MemberEventMap } from '@app/types'
-import { Injectable, Logger } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
 import { DisconnectDescription } from 'socket.io-client/build/esm/socket'
+
+import {
+	HTTP_HEADER_SECRET_KEY_NAME,
+	SocketIoLogger,
+	WsNamespace,
+} from '@app/common'
+import { MemberEventMap } from '@app/types'
+import { Injectable } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 
 @Injectable()
 export class MemberServerSocketClientService {
@@ -13,7 +17,6 @@ export class MemberServerSocketClientService {
 	}
 
 	private socket: Socket<MemberEventMap>
-	private logger = new Logger('SocketIO')
 
 	private connect() {
 		this.socket = io(
@@ -26,7 +29,7 @@ export class MemberServerSocketClientService {
 			}
 		)
 		this.socket.on('connect', () => {
-			this.logger.log('Socket-client connected')
+			SocketIoLogger.log('Socket-client connected')
 		})
 		this.socket.on(
 			'disconnect',
@@ -35,7 +38,7 @@ export class MemberServerSocketClientService {
 				description?: DisconnectDescription
 			) => {
 				reason
-				this.logger.warn(
+				SocketIoLogger.warn(
 					'Socket-client disconnected' +
 						`: ${reason} - ${
 							(description as Error)?.message ||
@@ -45,10 +48,10 @@ export class MemberServerSocketClientService {
 			}
 		)
 		this.socket.on('connect_error', (err: Error) => {
-			this.logger.error('Socket connection occurs error', err.stack)
+			SocketIoLogger.error('Socket connection occurs error', err.stack)
 		})
 		this.socket.on('error', (err: Error) => {
-			this.logger.error(`${err.name} - ${err.message}`)
+			SocketIoLogger.error(`${err.name} - ${err.message}`)
 		})
 	}
 

@@ -2,22 +2,22 @@ import { isEqual } from 'lodash'
 import { ChangeStreamDocument, ChangeStreamUpdateDocument } from 'mongodb'
 import { Model } from 'mongoose'
 
-import { getMemberRoom, OrderBuyer } from '@app/common'
+import { ChangeStreamLogger, getMemberRoom, OrderBuyer } from '@app/common'
 import { OrderMember, OrderMemberDocument } from '@app/database'
-import { Injectable } from '@nestjs/common'
+import { Injectable, OnModuleInit } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { ConnectionProvider } from '@websocket/connection/connection.provider'
 import { OrderStatusUpdatedDTO } from '@websocket/order/dto/order-status-changed.dto'
-import { StreamHelperService } from './stream-helper.service'
 
 @Injectable()
-export class OrderStreamService {
+export class OrderStreamService implements OnModuleInit {
 	constructor(
 		@InjectModel(OrderBuyer.MEMBER)
 		private readonly orderMemberModel: Model<OrderMemberDocument>,
-		private readonly connectionProvider: ConnectionProvider,
-		private readonly streamHelper: StreamHelperService
-	) {
+		private readonly connectionProvider: ConnectionProvider
+	) {}
+
+	onModuleInit() {
 		const stream = this.orderMemberModel.watch(
 			[
 				{
@@ -60,7 +60,7 @@ export class OrderStreamService {
 			}
 		)
 
-		StreamHelperService.logger.debug('Order stream watching...')
+		ChangeStreamLogger.debug('Order stream watching...')
 		stream.on('change', (data: ChangeStreamDocument) => {
 			const updateData = data as ChangeStreamUpdateDocument<OrderMemberDocument>
 
