@@ -3,7 +3,7 @@ import { PickType } from '@nestjs/swagger'
 
 export class OrderListPaginationResultDTO {
 	maxCount: number
-	data: OrderShortDTO[]
+	orders: OrderShortDTO[]
 }
 
 export class OrderDetailDTO {

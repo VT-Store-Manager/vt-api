@@ -85,7 +85,7 @@ export class ConnectionGateway
 		const isHttpServer = client[IS_HTTP_SERVER_KEY]
 		if (isHttpServer) {
 			socketLogger.debug(
-				`[${client.id}] disconnected: HTTP Server - Namespace ${client.nsp.name})`
+				`[${client.id}] disconnected: HTTP Server - Namespace ${client.nsp.name}`
 			)
 			return
 		}

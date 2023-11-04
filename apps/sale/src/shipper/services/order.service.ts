@@ -320,10 +320,12 @@ export class ShipperOrderService {
 				.exec(),
 		])
 
-		return {
+		const result: OrderListPaginationResultDTO = {
 			maxCount: totalCountOrder,
-			data: orders,
+			orders,
 		}
+
+		return result
 	}
 
 	async getOrderDetail(
