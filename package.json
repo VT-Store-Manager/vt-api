@@ -6,6 +6,7 @@
 	"license": "UNLICENSED",
 	"author": "quanqvinh",
 	"scripts": {
+		"cz": "git-cz",
 		"prebuild": "rimraf dist",
 		"build": "nest build",
 		"build-all": "concurrently -c auto \"pnpm build admin\" \"pnpm build sale\" \"pnpm build client\"",
@@ -28,6 +29,11 @@
 		"*.{ts,js}": "eslint --cache --fix --max-warnings=0",
 		"*.{json,md}": "prettier --write",
 		"package.json": "npx sort-package-json"
+	},
+	"config": {
+		"commitizen": {
+			"path": "@commitlint/cz-commitlint"
+		}
 	},
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.282.0",
@@ -71,6 +77,10 @@
 		"uuid": "^9.0.0"
 	},
 	"devDependencies": {
+		"@commitlint/cli": "^18.2.0",
+		"@commitlint/config-conventional": "^18.1.0",
+		"@commitlint/cz-commitlint": "^18.2.0",
+		"@commitlint/prompt": "^18.2.0",
 		"@nestjs/cli": "^9.5.0",
 		"@nestjs/schematics": "^9.2.0",
 		"@nestjs/testing": "^9.4.3",
@@ -87,6 +97,7 @@
 		"@types/supertest": "^2.0.11",
 		"@typescript-eslint/eslint-plugin": "^5.0.0",
 		"@typescript-eslint/parser": "^5.0.0",
+		"commitizen": "^4.3.0",
 		"eslint": "^8.0.1",
 		"eslint-config-prettier": "^8.3.0",
 		"eslint-plugin-prettier": "^4.0.0",
