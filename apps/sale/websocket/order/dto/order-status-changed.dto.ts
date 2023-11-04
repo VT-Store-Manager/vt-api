@@ -1,6 +1,6 @@
 import { GetOrderDetailDTO } from '@sale/src/order/dto/response.dto'
 
-export type OrderStatusChangedDTO = Pick<
+export type OrderStatusUpdatedDTO = Pick<
 	GetOrderDetailDTO,
 	'id' | 'statusId' | 'timeLog'
 >

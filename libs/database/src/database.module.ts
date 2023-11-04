@@ -126,6 +126,6 @@ import { Voucher, VoucherSchema } from './schemas/voucher.schema'
 		]),
 	],
 	providers: [],
-	exports: [],
+	exports: [MongooseModule],
 })
 export class DatabaseModule {}

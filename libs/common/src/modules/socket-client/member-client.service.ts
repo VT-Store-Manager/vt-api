@@ -7,7 +7,7 @@ import { ConfigService } from '@nestjs/config'
 import { DisconnectDescription } from 'socket.io-client/build/esm/socket'
 
 @Injectable()
-export class MemberSocketClientService {
+export class MemberServerSocketClientService {
 	constructor(private readonly configService: ConfigService) {
 		this.connect()
 	}

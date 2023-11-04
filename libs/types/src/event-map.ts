@@ -1,11 +1,9 @@
-import {
-	OrderDetailDTO,
-	OrderShortDTO,
-} from '@sale/src/shipper/dto/response.dto'
 import { GetOrderDetailDTO } from '@sale/src/order/dto/response.dto'
+import { OrderShortDTO } from '@sale/src/shipper/dto/response.dto'
 import { AuthenticateClientDTO } from '@websocket/connection/dto/authenticate-client.dto'
 import { OrderDataDTO } from '@websocket/order/dto/order-data.dto'
-import { OrderStatusChangedDTO } from '@websocket/order/dto/order-status-changed.dto'
+import { OrderShipperPickedDTO } from '@websocket/order/dto/order-shipper-picked.dto'
+import { OrderStatusUpdatedDTO } from '@websocket/order/dto/order-status-changed.dto'
 
 // Common namespace
 export type CommonEventMap = {
@@ -18,9 +16,10 @@ export type CommonEventNames = keyof CommonEventMap
 // Member namespace
 export type MemberEventMap = {
 	['error']: (error: Error) => void
-	['member:new_order']: (dto: OrderDataDTO) => void
-	['member:cancel_order']: (dto: OrderDataDTO) => void
-	['member:paid_order']: (dto: OrderDataDTO) => void
+	['member-server:new_order']: (dto: OrderDataDTO) => void
+	['member-server:cancel_order']: (dto: OrderDataDTO) => void
+	['member-server:paid_order']: (dto: OrderDataDTO) => void
+	['member-user:order_status_updated']: (dto: OrderStatusUpdatedDTO) => void
 }
 export type MemberEventNames = keyof MemberEventMap
 
@@ -29,7 +28,8 @@ export type StoreEventMap = {
 	['error']: (error: Error) => void
 	['store:new_order']: (dto: GetOrderDetailDTO) => void
 	['store:cancelled_order']: (dto: OrderDataDTO) => void
-	['store:order_status_change']: (dto: OrderStatusChangedDTO) => void
+	['store:order_status_updated']: (dto: OrderStatusUpdatedDTO) => void
+	['store:shipper_picked']: (dto: OrderShipperPickedDTO) => void
 }
 export type StoreEventNames = keyof StoreEventMap
 

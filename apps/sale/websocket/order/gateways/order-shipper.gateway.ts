@@ -1,13 +1,9 @@
-import { Namespace, Socket } from 'socket.io'
+import { Socket } from 'socket.io'
 
-import {
-	MemberEventMap,
-	ShipperEventMap,
-	ShipperEventNames,
-	StoreEventMap,
-} from '@/libs/types/src'
+import { ShipperEventMap, ShipperEventNames } from '@/libs/types/src'
 import { CurrentClient, WsAuth } from '@app/authentication'
 import {
+	getStoreRoom,
 	OrderState,
 	Role,
 	ShippingMethod,
@@ -20,10 +16,8 @@ import {
 	MessageBody,
 	SubscribeMessage,
 	WebSocketGateway,
-	WebSocketServer,
 } from '@nestjs/websockets'
-import { OrderService } from '@sale/src/order/services/order.service'
-import { ShipperOrderService } from '@sale/src/shipper/services/order.service'
+import { ConnectionProvider } from '@websocket/connection/connection.provider'
 
 import { OrderDataDTO } from '../dto/order-data.dto'
 import { WsOrderService } from '../order.service'
@@ -33,29 +27,9 @@ import { WsOrderService } from '../order.service'
 @WebSocketGateway({ cors: '*', namespace: WsNamespace.SHIPPER })
 export class OrderShipperGateway {
 	constructor(
-		private readonly orderService: OrderService,
-		private readonly shipperOrderService: ShipperOrderService,
-		private readonly wsOrderService: WsOrderService
+		private readonly wsOrderService: WsOrderService,
+		private readonly connectionProvider: ConnectionProvider
 	) {}
-
-	@WebSocketServer()
-	nsp: Namespace<ShipperEventMap>
-	storeNsp: Namespace<StoreEventMap>
-	memberNsp: Namespace<MemberEventMap>
-
-	private getStoreNsp(): Namespace<StoreEventMap> {
-		if (!this.storeNsp) {
-			this.storeNsp = this.nsp.server.of(WsNamespace.STORE)
-		}
-		return this.storeNsp
-	}
-
-	private getMemberNsp(): Namespace<MemberEventMap> {
-		if (!this.memberNsp) {
-			this.memberNsp = this.nsp.server.of(WsNamespace.MEMBER)
-		}
-		return this.memberNsp
-	}
 
 	@WsAuth(Role.SHIPPER)
 	@SubscribeMessage<ShipperEventNames>('shipper:pick_order')
@@ -84,14 +58,28 @@ export class OrderShipperGateway {
 				shipperInfo
 			)
 			if (isUpdated) {
-				client.broadcast.emit('shipper:remove_picked_order', body)
 				client.emit('shipper:pick_order_success', body)
+				// Emit event: having shipper for order
+				this.connectionProvider
+					.getStoreNsp()
+					.to(getStoreRoom(orderShippingData.store.id))
+					.emit('store:shipper_picked', {
+						id: body.orderId,
+						shipper: shipperInfo,
+					})
+				// Emit event: order status is updated
+				this.wsOrderService.getOrderStatus(body.orderId).then(orderStatus => {
+					this.connectionProvider
+						.getStoreNsp()
+						.to(getStoreRoom(orderShippingData.store.id))
+						.emit('store:order_status_updated', orderStatus)
+				})
 			} else {
 				client.emit('shipper:pick_order_error', body)
 			}
 		} catch {
 			client.emit('shipper:pick_order_error', body)
 		}
-		this.getStoreNsp()
+		client.broadcast.emit('shipper:remove_picked_order', body)
 	}
 }

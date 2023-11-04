@@ -1,5 +1,6 @@
 import { OrderState, PaymentType, ShippingMethod } from '@app/common'
 import { TimeLog } from '@app/database'
+import { OmitType } from '@nestjs/swagger'
 
 export class GetProductPriceApplyingVoucherDTO {
 	fee: number
@@ -60,7 +61,7 @@ export class GetOrderDetailDTO {
 	reviewShipper?: OrderReviewShipperDTO
 	point: number
 	statusId: OrderState
-	timeLog: TimeLog[]
+	timeLog: OrderTimeLog[]
 	employee?: OrderEmployeeInfo
 	shipper?: OrderShipperInfo
 }
@@ -101,6 +102,10 @@ export class OrderReviewDTO {
 	review: string
 	like: string[]
 	dislike: string[]
+}
+
+export class OrderTimeLog extends OmitType(TimeLog, ['time'] as const) {
+	time: number
 }
 
 export class OrderReviewShipperDTO {

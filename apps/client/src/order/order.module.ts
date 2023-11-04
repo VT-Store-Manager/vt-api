@@ -1,5 +1,5 @@
 import {
-	MemberSocketClientService,
+	MemberServerSocketClientService,
 	OrderBuyer,
 	SettingModule,
 } from '@app/common'
@@ -63,7 +63,7 @@ import { OrderService } from './services/order.service'
 		OrderService,
 		OrderStateService,
 		MongoSessionService,
-		MemberSocketClientService,
+		MemberServerSocketClientService,
 	],
 })
 export class OrderModule {}
