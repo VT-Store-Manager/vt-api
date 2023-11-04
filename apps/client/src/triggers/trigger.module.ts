@@ -27,7 +27,6 @@ import { MemberVoucherStreamService } from './services/member-voucher-stream.ser
 import { NotificationStreamService } from './services/notification-stream.service'
 import { OrderStreamService } from './services/order-stream.service'
 import { PromotionStreamService } from './services/promotion-stream.service'
-import { StreamHelperService } from './services/stream-helper.service'
 
 @Module({
 	imports: [
@@ -69,7 +68,6 @@ import { StreamHelperService } from './services/stream-helper.service'
 	],
 	providers: [
 		MongoSessionService,
-		StreamHelperService,
 		MemberDataStreamService,
 		MemberRankStreamService,
 		MemberVoucherStreamService,

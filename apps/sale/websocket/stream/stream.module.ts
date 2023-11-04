@@ -10,7 +10,6 @@ import { MongooseModule } from '@nestjs/mongoose'
 
 import { ConnectionModule } from '../connection/connection.module'
 import { OrderStreamService } from './services/order-stream.service'
-import { StreamHelperService } from './services/stream-helper.service'
 
 @Module({
 	imports: [
@@ -26,6 +25,6 @@ import { StreamHelperService } from './services/stream-helper.service'
 			},
 		]),
 	],
-	providers: [OrderStreamService, StreamHelperService],
+	providers: [OrderStreamService],
 })
 export class WsStreamModule {}
