@@ -112,7 +112,9 @@ export class OrderController {
 		const isDeleted = await this.orderService.cancelOrder(memberId, orderId)
 
 		if (isDeleted) {
-			this.socketClient.getSocket().emit('member-server:cancel_order', { orderId })
+			this.socketClient
+				.getSocket()
+				.emit('member-server:cancel_order', { orderId })
 		}
 
 		return isDeleted

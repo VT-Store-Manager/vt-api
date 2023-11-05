@@ -7,12 +7,14 @@ import {
 	WsNamespace,
 } from '@app/common'
 import { MemberEventMap } from '@app/types'
-import { Injectable } from '@nestjs/common'
+import { Injectable, OnModuleInit } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 
 @Injectable()
-export class MemberServerSocketClientService {
-	constructor(private readonly configService: ConfigService) {
+export class MemberServerSocketClientService implements OnModuleInit {
+	constructor(private readonly configService: ConfigService) {}
+
+	onModuleInit() {
 		this.connect()
 	}
 

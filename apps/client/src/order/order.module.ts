@@ -1,7 +1,8 @@
 import {
-	MemberServerSocketClientService,
 	OrderBuyer,
 	SettingModule,
+	SocketClientModule,
+	WsNamespace,
 } from '@app/common'
 import {
 	MemberData,
@@ -57,13 +58,9 @@ import { OrderService } from './services/order.service'
 		]),
 		VoucherModule,
 		SettingModule,
+		SocketClientModule.register(WsNamespace.MEMBER),
 	],
 	controllers: [OrderController, OrderStateController],
-	providers: [
-		OrderService,
-		OrderStateService,
-		MongoSessionService,
-		MemberServerSocketClientService,
-	],
+	providers: [OrderService, OrderStateService, MongoSessionService],
 })
 export class OrderModule {}

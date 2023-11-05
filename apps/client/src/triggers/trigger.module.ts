@@ -1,4 +1,4 @@
-import { MemberServerSocketClientService, SettingModule } from '@app/common'
+import { SettingModule, SocketClientModule, WsNamespace } from '@app/common'
 import {
 	MemberData,
 	MemberDataSchema,
@@ -65,6 +65,7 @@ import { PromotionStreamService } from './services/promotion-stream.service'
 			},
 		]),
 		SettingModule,
+		SocketClientModule.register(WsNamespace.MEMBER),
 	],
 	providers: [
 		MongoSessionService,
@@ -74,7 +75,6 @@ import { PromotionStreamService } from './services/promotion-stream.service'
 		NotificationStreamService,
 		PromotionStreamService,
 		OrderStreamService,
-		MemberServerSocketClientService,
 	],
 })
 export class TriggerModule {}
