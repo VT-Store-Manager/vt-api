@@ -18,7 +18,7 @@ export const keyCodePattern = /^[A-Z0-9]+$/
 export const adminPasswordPattern =
 	/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[~!@#\$%^&\*\_,\.\?])[A-Za-z\d~!@#\$%^&\*\_,\.\?]{8,}$/
 
-export const vnPhoneNumberPattern = /^(((\+?84)|0)[235789])([0-9]{8})$/g
+export const vnPhoneNumberPattern = /^(((\+?84)|0)[235789])([0-9]{8})$/
 
 // Enums
 export enum NodeEnv {
