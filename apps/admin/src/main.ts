@@ -1,6 +1,6 @@
 import compression from 'compression'
 
-import { NodeEnv } from '@app/common'
+import { AppVersion, NodeEnv } from '@app/common'
 import { awsS3Config, morganConfig, swaggerConfig } from '@app/config'
 import { Logger, ValidationPipe, VersioningType } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
@@ -30,7 +30,7 @@ async function bootstrap() {
 	app.setGlobalPrefix('api')
 	app.enableVersioning({
 		type: VersioningType.URI,
-		defaultVersion: '2',
+		defaultVersion: AppVersion.ADMIN,
 	})
 
 	swaggerConfig(app, {

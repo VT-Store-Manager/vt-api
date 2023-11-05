@@ -1,24 +1,20 @@
 import { Model, Types } from 'mongoose'
 
-import { s3KeyPattern, SettingMemberAppService } from '@app/common'
+import { FileService, SettingMemberAppService } from '@app/common'
 import { MemberData, MemberDataDocument } from '@app/database'
 import { BadRequestException, Injectable } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
 import { InjectModel } from '@nestjs/mongoose'
 
 import { MemberNotificationItemDTO } from './dto/response.dto'
 
 @Injectable()
 export class NotificationService {
-	private readonly imageUrl: string
 	constructor(
 		@InjectModel(MemberData.name)
 		private readonly memberDataModel: Model<MemberDataDocument>,
 		private readonly settingMemberAppService: SettingMemberAppService,
-		private readonly configService: ConfigService
-	) {
-		this.imageUrl = configService.get<string>('imageUrl')
-	}
+		private readonly fileService: FileService
+	) {}
 
 	async getAll(memberId: string) {
 		const [memberData, { notification: notificationSetting }] =
@@ -41,18 +37,8 @@ export class NotificationService {
 											name: '$$e.name',
 											description: '$$e.name',
 											time: { $toLong: '$$e.createdAt' },
-											image: {
-												$cond: [
-													{
-														$regexMatch: {
-															input: '$$e.image',
-															regex: s3KeyPattern,
-														},
-													},
-													{ $concat: [this.imageUrl, '$$e.image'] },
-													null,
-												],
-											},
+											image:
+												this.fileService.getImageUrlExpression('$$e.image'),
 											targetId: '$$e.targetId',
 											checked: '$$e.checked',
 											type: '$$e.type',
@@ -73,8 +59,12 @@ export class NotificationService {
 			.slice(0, notificationSetting.limit)
 			.map(item => ({
 				...item,
-				...(!item.image && s3KeyPattern.test(notificationSetting.defaultImage)
-					? { image: this.imageUrl + notificationSetting.defaultImage }
+				...(!item.image && notificationSetting.defaultImage
+					? {
+							image: this.fileService.getImageUrl(
+								notificationSetting.defaultImage
+							),
+					  }
 					: {}),
 			}))
 	}

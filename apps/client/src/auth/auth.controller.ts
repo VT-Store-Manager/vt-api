@@ -29,7 +29,7 @@ export class AuthController {
 		private readonly tokenService: TokenService,
 		private readonly mongoSessionService: MongoSessionService
 	) {
-		this.disableSMS = this.configService.get<boolean>('flag.disableSMS')
+		this.disableSMS = this.configService.get<boolean>('dev.disableSmsFlag')
 	}
 
 	@Post('login')

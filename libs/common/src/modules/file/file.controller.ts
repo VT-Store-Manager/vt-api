@@ -15,6 +15,7 @@ import {
 	UploadedFile,
 	UploadedFiles,
 	UseInterceptors,
+	VERSION_NEUTRAL,
 } from '@nestjs/common'
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express'
 import { ApiBody, ApiConsumes, ApiResponse, ApiTags } from '@nestjs/swagger'
@@ -26,7 +27,10 @@ import pluralize from 'pluralize'
 import snakeCase from 'lodash/snakeCase'
 
 @ApiTags('file')
-@Controller('file')
+@Controller({
+	path: 'file',
+	version: VERSION_NEUTRAL,
+})
 export class FileController {
 	constructor(private readonly fileService: FileService) {}
 

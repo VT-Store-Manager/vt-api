@@ -1,24 +1,24 @@
+import { CheckPolicies } from '@admin/authentication/decorators/check-policies.decorator'
+import { CurrentAdmin } from '@admin/authentication/decorators/current-admin.decorator'
+import { JwtAccess } from '@admin/authentication/decorators/jwt.decorator'
+import { Actions, AdminFeature } from '@admin/constants'
 import {
 	NotEmptyObjectPipe,
 	ObjectIdPipe,
 	RemoveNullishObjectPipe,
-} from '@/libs/common/src'
-import { CurrentAdmin } from '@admin/authentication/decorators/current-admin.decorator'
-import { JwtAccess } from '@admin/authentication/decorators/jwt.decorator'
+} from '@app/common'
 import { Body, Controller, Delete, Get, Patch, Post } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
+import {
+	AdminAbility,
+	CaslAbilityFactory,
+} from '../../casl/casl-ability.factory'
 import { CreateAccountAdminDTO } from '../dto/create-account-admin.dto'
 import { UpdateAccountAdminPasswordDTO } from '../dto/update-account-admin-password.dto'
 import { UpdateAccountAdminDTO } from '../dto/update-account-admin.dto'
 import { UpdateAccountRoleDTO } from '../dto/update-account-role.dto'
 import { AccountAdminService } from '../services/account-admin.service'
-import { CheckPolicies } from '@admin/authentication/decorators/check-policies.decorator'
-import {
-	AdminAbility,
-	CaslAbilityFactory,
-} from '../../casl/casl-ability.factory'
-import { AdminFeature, Actions } from '@admin/constants'
 
 @Controller('admin/account-admin')
 @ApiTags('admin-app > account-admin')

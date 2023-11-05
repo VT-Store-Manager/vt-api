@@ -1,5 +1,6 @@
 import { Model } from 'mongoose'
 
+import { FileService } from '@app/common'
 import { PromotionCategory, PromotionCategoryDocument } from '@app/database'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
@@ -10,7 +11,8 @@ import { PromotionCategoryItemDTO } from './dto/response.dto'
 export class PromotionCategoryService {
 	constructor(
 		@InjectModel(PromotionCategory.name)
-		private readonly promotionCategoryModel: Model<PromotionCategoryDocument>
+		private readonly promotionCategoryModel: Model<PromotionCategoryDocument>,
+		private readonly fileService: FileService
 	) {}
 
 	async getAll() {
@@ -55,6 +57,11 @@ export class PromotionCategoryService {
 				{
 					$project: {
 						_id: false,
+					},
+				},
+				{
+					$addFields: {
+						image: this.fileService.getImageUrlExpression('$image'),
 					},
 				},
 				{

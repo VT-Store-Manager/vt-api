@@ -3,15 +3,13 @@ import { hostname } from 'os'
 
 export const envConfiguration = () => {
 	const nodeEnv = process.env.NODE_ENV || NodeEnv.DEVELOPMENT
-	const port = process.env.PORT
+	const port = isNaN(+process.env.PORT) ? undefined : +process.env.PORT
 	const host = process.env.APP_URL || hostname()
-	const imageUrl = host + '/api/v1/file/'
 
 	const env = {
 		nodeEnv,
 		host,
 		port,
-		imageUrl,
 		database: {
 			url: process.env.MONGODB_URL,
 			db: process.env.MONGODB_DB,
@@ -39,10 +37,24 @@ export const envConfiguration = () => {
 			httpSecret: process.env.WS_HTTP_SECRET_KEY,
 			host: process.env.WS_HOST,
 		},
-		flag: {
-			disableSMS:
-				process.env.DISABLE_SMS === 'true' || +process.env.DISABLE_SMS === 1,
-		},
+	}
+	// DEV addition environment
+	if (nodeEnv === NodeEnv.DEVELOPMENT) {
+		Object.assign(env, {
+			dev: {
+				clientPort: isNaN(+process.env.CLIENT_PORT)
+					? undefined
+					: +process.env.CLIENT_PORT,
+				salePort: isNaN(+process.env.SALE_PORT)
+					? undefined
+					: +process.env.SALE_PORT,
+				adminPort: isNaN(+process.env.ADMIN_PORT)
+					? undefined
+					: +process.env.ADMIN_PORT,
+				disableSmsFlag:
+					process.env.DISABLE_SMS === 'true' || +process.env.DISABLE_SMS === 1,
+			},
+		})
 	}
 
 	return env

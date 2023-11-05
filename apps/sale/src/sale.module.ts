@@ -49,7 +49,7 @@ import { VoucherModule } from './voucher/voucher.module'
 			cache: true,
 		}),
 		ServeStaticModule.forRoot({
-			rootPath: join(__dirname, '..', '..', 'public'),
+			rootPath: join(__dirname, '..', '..', '..', 'public'),
 			serveRoot: '/',
 			serveStaticOptions: {
 				cacheControl: true,

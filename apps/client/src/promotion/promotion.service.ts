@@ -1,6 +1,6 @@
 import { ClientSession, Model, Types } from 'mongoose'
 
-import { s3KeyPattern, SettingGeneralService } from '@app/common'
+import { FileService, SettingGeneralService } from '@app/common'
 import {
 	MemberPromotionHistory,
 	MemberPromotionHistoryDocument,
@@ -17,14 +17,12 @@ import {
 	Injectable,
 	InternalServerErrorException,
 } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
 import { InjectModel } from '@nestjs/mongoose'
 
 import { PromotionItemDTO } from './dto/response.dto'
 
 @Injectable()
 export class PromotionService {
-	private readonly imageUrl: string
 	constructor(
 		@InjectModel(Promotion.name)
 		private readonly promotionModel: Model<PromotionDocument>,
@@ -35,10 +33,8 @@ export class PromotionService {
 		@InjectModel(MemberPromotionHistory.name)
 		private readonly memberPromotionHistoryModel: Model<MemberPromotionHistoryDocument>,
 		private readonly settingGeneralModel: SettingGeneralService,
-		private readonly configService: ConfigService
-	) {
-		this.imageUrl = configService.get<string>('imageUrl')
-	}
+		private readonly fileService: FileService
+	) {}
 
 	async getAll(memberId: string) {
 		const [memberRank, { brand }] = await Promise.all([
@@ -129,35 +125,13 @@ export class PromotionService {
 						id: '$_id',
 						_id: false,
 						name: { $ifNull: ['$title', '$voucher.title'] },
-						partnerImage: {
-							$cond: [
-								{
-									$regexMatch: {
-										input: '$partner.image',
-										regex: s3KeyPattern,
-									},
-								},
-								{ $concat: [this.imageUrl, '$partner.image'] },
-								this.imageUrl + brand.image,
-							],
-						},
-						backgroundImage: {
-							$cond: [
-								{
-									$regexMatch: {
-										input: { $ifNull: ['$image', '$voucher.image'] },
-										regex: s3KeyPattern,
-									},
-								},
-								{
-									$concat: [
-										this.imageUrl,
-										{ $ifNull: ['$image', '$voucher.image'] },
-									],
-								},
-								null,
-							],
-						},
+						partnerImage: this.fileService.getImageUrlExpression(
+							'$partner.image',
+							brand.image
+						),
+						backgroundImage: this.fileService.getImageUrlExpression({
+							$ifNull: ['$image', '$voucher.image'],
+						}),
 						point: '$cost',
 						expire: '$voucher.expireHour',
 						partner: '$partner.name',
@@ -286,23 +260,9 @@ export class PromotionService {
 								'$description',
 							],
 						},
-						image: {
-							$cond: [
-								{
-									$regexMatch: {
-										input: { $ifNull: ['$image', '$voucher.image'] },
-										regex: s3KeyPattern,
-									},
-								},
-								{
-									$concat: [
-										this.imageUrl,
-										{ $ifNull: ['$image', '$voucher.image'] },
-									],
-								},
-								null,
-							],
-						},
+						image: this.fileService.getImageUrlExpression({
+							$ifNull: ['$image', '$voucher.image'],
+						}),
 						cost: true,
 						voucher: {
 							id: '$voucher._id',

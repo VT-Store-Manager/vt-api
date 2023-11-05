@@ -1,6 +1,6 @@
 import { Model, Types } from 'mongoose'
 
-import { s3KeyPattern } from '@app/common'
+import { FileService } from '@app/common'
 import {
 	Product,
 	ProductCategory,
@@ -10,14 +10,12 @@ import {
 	StoreDocument,
 } from '@app/database'
 import { BadRequestException, Injectable } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
 import { InjectModel } from '@nestjs/mongoose'
 
 import { ProductCategoryDTO } from './dto/response.dto'
 
 @Injectable()
 export class ProductCategoryService {
-	private readonly imageUrl: string
 	constructor(
 		@InjectModel(ProductCategory.name)
 		private readonly productCategoryModel: Model<ProductCategoryDocument>,
@@ -25,10 +23,8 @@ export class ProductCategoryService {
 		private readonly productModel: Model<ProductDocument>,
 		@InjectModel(Store.name)
 		private readonly storeModel: Model<StoreDocument>,
-		private readonly configService: ConfigService
-	) {
-		this.imageUrl = configService.get<string>('imageUrl')
-	}
+		private readonly fileService: FileService
+	) {}
 
 	async getCategoriesWithProducts(storeId?: string) {
 		let unavailableGoods: Store['unavailableGoods'] = {
@@ -76,18 +72,7 @@ export class ProductCategoryService {
 			.project({
 				id: '$_id',
 				name: '$category.name',
-				image: {
-					$cond: [
-						{
-							$regexMatch: {
-								input: '$category.image',
-								regex: s3KeyPattern,
-							},
-						},
-						{ $concat: [this.imageUrl, '$category.image'] },
-						null,
-					],
-				},
+				image: this.fileService.getImageUrlExpression('$category.image'),
 				productIds: 1,
 				_id: 0,
 			})

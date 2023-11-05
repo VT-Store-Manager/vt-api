@@ -2,7 +2,7 @@ import { isNumber, sortBy } from 'lodash'
 import { Model, Types } from 'mongoose'
 
 import {
-	s3KeyPattern,
+	FileService,
 	SettingGeneralService,
 	SettingMemberAppService,
 	ShippingMethod,
@@ -19,7 +19,6 @@ import {
 	VoucherDiscount,
 } from '@app/database'
 import { BadRequestException, Injectable } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
 import { InjectModel } from '@nestjs/mongoose'
 import { AvailableUserVoucherDTO } from './dto/response.dto'
 
@@ -52,7 +51,6 @@ export type ApplyVoucherResult = {
 }
 @Injectable()
 export class VoucherService {
-	private readonly imageUrl: string
 	constructor(
 		@InjectModel(MemberRank.name)
 		private readonly memberRankModel: Model<MemberRankDocument>,
@@ -60,10 +58,8 @@ export class VoucherService {
 		private readonly memberVoucherModel: Model<MemberVoucherDocument>,
 		private readonly settingGeneralService: SettingGeneralService,
 		private readonly settingMemberAppService: SettingMemberAppService,
-		private readonly configService: ConfigService
-	) {
-		this.imageUrl = configService.get<string>('imageUrl')
-	}
+		private readonly fileService: FileService
+	) {}
 
 	validateVoucherWithCart(condition: VoucherCondition, cart: ValidatedCart) {
 		// Validate min quantity
@@ -408,18 +404,10 @@ export class VoucherService {
 							_id: false,
 							code: '$voucher.code',
 							name: '$voucher.title',
-							image: {
-								$cond: [
-									{
-										$regexMatch: {
-											input: '$voucher.image',
-											regex: s3KeyPattern,
-										},
-									},
-									{ $concat: [this.imageUrl, '$voucher.image'] },
-									{ $concat: [this.imageUrl, defaultImages.voucher] },
-								],
-							},
+							image: this.fileService.getImageUrlExpression(
+								'$voucher.image',
+								defaultImages.voucher
+							),
 							partner: '$voucher.partner.name',
 							from: { $toLong: '$startTime' },
 							to: { $toLong: '$finishTime' },

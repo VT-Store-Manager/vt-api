@@ -1,25 +1,21 @@
 import { Model, Types } from 'mongoose'
 
-import { s3KeyPattern } from '@app/common'
+import { FileService } from '@app/common'
 import { Product, ProductDocument, Store, StoreDocument } from '@app/database'
 import { BadRequestException, Injectable } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
 import { InjectModel } from '@nestjs/mongoose'
 
 import { ProductListItemDTO } from './dto/response.dto'
 
 @Injectable()
 export class ProductService {
-	private readonly imageUrl: string
 	constructor(
 		@InjectModel(Product.name)
 		private readonly productModel: Model<ProductDocument>,
 		@InjectModel(Store.name)
 		private readonly storeModel: Model<StoreDocument>,
-		private readonly configService: ConfigService
-	) {
-		this.imageUrl = configService.get<string>('imageUrl')
-	}
+		private readonly fileService: FileService
+	) {}
 
 	async getProductByCategory(storeId: string, categoryId: string) {
 		const store = await this.storeModel
@@ -52,18 +48,7 @@ export class ProductService {
 									$map: {
 										input: '$images',
 										as: 'image',
-										in: {
-											$cond: [
-												{
-													$regexMatch: {
-														input: '$$image',
-														regex: s3KeyPattern,
-													},
-												},
-												{ $concat: [this.imageUrl, '$$image'] },
-												null,
-											],
-										},
+										in: this.fileService.getImageUrlExpression('$$image'),
 									},
 								},
 								as: 'image',

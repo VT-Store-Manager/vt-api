@@ -3,6 +3,7 @@ import { Model, Types } from 'mongoose'
 import {
 	colorHexToInt,
 	DEFAULT_POINT_NAME,
+	FileService,
 	IS_ZERO_POINT_MESSAGE,
 	RANK_MESSAGE_SPLIT,
 } from '@app/common'
@@ -15,14 +16,12 @@ import {
 	RankDocument,
 } from '@app/database'
 import { Injectable, InternalServerErrorException } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
 import { InjectModel } from '@nestjs/mongoose'
 
 import { MemberRankCardDTO } from './dto/response.dto'
 
 @Injectable()
 export class MemberRankService {
-	private readonly imageUrl: string
 	constructor(
 		@InjectModel(Member.name)
 		private readonly memberModel: Model<MemberDocument>,
@@ -30,10 +29,8 @@ export class MemberRankService {
 		private readonly rankModel: Model<RankDocument>,
 		@InjectModel(MemberRank.name)
 		private readonly memberRankModel: Model<MemberRankDocument>,
-		private readonly configService: ConfigService
-	) {
-		this.imageUrl = configService.get('imageUrl')
-	}
+		private readonly fileService: FileService
+	) {}
 
 	private getRankMessage(
 		script: string | null | undefined,
@@ -103,7 +100,9 @@ export class MemberRankService {
 			currentRankName: memberRank.rank.name,
 			nextRankPoint: nextRank ? nextRank.minPoint : null,
 			nextRankName: nextRank ? nextRank.name : null,
-			backgroundImage: this.imageUrl + memberRank.rank.appearance.background,
+			backgroundImage: this.fileService.getImageUrl(
+				memberRank.rank.appearance.background
+			),
 			description: rankMessage,
 			color: colorHexToInt(memberRank.rank.appearance.color),
 			fee: memberRank.rank.deliveryFee ?? 0,

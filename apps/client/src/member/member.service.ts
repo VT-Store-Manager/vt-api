@@ -1,7 +1,7 @@
 import { difference } from 'lodash'
 import { Model, Types, UpdateQuery } from 'mongoose'
 
-import { SettingMemberAppService } from '@app/common'
+import { FileService, SettingMemberAppService } from '@app/common'
 import {
 	CartTemplate,
 	CartTemplateDocument,
@@ -19,7 +19,6 @@ import {
 	Injectable,
 	InternalServerErrorException,
 } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
 import { InjectModel } from '@nestjs/mongoose'
 
 import { CreateMemberAddressDTO } from './dto/create-member-address.dto'
@@ -34,7 +33,6 @@ import { UpdateProfileDTO } from './dto/update-profile.dto'
 
 @Injectable()
 export class MemberService {
-	private readonly imageUrl: string
 	constructor(
 		@InjectModel(Member.name)
 		private readonly memberModel: Model<MemberDocument>,
@@ -46,10 +44,8 @@ export class MemberService {
 		private readonly cartTemplateModel: Model<CartTemplateDocument>,
 		private readonly settingMemberAppService: SettingMemberAppService,
 		private readonly mongoSessionService: MongoSessionService,
-		private readonly configService: ConfigService
-	) {
-		this.imageUrl = this.configService.get<string>('imageUrl')
-	}
+		private readonly fileService: FileService
+	) {}
 
 	async getProfile(memberId: string) {
 		const memberData = await this.memberModel
@@ -575,7 +571,7 @@ export class MemberService {
 		}
 
 		return {
-			image: this.imageUrl + greeting.image,
+			image: this.fileService.getImageUrl(greeting.image),
 			greeting: Object.keys(members[0]).reduce((res, key) => {
 				return res.replaceAll(
 					new RegExp(`{{\s{0,}${key}\s{0,}}}`, 'g'),

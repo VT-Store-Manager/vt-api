@@ -1,6 +1,6 @@
 import { Model, Types } from 'mongoose'
 
-import { s3KeyPattern, SettingGeneralService } from '@app/common'
+import { FileService, SettingGeneralService } from '@app/common'
 import {
 	MemberData,
 	MemberDataDocument,
@@ -8,23 +8,19 @@ import {
 	StoreDocument,
 } from '@app/database'
 import { BadRequestException, Injectable } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
 import { InjectModel } from '@nestjs/mongoose'
 
 import { ShortStoreItemDTO, StoreDetailDTO } from './dto/response.dto'
 
 @Injectable()
 export class StoreService {
-	private readonly imageUrl: string
 	constructor(
 		@InjectModel(Store.name) private readonly storeModel: Model<StoreDocument>,
 		@InjectModel(MemberData.name)
 		private readonly memberDataModel: Model<MemberDataDocument>,
 		private readonly settingGeneralService: SettingGeneralService,
-		private readonly configService: ConfigService
-	) {
-		this.imageUrl = configService.get<string>('imageUrl')
-	}
+		private readonly fileService: FileService
+	) {}
 
 	async getAllStoresInShort(memberId?: string): Promise<ShortStoreItemDTO[]> {
 		const [stores, memberData] = await Promise.all([
@@ -41,18 +37,7 @@ export class StoreService {
 								$map: {
 									input: '$images',
 									as: 'image',
-									in: {
-										$cond: [
-											{
-												$regexMatch: {
-													input: '$$image',
-													regex: s3KeyPattern,
-												},
-											},
-											{ $concat: [this.imageUrl, '$$image'] },
-											null,
-										],
-									},
+									in: this.fileService.getImageUrlExpression('$$image'),
 								},
 							},
 							as: 'image',
@@ -116,18 +101,7 @@ export class StoreService {
 								$map: {
 									input: '$images',
 									as: 'image',
-									in: {
-										$cond: [
-											{
-												$regexMatch: {
-													input: '$$image',
-													regex: s3KeyPattern,
-												},
-											},
-											{ $concat: [this.imageUrl, '$$image'] },
-											null,
-										],
-									},
+									in: this.fileService.getImageUrlExpression('$$image'),
 								},
 							},
 							as: 'image',

@@ -13,6 +13,8 @@ export const cronTimePattern =
 export const s3KeyPattern =
 	/^([a-zA-Z0-9_-]+\/){0,}[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}(.[a-z]+)?$/
 
+export const urlPattern = /^https?:\/\//
+
 export const keyCodePattern = /^[A-Z0-9]+$/
 
 export const adminPasswordPattern =
@@ -26,10 +28,22 @@ export enum NodeEnv {
 	DEVELOPMENT = 'development',
 }
 
+export enum AppName {
+	CLIENT = 'client',
+	SALE = 'sale',
+	ADMIN = 'admin',
+}
+
 export enum WsNamespace {
 	MEMBER = 'member',
 	STORE = 'store',
 	SHIPPER = 'shipper',
+}
+
+export enum AppVersion {
+	MEMBER = '2',
+	SALE = '2',
+	ADMIN = '2',
 }
 
 export enum Gender {

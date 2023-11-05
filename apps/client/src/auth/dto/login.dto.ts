@@ -1,10 +1,7 @@
 import { Transform } from 'class-transformer'
 import { IsString, Matches } from 'class-validator'
 
-import {
-	validateAndTransformPhone,
-	vnPhoneNumberPattern,
-} from '@/libs/common/src'
+import { validateAndTransformPhone, vnPhoneNumberPattern } from '@app/common'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class LoginDTO {

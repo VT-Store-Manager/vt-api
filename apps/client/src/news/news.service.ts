@@ -2,21 +2,18 @@ import { Model } from 'mongoose'
 
 import { News, NewsDocument } from '@app/database'
 import { Injectable } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
 import { InjectModel } from '@nestjs/mongoose'
 
 import { NewsListByTagItemDTO } from './dto/response.dto'
+import { FileService } from '@app/common'
 
 @Injectable()
 export class NewsService {
-	private readonly imageUrl: string
 	constructor(
 		@InjectModel(News.name)
 		private readonly newsModel: Model<NewsDocument>,
-		private readonly configService: ConfigService
-	) {
-		this.imageUrl = configService.get<string>('imageUrl')
-	}
+		private readonly fileService: FileService
+	) {}
 
 	async getNewsList(): Promise<NewsListByTagItemDTO[]> {
 		const newsByTag = await this.newsModel
@@ -33,12 +30,10 @@ export class NewsService {
 							$push: {
 								id: '$_id',
 								name: '$name',
-								image: {
-									$concat: [this.imageUrl, '$image'],
-								},
+								image: this.fileService.getImageUrlExpression('$image'),
 								content: '$content',
 								url:
-									this.configService.get<string>('host') +
+									this.fileService.getAppUrl() +
 									'/assets/html/coming-soon.html',
 								time: { $toLong: '$createdAt' },
 							},

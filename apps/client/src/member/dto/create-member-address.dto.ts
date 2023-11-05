@@ -7,10 +7,7 @@ import {
 	Matches,
 } from 'class-validator'
 
-import {
-	validateAndTransformPhone,
-	vnPhoneNumberPattern,
-} from '@/libs/common/src'
+import { validateAndTransformPhone, vnPhoneNumberPattern } from '@app/common'
 import { MemberAddress } from '@app/database'
 import { PickType } from '@nestjs/swagger'
 

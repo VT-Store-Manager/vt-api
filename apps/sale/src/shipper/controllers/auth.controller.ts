@@ -26,7 +26,7 @@ export class ShipperAuthController {
 		private readonly smsService: SmsService,
 		private readonly tokenService: TokenService
 	) {
-		this.disableSMS = this.configService.get<boolean>('flag.disableSMS')
+		this.disableSMS = this.configService.get<boolean>('dev.disableSmsFlag')
 	}
 
 	@Post('login')

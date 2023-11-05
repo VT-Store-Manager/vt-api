@@ -1,7 +1,7 @@
 import { Model, Types } from 'mongoose'
 
 import {
-	s3KeyPattern,
+	FileService,
 	SettingGeneralService,
 	SettingMemberAppService,
 } from '@app/common'
@@ -14,7 +14,6 @@ import {
 	SettingMemberApp,
 } from '@app/database'
 import { Injectable } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
 import { InjectModel } from '@nestjs/mongoose'
 
 import {
@@ -24,7 +23,6 @@ import {
 
 @Injectable()
 export class MemberVoucherService {
-	private readonly imageUrl: string
 	constructor(
 		@InjectModel(MemberVoucher.name)
 		private readonly memberVoucherModel: Model<MemberVoucherDocument>,
@@ -32,10 +30,8 @@ export class MemberVoucherService {
 		private readonly memberVoucherHistoryModel: Model<MemberVoucherHistoryDocument>,
 		private readonly settingGeneralService: SettingGeneralService,
 		private readonly settingMemberAppService: SettingMemberAppService,
-		private readonly configService: ConfigService
-	) {
-		this.imageUrl = configService.get<string>('imageUrl')
-	}
+		private readonly fileService: FileService
+	) {}
 
 	async getMemberAvailableVoucher(memberId: string) {
 		const { defaultImages } = await this.settingMemberAppService.getData<
@@ -108,31 +104,13 @@ export class MemberVoucherService {
 							_id: false,
 							code: '$voucher.code',
 							name: '$voucher.title',
-							image: {
-								$cond: [
-									{
-										$regexMatch: {
-											input: '$voucher.image',
-											regex: s3KeyPattern,
-										},
-									},
-									{ $concat: [this.imageUrl, '$voucher.image'] },
-									{ $concat: [this.imageUrl, defaultImages.voucher] },
-								],
-							},
+							image: this.fileService.getImageUrlExpression(
+								'$voucher.image',
+								defaultImages.voucher
+							),
 							partner: '$voucher.partner.name',
-							sliderImage: {
-								$cond: [
-									{
-										$regexMatch: {
-											input: '$voucher.slider',
-											regex: s3KeyPattern,
-										},
-									},
-									{ $concat: [this.imageUrl, '$voucher.slider'] },
-									null,
-								],
-							},
+							sliderImage:
+								this.fileService.getImageUrlExpression('$voucher.slider'),
 							from: { $toLong: '$startTime' },
 							to: { $toLong: '$finishTime' },
 							description: '$voucher.description',
@@ -185,18 +163,10 @@ export class MemberVoucherService {
 							_id: false,
 							code: '$voucherData.code',
 							name: '$voucherData.title',
-							image: {
-								$cond: [
-									{
-										$regexMatch: {
-											input: '$voucherData.image',
-											regex: s3KeyPattern,
-										},
-									},
-									{ $concat: [this.imageUrl, '$voucherData.image'] },
-									{ $concat: [this.imageUrl, defaultImages.voucher] },
-								],
-							},
+							image: this.fileService.getImageUrlExpression(
+								'$voucherData.image',
+								defaultImages.voucher
+							),
 							partner: '$partner.name',
 							usedAt: { $toLong: '$usedAt' },
 							from: { $toLong: '$voucherData.startTime' },

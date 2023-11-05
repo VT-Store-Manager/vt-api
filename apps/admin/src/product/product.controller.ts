@@ -1,5 +1,9 @@
-import { ObjectIdPipe } from '@/libs/common/src/pipes/object-id.pipe'
-import { ApiSuccessResponse, FileService, ParseFile } from '@app/common'
+import {
+	ApiSuccessResponse,
+	FileService,
+	ObjectIdPipe,
+	ParseFile,
+} from '@app/common'
 import { MongoSessionService, Product } from '@app/database'
 import { BooleanResponseDTO } from '@app/types'
 import {
@@ -14,6 +18,7 @@ import {
 import { FilesInterceptor } from '@nestjs/platform-express'
 import { ApiConsumes, ApiResponse, ApiTags } from '@nestjs/swagger'
 
+import { JwtAccess } from '../../authentication/decorators/jwt.decorator'
 import { ProductCategoryService } from '../product-category/product-category.service'
 import { ProductOptionService } from '../product-option/product-option.service'
 import { CreateProductDTO } from './dto/create-product.dto'
@@ -21,7 +26,6 @@ import { GetProductListQueryDTO } from './dto/get-product-list-query.dto'
 import { ProductListPaginationDTO } from './dto/response-products.dto'
 import { ProductDetailDataDTO } from './dto/response.dto'
 import { ProductService } from './product.service'
-import { JwtAccess } from '../../authentication/decorators/jwt.decorator'
 
 @ApiTags('admin-app > product')
 @Controller('admin/product')

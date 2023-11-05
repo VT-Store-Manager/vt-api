@@ -1,21 +1,21 @@
 import { CurrentAdmin } from '@admin/authentication/decorators/current-admin.decorator'
 import { JwtAccess } from '@admin/authentication/decorators/jwt.decorator'
+import { ObjectIdPipe } from '@app/common'
 import {
 	Body,
 	Controller,
 	Delete,
 	Get,
-	Post,
-	Put,
 	Param,
 	Patch,
+	Post,
+	Put,
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
 import { CreateAccountAdminRoleDTO } from '../dto/create-account-admin-role.dto'
-import { AccountAdminRoleService } from '../services/account-admin-role.service'
 import { UpdateRoleDTO } from '../dto/update-role.dto'
-import { ObjectIdPipe } from '@/libs/common/src'
+import { AccountAdminRoleService } from '../services/account-admin-role.service'
 
 @Controller('admin/account-admin/role')
 @ApiTags('admin-app > account-admin-role')

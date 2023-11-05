@@ -1,7 +1,13 @@
-import { Connection, Types } from 'mongoose'
+import { AnyExpression, Connection, Expression, Types } from 'mongoose'
 import { v4 as uuidv4 } from 'uuid'
 
-import { getFileExtension } from '@app/common'
+import {
+	AppName,
+	NodeEnv,
+	getFileExtension,
+	s3KeyPattern,
+	urlPattern,
+} from '@app/common'
 import {
 	DeleteObjectsCommand,
 	DeleteObjectsCommandInput,
@@ -25,10 +31,17 @@ import { InjectConnection } from '@nestjs/mongoose'
 export class FileService {
 	private s3: S3Client
 	private bucketName: string
+	// App url values
+	private nodeEnv: NodeEnv
+	private host: string
+	private port: number
+	private clientPort: number
+	private salePort: number
+	private adminPort: number
 
 	constructor(
 		@InjectConnection() private readonly connection: Connection,
-		private configService: ConfigService
+		private readonly configService: ConfigService
 	) {
 		this.s3 = new S3Client({
 			credentials: {
@@ -38,6 +51,107 @@ export class FileService {
 			region: configService.get<string>('aws.region'),
 		})
 		this.bucketName = this.configService.get<string>('aws.bucketName')
+
+		this.nodeEnv = this.configService.get<NodeEnv>('nodeEnv')
+		this.host = this.configService
+			.get<string>('host')
+			.replace(/^https?:\/\//g, '')
+		this.port = this.configService.get<number>('port')
+
+		this.clientPort = this.configService.get<number>('dev.clientPort')
+		this.salePort = this.configService.get<number>('dev.salePort')
+		this.adminPort = this.configService.get<number>('dev.adminPort')
+	}
+
+	getAppUrl(appName = AppName.CLIENT) {
+		if (this.nodeEnv === NodeEnv.PRODUCTION) {
+			const prodPort = this.port || 443
+			return `https://${this.host}${
+				[80, 443].includes(prodPort) ? '' : `:${prodPort}`
+			}`
+		}
+
+		let devPort = this.port || 80
+		if (appName === AppName.CLIENT) {
+			devPort = this.clientPort || devPort
+		} else if (appName === AppName.SALE) {
+			devPort = this.salePort || devPort
+		} else if (appName === AppName.ADMIN) {
+			devPort = this.adminPort || devPort
+		}
+
+		return `http://${this.host}${
+			[80, 443].includes(devPort) ? '' : `:${devPort}`
+		}`
+	}
+
+	private getImagePrefixUrl(appName = AppName.CLIENT) {
+		const appUrl = this.getAppUrl(appName)
+		const imageUrlPrefix = 'api/file/'
+
+		return `${appUrl}/${imageUrlPrefix}`
+	}
+
+	getImageUrl(url: string, appName = AppName.CLIENT) {
+		if (urlPattern.test(url)) {
+			return url
+		} else if (s3KeyPattern.test(url)) {
+			return this.getImagePrefixUrl(appName) + url
+		}
+		return url
+	}
+
+	getImageUrlExpression(
+		imageExpression: string | AnyExpression | Expression,
+		defaultImageUrl?: string | AnyExpression | Expression,
+		appName = AppName.CLIENT
+	): AnyExpression | Expression {
+		const imageUrl = this.getImagePrefixUrl(appName)
+
+		const isS3KeyExpr = {
+			$regexMatch: {
+				input: imageExpression,
+				regex: s3KeyPattern,
+			},
+		}
+		const isFullUrlExpr = {
+			$regexMatch: {
+				input: imageExpression,
+				regex: urlPattern,
+			},
+		}
+		const isFullUrlDefaultImageExpr = {
+			$regexMatch: {
+				input: defaultImageUrl,
+				regex: urlPattern,
+			},
+		}
+
+		const temp = {
+			$cond: {
+				if: {
+					$or: [isS3KeyExpr, isFullUrlExpr],
+				},
+				then: {
+					$cond: {
+						if: isS3KeyExpr,
+						then: { $concat: [imageUrl, imageExpression] },
+						else: imageExpression,
+					},
+				},
+				else: defaultImageUrl
+					? {
+							$cond: {
+								if: isFullUrlDefaultImageExpr,
+								then: imageExpression,
+								else: { $concat: [imageUrl, defaultImageUrl] },
+							},
+					  }
+					: null,
+			},
+		}
+
+		return temp
 	}
 
 	createObjectKey(path: string[] = [], originalFilename: string) {
