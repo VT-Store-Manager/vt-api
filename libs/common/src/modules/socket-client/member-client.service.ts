@@ -50,7 +50,7 @@ export class MemberServerSocketClientService implements OnModuleInit {
 			}
 		)
 		this.socket.on('connect_error', (err: Error) => {
-			SocketIoLogger.error('Socket connection occurs error', err.stack)
+			SocketIoLogger.error(`Socket connection error: ${err.message}`)
 		})
 		this.socket.on('error', (err: Error) => {
 			SocketIoLogger.error(`${err.name} - ${err.message}`)

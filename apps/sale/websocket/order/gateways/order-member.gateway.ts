@@ -89,9 +89,13 @@ export class OrderMemberGateway {
 	@HttpServer()
 	@SubscribeMessage<MemberEventNames>('member-server:cancel_order')
 	async memberCancelledOrder(@MessageBody() body: OrderDataDTO) {
-		const orderCommonData = await this.wsMemberOrderService.getOrderCommonData(
-			body.orderId
-		)
+		const [orderCommonData, orderStatus] = await Promise.all([
+			this.wsMemberOrderService.getOrderCommonData(body.orderId),
+			this.wsMemberOrderService.getOrderStatus(body.orderId),
+		])
+
+		if (orderStatus.statusId !== OrderState.CANCELED) return
+
 		this.connectionProvider
 			.getStoreNsp()
 			.to(getStoreRoom(orderCommonData.store.id))

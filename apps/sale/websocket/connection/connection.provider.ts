@@ -14,7 +14,7 @@ export class ConnectionProvider {
 	getMemberNsp(): Namespace<MemberEventMap> {
 		if (!this.server) return null
 		if (!this.memberNsp) {
-			this.memberNsp = this.server.of(WsNamespace.STORE)
+			this.memberNsp = this.server.of(WsNamespace.MEMBER)
 		}
 		return this.memberNsp
 	}

@@ -56,7 +56,7 @@ export class WsOrderService {
 	async getOrderCommonData(orderId: string): Promise<OrderCommonData> {
 		const [order] = await this.orderModel
 			.aggregate<OrderCommonData>([
-				{ $match: new Types.ObjectId(orderId.toString()) },
+				{ $match: { _id: new Types.ObjectId(orderId.toString()) } },
 				{
 					$addFields: {
 						member: {
@@ -118,7 +118,7 @@ export class WsOrderService {
 	async getOrderStatus(orderId: string): Promise<OrderStatusUpdatedDTO> {
 		const [orderStatus] = await this.orderModel
 			.aggregate<OrderStatusUpdatedDTO>([
-				{ $match: new Types.ObjectId(orderId.toString()) },
+				{ $match: { _id: new Types.ObjectId(orderId.toString()) } },
 				{
 					$project: {
 						id: { $toString: '$_id' },
@@ -148,11 +148,10 @@ export class WsOrderService {
 	async getShippingData(orderId): Promise<OrderShortDTO> {
 		const [shippingOrderData] = await this.orderModel
 			.aggregate<OrderShortDTO>([
-				{ $match: new Types.ObjectId(orderId.toString()) },
+				{ $match: { _id: new Types.ObjectId(orderId.toString()) } },
 				...this.shipperOrderService.getOrderShortInfoPipeline(),
 			])
 			.exec()
-
 		if (!shippingOrderData) throw new WsException('Order not found')
 
 		return shippingOrderData

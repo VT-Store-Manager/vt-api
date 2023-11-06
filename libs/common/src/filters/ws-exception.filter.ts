@@ -1,7 +1,7 @@
 import { capitalize } from 'lodash'
 import { Socket } from 'socket.io'
 
-import { ArgumentsHost, Catch, HttpException } from '@nestjs/common'
+import { ArgumentsHost, Catch, HttpException, Logger } from '@nestjs/common'
 import { BaseWsExceptionFilter, WsException } from '@nestjs/websockets'
 import {
 	AUTHENTICATED_USER_DATA,
@@ -79,6 +79,7 @@ const getExceptionData = (
 @Catch()
 export class WebsocketExceptionsFilter extends BaseWsExceptionFilter {
 	catch(exception: WsException | HttpException, host: ArgumentsHost) {
+		Logger.error(exception.name, exception.stack)
 		const client = host.switchToWs().getClient<Socket>()
 
 		const exceptionData = getExceptionData(exception, client)

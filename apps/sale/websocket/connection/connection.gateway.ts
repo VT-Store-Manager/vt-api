@@ -121,7 +121,7 @@ export class ConnectionGateway
 		@CurrentClient() auth: TokenPayload,
 		@CurrentClientData() userData: any
 	): WsResponse<TokenPayload> {
-		socketLogger.debug(userData)
+		socketLogger.debug('Authenticated user data', userData)
 		return { event: 'authenticated', data: auth }
 	}
 

@@ -93,6 +93,10 @@ export class OrderStreamService implements OnModuleInit {
 
 		if (isEqual(preOrderStatus, postOrderStatus)) return
 
+		ChangeStreamLogger.verbose(
+			`Order of ${postData.member.id.toString()} status updated`,
+			`${JSON.stringify(preOrderStatus)} -> ${JSON.stringify(postOrderStatus)}`
+		)
 		this.connectionProvider
 			.getMemberNsp()
 			.to(getMemberRoom(postData.member.id))

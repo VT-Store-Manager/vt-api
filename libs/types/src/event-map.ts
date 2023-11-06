@@ -1,3 +1,4 @@
+import { PickOrderErrorDTO } from '@websocket/order/dto/pick-order-error.dto'
 import { GetOrderDetailDTO } from '@sale/src/order/dto/response.dto'
 import { OrderShortDTO } from '@sale/src/shipper/dto/response.dto'
 import { AuthenticateClientDTO } from '@websocket/connection/dto/authenticate-client.dto'
@@ -39,7 +40,7 @@ export type ShipperEventMap = {
 	['shipper:new_order']: (dto: OrderShortDTO) => void
 	['shipper:cancelled_order']: (dto: OrderDataDTO) => void
 	['shipper:pick_order']: (dto: OrderDataDTO) => void
-	['shipper:pick_order_error']: (dto: OrderDataDTO) => void
+	['shipper:pick_order_error']: (dto: PickOrderErrorDTO) => void
 	['shipper:pick_order_success']: (dto: OrderDataDTO) => void
 	['shipper:remove_picked_order']: (dto: OrderDataDTO) => void
 }

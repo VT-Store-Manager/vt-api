@@ -49,7 +49,10 @@ export class OrderShipperGateway {
 			!orderShippingData.shipper
 
 		if (!isWaitingShipper) {
-			client.emit('shipper:pick_order_error', body)
+			client.emit('shipper:pick_order_error', {
+				orderId: body.orderId,
+				message: 'Order is not queued for shipper',
+			})
 			return
 		}
 		try {
@@ -75,10 +78,16 @@ export class OrderShipperGateway {
 						.emit('store:order_status_updated', orderStatus)
 				})
 			} else {
-				client.emit('shipper:pick_order_error', body)
+				client.emit('shipper:pick_order_error', {
+					orderId: body.orderId,
+					message: 'Order is picked by another shipper',
+				})
 			}
-		} catch {
-			client.emit('shipper:pick_order_error', body)
+		} catch (error) {
+			client.emit('shipper:pick_order_error', {
+				orderId: body.orderId,
+				message: error.message,
+			})
 		}
 		client.broadcast.emit('shipper:remove_picked_order', body)
 	}
