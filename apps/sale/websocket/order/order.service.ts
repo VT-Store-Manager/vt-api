@@ -1,7 +1,7 @@
 import { Model, Types } from 'mongoose'
 import { SoftDeleteModel } from 'mongoose-delete'
 
-import { OrderState, ShippingMethod } from '@app/common'
+import { OrderState, ShippingMethod, getDistance } from '@app/common'
 import {
 	Order,
 	OrderDocument,
@@ -153,6 +153,11 @@ export class WsOrderService {
 			])
 			.exec()
 		if (!shippingOrderData) throw new WsException('Order not found')
+
+		shippingOrderData.shipDistance = getDistance(
+			shippingOrderData.store,
+			shippingOrderData.receiver
+		)
 
 		return shippingOrderData
 	}

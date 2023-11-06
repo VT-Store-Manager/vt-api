@@ -11,6 +11,7 @@ export type CommonEventMap = {
 	['error']: (error: Error) => void
 	['authenticate']: (dto: AuthenticateClientDTO) => void
 	['check_authenticated']: () => void
+	['unauthorized']: () => void
 }
 export type CommonEventNames = keyof CommonEventMap
 

@@ -6,6 +6,7 @@ import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 
 import { SlideItemDTO } from './dto/response.dto'
+import { GetSlideQueryDTO } from './dto/get-slide-query.dto'
 
 @Injectable()
 export class SlideService {
@@ -14,7 +15,7 @@ export class SlideService {
 		private readonly fileService: FileService
 	) {}
 
-	async getAllSlides() {
+	async getAllSlides(query: GetSlideQueryDTO) {
 		return await this.slideModel
 			.aggregate<SlideItemDTO>([
 				{
@@ -22,9 +23,10 @@ export class SlideService {
 						id: '$_id',
 						_id: false,
 						image: this.fileService.getImageUrlExpression('$image'),
-						url: true,
+						url: { $ifNull: ['$url', null] },
 					},
 				},
+				...(query.limit ? [{ $limit: query.limit }] : []),
 			])
 			.exec()
 	}

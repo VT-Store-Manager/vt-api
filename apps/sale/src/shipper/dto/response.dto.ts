@@ -16,6 +16,7 @@ export class OrderDetailDTO {
 	paymentType: PaymentType
 	receiver: OrderReceiverDTO
 	store: OrderStoreDTO
+	shipDistance: number
 	timelines: OrderTimeLogDTO[]
 	review?: OrderReviewShipperDTO
 	createdAt: number
@@ -25,12 +26,17 @@ export class OrderShortDTO extends PickType(OrderDetailDTO, [
 	'id',
 	'receiver',
 	'store',
+	'shipDistance',
 	'paymentType',
 	'totalPrice',
 	'shippingFee',
 	'createdAt',
 	'quantity',
 ] as const) {}
+
+export class CurrentOrderShortDTO extends OrderShortDTO {
+	pickDistance?: number
+}
 
 export class OrderItemDTO {
 	id: string

@@ -6,11 +6,13 @@ import { ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import { GetOrderListDTO } from '../dto/get-order-list.dto'
 import {
+	CurrentOrderShortDTO,
 	OrderDetailDTO,
 	OrderListPaginationResultDTO,
 } from '../dto/response.dto'
 import { UpdateShipperOrderStateDTO } from '../dto/update-shipper-order-state.dto'
 import { ShipperOrderService } from '../services/order.service'
+import { GetPendingOrderListDTO } from '../dto/get-pending-order-list.dto'
 
 @Controller('shipper/order')
 @ApiTags('shipper-app > order')
@@ -27,6 +29,15 @@ export class ShipperOrderController {
 		if (query.page < 1) query.page = 1
 		if (query.limit < 1) query.limit = 20
 		return await this.orderService.getOrderListPagination(shipperId, query)
+	}
+
+	@Get('current')
+	@JwtAccess(Role.SHIPPER)
+	@ApiSuccessResponse(CurrentOrderShortDTO, 200, true)
+	async getPendingOrderShortList(
+		@Query() query: GetPendingOrderListDTO
+	): Promise<CurrentOrderShortDTO[]> {
+		return await this.orderService.getPendingList(query)
 	}
 
 	@Get(':orderId/detail')

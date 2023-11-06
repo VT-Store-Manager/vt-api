@@ -1,6 +1,7 @@
 import { capitalize } from 'lodash'
 import { Socket } from 'socket.io'
 
+import { AllEventMap } from '@app/types'
 import { ArgumentsHost, Catch, HttpException, Logger } from '@nestjs/common'
 import { BaseWsExceptionFilter, WsException } from '@nestjs/websockets'
 import {
@@ -16,7 +17,7 @@ const INTERNAL_SERVER_ERROR_NAME = 'Internal Server Error'
 
 const getExceptionData = (
 	exception: Error | HttpException | WsException,
-	client: Socket
+	client: Socket<AllEventMap>
 ): Error | undefined => {
 	const isWsException = exception instanceof WsException
 	const isHttpException = exception instanceof HttpException
