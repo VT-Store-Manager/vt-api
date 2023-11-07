@@ -12,6 +12,7 @@ import {
 	getClientRoom,
 	HTTP_HEADER_SECRET_KEY_NAME,
 	Role,
+	SocketIoLogger,
 	WebsocketExceptionsFilter,
 } from '@app/common'
 import { CommonEventMap, CommonEventNames, TokenPayload } from '@app/types'
@@ -38,11 +39,10 @@ import {
 	AUTHENTICATED_USER_DATA,
 	AUTHENTICATION_KEY,
 	IS_HTTP_SERVER_KEY,
-	socketLogger,
 } from '@sale/config/constant'
 
+import { WsConnectionService } from './connection.service'
 import { AuthenticateClientDTO } from './dto/authenticate-client.dto'
-import { ConnectionProvider } from './connection.provider'
 
 @UseFilters(new WebsocketExceptionsFilter())
 @UsePipes(new ValidationPipe())
@@ -51,7 +51,7 @@ export class ConnectionGateway
 	implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
 	constructor(
-		private connectionProvider: ConnectionProvider,
+		private connectionProvider: WsConnectionService,
 		private readonly jwtService: JwtService,
 		private readonly configService: ConfigService,
 		private readonly jwtAccessStrategy: JwtAccessStrategy,
@@ -69,20 +69,20 @@ export class ConnectionGateway
 		this.authenticate(client)
 		const isHttpServer = this.validateHttpServerClient(client)
 		if (isHttpServer) {
-			socketLogger.debug(
+			SocketIoLogger.debug(
 				`[${client.id}] connected: HTTP Server - Namespace ${client.nsp.name}`
 			)
 			return
 		}
 
-		socketLogger.debug(`[${client.id}] connected`)
+		SocketIoLogger.debug(`[${client.id}] connected`)
 	}
 
 	handleDisconnect(@ConnectedSocket() client: Socket) {
 		const userData = client[AUTHENTICATED_USER_DATA]
 		if (userData) {
-			socketLogger.debug(
-				`[${client.id}] disconnected: ${capitalize(userData.role)} - ${
+			SocketIoLogger.debug(
+				`[${client.id}] disconnected: ${capitalize(userData.role)} ${
 					userData.name
 				} - UID ${userData.id}`
 			)
@@ -91,12 +91,12 @@ export class ConnectionGateway
 
 		const isHttpServer = client[IS_HTTP_SERVER_KEY]
 		if (isHttpServer) {
-			socketLogger.debug(
+			SocketIoLogger.debug(
 				`[${client.id}] disconnected: HTTP Server - Namespace ${client.nsp.name}`
 			)
 			return
 		}
-		socketLogger.debug(`[${client.id}] disconnected`)
+		SocketIoLogger.debug(`[${client.id}] disconnected`)
 	}
 
 	@SubscribeMessage<CommonEventNames>('authenticate')
@@ -106,12 +106,17 @@ export class ConnectionGateway
 	) {
 		client.handshake.headers['authorization'] = body.token
 		const authenticated = await this.authenticate(client)
+
 		if (!authenticated) throw new UnauthorizedException()
+
+		const authenticatedData: TokenPayload = client[AUTHENTICATION_KEY]
 		const userData = client[AUTHENTICATED_USER_DATA]
-		socketLogger.debug(
-			`[${client.id}] authenticated:  ${capitalize(userData.role)} - ${
+		SocketIoLogger.debug(
+			`[${client.id}] authenticated: ${capitalize(userData.role)} - ${
 				userData.name
-			} - UID ${userData.id}`
+			} - UID ${userData.id} - expire at ${new Date(
+				authenticatedData.exp * 1000
+			).toLocaleString()}`
 		)
 	}
 
@@ -121,7 +126,7 @@ export class ConnectionGateway
 		@CurrentClient() auth: TokenPayload,
 		@CurrentClientData() userData: any
 	): WsResponse<TokenPayload> {
-		socketLogger.debug('Authenticated user data', userData)
+		SocketIoLogger.debug('Authenticated user data', userData)
 		return { event: 'authenticated', data: auth }
 	}
 

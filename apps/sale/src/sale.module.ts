@@ -18,6 +18,7 @@ import {
 	MongooseModule,
 	MongooseModuleOptions,
 } from '@nestjs/mongoose'
+import { ScheduleModule } from '@nestjs/schedule'
 import { ServeStaticModule } from '@nestjs/serve-static'
 
 import { WebSocketModule } from '../websocket/websocket.module'
@@ -55,6 +56,7 @@ import { VoucherModule } from './voucher/voucher.module'
 				cacheControl: true,
 			},
 		}),
+		ScheduleModule.forRoot(),
 		WebSocketModule,
 		FileModule,
 		AuthModule,

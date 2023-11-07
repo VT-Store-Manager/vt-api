@@ -15,7 +15,7 @@ import {
 	WebSocketGateway,
 } from '@nestjs/websockets'
 import { OrderService } from '@sale/src/order/services/order.service'
-import { ConnectionProvider } from '@websocket/connection/connection.provider'
+import { WsConnectionService } from '@/apps/sale/websocket/connection/connection.service'
 
 import { OrderDataDTO } from '../dto/order-data.dto'
 import { WsOrderService } from '../order.service'
@@ -27,7 +27,7 @@ export class OrderMemberGateway {
 	constructor(
 		private readonly orderService: OrderService,
 		private readonly wsMemberOrderService: WsOrderService,
-		private readonly connectionProvider: ConnectionProvider
+		private readonly connectionProvider: WsConnectionService
 	) {}
 
 	@HttpServer()

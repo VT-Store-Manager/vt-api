@@ -17,7 +17,7 @@ import {
 	SubscribeMessage,
 	WebSocketGateway,
 } from '@nestjs/websockets'
-import { ConnectionProvider } from '@websocket/connection/connection.provider'
+import { WsConnectionService } from '@/apps/sale/websocket/connection/connection.service'
 
 import { OrderDataDTO } from '../dto/order-data.dto'
 import { WsOrderService } from '../order.service'
@@ -28,7 +28,7 @@ import { WsOrderService } from '../order.service'
 export class OrderShipperGateway {
 	constructor(
 		private readonly wsOrderService: WsOrderService,
-		private readonly connectionProvider: ConnectionProvider
+		private readonly connectionProvider: WsConnectionService
 	) {}
 
 	@WsAuth(Role.SHIPPER)

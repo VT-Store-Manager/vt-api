@@ -13,7 +13,7 @@ import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 
 import { ConnectionGateway } from './connection.gateway'
-import { ConnectionProvider } from './connection.provider'
+import { WsConnectionService } from './connection.service'
 
 @Module({
 	imports: [
@@ -25,7 +25,7 @@ import { ConnectionProvider } from './connection.provider'
 		]),
 		CommonAuthModule,
 	],
-	providers: [ConnectionGateway, ConnectionProvider],
-	exports: [ConnectionProvider],
+	providers: [ConnectionGateway, WsConnectionService],
+	exports: [WsConnectionService],
 })
 export class ConnectionModule {}

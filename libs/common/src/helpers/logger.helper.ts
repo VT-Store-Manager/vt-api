@@ -7,3 +7,7 @@ export const ChangeStreamLogger = new Logger('ChangeStream', {
 export const SocketIoLogger = new Logger('SocketIO', {
 	timestamp: true,
 })
+
+export const TaskScheduleLogger = new Logger('TaskSchedule', {
+	timestamp: true,
+})

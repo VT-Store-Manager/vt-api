@@ -8,8 +8,8 @@ import {
 	AUTHENTICATED_USER_DATA,
 	AUTHENTICATION_KEY,
 	IS_HTTP_SERVER_KEY,
-	socketLogger,
 } from '@sale/config/constant'
+import { SocketIoLogger } from '../helpers'
 
 const COMMON_WS_EXCEPTION_NAME = 'Bad Event'
 const VALIDATION_ERROR_NAME = 'Validation Error'
@@ -54,9 +54,9 @@ const getExceptionData = (
 			}
 		} else if (status === 401) {
 			if (!userData) {
-				socketLogger.debug(`[${client.id}] unauthenticated`)
+				SocketIoLogger.debug(`[${client.id}] unauthenticated`)
 			} else {
-				socketLogger.debug(
+				SocketIoLogger.debug(
 					`[${client.id}] unauthenticated: ${capitalize(userData.role)} - ${
 						userData.name
 					} - UID ${userData.id}`

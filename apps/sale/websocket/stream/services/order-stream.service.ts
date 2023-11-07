@@ -6,7 +6,7 @@ import { ChangeStreamLogger, getMemberRoom, OrderBuyer } from '@app/common'
 import { OrderMember, OrderMemberDocument } from '@app/database'
 import { Injectable, OnModuleInit } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-import { ConnectionProvider } from '@websocket/connection/connection.provider'
+import { WsConnectionService } from '@/apps/sale/websocket/connection/connection.service'
 import { OrderStatusUpdatedDTO } from '@websocket/order/dto/order-status-changed.dto'
 
 @Injectable()
@@ -14,7 +14,7 @@ export class OrderStreamService implements OnModuleInit {
 	constructor(
 		@InjectModel(OrderBuyer.MEMBER)
 		private readonly orderMemberModel: Model<OrderMemberDocument>,
-		private readonly connectionProvider: ConnectionProvider
+		private readonly connectionProvider: WsConnectionService
 	) {}
 
 	onModuleInit() {
