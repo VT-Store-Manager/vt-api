@@ -15,6 +15,9 @@ export class AccountSale {
 
 	@Prop({ type: Types.ObjectId, required: true, ref: 'Store' })
 	store: Types.ObjectId
+
+	createdAt?: Date
+	updatedAt?: Date
 }
 
 export const AccountSaleSchema = SchemaFactory.createForClass(AccountSale)
