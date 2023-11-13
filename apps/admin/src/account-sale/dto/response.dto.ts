@@ -1,4 +1,5 @@
-import { UpdatedBy } from '@app/database'
+import { AccountSale, UpdatedBy } from '@app/database'
+import { OmitType } from '@nestjs/swagger'
 
 export class AccountSaleListPagination {
 	totalCount: number
@@ -19,3 +20,7 @@ export class StoreOfAccountSale {
 	name: string
 	image: string
 }
+
+export class NewAccountSaleDTO extends OmitType(AccountSale, [
+	'password',
+] as const) {}
