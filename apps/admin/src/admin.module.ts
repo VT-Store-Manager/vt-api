@@ -40,6 +40,7 @@ import { AuthModule } from './auth/auth.module'
 import { CaslModule } from './casl/casl.module'
 import { ShipperModule } from './shipper/shipper.module'
 import { EmployeeModule } from './employee/employee.module'
+import { AccountSaleModule } from './account-sale/account-sale.module'
 
 @Module({
 	imports: [
@@ -87,6 +88,7 @@ import { EmployeeModule } from './employee/employee.module'
 		CaslModule,
 		ShipperModule,
 		EmployeeModule,
+		AccountSaleModule,
 	],
 	controllers: [],
 	providers: [
