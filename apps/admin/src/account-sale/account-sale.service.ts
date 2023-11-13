@@ -1,4 +1,3 @@
-import { Model } from 'mongoose'
 import { SoftDeleteModel } from 'mongoose-delete'
 
 import {
@@ -20,7 +19,7 @@ import { QueryAccountSaleListDTO } from './dto/query-account-sale-list.dto'
 export class AccountSaleService {
 	constructor(
 		@InjectModel(AccountSale.name)
-		private readonly accountSaleModel: Model<AccountSaleDocument>,
+		private readonly accountSaleModel: SoftDeleteModel<AccountSaleDocument>,
 		@InjectModel(Store.name)
 		private readonly storeModel: SoftDeleteModel<StoreDocument>
 	) {}
@@ -30,33 +29,30 @@ export class AccountSaleService {
 	): Promise<AccountSaleListPagination> {
 		const [allAccountList, accountList] = await Promise.all([
 			this.storeModel
-				.aggregate([
+				.aggregate<{ accounts: any[] }>([
 					{
 						$lookup: {
 							from: 'account_sales',
 							localField: '_id',
 							foreignField: 'store',
-							as: 'account',
-						},
-					},
-					{
-						$match: {
-							deleted: false,
-							$expr: {
-								$gt: [
-									{
-										$size: '$account',
+							as: 'accounts',
+							pipeline: [
+								{
+									$match: {
+										deleted: { $ne: true },
 									},
-									0,
-								],
-							},
+								},
+								{
+									$project: {
+										_id: true,
+									},
+								},
+							],
 						},
 					},
 					{
 						$project: {
-							id: { $first: '$account._id' },
-							storeId: '$_id',
-							_id: false,
+							accounts: true,
 						},
 					},
 				])
@@ -72,7 +68,7 @@ export class AccountSaleService {
 							pipeline: [
 								{
 									$match: {
-										deleted: false,
+										deleted: { $ne: true },
 									},
 								},
 							],
@@ -99,6 +95,7 @@ export class AccountSaleService {
 									$first: '$store.images',
 								},
 							},
+							updatedBy: { $ifNull: ['$updatedBy', null] },
 							createdAt: true,
 							updatedAt: true,
 						},
@@ -124,7 +121,10 @@ export class AccountSaleService {
 		])
 
 		return {
-			totalCount: allAccountList.length,
+			totalCount: allAccountList.reduce(
+				(sum, store) => sum + store.accounts.length,
+				0
+			),
 			items: accountList,
 		}
 	}

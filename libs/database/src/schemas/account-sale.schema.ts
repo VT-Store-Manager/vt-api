@@ -1,7 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { Types, Document } from 'mongoose'
+import MongooseDelete, { SoftDeleteDocument } from 'mongoose-delete'
+import { UpdatedBy, UpdatedBySchema } from './updated-by.schema'
 
-export type AccountSaleDocument = AccountSale & Document
+export type AccountSaleDocument = AccountSale & Document & SoftDeleteDocument
 
 @Schema({ versionKey: false, timestamps: true, collection: 'account_sales' })
 export class AccountSale {
@@ -16,8 +18,16 @@ export class AccountSale {
 	@Prop({ type: Types.ObjectId, required: true, ref: 'Store' })
 	store: Types.ObjectId
 
+	@Prop({ type: UpdatedBySchema, required: true })
+	updatedBy: UpdatedBy
+
+	deleted?: boolean
+	deletedAt?: Date
+	deletedBy?: Types.ObjectId
 	createdAt?: Date
 	updatedAt?: Date
 }
 
 export const AccountSaleSchema = SchemaFactory.createForClass(AccountSale)
+
+AccountSaleSchema.plugin(MongooseDelete, { deletedBy: true, deletedAt: true })
