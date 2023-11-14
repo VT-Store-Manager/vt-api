@@ -1,19 +1,25 @@
 import { SoftDeleteModel } from 'mongoose-delete'
 
 import {
+	AccountAdmin,
+	AccountAdminDocument,
 	AccountSale,
 	AccountSaleDocument,
 	Store,
 	StoreDocument,
 } from '@app/database'
-import { Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 
 import {
 	AccountSaleListItem,
 	AccountSaleListPagination,
+	NewAccountSaleDTO,
 } from './dto/response.dto'
 import { QueryAccountSaleListDTO } from './dto/query-account-sale-list.dto'
+import { CreateAccountSaleDTO } from './dto/create-account-sale.dto'
+import { ClientSession, Types } from 'mongoose'
+import { hash } from '@app/common'
 
 @Injectable()
 export class AccountSaleService {
@@ -21,7 +27,9 @@ export class AccountSaleService {
 		@InjectModel(AccountSale.name)
 		private readonly accountSaleModel: SoftDeleteModel<AccountSaleDocument>,
 		@InjectModel(Store.name)
-		private readonly storeModel: SoftDeleteModel<StoreDocument>
+		private readonly storeModel: SoftDeleteModel<StoreDocument>,
+		@InjectModel(AccountAdmin.name)
+		private readonly accountAdminModel: SoftDeleteModel<AccountAdminDocument>
 	) {}
 
 	async getAccountSaleList(
@@ -127,5 +135,59 @@ export class AccountSaleService {
 			),
 			items: accountList,
 		}
+	}
+
+	async createAccount(
+		data: CreateAccountSaleDTO,
+		adminId: string,
+		session?: ClientSession
+	): Promise<NewAccountSaleDTO> {
+		const defaultPassword = 'p@ssw0rd'
+
+		const [_store, admin] = await Promise.all([
+			this.storeModel
+				.findOne({ _id: new Types.ObjectId(data.storeId) })
+				.orFail(new BadRequestException('Store not found'))
+				.select('_id')
+				.lean()
+				.exec(),
+			this.accountAdminModel
+				.findOne({ _id: new Types.ObjectId(adminId) })
+				.orFail(new BadRequestException('Admin account not found'))
+				.select('username')
+				.lean()
+				.exec(),
+		])
+
+		const [accountSale] = await this.accountSaleModel.create(
+			[
+				{
+					username: data.username,
+					password: hash(defaultPassword),
+					store: new Types.ObjectId(data.storeId),
+					updatedBy: {
+						accountId: admin._id,
+						accountUsername: admin.username,
+						time: new Date(),
+					},
+				},
+			],
+			{ session }
+		)
+
+		accountSale.password = undefined
+
+		return accountSale
+	}
+
+	async deleteAccount(deleteId: string, accountId: string) {
+		const deleteResult = await this.accountSaleModel
+			.delete(
+				{ _id: new Types.ObjectId(deleteId) },
+				new Types.ObjectId(accountId)
+			)
+			.exec()
+
+		return deleteResult.deletedCount > 0
 	}
 }

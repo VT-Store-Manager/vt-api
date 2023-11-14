@@ -1,4 +1,6 @@
 import {
+	AccountAdmin,
+	AccountAdminSchema,
 	AccountSale,
 	AccountSaleSchema,
 	Store,
@@ -15,6 +17,7 @@ import { AccountSaleService } from './account-sale.service'
 		MongooseModule.forFeature([
 			{ name: AccountSale.name, schema: AccountSaleSchema },
 			{ name: Store.name, schema: StoreSchema },
+			{ name: AccountAdmin.name, schema: AccountAdminSchema },
 		]),
 	],
 	controllers: [AccountSaleController],

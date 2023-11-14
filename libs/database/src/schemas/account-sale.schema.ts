@@ -18,6 +18,9 @@ export class AccountSale {
 	@Prop({ type: Types.ObjectId, required: true, ref: 'Store' })
 	store: Types.ObjectId
 
+	@Prop({ type: Boolean, default: true })
+	forceUpdatePassword: boolean
+
 	@Prop({ type: UpdatedBySchema, required: true })
 	updatedBy: UpdatedBy
 
@@ -30,4 +33,8 @@ export class AccountSale {
 
 export const AccountSaleSchema = SchemaFactory.createForClass(AccountSale)
 
-AccountSaleSchema.plugin(MongooseDelete, { deletedBy: true, deletedAt: true })
+AccountSaleSchema.plugin(MongooseDelete, {
+	deletedBy: true,
+	deletedAt: true,
+	overrideMethods: 'all',
+})
