@@ -33,4 +33,8 @@ export class AccountSale {
 
 export const AccountSaleSchema = SchemaFactory.createForClass(AccountSale)
 
-AccountSaleSchema.plugin(MongooseDelete, { deletedBy: true, deletedAt: true })
+AccountSaleSchema.plugin(MongooseDelete, {
+	deletedBy: true,
+	deletedAt: true,
+	overrideMethods: 'all',
+})

@@ -179,4 +179,15 @@ export class AccountSaleService {
 
 		return accountSale
 	}
+
+	async deleteAccount(deleteId: string, accountId: string) {
+		const deleteResult = await this.accountSaleModel
+			.delete(
+				{ _id: new Types.ObjectId(deleteId) },
+				new Types.ObjectId(accountId)
+			)
+			.exec()
+
+		return deleteResult.deletedCount > 0
+	}
 }

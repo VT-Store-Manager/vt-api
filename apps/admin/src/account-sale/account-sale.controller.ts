@@ -1,8 +1,16 @@
 import { CurrentAdmin } from '@admin/authentication/decorators/current-admin.decorator'
 import { JwtAccess } from '@admin/authentication/decorators/jwt.decorator'
-import { ApiSuccessResponse } from '@app/common'
-import { Body, Controller, Get, Post, Query } from '@nestjs/common'
-import { ApiTags } from '@nestjs/swagger'
+import { ApiSuccessResponse, ObjectIdPipe } from '@app/common'
+import {
+	Body,
+	Controller,
+	Delete,
+	Get,
+	Param,
+	Post,
+	Query,
+} from '@nestjs/common'
+import { ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import { AccountSaleService } from './account-sale.service'
 import { CreateAccountSaleDTO } from './dto/create-account-sale.dto'
@@ -11,6 +19,7 @@ import {
 	AccountSaleListPagination,
 	NewAccountSaleDTO,
 } from './dto/response.dto'
+import { BooleanResponseDTO } from '@app/types'
 
 @Controller('admin/account-sale')
 @ApiTags('admin-app > account-sale')
@@ -31,5 +40,14 @@ export class AccountSaleController {
 		@CurrentAdmin('sub') adminId: string
 	) {
 		return await this.accountSaleService.createAccount(body, adminId)
+	}
+
+	@Delete(':id')
+	@ApiResponse({ type: BooleanResponseDTO })
+	async deleteAccount(
+		@Param('id', ObjectIdPipe) deleteId: string,
+		@CurrentAdmin('sub') adminId: string
+	) {
+		return await this.accountSaleService.deleteAccount(deleteId, adminId)
 	}
 }
