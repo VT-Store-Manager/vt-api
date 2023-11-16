@@ -1,11 +1,13 @@
 import { ApiPropertyFile } from '@app/common'
-import { IsJSON } from 'class-validator'
+import { ArrayMinSize, IsArray, IsString } from 'class-validator'
 
 export class UploadFileDTO {
 	@ApiPropertyFile()
 	file?: any
 
-	@IsJSON()
+	@IsArray()
+	@ArrayMinSize(1)
+	@IsString({ each: true })
 	path: Array<string>
 }
 

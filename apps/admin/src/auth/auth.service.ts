@@ -62,6 +62,7 @@ export class AuthService {
 		return await this.accountAdminModel
 			.findById(id)
 			.orFail(new ForbiddenException('Admin not found'))
+			.select('-password')
 			.lean()
 			.exec()
 	}

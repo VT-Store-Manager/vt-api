@@ -30,6 +30,6 @@ export class JwtAccessAdminStrategy extends PassportStrategy(
 				description: 'Detected an abnormal action or data',
 			})
 		}
-		return payload
+		return { ...payload, adminData: admin }
 	}
 }
