@@ -1,5 +1,11 @@
 import { FileService } from '@app/common'
-import { MongoSessionService, Shipper, ShipperSchema } from '@app/database'
+import {
+	AccountAdmin,
+	AccountAdminSchema,
+	MongoSessionService,
+	Shipper,
+	ShipperSchema,
+} from '@app/database'
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 
@@ -8,7 +14,10 @@ import { ShipperService } from './shipper.service'
 
 @Module({
 	imports: [
-		MongooseModule.forFeature([{ name: Shipper.name, schema: ShipperSchema }]),
+		MongooseModule.forFeature([
+			{ name: Shipper.name, schema: ShipperSchema },
+			{ name: AccountAdmin.name, schema: AccountAdminSchema },
+		]),
 	],
 	controllers: [ShipperController],
 	providers: [ShipperService, FileService, MongoSessionService],

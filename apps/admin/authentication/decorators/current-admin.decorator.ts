@@ -4,7 +4,10 @@ import { AccountAdminPayload } from '@app/types'
 import { createParamDecorator, ExecutionContext } from '@nestjs/common'
 
 export const CurrentAdmin = createParamDecorator(
-	(data: keyof AccountAdminPayload, context: ExecutionContext) => {
+	(
+		data: keyof AccountAdminPayload | 'adminData',
+		context: ExecutionContext
+	) => {
 		const request = context.switchToHttp().getRequest<Request>()
 
 		return data

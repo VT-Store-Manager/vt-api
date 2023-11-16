@@ -4,6 +4,7 @@ import MongooseDelete, { SoftDeleteDocument } from 'mongoose-delete'
 import { Gender, validateVnPhoneNumber } from '@app/common'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { isNumber } from 'lodash'
+import { UpdatedBy, UpdatedBySchema } from './updated-by.schema'
 
 export type ShipperDocument = Shipper & Document & SoftDeleteDocument
 
@@ -34,6 +35,9 @@ export class Shipper {
 
 	@Prop({ type: Date, required: true })
 	dob: Date
+
+	@Prop({ type: UpdatedBySchema, required: true })
+	updatedBy: UpdatedBy
 
 	deleted?: boolean
 	deletedAt?: Date
