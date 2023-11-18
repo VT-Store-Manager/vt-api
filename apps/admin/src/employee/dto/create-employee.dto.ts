@@ -1,10 +1,9 @@
 import {
+	IsDateString,
 	IsEnum,
 	IsMongoId,
-	IsNumber,
 	IsString,
 	Matches,
-	Min,
 	MinLength,
 } from 'class-validator'
 
@@ -30,8 +29,6 @@ export class CreateEmployeeDTO {
 	@Type(() => Number)
 	gender: Gender
 
-	@IsNumber()
-	@Type(() => Number)
-	@Min(0)
-	dob: number
+	@IsDateString()
+	dob: Date
 }
