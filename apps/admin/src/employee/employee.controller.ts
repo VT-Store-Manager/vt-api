@@ -3,7 +3,9 @@ import { Employee, MongoSessionService } from '@app/database'
 import {
 	Body,
 	Controller,
+	Get,
 	Post,
+	Query,
 	UploadedFile,
 	UseInterceptors,
 } from '@nestjs/common'
@@ -12,6 +14,8 @@ import { ApiConsumes, ApiTags } from '@nestjs/swagger'
 
 import { CreateEmployeeDTO } from './dto/create-employee.dto'
 import { EmployeeService } from './employee.service'
+import { EmployeeListPaginationDTO } from './dto/response.dto'
+import { QueryEmployeeListDTO } from './dto/query-employee-list.dto'
 
 @Controller('admin/employee')
 @ApiTags('admin-app > employee')
@@ -63,5 +67,11 @@ export class EmployeeController {
 		}
 
 		return result
+	}
+
+	@Get('list')
+	@ApiSuccessResponse(EmployeeListPaginationDTO)
+	async getEmployeeList(@Query() query: QueryEmployeeListDTO) {
+		return await this.employeeService.getEmployeeList(query)
 	}
 }
