@@ -280,6 +280,8 @@ export class VoucherService {
 										name: '$partner.name',
 										code: '$partner.code',
 										image: '$partner.image',
+										deleted: '$partner.deleted',
+										deletedAt: '$partner.deletedAt',
 									},
 								],
 							},

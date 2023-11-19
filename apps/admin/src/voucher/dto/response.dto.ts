@@ -21,4 +21,6 @@ export class ShortPartner {
 	id: string
 	name: string
 	code: string
+	deleted: boolean
+	deletedAt?: Date
 }

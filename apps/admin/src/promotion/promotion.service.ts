@@ -166,6 +166,7 @@ export class PromotionService {
 									$project: {
 										id: '$_id',
 										_id: false,
+										code: true,
 										title: true,
 										disabled: true,
 										deleted: true,
