@@ -121,4 +121,12 @@ export class EmployeeService {
 			items: employees,
 		}
 	}
+
+	async softDeleteEmployee(employeeId: string, adminId: string) {
+		const deleteResult = await this.employeeModel.delete(
+			{ _id: new Types.ObjectId(employeeId) },
+			new Types.ObjectId(adminId)
+		)
+		return deleteResult
+	}
 }
