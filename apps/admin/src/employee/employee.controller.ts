@@ -1,16 +1,29 @@
-import { ApiSuccessResponse, FileService, ParseFile } from '@app/common'
+import { CurrentAdmin } from '@admin/authentication/decorators/current-admin.decorator'
+import {
+	ApiSuccessResponse,
+	FileService,
+	ObjectIdPipe,
+	ParseFile,
+} from '@app/common'
 import { Employee, MongoSessionService } from '@app/database'
+import { BooleanResponseDTO } from '@app/types'
 import {
 	Body,
 	Controller,
+	Delete,
+	Get,
+	Param,
 	Post,
+	Query,
 	UploadedFile,
 	UseInterceptors,
 } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
-import { ApiConsumes, ApiTags } from '@nestjs/swagger'
+import { ApiConsumes, ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import { CreateEmployeeDTO } from './dto/create-employee.dto'
+import { QueryEmployeeListDTO } from './dto/query-employee-list.dto'
+import { EmployeeListPaginationDTO } from './dto/response.dto'
 import { EmployeeService } from './employee.service'
 
 @Controller('admin/employee')
@@ -63,5 +76,20 @@ export class EmployeeController {
 		}
 
 		return result
+	}
+
+	@Get('list')
+	@ApiSuccessResponse(EmployeeListPaginationDTO)
+	async getEmployeeList(@Query() query: QueryEmployeeListDTO) {
+		return await this.employeeService.getEmployeeList(query)
+	}
+
+	@Delete(':id')
+	@ApiResponse({ type: BooleanResponseDTO })
+	async softDeleteEmployee(
+		@Param('id', ObjectIdPipe) employeeId: string,
+		@CurrentAdmin('sub') adminId: string
+	) {
+		return await this.employeeService.softDeleteEmployee(employeeId, adminId)
 	}
 }
