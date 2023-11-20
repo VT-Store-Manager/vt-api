@@ -76,7 +76,7 @@ export const envValidationSchema = Joi.object({
 	// JWT
 	ACCESS_TOKEN_SECRET_KEY: Joi.string().token().required(),
 	ACCESS_TOKEN_EXPIRES_IN: Joi.string()
-		.pattern(/^\d+(m|d)$/)
+		.pattern(/^\d+(s|m|d)$/)
 		.required(),
 	REFRESH_TOKEN_SECRET_KEY: Joi.string().token().required(),
 	REFRESH_TOKEN_EXPIRES_IN: Joi.string()

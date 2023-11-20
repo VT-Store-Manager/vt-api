@@ -183,6 +183,9 @@ devDependencies:
   '@typescript-eslint/parser':
     specifier: ^5.0.0
     version: 5.53.0(eslint@8.35.0)(typescript@5.1.6)
+  chalk:
+    specifier: 4.1.2
+    version: 4.1.2
   commitizen:
     specifier: ^4.3.0
     version: 4.3.0(typescript@5.1.6)

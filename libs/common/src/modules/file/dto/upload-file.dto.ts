@@ -1,8 +1,9 @@
 import { ApiPropertyFile } from '@app/common'
-import { ArrayMinSize, IsArray, IsString } from 'class-validator'
+import { ArrayMinSize, IsArray, IsNotEmpty, IsString } from 'class-validator'
 
 export class UploadFileDTO {
 	@ApiPropertyFile()
+	@IsNotEmpty()
 	file?: any
 
 	@IsArray()
