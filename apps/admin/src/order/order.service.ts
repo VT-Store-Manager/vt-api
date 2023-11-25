@@ -1,13 +1,13 @@
 import uniq from 'lodash/uniq'
-import { FilterQuery, Model, Types } from 'mongoose'
+import { FilterQuery, Model, Types, isObjectIdOrHexString } from 'mongoose'
 
-import { SortOrder, keyCodePattern } from '@app/common'
+import { SortOrder } from '@app/common'
 import { Order, OrderDocument } from '@app/database'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 
 import { GetOrderHistoryPaginationDTO } from './dto/get-order-history.dto'
-import { GetOrderDetailDTO } from './dto/response.dto'
+import { GetOrderDetailDTO, OrderDetailDTO } from './dto/response.dto'
 
 @Injectable()
 export class OrderService {
@@ -124,19 +124,35 @@ export class OrderService {
 		}
 	}
 
-	async getOrderDetail(orderId: string): Promise<Order> {
-		const order = await this.orderModel
-			.findOne(
-				keyCodePattern.test(orderId)
-					? {
-							code: orderId,
-					  }
-					: {
-							_id: new Types.ObjectId(orderId),
-					  }
-			)
-			.select('-_id')
-			.lean()
+	async getOrderDetail(orderId: string): Promise<OrderDetailDTO> {
+		const [order] = await this.orderModel
+			.aggregate([
+				{
+					$match: {
+						$or: [
+							{ code: orderId },
+							...(isObjectIdOrHexString(orderId)
+								? [
+										{
+											_id: new Types.ObjectId(orderId),
+										},
+								  ]
+								: []),
+						],
+					},
+				},
+				{
+					$addFields: {
+						id: '$_id',
+					},
+				},
+				{
+					$project: {
+						buyer: false,
+						_id: false,
+					},
+				},
+			])
 			.exec()
 		return order
 	}

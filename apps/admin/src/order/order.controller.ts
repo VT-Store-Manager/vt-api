@@ -1,12 +1,11 @@
 import { ApiSuccessResponse, NotEmptyObjectPipe } from '@app/common'
-import { Order } from '@app/database'
 import { PaginationModel } from '@app/types'
 import { Controller, Get, Query } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
 import { GetOrderDetailQueryDTO } from './dto/get-order-detail-query.dto'
 import { GetOrderHistoryPaginationDTO } from './dto/get-order-history.dto'
-import { GetOrderDetailDTO } from './dto/response.dto'
+import { GetOrderDetailDTO, OrderDetailDTO } from './dto/response.dto'
 import { OrderService } from './order.service'
 
 @Controller('admin/order')
@@ -23,7 +22,7 @@ export class OrderController {
 	}
 
 	@Get('detail')
-	@ApiSuccessResponse(Order)
+	@ApiSuccessResponse(OrderDetailDTO)
 	async getOrderDetail(
 		@Query(NotEmptyObjectPipe) query: GetOrderDetailQueryDTO
 	) {
