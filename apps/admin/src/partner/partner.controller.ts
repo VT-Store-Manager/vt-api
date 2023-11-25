@@ -1,10 +1,21 @@
-import { FileService, ImageMulterOption, ParseFile } from '@app/common'
+import { CurrentAdmin } from '@admin/authentication/decorators/current-admin.decorator'
+import { JwtAccess } from '@admin/authentication/decorators/jwt.decorator'
+import {
+	ApiSuccessResponse,
+	FileService,
+	ObjectIdPipe,
+	ParseFile,
+} from '@app/common'
 import { MongoSessionService } from '@app/database'
 import { BooleanResponseDTO } from '@app/types'
 import {
 	Body,
 	Controller,
+	Delete,
+	Get,
+	Param,
 	Post,
+	Query,
 	UploadedFile,
 	UseInterceptors,
 } from '@nestjs/common'
@@ -12,8 +23,9 @@ import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiConsumes, ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import { CreatePartnerDTO } from './dto/create_partner.dto'
+import { QueryPartnerListDTO } from './dto/query-partner-list.dto'
+import { PartnerListPaginationDTO } from './dto/response.dto'
 import { PartnerService } from './partner.service'
-import { JwtAccess } from '../../authentication/decorators/jwt.decorator'
 
 @Controller('admin/partner')
 @ApiTags('admin-app > partner')
@@ -56,5 +68,20 @@ export class PartnerController {
 		}
 
 		return true
+	}
+
+	@Get('list')
+	@ApiSuccessResponse(PartnerListPaginationDTO)
+	async getPartnerList(@Query() query: QueryPartnerListDTO) {
+		return await this.partnerService.getPartnerList(query)
+	}
+
+	@Delete(':id')
+	@ApiResponse({ type: BooleanResponseDTO })
+	async deletePartner(
+		@Param('id', ObjectIdPipe) partnerId: string,
+		@CurrentAdmin('sub') adminId: string
+	) {
+		return await this.partnerService.deleteParter(partnerId, adminId)
 	}
 }

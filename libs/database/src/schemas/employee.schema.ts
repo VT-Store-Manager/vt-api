@@ -43,9 +43,6 @@ export class Employee {
 	@Prop({ type: Date, required: true })
 	dob: Date
 
-	/**
-	 * @deprecated test
-	 */
 	deleted?: boolean
 	deletedAt?: Date
 	deletedBy?: Types.ObjectId

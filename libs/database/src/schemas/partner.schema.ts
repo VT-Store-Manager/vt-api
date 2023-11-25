@@ -1,8 +1,9 @@
 import { Document, Types } from 'mongoose'
 
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
+import MongooseDelete, { SoftDeleteDocument } from 'mongoose-delete'
 
-export type PartnerDocument = Partner & Document
+export type PartnerDocument = Partner & Document & SoftDeleteDocument
 
 @Schema({ versionKey: false, timestamps: true })
 export class Partner {
@@ -17,11 +18,20 @@ export class Partner {
 	@Prop({ type: String, required: true })
 	image: string
 
+	deleted?: boolean
+	deletedAt?: Date
+	deletedBy?: Types.ObjectId
 	createdAt?: Date
 	updatedAt?: Date
 }
 
 export const PartnerSchema = SchemaFactory.createForClass(Partner)
+
+PartnerSchema.plugin(MongooseDelete, {
+	deletedBy: true,
+	deletedAt: true,
+	overrideMethods: 'all',
+})
 
 @Schema({ versionKey: false, _id: false })
 export class ShortPartner {
