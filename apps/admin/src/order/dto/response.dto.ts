@@ -1,6 +1,6 @@
 import { OrderState, PaymentType, ShippingMethod } from '@app/common'
-import { OrderMember } from '@app/database'
-import { PickType } from '@nestjs/swagger'
+import { Order, OrderMember } from '@app/database'
+import { OmitType, PickType } from '@nestjs/swagger'
 
 export class GetOrderDetailDTO extends PickType(OrderMember, [
 	'store',
@@ -47,4 +47,8 @@ export class OrderProductItemDTO {
 export class OrderReviewDTO {
 	rate: number
 	review: string
+}
+
+export class OrderDetailDTO extends OmitType(Order, ['buyer', '_id'] as const) {
+	id: string
 }
