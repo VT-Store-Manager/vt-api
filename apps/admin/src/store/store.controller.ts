@@ -2,6 +2,7 @@ import {
 	ApiSuccessResponse,
 	FileService,
 	ImageMulterOption,
+	ObjectIdPipe,
 	ParseFile,
 } from '@app/common'
 import { MongoSessionService, Store } from '@app/database'
@@ -10,6 +11,7 @@ import {
 	Body,
 	Controller,
 	Get,
+	Param,
 	Post,
 	Query,
 	UploadedFiles,
@@ -25,6 +27,7 @@ import { CreateStoreDTO } from './dto/create-store.dto'
 import { GetListStoreDTO } from './dto/get-list-store.dto'
 import { ResponseStoreListDTO } from './dto/response-store-item.dto'
 import { StoreService } from './store.service'
+import { ResponseStoreDetailDTO } from './dto/response-store-detail.dto'
 
 @ApiTags('admin-app > store')
 @Controller('admin/store')
@@ -101,5 +104,11 @@ export class StoreController {
 	@ApiSuccessResponse(ResponseStoreListDTO, 200, true)
 	async getMetadataStorage(@Query() query: GetListStoreDTO) {
 		return this.storeService.getList(query)
+	}
+
+	@Get('detail')
+	@ApiSuccessResponse(ResponseStoreDetailDTO)
+	async getStoreDetail(@Query('id', ObjectIdPipe) storeId: string) {
+		return await this.storeService.getStoreDetail(storeId)
 	}
 }
