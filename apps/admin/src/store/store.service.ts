@@ -1,8 +1,8 @@
-import { ClientSession, Model } from 'mongoose'
+import { ClientSession, Types } from 'mongoose'
 
 import { CounterService } from '@app/common'
 import { Store, StoreDocument } from '@app/database'
-import { Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 
 import { CreateStoreDTO } from './dto/create-store.dto'
@@ -11,11 +11,14 @@ import {
 	ResponseStoreItem,
 	ResponseStoreListDTO,
 } from './dto/response-store-item.dto'
+import { ResponseStoreDetailDTO } from './dto/response-store-detail.dto'
+import { SoftDeleteModel } from 'mongoose-delete'
 
 @Injectable()
 export class StoreService {
 	constructor(
-		@InjectModel(Store.name) private readonly storeModel: Model<StoreDocument>,
+		@InjectModel(Store.name)
+		private readonly storeModel: SoftDeleteModel<StoreDocument>,
 		private readonly counterService: CounterService
 	) {}
 
@@ -49,5 +52,54 @@ export class StoreService {
 			this.storeModel.countDocuments().exec(),
 		])
 		return { totalCount, items }
+	}
+
+	async getStoreDetail(storeId: string): Promise<ResponseStoreDetailDTO> {
+		const [store] = await this.storeModel
+			.aggregate<ResponseStoreDetailDTO>([
+				{
+					$match: {
+						_id: new Types.ObjectId(storeId),
+					},
+				},
+				{
+					$lookup: {
+						from: 'products',
+						localField: 'unavailableGoods.product',
+						foreignField: '_id',
+						as: 'unavailableGoods.product',
+						pipeline: [
+							{
+								$project: {
+									id: '$_id',
+									_id: false,
+									name: true,
+									image: {
+										$first: '$images',
+									},
+									category: true,
+									deleted: true,
+									disabled: true,
+								},
+							},
+						],
+					},
+				},
+				{
+					$addFields: {
+						id: '$_id',
+					},
+				},
+				{
+					$project: {
+						_id: false,
+					},
+				},
+			])
+			.exec()
+
+		if (!store) throw new BadRequestException('Store not found')
+
+		return store
 	}
 }
