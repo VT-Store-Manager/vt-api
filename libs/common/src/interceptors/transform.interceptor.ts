@@ -28,7 +28,7 @@ export class TransformInterceptor implements NestInterceptor {
 				if (typeof data === 'object' && (data?.data || data?.message)) {
 					return {
 						statusCode: code,
-						data: data?.data,
+						data: data?.data || data,
 						message: data?.message,
 					}
 				}

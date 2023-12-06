@@ -11,7 +11,6 @@ import {
 	Body,
 	Controller,
 	Get,
-	Param,
 	Post,
 	Query,
 	UploadedFiles,
@@ -42,7 +41,9 @@ export class StoreController {
 	) {}
 
 	@Post('create')
-	@UseInterceptors(FilesInterceptor('images', undefined))
+	@UseInterceptors(
+		FilesInterceptor('images', undefined, ImageMulterOption(2, 6))
+	)
 	@ApiConsumes('multipart/form-data')
 	@ApiSuccessResponse(Store, 201)
 	async createStore(

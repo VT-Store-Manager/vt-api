@@ -1,3 +1,5 @@
+import { ValidationError, validate } from 'class-validator'
+
 export const clearUndefineOrNullField = (obj: Record<string | number, any>) => {
 	Object.keys(obj).forEach(key => {
 		if (obj[key] === undefined || obj[key] === null) {
@@ -13,4 +15,16 @@ export const clearUndefineOrNullField = (obj: Record<string | number, any>) => {
 			}
 		}
 	})
+}
+
+export const validatePayload = async <T extends new () => T>(
+	data: Record<string, any>,
+	ValidatedInstance: InstanceType<T>
+): Promise<ValidationError[]> => {
+	const obj = new ValidatedInstance()
+	Object.keys(data).forEach(key => {
+		obj[key] = data[key]
+	})
+
+	return await validate(obj)
 }

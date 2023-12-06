@@ -4,12 +4,21 @@ import { hostname } from 'os'
 export const envConfiguration = () => {
 	const nodeEnv = process.env.NODE_ENV || NodeEnv.DEVELOPMENT
 	const port = isNaN(+process.env.PORT) ? undefined : +process.env.PORT
-	const host = process.env.APP_URL || hostname()
+	const host = hostname().toLowerCase()
+
+	const saleUrl = (() => {
+		const url = process.env.SALE_URL || 'localhost'
+		if (/^(https?:\/\/)?.*local.*$/.test(url)) return 'http://localhost'
+		return url.replace(/^(https?:\/\/)?/, 'https://')
+	})()
 
 	const env = {
 		nodeEnv,
 		host,
 		port,
+		app: {
+			saleUrl,
+		},
 		database: {
 			url: process.env.MONGODB_URL,
 			db: process.env.MONGODB_DB,
@@ -33,9 +42,15 @@ export const envConfiguration = () => {
 			accessTokenExpiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN,
 			refreshTokenExpiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN,
 		},
+		momo: {
+			baseUrl: process.env.MOMO_URL,
+			partnerCode: process.env.MOMO_PARTNER_CODE,
+			accessKey: process.env.MOMO_ACCESS_KEY,
+			secretKey: process.env.MOMO_SECRET_KEY,
+		},
 		ws: {
 			httpSecret: process.env.WS_HTTP_SECRET_KEY,
-			host: process.env.WS_HOST,
+			host: saleUrl,
 		},
 	}
 	// DEV addition environment
@@ -59,8 +74,10 @@ export const envConfiguration = () => {
 
 	return env
 }
+export type EnvConfigType = ReturnType<typeof envConfiguration>
 
 export const envValidationSchema = Joi.object({
+	SALE_URL: Joi.string().hostname().optional(),
 	// Database
 	MONGODB_URL: Joi.string().required(),
 	MONGODB_DB: Joi.string().min(1).required(),
@@ -84,9 +101,13 @@ export const envValidationSchema = Joi.object({
 		.required(),
 	ACCESS_TOKEN_ADMIN_SECRET_KEY: Joi.string().token().required(),
 	REFRESH_TOKEN_ADMIN_SECRET_KEY: Joi.string().token().required(),
+	// Momo
+	MOMO_URL: Joi.string().uri().required(),
+	MOMO_PARTNER_CODE: Joi.string().token().required(),
+	MOMO_ACCESS_KEY: Joi.string().token().required(),
+	MOMO_SECRET_KEY: Joi.string().token().required(),
 	// WS
 	WS_HTTP_SECRET_KEY: Joi.string().token().required(),
-	WS_HOST: Joi.string().uri().required(),
 	// Flag
 	DISABLE_SMS: Joi.string()
 		.allow('true', 'false', true, false, '0', '1', 0, 1)

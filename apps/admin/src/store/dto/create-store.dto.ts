@@ -3,6 +3,7 @@ import {
 	IsArray,
 	IsMilitaryTime,
 	IsNotEmpty,
+	IsObject,
 	IsOptional,
 	IsString,
 	Validate,
@@ -80,15 +81,16 @@ export class CreateStoreDTO extends PickType(Store, [
 	@IsNotEmpty()
 	name: string
 
-	@ValidateNested({ each: true })
+	@IsObject()
+	@ValidateNested()
 	@Type(() => OpenTimeValidator)
 	openTime: OpenTimeValidator
 
-	@ValidateNested({ each: true })
+	@ValidateNested()
 	@Type(() => AddressValidator)
 	address: AddressValidator
 
-	@ValidateNested({ each: true })
+	@ValidateNested()
 	@Type(() => UnavailableGoodsValidator)
 	unavailableGoods: UnavailableGoodsValidator
 }

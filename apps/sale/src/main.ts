@@ -58,7 +58,7 @@ async function bootstrap() {
 				'NestApplication'
 			)
 			Logger.log(`Swagger viewed at http://${host}:${port}/api`, 'OpenAPI')
-			Logger.log(`SocketIO runs at ws://${host}:${port}`, 'SocketIO')
+			Logger.log(`SocketIO runs at http://${host}:${port}`, 'SocketIO')
 		}
 	})
 }

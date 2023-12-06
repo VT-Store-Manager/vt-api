@@ -42,6 +42,7 @@ import { SlideModule } from './slide/slide.module'
 import { StoreModule } from './store/store.module'
 import { TriggerModule } from './triggers/trigger.module'
 import { VoucherModule } from './voucher/voucher.module'
+import { PaymentModule } from './payment/payment.module'
 
 @Module({
 	imports: [
@@ -91,6 +92,7 @@ import { VoucherModule } from './voucher/voucher.module'
 		VoucherModule,
 		ShipperModule,
 		CommonAuthModule,
+		PaymentModule,
 	],
 	controllers: [],
 	providers: [

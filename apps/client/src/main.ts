@@ -50,8 +50,11 @@ async function bootstrap() {
 		configService.get<string>('port') || process.env.CLIENT_PORT || 8080
 	await app.listen(port, () => {
 		if (nodeEnv === NodeEnv.DEVELOPMENT) {
-			Logger.log(`Nest application runs at ${host}:${port}`, 'NestApplication')
-			Logger.log(`Swagger viewed at ${host}:${port}/api`, 'OpenAPI')
+			Logger.log(
+				`Nest application runs at http://${host}:${port}`,
+				'NestApplication'
+			)
+			Logger.log(`Swagger viewed at http://${host}:${port}/api`, 'OpenAPI')
 		}
 	})
 }

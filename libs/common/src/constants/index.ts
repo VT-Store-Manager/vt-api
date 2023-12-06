@@ -165,3 +165,14 @@ export enum QueryTime {
 	WEEK,
 	MONTH,
 }
+
+export enum PaymentStatus {
+	PENDING = 'pending',
+	FAILED = 'failed',
+	SUCCESS = 'success',
+}
+
+export enum MomoResultCode {
+	SUCCEEDED = 0,
+	AUTHORIZED_SUCCESSFULLY = 9000,
+}

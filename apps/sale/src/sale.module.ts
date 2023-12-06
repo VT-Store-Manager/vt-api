@@ -31,6 +31,7 @@ import { ProductOptionModule } from './product-option/product-option.module'
 import { ProductModule } from './product/product.module'
 import { ShipperModule } from './shipper/shipper.module'
 import { VoucherModule } from './voucher/voucher.module'
+import { PaymentModule } from './payment/payment.module';
 
 @Module({
 	imports: [
@@ -69,6 +70,7 @@ import { VoucherModule } from './voucher/voucher.module'
 		MemberModule,
 		ShipperModule,
 		CommonAuthModule,
+		PaymentModule,
 	],
 	controllers: [],
 	providers: [
