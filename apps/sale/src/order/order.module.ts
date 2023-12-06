@@ -1,4 +1,4 @@
-import { OrderBuyer, SettingModule } from '@app/common'
+import { MomoModule, OrderBuyer, SettingModule } from '@app/common'
 import {
 	Employee,
 	EmployeeSchema,
@@ -56,6 +56,7 @@ import { OrderService } from './services/order.service'
 		]),
 		VoucherModule,
 		SettingModule,
+		MomoModule,
 	],
 	controllers: [OrderStateController, OrderController],
 	providers: [OrderStateService, OrderService, MongoSessionService],

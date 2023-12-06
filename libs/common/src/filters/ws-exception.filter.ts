@@ -19,6 +19,7 @@ const getExceptionData = (
 	exception: Error | HttpException | WsException,
 	client: Socket<AllEventMap>
 ): Error | undefined => {
+	SocketIoLogger.error(exception)
 	const isWsException = exception instanceof WsException
 	const isHttpException = exception instanceof HttpException
 	const userData = client[AUTHENTICATED_USER_DATA]

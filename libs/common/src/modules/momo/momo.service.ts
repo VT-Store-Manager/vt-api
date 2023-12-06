@@ -349,22 +349,24 @@ export class MomoService {
 				: PaymentStatus.FAILED,
 		}
 
-		this.orderModel.updateOne(
-			{
-				_id: new Types.ObjectId(orderId),
-			},
-			{
-				$push: {
-					timeLog: {
-						time: new Date(),
-						title:
-							updateFields.status === PaymentStatus.SUCCESS
-								? 'Thanh toán thành công'
-								: 'Thanh toán thất bại',
-					} as TimeLog,
+		this.orderModel
+			.updateOne(
+				{
+					_id: new Types.ObjectId(orderId),
 				},
-			}
-		)
+				{
+					$push: {
+						timeLog: {
+							time: new Date(),
+							title:
+								updateFields.status === PaymentStatus.SUCCESS
+									? 'Thanh toán thành công'
+									: 'Thanh toán thất bại',
+						} as TimeLog,
+					},
+				}
+			)
+			.exec()
 
 		if (paymentData) {
 			const updatedData = await this.momoPaymentModel.findOneAndUpdate(

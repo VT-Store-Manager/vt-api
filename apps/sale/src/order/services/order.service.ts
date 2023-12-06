@@ -2,6 +2,7 @@ import { intersection, sortBy, uniq } from 'lodash'
 import { ClientSession, Model, Types } from 'mongoose'
 
 import {
+	MomoService,
 	OrderBuyer,
 	OrderState,
 	SettingMemberAppService,
@@ -16,6 +17,7 @@ import {
 	MemberVoucherDocument,
 	Order,
 	OrderDocument,
+	OrderInfoEmployee,
 	OrderInfoMember,
 	OrderInfoStore,
 	OrderInfoVoucher,
@@ -29,6 +31,7 @@ import {
 	SettingMemberApp,
 	Store,
 	StoreDocument,
+	TimeLog,
 	Voucher,
 } from '@app/database'
 import { ArrElement } from '@app/types'
@@ -45,10 +48,10 @@ import {
 	ShortProductInCartDTO,
 } from '../dto/check-voucher.dto'
 import { CreateOrderDTO } from '../dto/create-order.dto'
-import { UpdateOrderStateDTO } from '../dto/update-order-state.dto'
 import { GetSuggestVoucherDTO } from '../dto/get-suggest-voucher.dto'
 import { GetOrderDetailDTO, SuggestVoucherItemDTO } from '../dto/response.dto'
-import { OrderInfoEmployee } from '@app/database'
+import { UpdateOrderStateDTO } from '../dto/update-order-state.dto'
+import { OrderStateService } from './order-state.service'
 
 type ShortProductValidationData = {
 	_id: string
@@ -114,7 +117,9 @@ export class OrderService {
 		@InjectModel(Employee.name)
 		private readonly employeeModel: Model<EmployeeDocument>,
 		private readonly voucherService: VoucherService,
-		private readonly settingMemberAppService: SettingMemberAppService
+		private readonly settingMemberAppService: SettingMemberAppService,
+		private readonly momoService: MomoService,
+		private readonly orderStateService: OrderStateService
 	) {}
 
 	private async getRelatedDataToCreateOrder(
@@ -1063,16 +1068,16 @@ export class OrderService {
 	async updateState(data: UpdateOrderStateDTO) {
 		const [order, employee] = await Promise.all([
 			this.orderModel
-				.aggregate<Pick<Order, 'employee'>>([
-					{ $match: new Types.ObjectId(data.id) },
-					{ $project: { employee: true } },
+				.aggregate<Pick<Order, 'employee' | 'state'>>([
+					{ $match: { _id: new Types.ObjectId(data.id) } },
+					{ $project: { employee: true, state: true } },
 				])
 				.exec(),
 			data.employeeId
 				? this.employeeModel
 						.aggregate<OrderInfoEmployee>([
 							{
-								$match: new Types.ObjectId(data.employeeId),
+								$match: { _id: new Types.ObjectId(data.employeeId) },
 							},
 							{
 								$project: {
@@ -1094,6 +1099,13 @@ export class OrderService {
 		if (order[0].employee && employee?.length === 0) {
 			throw new BadRequestException('Employee not found')
 		}
+		if (
+			order[0].state === OrderState.PENDING &&
+			data.status === OrderState.PROCESSING
+		) {
+			const isPaid = await this.momoService.checkOrderPayment(data.id)
+			if (!isPaid) throw new BadRequestException('Order is not paid')
+		}
 
 		const updateResult = await this.orderModel
 			.updateOne(
@@ -1101,8 +1113,19 @@ export class OrderService {
 					_id: new Types.ObjectId(data.id),
 				},
 				{
-					state: data.status,
-					...(order[0].employee ? {} : { employee: employee[0] }),
+					$set: {
+						state: data.status,
+						...(order[0].employee ? {} : { employee: employee[0] }),
+					},
+					$push: {
+						timeLog: {
+							time: new Date(),
+							state: data.status,
+							title: this.orderStateService
+								.getAllOrderStates()
+								.find(state => state.id === data.status).name,
+						} as TimeLog,
+					},
 				}
 			)
 			.exec()

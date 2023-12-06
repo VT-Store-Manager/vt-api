@@ -29,6 +29,7 @@ import {
 	SettingMemberApp,
 	Store,
 	StoreDocument,
+	TimeLog,
 	Voucher,
 } from '@app/database'
 import { ArrElement } from '@app/types'
@@ -48,6 +49,7 @@ import { CreateOrderDTO } from '../dto/create-order.dto'
 import { GetOrderDetailDTO } from '../dto/response.dto'
 import { ReviewOrderDTO } from '../dto/review-order.dto'
 import { ReviewShipperDTO } from '../dto/review-shipper.dto'
+import { OrderStateService } from './order-state.service'
 
 type ShortProductValidationData = {
 	_id: string
@@ -114,7 +116,8 @@ export class OrderService {
 		@InjectModel(ProductOption.name)
 		private readonly productOptionModel: Model<ProductOptionDocument>,
 		private readonly voucherService: VoucherService,
-		private readonly settingMemberAppService: SettingMemberAppService
+		private readonly settingMemberAppService: SettingMemberAppService,
+		private readonly orderStateService: OrderStateService
 	) {}
 
 	private async getRelatedDataToCreateOrder(
@@ -958,7 +961,7 @@ export class OrderService {
 			buyer: OrderBuyer.MEMBER,
 			store: store,
 			...orderItems,
-			payment: PaymentType.CAST,
+			payment: data.payType,
 			member: memberRank.member,
 			voucher: memberVoucher?.voucher || undefined,
 			point: await this.calculateOrderPoint(
@@ -972,6 +975,21 @@ export class OrderService {
 				address: data.addressName || store.address,
 				timer: data.receivingTime ? new Date(data.receivingTime) : undefined,
 			},
+			timeLog: [
+				{
+					time: new Date(),
+					state: OrderState.PENDING,
+					...(PaymentType.CAST
+						? {
+								title: 'Chờ xác nhận',
+								description: 'Chờ cửa hàng xác nhận đơn hàng',
+						  }
+						: {
+								title: 'Chờ thanh toán',
+								description: 'Thực hiện thanh toán để hoàn thành đặt đơn hàng',
+						  }),
+				},
+			],
 		}
 
 		const createdOrder = await this.orderMemberModel.create(
@@ -1402,7 +1420,19 @@ export class OrderService {
 		const updateResult = await this.orderMemberModel
 			.updateOne(
 				{ _id: new Types.ObjectId(orderId) },
-				{ $set: { state: OrderState.CANCELED } }
+				{
+					$set: { state: OrderState.CANCELED },
+					$push: {
+						timeLog: {
+							time: new Date(),
+							title: this.orderStateService
+								.getAllOrderStates()
+								.find(state => state.id === OrderState.CANCELED).name,
+							description: 'Đơn hàng bị huỷ bởi người đặt',
+							state: OrderState.CANCELED,
+						} as TimeLog,
+					},
+				}
 			)
 			.exec()
 
