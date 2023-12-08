@@ -46,6 +46,7 @@ export class GetOrderDetailDTO {
 	originalFee: number
 	cost: number
 	payType: PaymentType
+	isPaid?: boolean
 	time: number
 	phone: string
 	receiver: string

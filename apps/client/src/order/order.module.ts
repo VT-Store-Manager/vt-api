@@ -1,4 +1,5 @@
 import {
+	MomoModule,
 	OrderBuyer,
 	SettingModule,
 	SocketClientModule,
@@ -59,6 +60,7 @@ import { OrderService } from './services/order.service'
 		VoucherModule,
 		SettingModule,
 		SocketClientModule.register(WsNamespace.MEMBER),
+		MomoModule,
 	],
 	controllers: [OrderController, OrderStateController],
 	providers: [OrderService, OrderStateService, MongoSessionService],

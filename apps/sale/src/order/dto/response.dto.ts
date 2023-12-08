@@ -52,6 +52,7 @@ export class GetOrderDetailDTO {
 	originalFee: number
 	cost: number
 	payType: PaymentType
+	isPaid?: boolean
 	time: number
 	voucher?: OrderVoucherInfo
 	member?: OrderMemberInfo

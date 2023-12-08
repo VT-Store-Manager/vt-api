@@ -5,6 +5,7 @@ import {
 	MomoService,
 	OrderBuyer,
 	OrderState,
+	PaymentType,
 	SettingMemberAppService,
 	ShippingMethod,
 } from '@app/common'
@@ -1096,7 +1097,7 @@ export class OrderService {
 		if (order.length === 0) {
 			throw new BadRequestException('Order not found')
 		}
-		if (order[0].employee && employee?.length === 0) {
+		if (!order[0].employee && employee?.length === 0) {
 			throw new BadRequestException('Employee not found')
 		}
 		if (
@@ -1115,7 +1116,9 @@ export class OrderService {
 				{
 					$set: {
 						state: data.status,
-						...(order[0].employee ? {} : { employee: employee[0] }),
+						...(order[0].employee || !employee?.[0]
+							? {}
+							: { employee: employee[0] }),
 					},
 					$push: {
 						timeLog: {
@@ -1379,6 +1382,9 @@ export class OrderService {
 		if (!order?.receiver?.name) delete order.receiver
 		if (!order?.employee?.id) delete order.employee
 		if (!order?.shipper?.id) delete order.shipper
+		if (order.payType === PaymentType.MOMO) {
+			order.isPaid = await this.momoService.checkOrderPayment(orderId)
+		}
 		order.name = (() => {
 			const nameSet = uniq(order.itemNames)
 			if (nameSet.length < 3) {

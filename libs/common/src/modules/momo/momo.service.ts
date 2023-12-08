@@ -8,6 +8,7 @@ import {
 	MomoResultCode,
 	OrderBuyer,
 	PaymentStatus,
+	PaymentType,
 	validatePayload,
 } from '@app/common'
 import { EnvConfigType } from '@app/config'
@@ -127,6 +128,7 @@ export class MomoService {
 				.aggregate<
 					Pick<OrderMember, 'code' | 'store' | 'receiver'> & {
 						name: string
+						payType: PaymentType
 						itemNames: string[]
 						cost: number
 						products: GetOrderDetailDTO['products']

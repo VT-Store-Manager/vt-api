@@ -50,8 +50,6 @@ export class WsConnectionService {
 	@Cron('*/30 * * * * *')
 	async checkExpiredClientsJob() {
 		if (!this.server) return
-		TaskScheduleLogger.debug('Cron Job: checkExpiredClientsJob executing...')
-
 		const socketsFromAllNamespaces = await Promise.all([
 			this.server.fetchSockets(),
 			this.getMemberNsp().fetchSockets(),

@@ -3,6 +3,7 @@ import { ClientSession, Model, Types } from 'mongoose'
 
 import {
 	getDistance,
+	MomoService,
 	OrderBuyer,
 	OrderState,
 	PaymentType,
@@ -117,7 +118,8 @@ export class OrderService {
 		private readonly productOptionModel: Model<ProductOptionDocument>,
 		private readonly voucherService: VoucherService,
 		private readonly settingMemberAppService: SettingMemberAppService,
-		private readonly orderStateService: OrderStateService
+		private readonly orderStateService: OrderStateService,
+		private readonly momoService: MomoService
 	) {}
 
 	private async getRelatedDataToCreateOrder(
@@ -1381,8 +1383,11 @@ export class OrderService {
 		if (!orders || orders.length === 0) {
 			throw new BadRequestException('Order not found')
 		}
-
 		const order = orders[0]
+		if (order.payType === PaymentType.MOMO) {
+			order.isPaid = await this.momoService.checkOrderPayment(orderId)
+		}
+
 		order.name = (() => {
 			const nameSet = uniq(order.itemNames)
 			if (nameSet.length < 3) {
