@@ -15,6 +15,7 @@ import { TokenDTO } from '../../auth/dto/token.dto'
 import { LoginDTO } from '../dto/login-shipper.dto'
 import { ShipperAuthService } from '../services/auth.service'
 import { VerifySmsOtpDTO } from '../dto/verify-sms-otp.dto'
+import { ShipperInfoDTO } from '../dto/response.dto'
 
 @Controller('shipper/auth')
 @ApiTags('shipper-app > auth')
@@ -63,10 +64,10 @@ export class ShipperAuthController {
 		return await this.tokenService.signToken(user)
 	}
 
-	@Get('whoiam')
+	@Get('info')
 	@JwtAccess(Role.SHIPPER)
-	@ApiSuccessResponse(UserPayload)
+	@ApiSuccessResponse(ShipperInfoDTO)
 	async whoIAm(@CurrentUser() user: UserPayload) {
-		return user
+		return await this.authService.getShipperInfo(user.sub)
 	}
 }

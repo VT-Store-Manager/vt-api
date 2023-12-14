@@ -238,10 +238,20 @@ export class FileService {
 	 * @returns The deleteResult is an array of the results of the two promises.
 	 */
 	async delete(keys: string[], abortController?: AbortController) {
+		const existKeys = (
+			await Promise.all(
+				keys.map(async key => {
+					const exist = await this.checkFile(key)
+					return exist ? key : null
+				})
+			)
+		).filter(v => v)
+		if (existKeys.length === 0) return
+
 		const params: DeleteObjectsCommandInput = {
 			Bucket: this.bucketName,
 			Delete: {
-				Objects: keys.map(key => ({ Key: key })),
+				Objects: existKeys.map(key => ({ Key: key })),
 			},
 		}
 

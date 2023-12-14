@@ -252,12 +252,14 @@ export class ShipperOrderService {
 						time: new Date(),
 						title: 'Giao đơn hàng',
 						description: `Đơn hàng được giao bởi ${shipper.name}.\nSĐT: ${shipper.phone}`,
+						state: OrderState.DELIVERING,
 				  }
 				: {
 						time: new Date(),
 						title: 'Hoàn tất',
 						description:
 							'Bạn vừa nhận đơn hàng thành công. Cảm ơn đã chọn Chillin!',
+						state: OrderState.DONE,
 				  }
 
 		const updateResult = await this.orderModel
@@ -267,13 +269,12 @@ export class ShipperOrderService {
 					$push: {
 						timeLog,
 					},
-					...(state === ShipperOrderState.DELIVERED
-						? {
-								$set: {
-									state: OrderState.DONE,
-								},
-						  }
-						: {}),
+					$set: {
+						state:
+							state === ShipperOrderState.TOOK_AWAY
+								? OrderState.DELIVERING
+								: OrderState.DONE,
+					},
 				}
 			)
 			.orFail(new BadRequestException('Order not found'))

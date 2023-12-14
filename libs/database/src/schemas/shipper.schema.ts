@@ -36,6 +36,9 @@ export class Shipper {
 	@Prop({ type: Date, required: true })
 	dob: Date
 
+	@Prop({ type: String, required: true, unique: true })
+	numberPlate: string
+
 	@Prop({ type: UpdatedBySchema, required: true })
 	updatedBy: UpdatedBy
 

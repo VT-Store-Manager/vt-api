@@ -21,6 +21,7 @@ const _logSuccessPath = () => {
 		},
 		{
 			interval: '1d',
+			immutable: true,
 			path: path.join(__dirname, '..', 'storage', 'log', 'access'),
 		}
 	)

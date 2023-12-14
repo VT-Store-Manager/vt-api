@@ -1,3 +1,4 @@
+import { Shipper } from '@app/database'
 import { PaymentType } from '@app/common'
 import { PickType } from '@nestjs/swagger'
 
@@ -70,4 +71,15 @@ export class OrderTimeLogDTO {
 export class OrderReviewShipperDTO {
 	rate: number
 	description?: string
+}
+
+export class ShipperInfoDTO extends PickType(Shipper, [
+	'avatar',
+	'name',
+	'phone',
+	'gender',
+	'numberPlate',
+] as const) {
+	dob: number
+	createdAt: number
 }

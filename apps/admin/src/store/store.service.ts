@@ -102,4 +102,32 @@ export class StoreService {
 
 		return store
 	}
+
+	async getStoreImages(storeId: string) {
+		const storeImages = await this.storeModel
+			.findOne({ _id: new Types.ObjectId(storeId) })
+			.orFail(new BadRequestException('Store not found'))
+			.select('images')
+			.lean()
+			.exec()
+
+		return storeImages.images
+	}
+
+	async updateStoreImage(
+		storeId: string,
+		images: string[],
+		session: ClientSession
+	) {
+		const updateResult = await this.storeModel
+			.updateOne(
+				{ _id: new Types.ObjectId(storeId) },
+				{ $set: { images } },
+				{ session }
+			)
+			.orFail(new BadRequestException('Store not found'))
+			.exec()
+
+		return updateResult.matchedCount > 0
+	}
 }

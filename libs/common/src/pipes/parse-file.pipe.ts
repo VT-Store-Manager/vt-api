@@ -18,6 +18,19 @@ export class ParseFile implements PipeTransform {
 }
 
 @Injectable()
+export class ParseFileOptional implements PipeTransform {
+	transform(
+		files: Express.Multer.File | Express.Multer.File[]
+	): Express.Multer.File | Express.Multer.File[] {
+		if (files === undefined || files === null) {
+			throw new BadRequestException('Image expected')
+		}
+
+		return files
+	}
+}
+
+@Injectable()
 export class ParseFileField implements PipeTransform {
 	constructor(private readonly fields: string[]) {
 		this.fields = fields

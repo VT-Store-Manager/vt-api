@@ -11,7 +11,7 @@ export const cronTimePattern =
 	/^((((\d+,)+\d+|(\d+(\/|-|#)\d+)|\d+L?|\*(\/\d+)?|L(-\d+)?|\?|[A-Z]{3}(-[A-Z]{3})?) ?){5,7})$/
 
 export const s3KeyPattern =
-	/^([a-zA-Z0-9_-]+\/){0,}[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}(.[a-z]+)?$/
+	/^([a-zA-Z0-9_-]+\/)*[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}(.[a-z]+)?$/
 
 export const urlPattern = /^https?:\/\//
 
@@ -20,7 +20,7 @@ export const keyCodePattern = /^[A-Z0-9]+$/
 export const adminPasswordPattern =
 	/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[~!@#\$%^&\*\_,\.\?])[A-Za-z\d~!@#\$%^&\*\_,\.\?]{8,}$/
 
-export const vnPhoneNumberPattern = /^(((\+?84)|0)[235789])([0-9]{8})$/
+export const vnPhoneNumberPattern = /^(((\+?84)|0)[235789])(\d{8})$/
 
 // Enums
 export enum NodeEnv {
@@ -100,9 +100,9 @@ export enum OrderStatus {
 }
 
 export enum ShippingMethod {
-	IN_STORE,
-	PICK_UP,
-	DELIVERY,
+	IN_STORE = 0,
+	PICK_UP = 1,
+	DELIVERY = 2,
 	NONE = -1,
 }
 
@@ -126,6 +126,7 @@ export enum StoreCriterion {
 export enum OrderState {
 	PENDING = 'pending',
 	PROCESSING = 'processing',
+	DELIVERING = 'delivering',
 	DONE = 'done',
 	CANCELED = 'canceled',
 }
@@ -137,9 +138,9 @@ export enum ShipperOrderState {
 
 export enum NotificationType {
 	OTHER = -1,
-	ORDER,
-	VOUCHER,
-	PROMOTION,
+	ORDER = 0,
+	VOUCHER = 1,
+	PROMOTION = 2,
 }
 
 export enum ErrorCode {
