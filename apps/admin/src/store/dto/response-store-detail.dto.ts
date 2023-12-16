@@ -1,16 +1,5 @@
-import { Product, Store } from '@app/database'
-import { OmitType, PickType } from '@nestjs/swagger'
-
-export class UnavailableProductDTO extends PickType(Product, [
-	'name',
-	'originalPrice',
-	'category',
-	'deleted',
-	'disabled',
-] as const) {
-	id: string
-	image: string
-}
+import { Store } from '@app/database'
+import { OmitType } from '@nestjs/swagger'
 
 export class ResponseStoreDetailDTO extends OmitType(Store, [
 	'_id',
@@ -18,7 +7,7 @@ export class ResponseStoreDetailDTO extends OmitType(Store, [
 ] as const) {
 	id: string
 	unavailableGoods: {
-		product: UnavailableProductDTO[]
+		product: string[]
 		category: string[]
 		option: string[]
 	}

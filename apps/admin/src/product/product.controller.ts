@@ -82,4 +82,55 @@ export class ProductController {
 	async getProductDetail(@Query('id', ObjectIdPipe) productId: string) {
 		return await this.productService.getProductDetailData(productId)
 	}
+
+	@Get('all-short')
+	async getAllProductDataInShort() {
+		const [allProducts, allCategories, allOptions] = await Promise.all([
+			this.productService.getAllInShort(),
+			this.productCategoryService.getAllInShort(),
+			this.productOptionService.getAllInShort(),
+		])
+
+		const productCategoryMap = new Map(
+			allCategories.map(category => [category.id, category])
+		)
+		const productCounterByCategory = allProducts.reduce((res, product) => {
+			if (!res[product.categoryId]) {
+				res[product.categoryId] = 0
+			}
+			res[product.categoryId]++
+			return res
+		}, {})
+		const productCounterByOption = allProducts.reduce((res, product) => {
+			product.options.forEach(optionId => {
+				if (!res[optionId]) {
+					res[optionId] = 0
+				}
+				res[optionId]++
+			})
+
+			return res
+		}, {})
+
+		return {
+			product: allProducts.map(product => {
+				return {
+					...product,
+					categoryName: productCategoryMap.get(product.categoryId)?.name ?? '',
+				}
+			}),
+			category: allCategories.map(category => {
+				return {
+					...category,
+					countProduct: productCounterByCategory[category.id] ?? 0,
+				}
+			}),
+			option: allOptions.map(option => {
+				return {
+					...option,
+					applying: productCounterByOption[option.id] ?? 0,
+				}
+			}),
+		}
+	}
 }

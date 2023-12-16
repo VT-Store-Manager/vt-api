@@ -12,4 +12,12 @@ orderKeyUid.setDictionary('alphanum_upper')
 
 const adminPasswordUid = new ShortUniqueId({ length: 12 })
 
-export { optionItemKeyUid, s3KeyUid, orderKeyUid, adminPasswordUid }
+const morganRequestUid = new ShortUniqueId({ length: 12 })
+
+export {
+	optionItemKeyUid,
+	s3KeyUid,
+	orderKeyUid,
+	adminPasswordUid,
+	morganRequestUid,
+}

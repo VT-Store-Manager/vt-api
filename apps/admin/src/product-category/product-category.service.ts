@@ -220,4 +220,25 @@ export class ProductCategoryService {
 
 		return categories[0]
 	}
+
+	async getAllInShort() {
+		return await this.productCategoryModel
+			.aggregate<{
+				id: string
+				name: string
+				image: string
+				countProduct: number
+			}>([
+				{
+					$project: {
+						id: { $toString: '$_id' },
+						_id: false,
+						name: true,
+						image: true,
+						countProduct: -1,
+					},
+				},
+			])
+			.exec()
+	}
 }

@@ -32,6 +32,6 @@ import { ProductService } from './product.service'
 	],
 	controllers: [ProductController],
 	providers: [ProductService, FileService, MongoSessionService],
-	exports: [ProductService],
+	exports: [ProductService, MongooseModule],
 })
 export class ProductModule {}

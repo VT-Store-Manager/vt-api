@@ -1,10 +1,10 @@
 import { Exclude } from 'class-transformer'
 import { Document, Types } from 'mongoose'
-import mongooseDelete from 'mongoose-delete'
+import mongooseDelete, { SoftDeleteDocument } from 'mongoose-delete'
 
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 
-export type ProductDocument = Product & Document
+export type ProductDocument = Product & Document & SoftDeleteDocument
 
 @Schema({ versionKey: false, timestamps: true })
 export class Product {
@@ -53,4 +53,7 @@ export class Product {
 
 export const ProductSchema = SchemaFactory.createForClass(Product)
 
-ProductSchema.plugin(mongooseDelete, { deletedAt: true })
+ProductSchema.plugin(mongooseDelete, {
+	deletedAt: true,
+	overrideMethods: 'all',
+})

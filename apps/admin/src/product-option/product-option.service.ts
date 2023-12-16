@@ -283,8 +283,8 @@ export class ProductOptionService {
 
 			items = updateInfo.childrenItems.reduce((preRes, curItem) => {
 				let res = [...preRes]
-				let item: ProductOptionItem
-				let idx: number
+				let item: ProductOptionItem = null
+				let idx: number = null
 
 				switch (curItem.action) {
 					case 'delete':
@@ -321,8 +321,8 @@ export class ProductOptionService {
 		} else {
 			items = updateInfo.parentItems.reduce((preRes, curItem) => {
 				let res = [...preRes]
-				let item: ProductOptionItem
-				let idx: number
+				let item: ProductOptionItem = null
+				let idx: number = null
 
 				switch (curItem.action) {
 					case 'delete':
@@ -389,6 +389,39 @@ export class ProductOptionService {
 				{
 					$sort: {
 						title: 1,
+					},
+				},
+			])
+			.exec()
+	}
+
+	async getAllInShort() {
+		return await this.productOptionModel
+			.aggregate<{
+				id: string
+				name: string
+				items: string[]
+				applying: number
+			}>([
+				{
+					$match: {
+						deleted: false,
+						disabled: false,
+					},
+				},
+				{
+					$project: {
+						id: { $toString: '$_id' },
+						_id: false,
+						name: true,
+						items: {
+							$map: {
+								input: '$items',
+								as: 'item',
+								in: '$$item.name',
+							},
+						},
+						applying: -1,
 					},
 				},
 			])
