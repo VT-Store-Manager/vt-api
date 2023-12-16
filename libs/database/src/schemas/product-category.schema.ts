@@ -1,9 +1,11 @@
 import { Document, Types } from 'mongoose'
-import mongooseDelete from 'mongoose-delete'
+import mongooseDelete, { SoftDeleteDocument } from 'mongoose-delete'
 
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 
-export type ProductCategoryDocument = ProductCategory & Document
+export type ProductCategoryDocument = ProductCategory &
+	Document &
+	SoftDeleteDocument
 
 @Schema({
 	versionKey: false,

@@ -1,7 +1,16 @@
 import { ClientSession, Types } from 'mongoose'
 
 import { CounterService } from '@app/common'
-import { Store, StoreDocument } from '@app/database'
+import {
+	Product,
+	ProductCategory,
+	ProductCategoryDocument,
+	ProductDocument,
+	ProductOption,
+	ProductOptionDocument,
+	Store,
+	StoreDocument,
+} from '@app/database'
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 
@@ -13,13 +22,22 @@ import {
 } from './dto/response-store-item.dto'
 import { ResponseStoreDetailDTO } from './dto/response-store-detail.dto'
 import { SoftDeleteModel } from 'mongoose-delete'
+import { UpdateUnavailableGoodsDTO } from './dto/update-unavailable-goods.dto'
+import { uniq } from 'lodash'
+import { UpdateStoreInfoDTO } from './dto/update-store-info.dto'
 
 @Injectable()
 export class StoreService {
 	constructor(
 		@InjectModel(Store.name)
 		private readonly storeModel: SoftDeleteModel<StoreDocument>,
-		private readonly counterService: CounterService
+		private readonly counterService: CounterService,
+		@InjectModel(Product.name)
+		private readonly productModel: SoftDeleteModel<ProductDocument>,
+		@InjectModel(ProductCategory.name)
+		private readonly productCategoryModel: SoftDeleteModel<ProductCategoryDocument>,
+		@InjectModel(ProductOption.name)
+		private readonly productOptionModel: SoftDeleteModel<ProductOptionDocument>
 	) {}
 
 	async create(data: CreateStoreDTO, session?: ClientSession): Promise<Store> {
@@ -60,29 +78,6 @@ export class StoreService {
 				{
 					$match: {
 						_id: new Types.ObjectId(storeId),
-					},
-				},
-				{
-					$lookup: {
-						from: 'products',
-						localField: 'unavailableGoods.product',
-						foreignField: '_id',
-						as: 'unavailableGoods.product',
-						pipeline: [
-							{
-								$project: {
-									id: '$_id',
-									_id: false,
-									name: true,
-									image: {
-										$first: '$images',
-									},
-									category: true,
-									deleted: true,
-									disabled: true,
-								},
-							},
-						],
 					},
 				},
 				{
@@ -129,5 +124,84 @@ export class StoreService {
 			.exec()
 
 		return updateResult.matchedCount > 0
+	}
+
+	async updateStoreUnavailableGoods(data: UpdateUnavailableGoodsDTO) {
+		data.product = uniq(data.product)
+		data.category = uniq(data.category)
+		data.option = uniq(data.option)
+
+		const [_, countProduct, countCategory, countOption] = await Promise.all([
+			this.storeModel
+				.exists({ _id: new Types.ObjectId(data.storeId) })
+				.orFail(new BadRequestException('Store not found'))
+				.exec(),
+			this.productModel
+				.countWithDeleted({
+					_id: { $in: data.product.map(id => new Types.ObjectId(id)) },
+				})
+
+				.exec(),
+			this.productCategoryModel
+				.countWithDeleted({
+					_id: { $in: data.category.map(id => new Types.ObjectId(id)) },
+				})
+				.exec(),
+			this.productOptionModel
+				.countWithDeleted({
+					_id: { $in: data.option.map(id => new Types.ObjectId(id)) },
+				})
+				.exec(),
+		])
+
+		if (countProduct < data.product.length) {
+			throw new BadRequestException('Contain invalid product')
+		} else if (countCategory < data.category.length) {
+			throw new BadRequestException('Contain invalid category')
+		} else if (countOption < data.option.length) {
+			throw new BadRequestException('Contain invalid option')
+		}
+
+		const updateResult = await this.storeModel
+			.updateOne(
+				{
+					_id: new Types.ObjectId(data.storeId),
+				},
+				{
+					$set: {
+						unavailableGoods: {
+							product: data.product,
+							category: data.category,
+							option: data.option,
+						},
+					},
+				}
+			)
+			.exec()
+
+		return updateResult.matchedCount > 0
+	}
+
+	async updateStoreInfo(data: UpdateStoreInfoDTO) {
+		const updatedResult = await this.storeModel
+			.updateOne(
+				{ _id: new Types.ObjectId(data.storeId) },
+				{
+					$set: {
+						name: data.name,
+						openTime: data.openTime,
+						address: data.address,
+						...(data.lat && data.lng
+							? {
+									lat: data.lat,
+									lng: data.lng,
+							  }
+							: {}),
+					},
+				}
+			)
+			.exec()
+
+		return updatedResult.matchedCount > 0
 	}
 }

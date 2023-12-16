@@ -14,7 +14,7 @@ import { ApiPropertyMultiFiles, ObjectIdRule } from '@app/common'
 import { Address, OpenTime, Store, UnavailableGoods } from '@app/database'
 import { PickType } from '@nestjs/swagger'
 
-class OpenTimeValidator extends OpenTime {
+export class OpenTimeValidator extends OpenTime {
 	@IsMilitaryTime()
 	start: string
 
@@ -22,7 +22,7 @@ class OpenTimeValidator extends OpenTime {
 	end: string
 }
 
-class AddressValidator extends Address {
+export class AddressValidator extends Address {
 	@IsString()
 	@IsNotEmpty()
 	street: string

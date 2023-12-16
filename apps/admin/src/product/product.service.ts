@@ -166,4 +166,37 @@ export class ProductService {
 		}
 		return products[0]
 	}
+
+	async getAllInShort() {
+		return await this.productModel
+			.aggregate<{
+				id: string
+				name: string
+				originalPrice: number
+				categoryId: string
+				categoryName: string
+				images: string[]
+				options: string[]
+			}>([
+				{
+					$project: {
+						id: { $toString: '$_id' },
+						_id: false,
+						name: true,
+						originalPrice: true,
+						images: true,
+						categoryId: { $toString: '$category' },
+						categoryName: '',
+						options: {
+							$map: {
+								input: '$options',
+								as: 'option',
+								in: { $toString: '$$option' },
+							},
+						},
+					},
+				},
+			])
+			.exec()
+	}
 }

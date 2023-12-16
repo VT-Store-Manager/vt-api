@@ -7,8 +7,8 @@ import moment from 'moment'
 import morgan from 'morgan'
 import path from 'path'
 import { createStream } from 'rotating-file-stream'
-import { v1 as uuidv1 } from 'uuid'
 
+import { adminPasswordUid } from '@app/common'
 import { INestApplication } from '@nestjs/common'
 
 const _logSuccessPath = () => {
@@ -61,7 +61,7 @@ const getRequestData = (req: Request, _res: Response): string => {
 
 export const morganConfig = async (app: INestApplication) => {
 	app.use((req, res, next) => {
-		req.id = uuidv1()
+		req.id = adminPasswordUid()
 		next()
 	})
 	morgan.token('request-id', req => {
@@ -143,7 +143,11 @@ RESPONSE: :response-data
 
 				return [
 					...(req.id
-						? [chalk.gray.italic.dim(`${req.id} `)]
+						? [
+								chalk.gray.italic.dim(
+									`${req.id} ${moment().format('HH:mm:ss')}`
+								),
+						  ]
 						: [
 								chalk.gray.italic.dim(
 									` ${moment().format('ddd YYYY/MM/DD HH:mm:ss.SSS Z')}  `

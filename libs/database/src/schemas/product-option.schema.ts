@@ -1,5 +1,5 @@
 import { Document, Types } from 'mongoose'
-import mongooseDelete from 'mongoose-delete'
+import mongooseDelete, { SoftDeleteDocument } from 'mongoose-delete'
 
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 
@@ -8,7 +8,9 @@ import {
 	ProductOptionItemSchema,
 } from './product-option-item.schema'
 
-export type ProductOptionDocument = Document & ProductOption
+export type ProductOptionDocument = Document &
+	ProductOption &
+	SoftDeleteDocument
 
 @Schema({ versionKey: false, timestamps: true, collection: 'product_options' })
 export class ProductOption {

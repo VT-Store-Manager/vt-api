@@ -32,6 +32,8 @@ import { ResponseStoreDetailDTO } from './dto/response-store-detail.dto'
 import { StoreEditImageDTO } from './dto/response-store-edit-image.dto'
 import { EditImageStoreDTO } from './dto/edit-image-store.dto'
 import { difference } from 'lodash'
+import { UpdateUnavailableGoodsDTO } from './dto/update-unavailable-goods.dto'
+import { UpdateStoreInfoDTO } from './dto/update-store-info.dto'
 
 @ApiTags('admin-app > store')
 @Controller('admin/store')
@@ -188,5 +190,15 @@ export class StoreController {
 		}
 
 		return storeUpdatedImages
+	}
+
+	@Patch('unavailable-goods')
+	async updateUnavailableGoods(@Body() body: UpdateUnavailableGoodsDTO) {
+		return await this.storeService.updateStoreUnavailableGoods(body)
+	}
+
+	@Patch('info')
+	async updateStoreInfo(@Body() body: UpdateStoreInfoDTO) {
+		return await this.storeService.updateStoreInfo(body)
 	}
 }
