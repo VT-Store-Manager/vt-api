@@ -39,6 +39,9 @@ export class Shipper {
 	@Prop({ type: String, required: true, unique: true })
 	numberPlate: string
 
+	@Prop({ type: Number, min: 0, default: 0 })
+	wallet: number
+
 	@Prop({ type: UpdatedBySchema, required: true })
 	updatedBy: UpdatedBy
 

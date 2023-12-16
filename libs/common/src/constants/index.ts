@@ -38,6 +38,7 @@ export enum WsNamespace {
 	MEMBER = 'member',
 	STORE = 'store',
 	SHIPPER = 'shipper',
+	ADMIN = 'admin',
 }
 
 export enum AppVersion {

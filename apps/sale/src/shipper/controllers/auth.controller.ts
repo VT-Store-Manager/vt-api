@@ -70,4 +70,10 @@ export class ShipperAuthController {
 	async whoIAm(@CurrentUser() user: UserPayload) {
 		return await this.authService.getShipperInfo(user.sub)
 	}
+
+	@Post('request-withdraw')
+	@JwtAccess(Role.SHIPPER)
+	async requestWithdraw(@CurrentUser('sub') shipperId: string) {
+		return await this.authService.createWithdrawRequest(shipperId)
+	}
 }
