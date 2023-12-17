@@ -56,6 +56,7 @@ export class ShipperAuthService {
 					gender: true,
 					dob: { $toLong: '$dob' },
 					numberPlate: true,
+					wallet: true,
 					createdAt: { $toLong: '$dob' },
 				}
 			)

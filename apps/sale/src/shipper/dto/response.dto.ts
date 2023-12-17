@@ -79,6 +79,7 @@ export class ShipperInfoDTO extends PickType(Shipper, [
 	'phone',
 	'gender',
 	'numberPlate',
+	'wallet',
 ] as const) {
 	dob: number
 	createdAt: number
