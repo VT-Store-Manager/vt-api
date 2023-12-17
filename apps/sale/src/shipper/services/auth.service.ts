@@ -23,14 +23,8 @@ export class ShipperAuthService {
 	) {}
 
 	async checkAccount(phone: string) {
-		const countShipper = await this.shipperModel
-			.count({ phone: { $in: getListVnPhone(phone) } })
-			.orFail(
-				new BadRequestException('Không tìm thấy tài xế dùng số điện thoại này')
-			)
-			.exec()
-
-		return countShipper > 0
+		const shipperId = await this.getShipperId(phone)
+		return !!shipperId
 	}
 
 	async getShipperId(phone: string): Promise<string> {
