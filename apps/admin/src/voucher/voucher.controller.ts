@@ -11,6 +11,7 @@ import {
 import { MongoSessionService } from '@app/database'
 import { BooleanResponseDTO } from '@app/types'
 import {
+	BadRequestException,
 	Body,
 	Controller,
 	Delete,
@@ -34,6 +35,7 @@ import { UpdateVoucherImageDTO } from './dto/update-voucher-image.dto'
 import { UpdateVoucherInfoDTO } from './dto/update-voucher-info.dto'
 import { UpdateVoucherSliderDTO } from './dto/update-voucher-slider.dto'
 import { VoucherService } from './voucher.service'
+import { isEmpty } from 'lodash'
 
 @Controller('admin/voucher')
 @ApiTags('admin-app > voucher')
@@ -54,12 +56,22 @@ export class VoucherController {
 	}
 
 	@Patch(':id/info')
+	@UseInterceptors(FileInterceptor('image'))
+	@ApiConsumes('multipart/form-data')
 	@ApiResponse({ type: BooleanResponseDTO, status: 200 })
 	async updateVoucherInfo(
+		@UploadedFile() image: Express.Multer.File | undefined,
 		@Param('id', ObjectIdPipe) voucherId: string,
-		@Body(RemoveNullishObjectPipe, NotEmptyObjectPipe)
+		@Body(RemoveNullishObjectPipe)
 		body: UpdateVoucherInfoDTO
 	) {
+		if (!image && isEmpty(body)) {
+			throw new BadRequestException('No data payload to update')
+		}
+		if (image) {
+			await this.updateVoucherImage(image, voucherId, {} as any)
+			delete body.image
+		}
 		return await this.voucherService.updateInfo(voucherId, body)
 	}
 
@@ -212,5 +224,10 @@ export class VoucherController {
 	@ApiSuccessResponse(GetVoucherListDTO)
 	async getVoucherPagination(@Query() query: GetVoucherPaginationDTO) {
 		return await this.voucherService.getVoucherWithPagination(query)
+	}
+
+	@Get(':id/detail')
+	async getVoucherDetail(@Param('id', ObjectIdPipe) voucherId: string) {
+		return await this.voucherService.getVoucherDetail(voucherId)
 	}
 }

@@ -4,6 +4,7 @@ import {
 	IsOptional,
 	IsPositive,
 	IsString,
+	IsUrl,
 	Matches,
 	Min,
 	Validate,
@@ -18,6 +19,10 @@ import { CreateVoucherDTO } from './create-voucher.dto'
 export class UpdateVoucherInfoDTO extends PartialType(
 	IntersectionType(CreateVoucherDTO, PickType(Voucher, ['expireHour'] as const))
 ) {
+	@IsOptional()
+	@IsString()
+	image?: string
+
 	@IsOptional()
 	@IsString()
 	@IsNotEmpty()
@@ -39,7 +44,7 @@ export class UpdateVoucherInfoDTO extends PartialType(
 	@IsOptional()
 	@IsNumber()
 	@Min(new Date(2023, 0, 1).getTime())
-	activeStartTime?: number = Date.now()
+	activeStartTime?: number
 
 	@IsOptional()
 	@IsNumber()

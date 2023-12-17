@@ -47,7 +47,7 @@ export class Voucher {
 	@Prop({ type: Number, default: 24 * 30 })
 	expireHour: number
 
-	@Prop({ type: Date, default: new Date() })
+	@Prop({ type: Date, default: new Date(), set: v => new Date(v) })
 	activeStartTime?: Date
 
 	@Prop({
@@ -57,6 +57,7 @@ export class Voucher {
 				return (this as Voucher).activeStartTime < value
 			},
 		},
+		set: v => new Date(v),
 	})
 	activeFinishTime?: Date
 

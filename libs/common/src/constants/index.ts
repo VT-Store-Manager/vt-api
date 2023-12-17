@@ -13,7 +13,8 @@ export const cronTimePattern =
 export const s3KeyPattern =
 	/^([a-zA-Z0-9_-]+\/)*[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}(.[a-z]+)?$/
 
-export const urlPattern = /^https?:\/\//
+export const urlPattern =
+	/(^https?:\/\/)|(^data:([-\w]+\/[-+\w.]+)?(;?\w+=[-\w]+)*(;base64)?,.*)/
 
 export const keyCodePattern = /^[A-Z0-9]+$/
 

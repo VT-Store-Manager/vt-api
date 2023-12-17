@@ -1,7 +1,13 @@
 import { intersection } from 'lodash'
 import { ClientSession, Model, Types } from 'mongoose'
 
-import { PublishStatus, Status } from '@app/common'
+import {
+	AppName,
+	FileService,
+	PublishStatus,
+	Status,
+	s3KeyPattern,
+} from '@app/common'
 import {
 	ConditionInclusion,
 	OfferTarget,
@@ -12,14 +18,19 @@ import {
 	Voucher,
 	VoucherDocument,
 } from '@app/database'
-import { BadRequestException, Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable, Logger } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 
 import { CreateVoucherDTO } from './dto/create-voucher.dto'
 import { GetVoucherPaginationDTO } from './dto/get-voucher-pagination.dto'
-import { GetVoucherListDTO, VoucherListItemDTO } from './dto/response.dto'
+import {
+	GetVoucherListDTO,
+	VoucherDetailDTO,
+	VoucherListItemDTO,
+} from './dto/response.dto'
 import { UpdateVoucherConditionDTO } from './dto/update-voucher-condition.dto'
 import { UpdateVoucherDiscountDTO } from './dto/update-voucher-discount.dto'
+import { UpdateVoucherInfoDTO } from './dto/update-voucher-info.dto'
 
 @Injectable()
 export class VoucherService {
@@ -29,7 +40,8 @@ export class VoucherService {
 		@InjectModel(Product.name)
 		private readonly productModel: Model<ProductDocument>,
 		@InjectModel(ProductOption.name)
-		private readonly productOptionModel: Model<ProductOptionDocument>
+		private readonly productOptionModel: Model<ProductOptionDocument>,
+		private readonly fileService: FileService
 	) {}
 
 	async create(data: CreateVoucherDTO, session?: ClientSession) {
@@ -38,25 +50,6 @@ export class VoucherService {
 			session ? { session } : {}
 		)
 		return voucher
-	}
-
-	async updateInfo(
-		voucherId: string,
-		data: Record<string, any>,
-		session?: ClientSession
-	) {
-		if (data.activeStartTime) {
-			data['activeStartTime'] = new Date(data.activeStartTime)
-		}
-		if (data.activeFinishTime) {
-			data.activeFinishTime = new Date(data.activeFinishTime)
-		}
-		const updateResult = await this.voucherModel.updateOne(
-			{ _id: new Types.ObjectId(voucherId) },
-			data,
-			session ? { session } : {}
-		)
-		return updateResult.modifiedCount === 1
 	}
 
 	async getDetail(voucherId: string, select = '') {
@@ -332,5 +325,89 @@ export class VoucherService {
 			totalCount: count,
 			items: vouchers,
 		}
+	}
+
+	async getVoucherDetail(voucherId: string) {
+		const [voucher] = await this.voucherModel
+			.aggregate<VoucherDetailDTO>([
+				{
+					$match: {
+						_id: new Types.ObjectId(voucherId),
+						deleted: { $ne: true },
+					},
+				},
+				{
+					$project: {
+						id: { $toString: '$_id' },
+						_id: false,
+						title: true,
+						image: this.fileService.getImageUrlExpression(
+							'$image',
+							undefined,
+							AppName.ADMIN
+						),
+						code: true,
+						partner: {
+							$cond: [
+								{ $eq: [{ $ifNull: ['$partner', null] }, null] },
+								null,
+								'$partner',
+							],
+						},
+						description: true,
+						expireHour: true,
+						activeStartTime: true,
+						activeFinishTime: true,
+						discount: true,
+						condition: true,
+						slider: this.fileService.getImageUrlExpression(
+							'$slider',
+							undefined,
+							AppName.ADMIN
+						),
+						disabled: true,
+						createdAt: true,
+						updatedAt: true,
+					},
+				},
+			])
+			.exec()
+
+		if (!voucher) throw new BadRequestException('Voucher not found')
+
+		return voucher
+	}
+
+	async updateInfo(
+		voucherId: string,
+		data: UpdateVoucherInfoDTO | Partial<Voucher>,
+		session?: ClientSession
+	) {
+		const updateResult = await this.voucherModel
+			.findOneAndUpdate(
+				{ _id: new Types.ObjectId(voucherId) },
+				{ $set: { ...data } },
+				{ session }
+			)
+			.orFail(new BadRequestException('Voucher not found'))
+			.lean()
+			.exec()
+
+		if (
+			data.image &&
+			s3KeyPattern.test(updateResult?.image) &&
+			data.image !== updateResult?.image
+		) {
+			this.fileService
+				.delete([updateResult.image])
+				.then(() => {
+					Logger.debug(`Delete image ${updateResult.image} successful`)
+				})
+				.catch(error => {
+					Logger.debug(`Delete image ${updateResult.image} failed`, error)
+				})
+		}
+
+		return true
 	}
 }

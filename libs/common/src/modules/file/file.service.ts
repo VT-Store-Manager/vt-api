@@ -127,7 +127,7 @@ export class FileService {
 			},
 		}
 
-		const temp = {
+		return {
 			$cond: {
 				if: {
 					$or: [isS3KeyExpr, isFullUrlExpr],
@@ -143,15 +143,13 @@ export class FileService {
 					? {
 							$cond: {
 								if: isFullUrlDefaultImageExpr,
-								then: imageExpression,
+								then: defaultImageUrl,
 								else: { $concat: [imageUrl, defaultImageUrl] },
 							},
 					  }
 					: null,
 			},
 		}
-
-		return temp
 	}
 
 	createObjectKey(path: string[] = [], originalFilename: string) {
