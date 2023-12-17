@@ -3,7 +3,7 @@ import { IsString, Matches } from 'class-validator'
 
 import { validateAndTransformPhone, vnPhoneNumberPattern } from '@app/common'
 
-export class LoginDTO {
+export class LoginShipperDTO {
 	@IsString()
 	@Matches(vnPhoneNumberPattern)
 	@Transform(({ value }) => validateAndTransformPhone(value))

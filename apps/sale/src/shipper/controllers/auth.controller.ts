@@ -12,7 +12,7 @@ import { ConfigService } from '@nestjs/config'
 import { ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import { TokenDTO } from '../../auth/dto/token.dto'
-import { LoginDTO } from '../dto/login-shipper.dto'
+import { LoginShipperDTO } from '../dto/login-shipper.dto'
 import { ShipperAuthService } from '../services/auth.service'
 import { VerifySmsOtpDTO } from '../dto/verify-sms-otp.dto'
 import { ShipperInfoDTO } from '../dto/response.dto'
@@ -32,7 +32,7 @@ export class ShipperAuthController {
 
 	@Post('login')
 	@ApiResponse({ type: BooleanResponseDTO, status: 201 })
-	async sendVerification(@Body() { phone }: LoginDTO) {
+	async sendVerification(@Body() { phone }: LoginShipperDTO) {
 		await this.authService.checkAccount(phone)
 		if (!this.disableSMS) {
 			await this.smsService.initiatePhoneNumberVerification(phone)
