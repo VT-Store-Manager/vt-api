@@ -15,7 +15,8 @@ import { TokenDTO } from '../../auth/dto/token.dto'
 import { LoginShipperDTO } from '../dto/login-shipper.dto'
 import { ShipperAuthService } from '../services/auth.service'
 import { VerifySmsOtpDTO } from '../dto/verify-sms-otp.dto'
-import { ShipperInfoDTO } from '../dto/response.dto'
+import { RequestWithdrawItem, ShipperInfoDTO } from '../dto/response.dto'
+import { RequestWithdrawDTO } from '../dto/request-withdraw.dto'
 
 @Controller('shipper/auth')
 @ApiTags('shipper-app > auth')
@@ -73,7 +74,18 @@ export class ShipperAuthController {
 
 	@Post('request-withdraw')
 	@JwtAccess(Role.SHIPPER)
-	async requestWithdraw(@CurrentUser('sub') shipperId: string) {
-		return await this.authService.createWithdrawRequest(shipperId)
+	@ApiResponse({ type: BooleanResponseDTO, status: 201 })
+	async requestWithdraw(
+		@CurrentUser('sub') shipperId: string,
+		@Body() body: RequestWithdrawDTO
+	) {
+		return await this.authService.createWithdrawRequest(shipperId, body)
+	}
+
+	@Get('withdraw-history')
+	@JwtAccess(Role.SHIPPER)
+	@ApiSuccessResponse(RequestWithdrawItem, 200, true)
+	async getWithdrawHistory(@CurrentUser('sub') shipperId: string) {
+		return await this.authService.getWithdrawHistory(shipperId)
 	}
 }

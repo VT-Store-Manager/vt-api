@@ -10,6 +10,6 @@ import { AdminRequestService } from './admin-request.service'
 		]),
 	],
 	providers: [AdminRequestService],
-	exports: [AdminRequestService],
+	exports: [AdminRequestService, MongooseModule],
 })
 export class AdminRequestModule {}

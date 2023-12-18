@@ -16,6 +16,7 @@ export class AdminRequestService {
 			| 'targetId'
 			| 'targetType'
 			| 'requestType'
+			| 'requestData'
 			| 'title'
 			| 'description'
 			| 'priority'

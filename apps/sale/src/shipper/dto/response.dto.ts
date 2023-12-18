@@ -1,6 +1,6 @@
-import { Shipper } from '@app/database'
+import { Shipper, RequestStatus } from '@app/database'
 import { PaymentType } from '@app/common'
-import { PickType } from '@nestjs/swagger'
+import { ApiProperty, PickType } from '@nestjs/swagger'
 
 export class OrderListPaginationResultDTO {
 	maxCount: number
@@ -82,5 +82,13 @@ export class ShipperInfoDTO extends PickType(Shipper, [
 	'wallet',
 ] as const) {
 	dob: number
+	createdAt: number
+}
+
+export class RequestWithdrawItem {
+	id: string
+	amount: number
+	@ApiProperty({ type: String, enum: RequestStatus })
+	status: RequestStatus
 	createdAt: number
 }
