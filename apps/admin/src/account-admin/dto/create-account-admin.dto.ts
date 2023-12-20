@@ -1,4 +1,10 @@
-import { IsMongoId, IsOptional, IsString, Matches } from 'class-validator'
+import {
+	ArrayMinSize,
+	IsMongoId,
+	IsOptional,
+	IsString,
+	Matches,
+} from 'class-validator'
 
 export class CreateAccountAdminDTO {
 	@IsString()
@@ -8,8 +14,10 @@ export class CreateAccountAdminDTO {
 	@IsString()
 	name: string
 
-	@IsMongoId()
-	role?: string
+	@IsOptional()
+	@IsMongoId({ each: true })
+	@ArrayMinSize(1)
+	roles?: string[] = []
 
 	@IsOptional()
 	@IsMongoId({ each: true })

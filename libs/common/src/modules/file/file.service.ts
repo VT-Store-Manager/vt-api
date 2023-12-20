@@ -213,6 +213,10 @@ export class FileService {
 		key: string,
 		abortController?: AbortController
 	) {
+		if (!key || !s3KeyPattern.test(key)) return null
+		const exist = await this.checkFile(key)
+		if (!exist) return null
+
 		const params: PutObjectCommandInput = {
 			Bucket: this.bucketName,
 			Key: key,
@@ -244,7 +248,7 @@ export class FileService {
 				})
 			)
 		).filter(v => v)
-		if (existKeys.length === 0) return
+		if (existKeys.length === 0) return null
 
 		const params: DeleteObjectsCommandInput = {
 			Bucket: this.bucketName,

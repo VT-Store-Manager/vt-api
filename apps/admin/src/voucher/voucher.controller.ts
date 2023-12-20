@@ -89,13 +89,12 @@ export class VoucherController {
 		const abortController = new AbortController()
 		const { error } = await this.mongoSessionService.execTransaction(
 			async session => {
-				if (voucher.image) {
-					await this.fileService.overrideFile(
-						image.buffer,
-						voucher.image,
-						abortController
-					)
-				} else {
+				const result = await this.fileService.overrideFile(
+					image.buffer,
+					voucher.image,
+					abortController
+				)
+				if (!result) {
 					const voucherImageKey = this.fileService.createObjectKey(
 						['voucher'],
 						image.originalname

@@ -13,7 +13,8 @@ import {
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { LoginAdminDTO } from './dto/login.dto'
-import { compare } from '@app/common'
+import { compare, hash } from '@app/common'
+import { UpdatePasswordDTO } from './dto/update-password.dto'
 
 @Injectable()
 export class AuthService {
@@ -51,7 +52,11 @@ export class AuthService {
 			])
 			.exec()
 
-		if (!account || !compare(data.password, account.password)) {
+		if (
+			!account ||
+			(account.forceUpdatePassword && data.password !== account.password) ||
+			!(account.forceUpdatePassword || compare(data.password, account.password))
+		) {
 			throw wrongLogin
 		}
 
@@ -77,5 +82,40 @@ export class AuthService {
 			)
 			.exec()
 		return updateResult.modifiedCount > 0
+	}
+
+	async updatePassword(adminId: string, data: UpdatePasswordDTO) {
+		const adminData = await this.accountAdminModel
+			.findOne(
+				{ _id: new Types.ObjectId(adminId) },
+				{
+					password: true,
+					forceUpdatePassword: true,
+				}
+			)
+			.orFail(new BadRequestException('Không tìm thấy admin này'))
+			.lean()
+			.exec()
+
+		if (
+			!compare(data.oldPassword, adminData.password) &&
+			adminData.forceUpdatePassword &&
+			data.oldPassword !== adminData.password
+		) {
+			throw new BadRequestException('Mật khẩu không chính xác')
+		}
+
+		const updateResult = await this.accountAdminModel
+			.updateOne(
+				{ _id: new Types.ObjectId(adminId) },
+				{
+					$set: {
+						password: hash(data.newPassword),
+						forceUpdatePassword: false,
+					},
+				}
+			)
+			.exec()
+		return updateResult.matchedCount > 0
 	}
 }

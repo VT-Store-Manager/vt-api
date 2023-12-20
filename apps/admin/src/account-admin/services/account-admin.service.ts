@@ -54,8 +54,8 @@ export class AccountAdminService {
 			username: data.username,
 			name: data.name,
 			password: adminPasswordUid(),
-			role: data.role,
-			stores: data.stores,
+			roles: data.roles.map(role => new Types.ObjectId(role)),
+			stores: data.stores.map(store => new Types.ObjectId(store)),
 		})
 		return createdAccount
 	}

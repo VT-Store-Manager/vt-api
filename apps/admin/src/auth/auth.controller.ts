@@ -6,11 +6,12 @@ import {
 } from '@admin/authentication/decorators/jwt.decorator'
 import { TokenService } from '@app/authentication'
 import { Role } from '@app/common'
-import { Body, Controller, Get, Post } from '@nestjs/common'
+import { Body, Controller, Get, Patch, Post } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
 import { AuthService } from './auth.service'
 import { LoginAdminDTO } from './dto/login.dto'
+import { UpdatePasswordDTO } from './dto/update-password.dto'
 
 @Controller('admin/auth')
 @ApiTags('admin-app > auth')
@@ -36,7 +37,7 @@ export class AuthController {
 				username: account.username,
 				name: account.name,
 				avatar: account.avatar,
-				role: account.roles.map(role => role.name),
+				roles: account.roles.map(role => role.name),
 				updatePassword: !!account.forceUpdatePassword,
 			},
 		}
@@ -46,6 +47,15 @@ export class AuthController {
 	@JwtRefresh()
 	async refresh(@CurrentAdmin() admin: AccountAdminPayload) {
 		return await this.tokenService.signToken(admin, { type: Role.ADMIN })
+	}
+
+	@Patch('update-password')
+	@JwtAccess()
+	async updatePassword(
+		@CurrentAdmin('sub') adminId: string,
+		@Body() body: UpdatePasswordDTO
+	) {
+		return await this.authService.updatePassword(adminId, body)
 	}
 
 	@Get('check')

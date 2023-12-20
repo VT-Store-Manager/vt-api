@@ -26,7 +26,7 @@ export class AccountAdmin {
 	@Prop({ type: [Types.ObjectId], default: () => [], ref: 'Store' })
 	stores: Types.ObjectId[]
 
-	@Prop({ type: Boolean, default: false })
+	@Prop({ type: Boolean, default: true })
 	forceUpdatePassword?: boolean
 
 	@Prop({ type: Date, default: Date.now() })
