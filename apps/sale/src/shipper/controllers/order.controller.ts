@@ -31,6 +31,16 @@ export class ShipperOrderController {
 		return await this.orderService.getOrderListPagination(shipperId, query)
 	}
 
+	@Get('delivering')
+	@JwtAccess(Role.SHIPPER)
+	@ApiSuccessResponse(CurrentOrderShortDTO, 200, true)
+	async getDeliveringOrderList(
+		@CurrentUser('sub') shipperId: string,
+		@Query() query: GetPendingOrderListDTO
+	) {
+		return await this.orderService.getDeliveringOrder(shipperId, query)
+	}
+
 	@Get('current')
 	@JwtAccess(Role.SHIPPER)
 	@ApiSuccessResponse(CurrentOrderShortDTO, 200, true)

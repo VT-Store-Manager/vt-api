@@ -355,6 +355,41 @@ export class ShipperOrderService {
 		return result
 	}
 
+	async getDeliveringOrder(shipperId: string, query: GetPendingOrderListDTO) {
+		const orders = await this.orderModel
+			.aggregate<CurrentOrderShortDTO>([
+				{
+					$match: {
+						type: ShippingMethod.DELIVERY,
+						state: OrderState.PROCESSING,
+						'shipper.id': new Types.ObjectId(shipperId),
+					},
+				},
+				...this.getOrderShortInfoPipeline(),
+				{
+					$addFields: {
+						shipDistance: 0,
+						pickDistance: null,
+					},
+				},
+			])
+			.exec()
+
+		orders.forEach(order => {
+			order.shipDistance = getDistance(order.store, order.receiver)
+		})
+
+		if (typeof query.lat === 'number' && typeof query.lng === 'number') {
+			orders.forEach(order => {
+				order.pickDistance = getDistance(order.store, query as Coordinate)
+			})
+		}
+
+		const sortedOrders = sortBy(orders, ['pickDistance', 'createdAt'])
+
+		return sortedOrders
+	}
+
 	async getPendingList(
 		query: GetPendingOrderListDTO
 	): Promise<CurrentOrderShortDTO[]> {
