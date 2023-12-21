@@ -983,7 +983,7 @@ export class OrderService {
 				{
 					time: new Date(),
 					state: OrderState.PENDING,
-					...(PaymentType.CAST
+					...(data.payType === PaymentType.CAST
 						? {
 								title: 'Chờ xác nhận',
 								description: 'Chờ cửa hàng xác nhận đơn hàng',

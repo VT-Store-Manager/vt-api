@@ -3,10 +3,21 @@ import {
 	ApiSuccessResponse,
 	MemberServerSocketClientService,
 	ObjectIdPipe,
+	OrderState,
+	PaymentType,
 	Role,
+	ShippingMethod,
 } from '@app/common'
 import { BooleanResponseDTO } from '@app/types'
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common'
+import {
+	Body,
+	Controller,
+	Get,
+	Logger,
+	Param,
+	Patch,
+	Post,
+} from '@nestjs/common'
 import { ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import { CheckVoucherDTO } from '../dto/check-voucher.dto'
@@ -18,12 +29,14 @@ import {
 import { ReviewOrderDTO } from '../dto/review-order.dto'
 import { OrderService } from '../services/order.service'
 import { ReviewShipperDTO } from '../dto/review-shipper.dto'
+import { OrderStateService } from '../services/order-state.service'
 
 @Controller('member/cart')
 @ApiTags('member-app > order')
 export class OrderController {
 	constructor(
 		private readonly orderService: OrderService,
+		private readonly orderStateService: OrderStateService,
 		private readonly socketClient: MemberServerSocketClientService
 	) {}
 
@@ -74,6 +87,24 @@ export class OrderController {
 			memberId,
 			body
 		)
+		if (
+			createdOrder.type === ShippingMethod.DELIVERY &&
+			createdOrder.payment === PaymentType.CAST
+		) {
+			Logger.verbose(
+				`Đơn hàng ${createdOrder._id.toString()} sẽ tự động xác nhận sau 1 phút`
+			)
+			setTimeout(() => {
+				this.orderStateService.updateOrderState(
+					createdOrder._id.toString(),
+					OrderState.PROCESSING,
+					{
+						title: 'Đơn hàng đã xác nhận',
+						description: `Đơn hàng được tự động xác nhận sau một phút`,
+					}
+				)
+			}, 60000)
+		}
 		return { id: createdOrder._id }
 	}
 

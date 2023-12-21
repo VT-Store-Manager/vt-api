@@ -2,8 +2,8 @@ import { uniq } from 'lodash'
 import { Model, Types } from 'mongoose'
 
 import { OrderBuyer, OrderState } from '@app/common'
-import { OrderMemberDocument } from '@app/database'
-import { Injectable } from '@nestjs/common'
+import { OrderMemberDocument, TimeLog } from '@app/database'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 
 import { GetOrderByStateDTO } from '../dto/get-order-by-state.dto'
@@ -12,6 +12,7 @@ import {
 	OrderCartItemDTO,
 	OrderStateItemDTO,
 } from '../dto/response.dto'
+import moment from 'moment'
 
 @Injectable()
 export class OrderStateService {
@@ -121,5 +122,48 @@ export class OrderStateService {
 				name: 'Đã hủy',
 			},
 		]
+	}
+
+	async updateOrderState(
+		orderId: string,
+		status: OrderState,
+		log?: Pick<TimeLog, 'title' | 'description'>
+	) {
+		const order = await this.orderMemberModel
+			.findOne({ _id: new Types.ObjectId(orderId) }, { timeLog: true })
+			.lean()
+			.exec()
+
+		const existedLog = order.timeLog.find(log => log.state === status)
+		if (existedLog) {
+			throw new BadRequestException(
+				`Trạng thái '${status}' đã được cập nhật lúc ${moment(
+					existedLog.time
+				).format('YYYY-MM-DD HH:mm:ss')}`
+			)
+		}
+		const updateResult = await this.orderMemberModel.updateOne(
+			{
+				_id: new Types.ObjectId(orderId),
+			},
+			{
+				$set: {
+					state: status,
+				},
+				...(log
+					? {
+							$push: {
+								timeLog: {
+									time: new Date(),
+									...log,
+									state: status,
+								},
+							},
+					  }
+					: {}),
+			}
+		)
+
+		return updateResult.matchedCount > 0
 	}
 }
