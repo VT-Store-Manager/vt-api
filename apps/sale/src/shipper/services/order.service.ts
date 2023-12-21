@@ -361,7 +361,7 @@ export class ShipperOrderService {
 				{
 					$match: {
 						type: ShippingMethod.DELIVERY,
-						state: OrderState.PROCESSING,
+						state: { $nin: [OrderState.DONE, OrderState.CANCELED] },
 						'shipper.id': new Types.ObjectId(shipperId),
 					},
 				},

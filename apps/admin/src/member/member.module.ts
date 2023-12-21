@@ -1,4 +1,9 @@
-import { Member, MemberSchema } from '@app/database'
+import {
+	Member,
+	MemberRank,
+	MemberRankSchema,
+	MemberSchema,
+} from '@app/database'
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 
@@ -7,7 +12,10 @@ import { MemberService } from './member.service'
 
 @Module({
 	imports: [
-		MongooseModule.forFeature([{ name: Member.name, schema: MemberSchema }]),
+		MongooseModule.forFeature([
+			{ name: Member.name, schema: MemberSchema },
+			{ name: MemberRank.name, schema: MemberRankSchema },
+		]),
 	],
 	controllers: [MemberController],
 	providers: [MemberService],
