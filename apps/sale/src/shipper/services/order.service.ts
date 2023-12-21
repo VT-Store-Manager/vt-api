@@ -26,6 +26,7 @@ import {
 import { SoftDeleteModel } from 'mongoose-delete'
 import { GetPendingOrderListDTO } from '../dto/get-pending-order-list.dto'
 import { sortBy } from 'lodash'
+import moment from 'moment'
 
 @Injectable()
 export class ShipperOrderService {
@@ -226,7 +227,7 @@ export class ShipperOrderService {
 		orderId: string,
 		state: ShipperOrderState
 	) {
-		const [shipper] = await Promise.all([
+		const [shipper, order] = await Promise.all([
 			this.shipperModel
 				.findById(shipperId, {
 					phone: true,
@@ -235,17 +236,18 @@ export class ShipperOrderService {
 				.orFail(new BadRequestException('Shipper not found'))
 				.lean()
 				.exec(),
-			this.shipperModel
+			this.orderModel
 				.findOne(
 					{
 						_id: new Types.ObjectId(orderId),
 						'shipper.id': new Types.ObjectId(shipperId),
 					},
-					{ _id: true }
+					{ timeLog: true }
 				)
-				.orFail(new BadRequestException('Shipper '))
+				.orFail(new BadRequestException('Order not found'))
 				.exec(),
 		])
+
 		const timeLog: TimeLog =
 			state === ShipperOrderState.TOOK_AWAY
 				? {
@@ -261,6 +263,15 @@ export class ShipperOrderService {
 							'Bạn vừa nhận đơn hàng thành công. Cảm ơn đã chọn Chillin!',
 						state: OrderState.DONE,
 				  }
+
+		const existedLog = order.timeLog.find(log => log.state === timeLog.state)
+		if (existedLog) {
+			throw new BadRequestException(
+				`Đơn hàng đã chuyển trạng thái '${existedLog.title}' lúc ${moment(
+					existedLog.time
+				).format('YYYY-MM-DD HH:mm:ss')}`
+			)
+		}
 
 		const updatedOrder = await this.orderModel
 			.findOneAndUpdate(
