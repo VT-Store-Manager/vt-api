@@ -409,7 +409,7 @@ export class ShipperOrderService {
 				{
 					$match: {
 						type: ShippingMethod.DELIVERY,
-						state: OrderState.PROCESSING,
+						state: { $in: [OrderState.PENDING, OrderState.PROCESSING] },
 					},
 				},
 				{
@@ -435,7 +435,7 @@ export class ShipperOrderService {
 				{
 					$match: {
 						$expr: {
-							$gt: [
+							$eq: [
 								{
 									$size: '$shipperData',
 								},
