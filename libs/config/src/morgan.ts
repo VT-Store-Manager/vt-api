@@ -76,41 +76,41 @@ export const morganConfig = async (app: INestApplication) => {
 	)
 
 	// Success log morgan
-	app.use(
-		morgan(
-			`:request-id :remote-addr :remote-user [:moment-time] - :method :url :status - :res[content-length] B - :response-time ms`,
-			{
-				stream: _logSuccessPath(),
-				skip: (req: Request, res: Response) => {
-					return (
-						res.statusCode >= 400 ||
-						(req.method.toUpperCase() === 'GET' && req.url.includes('/file/'))
-					)
-				},
-			},
-			{ flags: 'a' }
-		)
-	)
+	// 	app.use(
+	// 		morgan(
+	// 			`:request-id :remote-addr :remote-user [:moment-time] - :method :url :status - :res[content-length] B - :response-time ms`,
+	// 			{
+	// 				stream: _logSuccessPath(),
+	// 				skip: (req: Request, res: Response) => {
+	// 					return (
+	// 						res.statusCode >= 400 ||
+	// 						(req.method.toUpperCase() === 'GET' && req.url.includes('/file/'))
+	// 					)
+	// 				},
+	// 			},
+	// 			{ flags: 'a' }
+	// 		)
+	// 	)
 
-	// Error log morgan
-	app.use(
-		morgan(
-			`:request-id :remote-addr :remote-user [:moment-time] ":method :url HTTP/:http-version" :status ":referrer" ":user-agent" - :response-time ms
-REQUEST: :request-data
+	// 	// Error log morgan
+	// 	app.use(
+	// 		morgan(
+	// 			`:request-id :remote-addr :remote-user [:moment-time] ":method :url HTTP/:http-version" :status ":referrer" ":user-agent" - :response-time ms
+	// REQUEST: :request-data
 
-RESPONSE: :response-data
-=====================
+	// RESPONSE: :response-data
+	// =====================
 
-`,
-			{
-				stream: _logErrorPath(),
-				skip: (res: Request, req: Response) => {
-					return req.statusCode < 400
-				},
-			},
-			{ flags: 'a' }
-		)
-	)
+	// `,
+	// 			{
+	// 				stream: _logErrorPath(),
+	// 				skip: (res: Request, req: Response) => {
+	// 					return req.statusCode < 400
+	// 				},
+	// 			},
+	// 			{ flags: 'a' }
+	// 		)
+	// 	)
 
 	// Terminal log morgan
 	app.use(
