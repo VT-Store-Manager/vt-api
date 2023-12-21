@@ -47,9 +47,7 @@ export class OrderMemberGateway {
 
 		if (
 			orderDetail.categoryId === ShippingMethod.DELIVERY &&
-			[OrderState.PENDING, OrderState.PROCESSING].includes(
-				orderDetail.statusId
-			) &&
+			orderDetail.statusId === OrderState.PROCESSING &&
 			!orderCommonData.shipper
 		) {
 			const shippingData = await this.wsMemberOrderService.getShippingData(

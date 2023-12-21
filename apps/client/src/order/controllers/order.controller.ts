@@ -74,9 +74,6 @@ export class OrderController {
 			memberId,
 			body
 		)
-		this.socketClient.getSocket().emit('member-server:new_order', {
-			orderId: createdOrder._id.toString(),
-		})
 		return { id: createdOrder._id }
 	}
 

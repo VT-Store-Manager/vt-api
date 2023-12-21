@@ -7,6 +7,7 @@ import {
 	AppVersion,
 	MomoResultCode,
 	OrderBuyer,
+	OrderState,
 	PaymentStatus,
 	PaymentType,
 	validatePayload,
@@ -366,6 +367,9 @@ export class MomoService {
 									: 'Thanh toán thất bại',
 						} as TimeLog,
 					},
+					...(updateFields.status === PaymentStatus.SUCCESS
+						? { $set: { state: OrderState.PROCESSING } }
+						: {}),
 				}
 			)
 			.exec()

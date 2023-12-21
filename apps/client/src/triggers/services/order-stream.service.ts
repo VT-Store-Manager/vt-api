@@ -12,6 +12,8 @@ import {
 	OrderState,
 	SettingMemberAppService,
 	ChangeStreamLogger,
+	ShippingMethod,
+	MemberServerSocketClientService,
 } from '@app/common'
 import {
 	MemberData,
@@ -48,7 +50,8 @@ export class OrderStreamService implements OnModuleInit {
 		@InjectModel(MemberVoucherHistory.name)
 		private readonly memberVoucherHistoryModel: Model<MemberVoucherHistoryDocument>,
 		private readonly mongoSessionService: MongoSessionService,
-		private readonly settingMemberService: SettingMemberAppService
+		private readonly settingMemberService: SettingMemberAppService,
+		private readonly socketClient: MemberServerSocketClientService
 	) {}
 
 	onModuleInit() {
@@ -119,6 +122,10 @@ export class OrderStreamService implements OnModuleInit {
 						updateData.updateDescription.updatedFields
 					)
 					this.createOrderNotificationTrigger(
+						updateData.fullDocumentBeforeChange,
+						updateData.updateDescription.updatedFields
+					)
+					this.waitingForShipper(
 						updateData.fullDocumentBeforeChange,
 						updateData.updateDescription.updatedFields
 					)
@@ -353,6 +360,22 @@ export class OrderStreamService implements OnModuleInit {
 			ChangeStreamLogger.verbose(
 				`Member ${preData.member.id}: Add new notification - type ORDER`
 			)
+		}
+	}
+
+	async waitingForShipper(
+		preData: Pick<OrderMember, '_id' | 'shipper' | 'state' | 'type'>,
+		updateFields: Partial<OrderMember>
+	) {
+		if (
+			preData.type === ShippingMethod.DELIVERY &&
+			preData.state === OrderState.PENDING &&
+			updateFields?.state !== OrderState.PROCESSING &&
+			!preData.shipper?.id
+		) {
+			this.socketClient.getSocket().emit('member-server:new_order', {
+				orderId: preData._id.toString(),
+			})
 		}
 	}
 }
