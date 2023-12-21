@@ -100,7 +100,8 @@ export class MemberDataStreamService implements OnModuleInit {
 		if (error) {
 			ChangeStreamLogger.error(error.message)
 		} else {
-			const deletedAmount = data.notificationCount - result.notifications.length
+			const deletedAmount =
+				data.notificationCount - (result.notifications?.length || 0)
 			ChangeStreamLogger.verbose(
 				`Member ${data.member.toString()}: Pop ${deletedAmount} notification${
 					deletedAmount > 1 ? 's' : ''

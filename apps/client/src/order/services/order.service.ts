@@ -976,6 +976,8 @@ export class OrderService {
 				phone: data.phone || memberRank.member.phone,
 				address: data.addressName || store.address,
 				timer: data.receivingTime ? new Date(data.receivingTime) : undefined,
+				lat: data.addressLat,
+				lng: data.addressLng,
 			},
 			timeLog: [
 				{
