@@ -309,7 +309,7 @@ export class MomoService {
 	async updatePaymentResult(
 		payload: MomoProcessPaymentResult,
 		orderId: string
-	): Promise<MomoPayment> {
+	): Promise<boolean> {
 		const filterQuery: FilterQuery<MomoPayment> = {
 			requestId: payload.requestId,
 			orderId: payload.orderId,
@@ -375,20 +375,17 @@ export class MomoService {
 			.exec()
 
 		if (paymentData) {
-			const updatedData = await this.momoPaymentModel.findOneAndUpdate(
-				filterQuery,
-				updateFields
-			)
-			return updatedData
+			await this.momoPaymentModel.updateOne(filterQuery, updateFields).exec()
 		} else {
-			const createdData = await this.momoPaymentModel.create<MomoPayment>({
+			await this.momoPaymentModel.create<MomoPayment>({
 				cartOrderId: new Types.ObjectId(orderId),
 				requestId: payload.requestId,
 				orderId: payload.orderId,
 				...updateFields,
 			})
-			return createdData
 		}
+
+		return await this.checkOrderPayment(orderId)
 	}
 
 	async checkTransactionStatus(

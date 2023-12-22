@@ -23,9 +23,12 @@ export class MomoController {
 		@Req() { body }: Request<any, any, MomoProcessPaymentResult>
 	) {
 		const result = await this.momoService.updatePaymentResult(body, orderId)
-		this.socketClient.getSocket().emit('member-server:paid_order', {
-			orderId,
-		})
+		console.log(result)
+		if (result) {
+			this.socketClient.getSocket().emit('member-server:paid_order', {
+				orderId,
+			})
+		}
 		return result
 	}
 }

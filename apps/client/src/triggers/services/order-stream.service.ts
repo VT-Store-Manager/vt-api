@@ -89,6 +89,8 @@ export class OrderStreamService implements OnModuleInit {
 							point: true,
 							state: true,
 							createdAt: true,
+							type: true,
+							shipper: true,
 						},
 					},
 				},
@@ -367,10 +369,17 @@ export class OrderStreamService implements OnModuleInit {
 		preData: Pick<OrderMember, '_id' | 'shipper' | 'state' | 'type'>,
 		updateFields: Partial<OrderMember>
 	) {
+		console.log(
+			'watch order status',
+			preData.type,
+			preData.state,
+			updateFields,
+			preData.shipper
+		)
 		if (
 			preData.type === ShippingMethod.DELIVERY &&
 			preData.state === OrderState.PENDING &&
-			updateFields?.state !== OrderState.PROCESSING &&
+			updateFields?.state === OrderState.PROCESSING &&
 			!preData.shipper?.id
 		) {
 			this.socketClient.getSocket().emit('member-server:new_order', {
