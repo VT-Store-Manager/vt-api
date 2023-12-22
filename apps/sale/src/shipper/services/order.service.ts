@@ -286,7 +286,8 @@ export class ShipperOrderService {
 								? OrderState.DELIVERING
 								: OrderState.DONE,
 					},
-				}
+				},
+				{ new: true }
 			)
 			.orFail(new BadRequestException('Order not found'))
 			.exec()
