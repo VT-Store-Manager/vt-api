@@ -197,6 +197,8 @@ export class OrderService {
 							},
 							unavailableGoods: true,
 							disabled: true,
+							lat: true,
+							lng: true,
 						},
 					},
 				])

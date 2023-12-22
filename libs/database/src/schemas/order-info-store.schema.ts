@@ -13,11 +13,11 @@ export class OrderInfoStore {
 	@Prop({ type: String, required: true, minlength: 1 })
 	address: string
 
-	@Prop({ type: Number, required: true })
-	lat: number
+	@Prop({ type: Number, required: true, default: 0 })
+	lat?: number
 
-	@Prop({ type: Number, required: true })
-	lng: number
+	@Prop({ type: Number, required: true, default: 0 })
+	lng?: number
 }
 
 export const OrderInfoStoreSchema = SchemaFactory.createForClass(OrderInfoStore)
