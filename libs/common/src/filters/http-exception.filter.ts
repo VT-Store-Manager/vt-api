@@ -32,6 +32,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
 					: exception.message,
 			}
 		}
+		if (statusCode >= 500) {
+			// eslint-disable-next-line no-console
+			console.log(exception)
+		}
 		response['_data'] = responseData
 		response.status(statusCode).json(responseData)
 	}

@@ -417,7 +417,9 @@ export class OrderService {
 				? this.employeeModel
 						.aggregate<OrderInfoEmployee>([
 							{
-								$match: new Types.ObjectId(data.employeeId),
+								$match: {
+									_id: new Types.ObjectId(data.employeeId),
+								},
 							},
 							{
 								$project: {
