@@ -9,6 +9,7 @@ import {
 import { MemberEventMap } from '@app/types'
 import { Injectable, OnModuleInit } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
+import { throttle } from 'lodash'
 
 @Injectable()
 export class MemberServerSocketClientService implements OnModuleInit {
@@ -49,9 +50,12 @@ export class MemberServerSocketClientService implements OnModuleInit {
 				)
 			}
 		)
-		this.socket.on('connect_error', (err: Error) => {
-			SocketIoLogger.error(`Socket connection error: ${err.message}`)
-		})
+		this.socket.on(
+			'connect_error',
+			throttle((err: Error) => {
+				SocketIoLogger.error(`Socket connection error: ${err.message}`)
+			}, 60000)
+		)
 		this.socket.on('error', (err: Error) => {
 			SocketIoLogger.error(`${err.name} - ${err.message}`)
 		})

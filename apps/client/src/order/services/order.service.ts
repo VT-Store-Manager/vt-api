@@ -1014,6 +1014,25 @@ export class OrderService {
 		optionKeyMap: Map<string, ShortProductOptionValidationData>,
 		storeUnavailableGoods?: Store['unavailableGoods']
 	) {
+		// Convert option item key from parent key to child keys
+		cartProducts = cartProducts.map(product => {
+			const productData = productMap.get(product.id)
+			const childKeyMap = productData.options
+				.reduce((res, option) => {
+					return [...res, ...option.items]
+				}, [] as ShortProductValidationData['options'][number]['items'])
+				.filter(item => item.parentKey)
+				.reduce((res, item) => {
+					res[item.parentKey] = item.key
+					return res
+				}, {} as Record<string, string>)
+			product.options = product.options.map(selectedOptionKey => {
+				return childKeyMap[selectedOptionKey] ?? selectedOptionKey
+			})
+			return product
+		})
+
+		// Start calculate product option price
 		const result = cartProducts.map((validateProduct): ValidatedProduct => {
 			const product = productMap.get(validateProduct.id)
 			if (!product) {
@@ -1034,7 +1053,7 @@ export class OrderService {
 				optionalOptionPrice = 0
 			product.options.forEach(option => {
 				const selectedKeys = intersection(
-					option.items.map(item => item.parentKey || item.key),
+					option.items.map(item => item.key || item.parentKey),
 					validateProduct.options
 				)
 				if (option.disabled || option.deleted) {
