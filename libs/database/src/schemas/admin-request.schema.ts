@@ -12,7 +12,12 @@ export const requestPriority = ['high', 'medium', 'low'] as const
 
 export type AdminRequestDocument = AdminRequest & Document
 
-@Schema({ versionKey: false, timestamps: true, collection: 'admin_requests' })
+@Schema({
+	versionKey: false,
+	timestamps: true,
+	suppressReservedKeysWarning: true,
+	collection: 'admin_requests',
+})
 export class AdminRequest {
 	_id?: Types.ObjectId
 

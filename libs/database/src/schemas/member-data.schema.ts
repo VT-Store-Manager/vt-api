@@ -27,7 +27,12 @@ export class MemberSetting {
 export const MemberSettingSchema = SchemaFactory.createForClass(MemberSetting)
 
 export type MemberDataDocument = MemberData & Document
-@Schema({ versionKey: false, timestamps: true, collection: 'member_data' })
+@Schema({
+	versionKey: false,
+	timestamps: true,
+	suppressReservedKeysWarning: true,
+	collection: 'member_data',
+})
 export class MemberData {
 	_id?: Types.ObjectId
 

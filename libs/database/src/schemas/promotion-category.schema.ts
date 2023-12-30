@@ -6,6 +6,7 @@ export type PromotionCategoryDocument = PromotionCategory & Document
 @Schema({
 	versionKey: false,
 	timestamps: true,
+	suppressReservedKeysWarning: true,
 	collection: 'promotion_categories',
 })
 export class PromotionCategory {

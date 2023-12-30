@@ -4,7 +4,12 @@ import MongooseDelete, { SoftDeleteDocument } from 'mongoose-delete'
 
 export type AccountAdminDocument = AccountAdmin & Document & SoftDeleteDocument
 
-@Schema({ versionKey: false, timestamps: true, collection: 'account_admins' })
+@Schema({
+	versionKey: false,
+	timestamps: true,
+	suppressReservedKeysWarning: true,
+	collection: 'account_admins',
+})
 export class AccountAdmin {
 	_id?: Types.ObjectId
 

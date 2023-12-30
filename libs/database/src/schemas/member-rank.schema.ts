@@ -5,7 +5,12 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 
 export type MemberRankDocument = MemberRank & Document & MemberRankVirtual
 
-@Schema({ versionKey: false, timestamps: true, collection: 'member_ranks' })
+@Schema({
+	versionKey: false,
+	timestamps: true,
+	suppressReservedKeysWarning: true,
+	collection: 'member_ranks',
+})
 export class MemberRank {
 	_id?: Types.ObjectId
 

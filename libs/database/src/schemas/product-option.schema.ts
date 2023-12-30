@@ -12,7 +12,12 @@ export type ProductOptionDocument = Document &
 	ProductOption &
 	SoftDeleteDocument
 
-@Schema({ versionKey: false, timestamps: true, collection: 'product_options' })
+@Schema({
+	versionKey: false,
+	timestamps: true,
+	suppressReservedKeysWarning: true,
+	collection: 'product_options',
+})
 export class ProductOption {
 	_id: Types.ObjectId
 

@@ -4,7 +4,12 @@ import { Types } from 'mongoose'
 
 export type MomoPaymentDocument = Document & MomoPayment
 
-@Schema({ versionKey: false, timestamps: true, collection: 'momo_payments' })
+@Schema({
+	versionKey: false,
+	timestamps: true,
+	suppressReservedKeysWarning: true,
+	collection: 'momo_payments',
+})
 export class MomoPayment {
 	_id?: Types.ObjectId
 

@@ -36,7 +36,12 @@ export class CartProduct {
 
 export const CartProductSchema = SchemaFactory.createForClass(CartProduct)
 
-@Schema({ versionKey: false, timestamps: true, collection: 'cart_templates' })
+@Schema({
+	versionKey: false,
+	timestamps: true,
+	suppressReservedKeysWarning: true,
+	collection: 'cart_templates',
+})
 export class CartTemplate {
 	_id?: Types.ObjectId
 

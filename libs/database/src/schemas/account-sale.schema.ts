@@ -5,7 +5,12 @@ import { UpdatedBy, UpdatedBySchema } from './updated-by.schema'
 
 export type AccountSaleDocument = AccountSale & Document & SoftDeleteDocument
 
-@Schema({ versionKey: false, timestamps: true, collection: 'account_sales' })
+@Schema({
+	versionKey: false,
+	timestamps: true,
+	suppressReservedKeysWarning: true,
+	collection: 'account_sales',
+})
 export class AccountSale {
 	_id?: Types.ObjectId
 

@@ -31,6 +31,7 @@ export const SelectedPermissionItemSchema = SchemaFactory.createForClass(
 @Schema({
 	versionKey: false,
 	timestamps: true,
+	suppressReservedKeysWarning: true,
 	collection: 'account_admin_roles',
 })
 export class AccountAdminRole {

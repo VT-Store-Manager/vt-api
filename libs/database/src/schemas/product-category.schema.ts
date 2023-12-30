@@ -10,6 +10,7 @@ export type ProductCategoryDocument = ProductCategory &
 @Schema({
 	versionKey: false,
 	timestamps: true,
+	suppressReservedKeysWarning: true,
 	collection: 'product_categories',
 })
 export class ProductCategory {

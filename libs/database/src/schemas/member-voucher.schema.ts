@@ -4,7 +4,12 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 
 export type MemberVoucherDocument = Document & MemberVoucher
 
-@Schema({ versionKey: false, timestamps: true, collection: 'member_vouchers' })
+@Schema({
+	versionKey: false,
+	timestamps: true,
+	suppressReservedKeysWarning: true,
+	collection: 'member_vouchers',
+})
 export class MemberVoucher {
 	_id?: Types.ObjectId
 

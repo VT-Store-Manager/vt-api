@@ -7,6 +7,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 @Schema({
 	versionKey: false,
 	timestamps: { createdAt: true, updatedAt: false },
+	suppressReservedKeysWarning: true,
 	collection: 'member_notifications',
 })
 export class MemberNotification {

@@ -10,6 +10,7 @@ export type TimerFlagCollection = TimerFlagCollectionTuple[number]
 @Schema({
 	versionKey: false,
 	timestamps: { createdAt: true },
+	suppressReservedKeysWarning: true,
 	collection: 'timer_flags',
 	discriminatorKey: 'collection',
 })

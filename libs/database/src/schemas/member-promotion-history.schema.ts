@@ -9,6 +9,7 @@ export type MemberPromotionHistoryDocument = Document & MemberPromotionHistory
 @Schema({
 	versionKey: false,
 	timestamps: { createdAt: true },
+	suppressReservedKeysWarning: true,
 	collection: 'member_promotion_histories',
 })
 export class MemberPromotionHistory {

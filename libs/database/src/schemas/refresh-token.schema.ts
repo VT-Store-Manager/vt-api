@@ -7,6 +7,7 @@ export type RefreshTokenDocument = Document & RefreshToken
 @Schema({
 	versionKey: false,
 	timestamps: { createdAt: true },
+	suppressReservedKeysWarning: true,
 	collection: 'refresh_tokens',
 })
 export class RefreshToken {

@@ -35,6 +35,7 @@ export const ShortVoucherDataSchema =
 @Schema({
 	versionKey: false,
 	timestamps: { createdAt: true, updatedAt: false },
+	suppressReservedKeysWarning: true,
 	collection: 'member_voucher_histories',
 })
 export class MemberVoucherHistory {
