@@ -1,4 +1,5 @@
 import {
+	GoogleMapModule,
 	MomoModule,
 	OrderBuyer,
 	SettingModule,
@@ -61,6 +62,7 @@ import { OrderService } from './services/order.service'
 		SettingModule,
 		SocketClientModule.register(WsNamespace.MEMBER),
 		MomoModule,
+		GoogleMapModule,
 	],
 	controllers: [OrderController, OrderStateController],
 	providers: [OrderService, OrderStateService, MongoSessionService],

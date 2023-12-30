@@ -37,6 +37,7 @@
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.282.0",
 		"@casl/ability": "^6.5.0",
+		"@googlemaps/google-maps-services-js": "^3.3.42",
 		"@joi/date": "^2.1.0",
 		"@nestjs/axios": "^3.0.1",
 		"@nestjs/common": "10.0.5",

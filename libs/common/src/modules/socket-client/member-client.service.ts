@@ -9,7 +9,6 @@ import {
 import { MemberEventMap } from '@app/types'
 import { Injectable, OnModuleInit } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { throttle } from 'lodash'
 
 @Injectable()
 export class MemberServerSocketClientService implements OnModuleInit {
@@ -22,15 +21,14 @@ export class MemberServerSocketClientService implements OnModuleInit {
 	private socket: Socket<MemberEventMap>
 
 	private connect() {
-		this.socket = io(
-			this.configService.get<string>('ws.host') + '/' + WsNamespace.MEMBER,
-			{
-				auth: {
-					[HTTP_HEADER_SECRET_KEY_NAME]:
-						this.configService.get<string>('ws.httpSecret'),
-				},
-			}
-		)
+		const host =
+			this.configService.get<string>('ws.host') + '/' + WsNamespace.MEMBER
+		this.socket = io(host, {
+			auth: {
+				[HTTP_HEADER_SECRET_KEY_NAME]:
+					this.configService.get<string>('ws.httpSecret'),
+			},
+		})
 		this.socket.on('connect', () => {
 			SocketIoLogger.log('Socket-client connected')
 		})
@@ -40,7 +38,6 @@ export class MemberServerSocketClientService implements OnModuleInit {
 				reason: Socket.DisconnectReason,
 				description?: DisconnectDescription
 			) => {
-				reason
 				SocketIoLogger.warn(
 					'Socket-client disconnected' +
 						`: ${reason} - ${
@@ -50,12 +47,9 @@ export class MemberServerSocketClientService implements OnModuleInit {
 				)
 			}
 		)
-		this.socket.on(
-			'connect_error',
-			throttle((err: Error) => {
-				SocketIoLogger.error(`Socket connection error: ${err.message}`)
-			}, 60000)
-		)
+		this.socket.once('connect_error', (_err: Error) => {
+			SocketIoLogger.error(`Socket connection error: ${host}`)
+		})
 		this.socket.on('error', (err: Error) => {
 			SocketIoLogger.error(`${err.name} - ${err.message}`)
 		})

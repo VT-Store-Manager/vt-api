@@ -52,6 +52,9 @@ export const envConfiguration = () => {
 			httpSecret: process.env.WS_HTTP_SECRET_KEY,
 			host: saleUrl,
 		},
+		google: {
+			googleMapApiKey: process.env.GOOGLE_MAP_API_KEY,
+		},
 	}
 	// DEV addition environment
 	if (nodeEnv === NodeEnv.DEVELOPMENT) {
@@ -106,6 +109,10 @@ export const envValidationSchema = Joi.object({
 	MOMO_PARTNER_CODE: Joi.string().token().required(),
 	MOMO_ACCESS_KEY: Joi.string().token().required(),
 	MOMO_SECRET_KEY: Joi.string().token().required(),
+	// Google Map
+	GOOGLE_MAP_API_KEY: Joi.string()
+		.regex(/^[a-zA-Z0-9_-]+$/)
+		.optional(),
 	// WS
 	WS_HTTP_SECRET_KEY: Joi.string().token().required(),
 	// Flag
