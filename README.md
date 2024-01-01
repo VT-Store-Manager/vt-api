@@ -22,43 +22,64 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Description
+## Requirements
+- NodeJS from v16: `node>=16.x` [install now](https://nodejs.org/en/download)
+- PNPM package manager: `pnpm>=8.x` [install now](https://pnpm.io/installation)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## How to run ?
 
-## Installation
-
+#### Installation
 ```bash
-$ pnpm install
+pnpm install
 ```
 
-## Running the app
-
+#### Build all applications
+<sup>Include 3 server: member, sale/shipper, admin</sup>
 ```bash
-# development
-$ pnpm start
+NODE_ENV=production pnpm build-all
+```
 
-# watch mode
-$ pnpm start:dev
+#### Run each application
+```bash
+# Member app
+NODE_ENV=production pnpm start:prod:client
 
+# Sale/Shipper app
+NODE_ENV=production pnpm start:prod:sale
+
+# Admin app
+NODE_ENV=production pnpm start:prod:admin
+```
+*This running is without Socket connection and Momo IPN api. Continue next section to setup those features*
+## How to run and test SocketIO + Momo IPN in local ?
+#### Setup Ngrok
+- Create a Ngrok account: https://ngrok.com
+- Install `ngrok` command: https://ngrok.com/download
+- Configure Ngrok: https://dashboard.ngrok.com/get-started/your-authtoken
+```bash
+ngrok config add-authtoken <your_authtoken>
+```
+- Create a domain: https://dashboard.ngrok.com/cloud-edge/domains
+- Copy your domain and add new environment variable to `.env` file:
+```javascript
+SALE_URL=your_custom_domain.ngrok-free.app
+```
+
+#### Run Ngrok with your custom domain
+```bash
+pnpm ngrok:sale
 # or
-
-# production mode
-$ pnpm build
-$ pnpm start:prod
+ngrok http 80 --domain=your_custom_domain.ngrok-free.app
+# 80 is SALE_PORT in .env
 ```
 
-## Test
-
+#### Re-run related applications
 ```bash
-# unit tests
-$ pnpm test
+# Member app
+NODE_ENV=production pnpm start:prod:client
 
-# e2e tests
-$ pnpm test:e2e
-
-# test coverage
-$ pnpm test:cov
+# Sale/Shipper app
+NODE_ENV=production pnpm start:prod:sale
 ```
 
 ## Support
