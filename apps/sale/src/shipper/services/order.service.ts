@@ -87,6 +87,7 @@ export class ShipperOrderService {
 							},
 						},
 					},
+					status: '$state',
 					totalPrice: '$totalProductPrice',
 					shippingFee: {
 						$subtract: ['$deliveryPrice', '$deliveryDiscount'],
@@ -173,6 +174,7 @@ export class ShipperOrderService {
 							},
 						},
 					},
+					status: '$state',
 					totalPrice: '$totalProductPrice',
 					shippingFee: {
 						$subtract: ['$deliveryPrice', '$deliveryDiscount'],
