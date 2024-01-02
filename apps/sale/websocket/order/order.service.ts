@@ -6,7 +6,6 @@ import {
 	OrderState,
 	SettingSaleService,
 	ShippingMethod,
-	getDistance,
 } from '@app/common'
 import {
 	Order,
@@ -163,10 +162,13 @@ export class WsOrderService {
 			.exec()
 		if (!shippingOrderData) throw new WsException('Order not found')
 
-		shippingOrderData.shipDistance = getDistance(
-			shippingOrderData.store,
-			shippingOrderData.receiver
-		)
+		const distanceData = await this.shipperOrderService.calculateShipperIncome({
+			store: shippingOrderData.store,
+			receiver: shippingOrderData.receiver,
+		})
+
+		shippingOrderData.shipDistance = distanceData.deliveryDistance
+		shippingOrderData.shipperIncome = distanceData.shipperIncome
 
 		return shippingOrderData
 	}

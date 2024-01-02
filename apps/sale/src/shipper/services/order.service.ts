@@ -597,7 +597,7 @@ export class ShipperOrderService {
 		return result
 	}
 
-	private async calculateShipperIncome(data: {
+	async calculateShipperIncome(data: {
 		store: Coordinate
 		receiver: Coordinate
 	}): Promise<Pick<OrderInfoShipper, 'deliveryDistance' | 'shipperIncome'>> {
