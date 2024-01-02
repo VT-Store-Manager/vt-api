@@ -1,5 +1,5 @@
 import { CommonAuthModule } from '@app/authentication'
-import { AdminRequestModule, SettingModule } from '@app/common'
+import { AdminRequestModule, GoogleMapModule, SettingModule } from '@app/common'
 import {
 	MongoSessionService,
 	Order,
@@ -24,6 +24,7 @@ import { ShipperOrderService } from './services/order.service'
 		CommonAuthModule,
 		SettingModule,
 		AdminRequestModule,
+		GoogleMapModule,
 	],
 	controllers: [ShipperAuthController, ShipperOrderController],
 	providers: [ShipperAuthService, ShipperOrderService, MongoSessionService],

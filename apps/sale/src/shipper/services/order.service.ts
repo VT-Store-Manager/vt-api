@@ -1,8 +1,10 @@
 import {
 	Coordinate,
 	FileService,
+	GoogleMapService,
 	OrderState,
 	QueryTime,
+	SettingSaleService,
 	ShipperOrderState,
 	ShippingMethod,
 	getDistance,
@@ -10,6 +12,7 @@ import {
 import {
 	Order,
 	OrderDocument,
+	OrderInfoShipper,
 	Shipper,
 	ShipperDocument,
 	TimeLog,
@@ -43,7 +46,9 @@ export class ShipperOrderService {
 		private readonly shipperModel: Model<ShipperDocument>,
 		@InjectModel(Order.name)
 		private readonly orderModel: SoftDeleteModel<OrderDocument>,
-		private readonly fileService: FileService
+		private readonly fileService: FileService,
+		private readonly googleMapService: GoogleMapService,
+		private readonly settingSaleService: SettingSaleService
 	) {}
 
 	getOrderShortInfoPipeline(): PipelineStage[] {
@@ -86,6 +91,8 @@ export class ShipperOrderService {
 					shippingFee: {
 						$subtract: ['$deliveryPrice', '$deliveryDiscount'],
 					},
+					shipDistance: { $ifNull: ['$shipper.deliveryDistance', 0] },
+					shipperIncome: { $ifNull: ['$shipper.shipperIncome', 0] },
 					paymentType: '$payment',
 					receiver: {
 						name: true,
@@ -170,6 +177,8 @@ export class ShipperOrderService {
 					shippingFee: {
 						$subtract: ['$deliveryPrice', '$deliveryDiscount'],
 					},
+					shipDistance: { $ifNull: ['$shipper.deliveryDistance', 0] },
+					shipperIncome: { $ifNull: ['$shipper.shipperIncome', 0] },
 					paymentType: '$payment',
 					receiver: {
 						name: true,
@@ -363,8 +372,15 @@ export class ShipperOrderService {
 				.exec(),
 		])
 
-		orders.forEach(order => {
-			order.shipDistance = getDistance(order.store, order.receiver)
+		orders.forEach(async order => {
+			if (!order.shipDistance || !order.shipperIncome) {
+				const cal = await this.calculateShipperIncome({
+					store: order.store,
+					receiver: order.receiver,
+				})
+				order.shipDistance = cal.deliveryDistance
+				order.shipperIncome = cal.shipperIncome
+			}
 		})
 
 		const result: OrderListPaginationResultDTO = {
@@ -395,8 +411,15 @@ export class ShipperOrderService {
 			])
 			.exec()
 
-		orders.forEach(order => {
-			order.shipDistance = getDistance(order.store, order.receiver)
+		orders.forEach(async order => {
+			if (!order.shipDistance || !order.shipperIncome) {
+				const cal = await this.calculateShipperIncome({
+					store: order.store,
+					receiver: order.receiver,
+				})
+				order.shipDistance = cal.deliveryDistance
+				order.shipperIncome = cal.shipperIncome
+			}
 		})
 
 		if (typeof query.lat === 'number' && typeof query.lng === 'number') {
@@ -463,8 +486,15 @@ export class ShipperOrderService {
 			])
 			.exec()
 
-		orders.forEach(order => {
-			order.shipDistance = getDistance(order.store, order.receiver)
+		orders.forEach(async order => {
+			if (!order.shipDistance || !order.shipperIncome) {
+				const cal = await this.calculateShipperIncome({
+					store: order.store,
+					receiver: order.receiver,
+				})
+				order.shipDistance = cal.deliveryDistance
+				order.shipperIncome = cal.shipperIncome
+			}
 		})
 
 		if (typeof query.lat === 'number' && typeof query.lng === 'number') {
@@ -496,7 +526,14 @@ export class ShipperOrderService {
 
 		if (!order) throw new BadRequestException('Không tìm thấy đơn hàng')
 
-		order.shipDistance = getDistance(order.store, order.receiver)
+		if (!order.shipDistance || !order.shipperIncome) {
+			const cal = await this.calculateShipperIncome({
+				store: order.store,
+				receiver: order.receiver,
+			})
+			order.shipDistance = cal.deliveryDistance
+			order.shipperIncome = cal.shipperIncome
+		}
 
 		return order
 	}
@@ -558,5 +595,31 @@ export class ShipperOrderService {
 		result.success = updateResult.modifiedCount > 0
 
 		return result
+	}
+
+	private async calculateShipperIncome(data: {
+		store: Coordinate
+		receiver: Coordinate
+	}): Promise<Pick<OrderInfoShipper, 'deliveryDistance' | 'shipperIncome'>> {
+		let deliveryDistance = await this.googleMapService.getShipDistance(
+			{
+				lat: data.store.lat,
+				lng: data.store.lng,
+			},
+			{
+				lat: data.receiver.lat,
+				lng: data.receiver.lng,
+			}
+		)
+
+		// TODO: Temporary value for old latLng data
+		if (deliveryDistance >= 10000) {
+			deliveryDistance = Math.floor(Math.random() * 9000) + 1000
+		}
+
+		const shipperIncome =
+			this.settingSaleService.calculateShipperIncome(deliveryDistance)
+
+		return { deliveryDistance, shipperIncome }
 	}
 }
