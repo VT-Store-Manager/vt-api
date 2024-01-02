@@ -2,6 +2,7 @@ import { intersection, sortBy, uniq } from 'lodash'
 import { ClientSession, Model, Types } from 'mongoose'
 
 import {
+	FileService,
 	MomoService,
 	OrderBuyer,
 	OrderState,
@@ -120,7 +121,8 @@ export class OrderService {
 		private readonly voucherService: VoucherService,
 		private readonly settingMemberAppService: SettingMemberAppService,
 		private readonly momoService: MomoService,
-		private readonly orderStateService: OrderStateService
+		private readonly orderStateService: OrderStateService,
+		private readonly fileService: FileService
 	) {}
 
 	private async getRelatedDataToCreateOrder(
@@ -1355,7 +1357,8 @@ export class OrderService {
 							id: '$employee.id',
 							name: '$employee.name',
 							phone: '$employee.phone',
-							avatar: '$employee.avatar',
+							avatar:
+								this.fileService.getImageUrlExpression('$employee.avatar'),
 							isDeleted: {
 								$ifNull: ['$employeeData.deleted', true],
 							},
@@ -1364,11 +1367,22 @@ export class OrderService {
 							id: '$shipper.id',
 							phone: '$shipper.phone',
 							name: '$shipper.name',
+							shippedEvidence: {
+								$ifNull: [
+									this.fileService.getImageUrlExpression(
+										'$shipper.shippedEvidence'
+									),
+									null,
+								],
+							},
 							avatar: {
-								$ifNull: ['$shipperData.avatar', ''],
+								$ifNull: [
+									this.fileService.getImageUrlExpression('$shipperData.avatar'),
+									'',
+								],
 							},
 							isDeleted: {
-								$ifNull: ['$shipperData.deleted', true],
+								$ifNull: ['$shipperData.deleted', false],
 							},
 						},
 					},

@@ -1,5 +1,6 @@
 import {
 	Coordinate,
+	FileService,
 	OrderState,
 	QueryTime,
 	ShipperOrderState,
@@ -41,7 +42,8 @@ export class ShipperOrderService {
 		@InjectModel(Shipper.name)
 		private readonly shipperModel: Model<ShipperDocument>,
 		@InjectModel(Order.name)
-		private readonly orderModel: SoftDeleteModel<OrderDocument>
+		private readonly orderModel: SoftDeleteModel<OrderDocument>,
+		private readonly fileService: FileService
 	) {}
 
 	getOrderShortInfoPipeline(): PipelineStage[] {
@@ -223,6 +225,14 @@ export class ShipperOrderService {
 							},
 						],
 					},
+					shippedEvidence: {
+						$ifNull: [
+							this.fileService.getImageUrlExpression(
+								'$shipper.shippedEvidence'
+							),
+							null,
+						],
+					},
 					createdAt: { $toLong: '$createdAt' },
 				},
 			},
@@ -264,14 +274,19 @@ export class ShipperOrderService {
 						state: OrderState.DELIVERING,
 				  }
 				: {
+						// time: new Date(),
+						// title: 'Hoàn tất',
+						// description:
+						// 	'Bạn vừa nhận đơn hàng thành công. Cảm ơn đã chọn Chillin!',
+						// state: OrderState.DONE,
 						time: new Date(),
-						title: 'Hoàn tất',
-						description:
-							'Bạn vừa nhận đơn hàng thành công. Cảm ơn đã chọn Chillin!',
-						state: OrderState.DONE,
+						title: 'Nhận hàng thành công',
+						description: `Bạn đã nhận hàng thành công từ tài xế ${shipper.name}`,
 				  }
 
-		const existedLog = order.timeLog.find(log => log.state === timeLog.state)
+		const existedLog = order.timeLog.find(
+			log => timeLog.state && log.state === timeLog.state
+		)
 		if (existedLog) {
 			throw new BadRequestException(
 				`Đơn hàng đã chuyển trạng thái '${existedLog.title}' lúc ${moment(
@@ -288,10 +303,9 @@ export class ShipperOrderService {
 						timeLog,
 					},
 					$set: {
-						state:
-							state === ShipperOrderState.TOOK_AWAY
-								? OrderState.DELIVERING
-								: OrderState.DONE,
+						...(state === ShipperOrderState.TOOK_AWAY
+							? { state: OrderState.DELIVERING }
+							: {}),
 					},
 				},
 				{ new: true }
