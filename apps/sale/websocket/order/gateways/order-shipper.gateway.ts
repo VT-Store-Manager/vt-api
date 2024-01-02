@@ -62,6 +62,7 @@ export class OrderShipperGateway {
 			)
 			if (isUpdated) {
 				client.emit('shipper:pick_order_success', body)
+				client.broadcast.emit('shipper:remove_picked_order', body)
 				// Emit event: having shipper for order
 				this.connectionProvider
 					.getStoreNsp()
@@ -77,6 +78,8 @@ export class OrderShipperGateway {
 						.to(getStoreRoom(orderShippingData.store.id))
 						.emit('store:order_status_updated', orderStatus)
 				})
+
+				this.wsOrderService.updateShipperIncome(body)
 			} else {
 				client.emit('shipper:pick_order_error', {
 					orderId: body.orderId,
@@ -89,6 +92,5 @@ export class OrderShipperGateway {
 				message: error.message,
 			})
 		}
-		client.broadcast.emit('shipper:remove_picked_order', body)
 	}
 }

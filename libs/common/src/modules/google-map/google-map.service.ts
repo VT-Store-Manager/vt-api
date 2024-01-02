@@ -7,6 +7,7 @@ import {
 	Status,
 	TravelMode,
 } from '@googlemaps/google-maps-services-js'
+import { Coordinate, getDistance } from '../../helpers'
 
 @Injectable()
 export class GoogleMapService {
@@ -58,5 +59,15 @@ export class GoogleMapService {
 		} catch (err) {
 			return null
 		}
+	}
+
+	async getShipDistance(from: Coordinate, to: Coordinate): Promise<number> {
+		const distanceMatrix = await this.getRouteDistance(from, to)
+
+		const deliveryDistance =
+			distanceMatrix?.rows?.[0].elements?.[0].distance.value ??
+			getDistance(from, to)
+
+		return deliveryDistance
 	}
 }

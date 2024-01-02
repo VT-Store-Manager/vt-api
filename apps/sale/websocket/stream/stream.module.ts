@@ -1,9 +1,11 @@
-import { OrderBuyer } from '@app/common'
+import { GoogleMapModule, OrderBuyer, SettingModule } from '@app/common'
 import {
 	Order,
 	OrderCustomerSchema,
 	OrderMemberSchema,
 	OrderSchema,
+	Shipper,
+	ShipperSchema,
 } from '@app/database'
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
@@ -23,7 +25,13 @@ import { OrderStreamService } from './services/order-stream.service'
 					{ name: OrderBuyer.MEMBER, schema: OrderMemberSchema },
 				],
 			},
+			{
+				name: Shipper.name,
+				schema: ShipperSchema,
+			},
 		]),
+		GoogleMapModule,
+		SettingModule,
 	],
 	providers: [OrderStreamService],
 })

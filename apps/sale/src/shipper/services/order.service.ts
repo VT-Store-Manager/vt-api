@@ -295,8 +295,8 @@ export class ShipperOrderService {
 			)
 		}
 
-		const updatedOrder = await this.orderModel
-			.findOneAndUpdate(
+		const _updateResult = await this.orderModel
+			.updateOne(
 				{ _id: new Types.ObjectId(orderId) },
 				{
 					$push: {
@@ -307,23 +307,10 @@ export class ShipperOrderService {
 							? { state: OrderState.DELIVERING }
 							: {}),
 					},
-				},
-				{ new: true }
+				}
 			)
 			.orFail(new BadRequestException('Không tìm thấy đơn hàng'))
 			.exec()
-
-		if (updatedOrder.state === OrderState.DONE) {
-			await this.shipperModel
-				.updateOne(
-					{ _id: new Types.ObjectId(shipperId) },
-					{
-						$inc: { wallet: updatedOrder.deliveryPrice },
-					}
-				)
-				.orFail(new BadRequestException('Không tìm thấy tài xế này'))
-				.exec()
-		}
 
 		return true
 	}

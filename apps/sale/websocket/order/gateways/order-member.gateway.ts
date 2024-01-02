@@ -62,13 +62,11 @@ export class OrderMemberGateway {
 	@HttpServer()
 	@SubscribeMessage<MemberEventNames>('member-server:paid_order')
 	async memberPaidOrder(@MessageBody() body: OrderDataDTO) {
-		console.log(body)
 		const [orderCommonData, orderStatus] = await Promise.all([
 			this.wsMemberOrderService.getOrderCommonData(body.orderId),
 			this.wsMemberOrderService.getOrderStatus(body.orderId),
 		])
 
-		console.log([orderCommonData, orderStatus])
 		this.connectionProvider
 			.getStoreNsp()
 			.to(getStoreRoom(orderCommonData.store.id))

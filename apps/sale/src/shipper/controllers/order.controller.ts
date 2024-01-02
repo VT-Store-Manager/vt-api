@@ -32,7 +32,10 @@ import {
 } from '../dto/response.dto'
 import { UpdateShipperOrderStateDTO } from '../dto/update-shipper-order-state.dto'
 import { ShipperOrderService } from '../services/order.service'
-import { UploadEvidenceDTO } from '../dto/upload-evidence.dto'
+import {
+	UploadEvidenceBodyDTO,
+	UploadEvidenceDTO,
+} from '../dto/upload-evidence.dto'
 
 @Controller('shipper/order')
 @ApiTags('shipper-app > order')
@@ -107,7 +110,8 @@ export class ShipperOrderController {
 	async uploadEvidence(
 		@UploadedFile(ParseFile) image: Express.Multer.File,
 		@CurrentUser('sub') shipperId: string,
-		@Param('id', ObjectIdPipe) orderId: string
+		@Param('id', ObjectIdPipe) orderId: string,
+		@Body() _body: UploadEvidenceBodyDTO
 	) {
 		const imageKey = this.fileService.createObjectKey(
 			['order', 'evidence'],

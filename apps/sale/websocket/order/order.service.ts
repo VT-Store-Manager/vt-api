@@ -1,7 +1,13 @@
 import { Model, Types } from 'mongoose'
 import { SoftDeleteModel } from 'mongoose-delete'
 
-import { OrderState, ShippingMethod, getDistance } from '@app/common'
+import {
+	GoogleMapService,
+	OrderState,
+	SettingSaleService,
+	ShippingMethod,
+	getDistance,
+} from '@app/common'
 import {
 	Order,
 	OrderDocument,
@@ -19,6 +25,7 @@ import { OrderShortDTO } from '@sale/src/shipper/dto/response.dto'
 import { ShipperOrderService } from '@sale/src/shipper/services/order.service'
 
 import { OrderStatusUpdatedDTO } from './dto/order-status-changed.dto'
+import { OrderDataDTO } from './dto/order-data.dto'
 
 type OrderCommonData = {
 	categoryId: ShippingMethod
@@ -50,7 +57,9 @@ export class WsOrderService {
 		private readonly shipperOrderService: ShipperOrderService,
 		@InjectModel(Order.name) private readonly orderModel: Model<OrderDocument>,
 		@InjectModel(Shipper.name)
-		private readonly shipperModel: SoftDeleteModel<ShipperDocument>
+		private readonly shipperModel: SoftDeleteModel<ShipperDocument>,
+		private readonly googleMapService: GoogleMapService,
+		private readonly settingSaleService: SettingSaleService
 	) {}
 
 	async getOrderCommonData(orderId: string): Promise<OrderCommonData> {
@@ -242,5 +251,48 @@ export class WsOrderService {
 		}
 
 		return updateResult.modifiedCount > 0
+	}
+
+	async updateShipperIncome(data: OrderDataDTO) {
+		const order = await this.orderModel
+			.findOne(
+				{
+					_id: new Types.ObjectId(data.orderId),
+					type: ShippingMethod.DELIVERY,
+				},
+				{
+					store: true,
+					receiver: true,
+				}
+			)
+			.lean()
+			.exec()
+
+		const deliveryDistance = await this.googleMapService.getShipDistance(
+			{
+				lat: order.store.lat,
+				lng: order.store.lng,
+			},
+			{
+				lat: order.receiver.lat,
+				lng: order.receiver.lng,
+			}
+		)
+		const shipperIncome =
+			this.settingSaleService.calculateShipperIncome(deliveryDistance)
+
+		const updateResult = await this.orderModel
+			.updateOne(
+				{ _id: order._id },
+				{
+					$set: {
+						'shipper.shipperIncome': shipperIncome,
+						'shipper.deliveryDistance': deliveryDistance,
+					},
+				}
+			)
+			.exec()
+
+		return updateResult.matchedCount > 0
 	}
 }

@@ -369,13 +369,6 @@ export class OrderStreamService implements OnModuleInit {
 		preData: Pick<OrderMember, '_id' | 'shipper' | 'state' | 'type'>,
 		updateFields: Partial<OrderMember>
 	) {
-		console.log(
-			'watch order status',
-			preData.type,
-			preData.state,
-			updateFields,
-			preData.shipper
-		)
 		if (
 			preData.type === ShippingMethod.DELIVERY &&
 			preData.state === OrderState.PENDING &&

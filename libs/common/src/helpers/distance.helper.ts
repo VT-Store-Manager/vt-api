@@ -19,5 +19,5 @@ export const getDistance = function (p1: Coordinate, p2: Coordinate): number {
 			Math.sin(dLong / 2)
 	const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
 	const d = R * c
-	return d // returns the distance in meter
+	return Math.round(d) // returns the distance in meter
 }

@@ -6,7 +6,7 @@ import {
 	ObjectIdPipe,
 	StoreSocketClientService,
 } from '@app/common'
-import { Controller, Param, Post, Req } from '@nestjs/common'
+import { Controller, Logger, Param, Post, Req } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
 @Controller('momo')
@@ -23,12 +23,14 @@ export class MomoController {
 		@Req() { body }: Request<any, any, MomoProcessPaymentResult>
 	) {
 		const result = await this.momoService.updatePaymentResult(body, orderId)
-		console.log(result)
 		if (result) {
 			this.socketClient.getSocket().emit('member-server:paid_order', {
 				orderId,
 			})
 		}
+		Logger.verbose(
+			`Order ${orderId} paid with Momo ${result ? 'successfully' : 'failed'}`
+		)
 		return result
 	}
 }

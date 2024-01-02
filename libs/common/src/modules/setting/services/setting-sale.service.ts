@@ -27,4 +27,16 @@ export class SettingSaleService {
 		}
 		return setting[0]
 	}
+
+	calculateShipperIncome(distance: number, _time?: Date) {
+		const initCost = 20000 // vnd
+		const initDistance = 2000 // meter
+		const costPerKm = 5000 // vnd
+
+		if (distance <= initDistance) return initCost
+
+		const additionCost =
+			Math.floor((distance - initDistance) / 1000) * costPerKm
+		return initCost + additionCost
+	}
 }
