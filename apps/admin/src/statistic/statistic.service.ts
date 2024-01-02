@@ -295,6 +295,15 @@ export class StatisticService {
 						totalProfit: {
 							$sum: '$totalProductPrice',
 						},
+						totalPickupOrderProfit: {
+							$sum: {
+								$cond: [
+									{ $eq: ['$type', ShippingMethod.PICK_UP] },
+									'$totalProductPrice',
+									0,
+								],
+							},
+						},
 						totalDeliveryOrderProfit: {
 							$sum: {
 								$cond: [
@@ -347,6 +356,7 @@ export class StatisticService {
 				totalCount: 0,
 				memberOrderCount: 0,
 				totalDeliveryOrderProfit: 0,
+				totalPickupOrderProfit: 0,
 				totalProfit: 0,
 			}
 
@@ -356,6 +366,7 @@ export class StatisticService {
 			orderByMonth.totalCount += order.totalCount
 			orderByMonth.memberOrderCount += order.memberOrderCount
 			orderByMonth.totalDeliveryOrderProfit += order.totalDeliveryOrderProfit
+			orderByMonth.totalPickupOrderProfit += order.totalPickupOrderProfit
 			orderByMonth.totalProfit += order.totalProfit
 
 			orderHistoryByMonth[month] = orderByMonth
@@ -370,6 +381,7 @@ export class StatisticService {
 				totalCount: 0,
 				memberOrderCount: 0,
 				totalDeliveryOrderProfit: 0,
+				totalPickupOrderProfit: 0,
 				totalProfit: 0,
 			}
 
@@ -379,6 +391,7 @@ export class StatisticService {
 			orderByYear.totalCount += order.totalCount
 			orderByYear.memberOrderCount += order.memberOrderCount
 			orderByYear.totalDeliveryOrderProfit += order.totalDeliveryOrderProfit
+			orderByYear.totalPickupOrderProfit += order.totalPickupOrderProfit
 			orderByYear.totalProfit += order.totalProfit
 
 			orderHistoryByYear[year] = orderByYear

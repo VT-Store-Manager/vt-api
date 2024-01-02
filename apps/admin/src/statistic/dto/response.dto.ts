@@ -19,6 +19,7 @@ export class StatisticOrderDataItem {
 	totalCount: number
 	memberOrderCount: number
 	totalProfit: number
+	totalPickupOrderProfit: number
 	totalDeliveryOrderProfit: number
 }
 
