@@ -114,6 +114,10 @@ export class OrderStateService {
 				name: 'Đang thực hiện',
 			},
 			{
+				id: OrderState.DELIVERING,
+				name: 'Đang giao hàng',
+			},
+			{
 				id: OrderState.DONE,
 				name: 'Đã hoàn tất',
 			},

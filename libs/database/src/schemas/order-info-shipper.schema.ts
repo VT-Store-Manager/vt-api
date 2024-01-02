@@ -1,5 +1,7 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { Types } from 'mongoose'
+
+import { s3KeyPattern } from '@app/common'
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 
 @Schema({ versionKey: false, _id: false })
 export class ShipperReview {
@@ -31,6 +33,15 @@ export class OrderInfoShipper {
 
 	@Prop({ type: ShipperReviewSchema })
 	review?: ShipperReview
+
+	@Prop({ type: String, match: s3KeyPattern })
+	shippedEvidence?: string
+
+	@Prop({ type: Number, min: 0 })
+	shipperIncome?: number
+
+	@Prop({ type: Number, min: 0 })
+	deliveryDistance?: number
 }
 
 export const OrderInfoShipperSchema =

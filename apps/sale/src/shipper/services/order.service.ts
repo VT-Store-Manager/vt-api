@@ -15,7 +15,13 @@ import {
 } from '@app/database'
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-import { FilterQuery, Model, PipelineStage, Types } from 'mongoose'
+import {
+	ClientSession,
+	FilterQuery,
+	Model,
+	PipelineStage,
+	Types,
+} from 'mongoose'
 import { GetOrderListDTO } from '../dto/get-order-list.dto'
 import {
 	CurrentOrderShortDTO,
@@ -27,6 +33,7 @@ import { SoftDeleteModel } from 'mongoose-delete'
 import { GetPendingOrderListDTO } from '../dto/get-pending-order-list.dto'
 import { sortBy } from 'lodash'
 import moment from 'moment'
+import { UploadEvidenceDTO } from '../dto/upload-evidence.dto'
 
 @Injectable()
 export class ShipperOrderService {
@@ -233,7 +240,7 @@ export class ShipperOrderService {
 					phone: true,
 					name: true,
 				})
-				.orFail(new BadRequestException('Shipper not found'))
+				.orFail(new BadRequestException('Không tìm thấy tài xế'))
 				.lean()
 				.exec(),
 			this.orderModel
@@ -244,7 +251,7 @@ export class ShipperOrderService {
 					},
 					{ timeLog: true }
 				)
-				.orFail(new BadRequestException('Order not found'))
+				.orFail(new BadRequestException('Không tìm thấy đơn hàng'))
 				.exec(),
 		])
 
@@ -289,7 +296,7 @@ export class ShipperOrderService {
 				},
 				{ new: true }
 			)
-			.orFail(new BadRequestException('Order not found'))
+			.orFail(new BadRequestException('Không tìm thấy đơn hàng'))
 			.exec()
 
 		if (updatedOrder.state === OrderState.DONE) {
@@ -486,10 +493,69 @@ export class ShipperOrderService {
 			])
 			.exec()
 
-		if (!order) throw new BadRequestException('Order not found')
+		if (!order) throw new BadRequestException('Không tìm thấy đơn hàng')
 
 		order.shipDistance = getDistance(order.store, order.receiver)
 
 		return order
+	}
+
+	async uploadEvidence(data: UploadEvidenceDTO, session?: ClientSession) {
+		const order = await this.orderModel
+			.findOne(
+				{ _id: new Types.ObjectId(data.orderId) },
+				{
+					type: true,
+					state: true,
+					shipper: true,
+				}
+			)
+			.orFail(new BadRequestException('Không tìm thấy đơn hàng'))
+			.lean()
+			.exec()
+
+		if (order.type !== ShippingMethod.DELIVERY) {
+			throw new BadRequestException(
+				'Đơn hàng này không thuộc loại giao tận nơi'
+			)
+		}
+		if (order.state !== OrderState.DELIVERING) {
+			const message = OrderState.DONE
+				? 'Đơn hàng đã hoàn tất'
+				: 'Đơn hàng chưa được đổi trạng thái giao hàng'
+			throw new BadRequestException(message)
+		}
+		if (!order.shipper) {
+			throw new BadRequestException('Chưa có tài xế nhận đơn hàng này')
+		}
+		if (order.shipper.id.toString() !== data.shipperId) {
+			throw new BadRequestException('Bạn không đảm nhận đơn hàng này')
+		}
+
+		const result = {
+			success: false,
+			oldEvidence: null,
+		}
+
+		if (order.shipper.shippedEvidence) {
+			result.oldEvidence = order.shipper.shippedEvidence
+		}
+
+		const updateResult = await this.orderModel
+			.updateOne(
+				{ _id: new Types.ObjectId(data.orderId) },
+				{
+					$set: {
+						'shipper.shippedEvidence': data.image,
+					},
+				},
+				{ session }
+			)
+			.orFail(new BadRequestException('Không tìm thấy đơn hàng'))
+			.exec()
+
+		result.success = updateResult.modifiedCount > 0
+
+		return result
 	}
 }
