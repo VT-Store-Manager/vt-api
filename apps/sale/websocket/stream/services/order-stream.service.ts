@@ -151,6 +151,7 @@ export class OrderStreamService implements OnModuleInit {
 		) {
 			return
 		}
+		if (!order.shipper?.id) return
 
 		let shipperIncome = order.shipper?.shipperIncome
 		if (!shipperIncome) {
