@@ -152,7 +152,7 @@ export class OrderStreamService implements OnModuleInit {
 			return
 		}
 
-		let shipperIncome = order.shipper.shipperIncome
+		let shipperIncome = order.shipper?.shipperIncome
 		if (!shipperIncome) {
 			const deliveryDistance =
 				order.shipper?.deliveryDistance ??
