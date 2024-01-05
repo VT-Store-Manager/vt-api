@@ -4,6 +4,7 @@ import { Model, Types } from 'mongoose'
 
 import {
 	ChangeStreamLogger,
+	FileService,
 	getMemberRoom,
 	getStoreRoom,
 	GoogleMapService,
@@ -34,7 +35,8 @@ export class OrderStreamService implements OnModuleInit {
 		@InjectModel(Shipper.name)
 		private readonly shipperModel: Model<ShipperDocument>,
 		private readonly googleMapService: GoogleMapService,
-		private readonly settingSaleService: SettingSaleService
+		private readonly settingSaleService: SettingSaleService,
+		private readonly fileService: FileService
 	) {}
 
 	onModuleInit() {
@@ -107,7 +109,9 @@ export class OrderStreamService implements OnModuleInit {
 						time: log.time.getTime(),
 					}
 				}),
-				shippedEvidence: data?.shipper?.shippedEvidence,
+				shippedEvidence: data?.shipper?.shippedEvidence
+					? this.fileService.getImageUrl(data.shipper.shippedEvidence)
+					: null,
 			}
 		}
 
