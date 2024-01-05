@@ -8,8 +8,10 @@ import {
 	getMemberRoom,
 	getStoreRoom,
 	GoogleMapService,
+	MomoService,
 	OrderBuyer,
 	OrderState,
+	PaymentType,
 	SettingSaleService,
 	ShippingMethod,
 } from '@app/common'
@@ -36,7 +38,8 @@ export class OrderStreamService implements OnModuleInit {
 		private readonly shipperModel: Model<ShipperDocument>,
 		private readonly googleMapService: GoogleMapService,
 		private readonly settingSaleService: SettingSaleService,
-		private readonly fileService: FileService
+		private readonly fileService: FileService,
+		private readonly momoService: MomoService
 	) {}
 
 	onModuleInit() {
@@ -63,6 +66,7 @@ export class OrderStreamService implements OnModuleInit {
 							shipper: true,
 							state: true,
 							timeLog: true,
+							payment: true,
 						},
 						fullDocumentBeforeChange: {
 							state: true,
@@ -156,6 +160,21 @@ export class OrderStreamService implements OnModuleInit {
 			.exec()
 
 		this.addToWalletShipper(orderData as Order)
+		// Refund paid order
+		if (
+			preOrderStatus.statusId !== OrderState.CANCELED &&
+			postOrderStatus.statusId === OrderState.CANCELED &&
+			postData.payment === PaymentType.MOMO
+		) {
+			this.momoService.refundOrder(
+				postData._id.toString(),
+				postData.member.id.toString(),
+				{
+					lang: 'vi',
+					description: 'Hoàn tiền đơn hàng bị huỷ',
+				}
+			)
+		}
 	}
 
 	private async addToWalletShipper(order: Order) {

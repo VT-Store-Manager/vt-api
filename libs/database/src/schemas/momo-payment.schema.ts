@@ -1,6 +1,10 @@
 import { PaymentStatus } from '@app/common'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { Types } from 'mongoose'
+import {
+	MomoPaymentRefund,
+	MomoPaymentRefundSchema,
+} from './momo-payment-refund.schema'
 
 export type MomoPaymentDocument = Document & MomoPayment
 
@@ -27,6 +31,9 @@ export class MomoPayment {
 	@Prop({ type: String, required: true })
 	orderId: string
 
+	@Prop({ type: String })
+	payUrl?: string
+
 	@Prop({ type: Number })
 	transId?: number
 
@@ -35,6 +42,9 @@ export class MomoPayment {
 
 	@Prop({ type: String })
 	message?: string
+
+	@Prop({ type: [MomoPaymentRefundSchema], default: () => [] })
+	refunds?: MomoPaymentRefund[]
 
 	@Prop({
 		type: String,

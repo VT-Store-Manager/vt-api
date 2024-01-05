@@ -1,4 +1,9 @@
-import { GoogleMapModule, OrderBuyer, SettingModule } from '@app/common'
+import {
+	GoogleMapModule,
+	MomoModule,
+	OrderBuyer,
+	SettingModule,
+} from '@app/common'
 import {
 	Order,
 	OrderCustomerSchema,
@@ -32,6 +37,7 @@ import { OrderStreamService } from './services/order-stream.service'
 		]),
 		GoogleMapModule,
 		SettingModule,
+		MomoModule,
 	],
 	providers: [OrderStreamService],
 })

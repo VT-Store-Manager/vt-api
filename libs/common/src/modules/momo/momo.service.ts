@@ -18,6 +18,7 @@ import {
 	MemberDocument,
 	MomoPayment,
 	MomoPaymentDocument,
+	MomoPaymentRefund,
 	Order,
 	OrderDocument,
 	OrderInfoMember,
@@ -30,6 +31,7 @@ import {
 	BadGatewayException,
 	BadRequestException,
 	Injectable,
+	InternalServerErrorException,
 	Logger,
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
@@ -51,6 +53,11 @@ import {
 	CheckTransactionStatusResultModel,
 	checkTransactionStatusSignatureKeys,
 } from './models/check-transaction-status.model'
+import {
+	RefundTransactionRequestModel,
+	refundTransactionRequestSignatureKeys,
+	RefundTransactionResultModel,
+} from './models/refund-transaction-request.model'
 
 @Injectable()
 export class MomoService {
@@ -301,6 +308,7 @@ export class MomoService {
 			cartOrderId: new Types.ObjectId(orderId),
 			requestId: createResult.data.requestId,
 			orderId: createResult.data.orderId,
+			payUrl: createResult.data.payUrl,
 		})
 
 		return createResult
@@ -398,6 +406,7 @@ export class MomoService {
 				.findOne({
 					cartOrderId: new Types.ObjectId(orderId),
 				})
+				.sort('resultCode -_id')
 				.lean()
 				.exec(),
 			this.orderMemberModel
@@ -450,5 +459,118 @@ export class MomoService {
 		})
 
 		return successPaymentCount > 0
+	}
+
+	async refundOrder(
+		orderId: string,
+		memberId: string,
+		initPayload?: Partial<RefundTransactionRequestModel>,
+		throwError = false
+	): Promise<RefundTransactionResultModel | string> {
+		try {
+			const orderData = await this.orderMemberModel
+				.findOne(
+					{
+						_id: new Types.ObjectId(orderId),
+						'member.id': new Types.ObjectId(memberId),
+					},
+					{ code: true, state: true, payment: true }
+				)
+				.orFail(new BadRequestException('Không tìm thấy đơn hàng'))
+				.lean()
+				.exec()
+
+			if (orderData.payment !== PaymentType.MOMO) {
+				throw new BadRequestException('Không phải đơn thanh toán Momo')
+			}
+			if (orderData.state !== OrderState.CANCELED) {
+				throw new BadRequestException(
+					'Đơn hàng không đủ điều kiện hoàn tiền, cần bị huỷ khi đã thanh toán thành công'
+				)
+			}
+
+			let transactionResult: false | CheckTransactionStatusResultModel = false
+			try {
+				transactionResult = await this.checkTransactionStatus(
+					orderId,
+					memberId,
+					{
+						lang: 'vi',
+					}
+				)
+			} catch (err) {
+				Logger.error(err)
+				throw new InternalServerErrorException('Lỗi kiểm tra giao dịch')
+			}
+			if (!transactionResult || transactionResult.resultCode !== 0) {
+				throw new BadRequestException(
+					'Đơn hàng không đủ điều kiện hoàn tiền, cần thanh toán thành công trước đó'
+				)
+			}
+
+			const refundOrderId = `RFD_${orderData.code}_${Date.now()}`
+
+			const refundPayload: RefundTransactionRequestModel = {
+				partnerCode: this.partnerCode,
+				orderId: refundOrderId,
+				requestId: refundOrderId,
+				amount: transactionResult.amount,
+				transId: transactionResult.transId,
+				lang: 'vi',
+				signature: '',
+				description: '',
+				...initPayload,
+			}
+
+			refundPayload.signature = this.generateSignature(
+				refundPayload,
+				refundTransactionRequestSignatureKeys
+			)
+
+			const validateErrors = await validatePayload(
+				refundPayload,
+				RefundTransactionRequestModel
+			)
+
+			if (validateErrors.length > 0) {
+				throw validateErrors
+			}
+
+			let refundResult: RefundTransactionResultModel
+			try {
+				const refundResultResponse = await firstValueFrom(
+					this.httpService.post<RefundTransactionResultModel>(
+						'/v2/gateway/api/refund',
+						refundPayload,
+						{ baseURL: this.baseUrl }
+					)
+				)
+				delete refundResultResponse.data.partnerCode
+				refundResult = refundResultResponse.data
+			} catch (err) {
+				refundResult = {
+					responseTime: Date.now(),
+					message:
+						'Quyền truy cập bị từ chối. Vui lòng liên hệ MoMo để biết thêm chi tiết.',
+					resultCode: 11,
+				}
+			}
+			// Update refund transaction data
+			this.momoPaymentModel
+				.updateOne(
+					{ transId: transactionResult.transId },
+					{
+						$push: {
+							refunds: refundResult,
+						},
+					}
+				)
+				.exec()
+
+			return refundResult
+		} catch (error) {
+			if (throwError) throw error
+			return error.message
+		}
 	}
 }

@@ -5,6 +5,7 @@ import {
 	MomoCreatePaymentResponse,
 	MomoService,
 	ObjectIdPipe,
+	RefundTransactionResultModel,
 	RemoveNullishObjectPipe,
 	Role,
 } from '@app/common'
@@ -52,6 +53,24 @@ export class MomoController {
 			orderId,
 			memberId,
 			body
+		)
+	}
+
+	@Post(':orderId/refund')
+	@JwtAccess(Role.MEMBER)
+	@ApiSuccessResponse(RefundTransactionResultModel, 201)
+	async refundOrder(
+		@CurrentUser('sub') memberId: string,
+		@Param('orderId', ObjectIdPipe) orderId: string
+	) {
+		return await this.momoService.refundOrder(
+			orderId,
+			memberId,
+			{
+				lang: 'vi',
+				description: 'Hoàn tiền đơn hàng bị huỷ',
+			},
+			true
 		)
 	}
 }

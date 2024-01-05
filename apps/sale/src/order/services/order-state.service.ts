@@ -132,14 +132,7 @@ export class OrderStateService {
 							},
 							shipper: {
 								$cond: [
-									{
-										$ne: [
-											{
-												$toString: '$shipper.id',
-											},
-											null,
-										],
-									},
+									{ $ne: [{ $toString: '$shipper.id' }, null] },
 									{
 										id: { $toString: '$shipper.id' },
 										name: '$shipper.name',
