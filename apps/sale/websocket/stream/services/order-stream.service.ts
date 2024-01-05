@@ -5,6 +5,7 @@ import { Model, Types } from 'mongoose'
 import {
 	ChangeStreamLogger,
 	getMemberRoom,
+	getStoreRoom,
 	GoogleMapService,
 	OrderBuyer,
 	OrderState,
@@ -13,6 +14,7 @@ import {
 } from '@app/common'
 import {
 	Order,
+	OrderInfoShipper,
 	OrderMember,
 	OrderMemberDocument,
 	Shipper,
@@ -68,6 +70,7 @@ export class OrderStreamService implements OnModuleInit {
 						fullDocumentBeforeChange: {
 							state: true,
 							timeLog: true,
+							shipper: true,
 						},
 					},
 				},
@@ -94,7 +97,8 @@ export class OrderStreamService implements OnModuleInit {
 	private async updateOrderStatus(preData: OrderMember, postData: OrderMember) {
 		const getOrderStatus = (
 			data: OrderMember
-		): Pick<OrderStatusUpdatedDTO, 'statusId' | 'timeLog'> => {
+		): Pick<OrderStatusUpdatedDTO, 'statusId' | 'timeLog'> &
+			Pick<OrderInfoShipper, 'shippedEvidence'> => {
 			return {
 				statusId: data.state,
 				timeLog: data.timeLog.map(log => {
@@ -103,6 +107,7 @@ export class OrderStreamService implements OnModuleInit {
 						time: log.time.getTime(),
 					}
 				}),
+				shippedEvidence: data?.shipper?.shippedEvidence,
 			}
 		}
 
@@ -114,12 +119,23 @@ export class OrderStreamService implements OnModuleInit {
 		ChangeStreamLogger.verbose(
 			`Order of ${postData.member.id.toString()} status updated: ${
 				preOrderStatus.statusId
-			} -> ${postOrderStatus.statusId}`
+			} -> ${postOrderStatus.statusId} ; timeLog(${
+				preOrderStatus.timeLog.length
+			}) -> timeLog(${postOrderStatus.timeLog.length}) ; evidence(${
+				preOrderStatus.shippedEvidence
+			}) -> evidence(${postOrderStatus.shippedEvidence})`
 		)
 		this.connectionProvider
 			.getMemberNsp()
 			.to(getMemberRoom(postData.member.id))
 			.emit('member-user:order_status_updated', {
+				id: postData._id.toString(),
+				...postOrderStatus,
+			})
+		this.connectionProvider
+			.getStoreNsp()
+			.to(getStoreRoom(postData.store.id))
+			.emit('store:order_status_updated', {
 				id: postData._id.toString(),
 				...postOrderStatus,
 			})

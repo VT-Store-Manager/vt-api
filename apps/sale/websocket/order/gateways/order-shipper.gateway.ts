@@ -71,13 +71,6 @@ export class OrderShipperGateway {
 						id: body.orderId,
 						shipper: shipperInfo,
 					})
-				// Emit event: order status is updated
-				this.wsOrderService.getOrderStatus(body.orderId).then(orderStatus => {
-					this.connectionProvider
-						.getStoreNsp()
-						.to(getStoreRoom(orderShippingData.store.id))
-						.emit('store:order_status_updated', orderStatus)
-				})
 
 				this.wsOrderService.updateShipperIncome(body)
 			} else {

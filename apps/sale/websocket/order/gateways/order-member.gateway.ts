@@ -67,11 +67,6 @@ export class OrderMemberGateway {
 			this.wsMemberOrderService.getOrderStatus(body.orderId),
 		])
 
-		this.connectionProvider
-			.getStoreNsp()
-			.to(getStoreRoom(orderCommonData.store.id))
-			.emit('store:order_status_updated', orderStatus)
-
 		if (
 			orderCommonData.categoryId === ShippingMethod.DELIVERY &&
 			orderStatus.statusId === OrderState.PROCESSING &&
