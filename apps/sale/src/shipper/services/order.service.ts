@@ -94,6 +94,14 @@ export class ShipperOrderService {
 					},
 					shipDistance: { $ifNull: ['$shipper.deliveryDistance', 0] },
 					shipperIncome: { $ifNull: ['$shipper.shipperIncome', 0] },
+					shippedEvidence: {
+						$ifNull: [
+							this.fileService.getImageUrlExpression(
+								'$shipper.shippedEvidence'
+							),
+							null,
+						],
+					},
 					paymentType: '$payment',
 					receiver: {
 						name: true,

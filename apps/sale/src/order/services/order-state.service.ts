@@ -1,7 +1,7 @@
 import { uniq } from 'lodash'
 import { FilterQuery, Model, Types } from 'mongoose'
 
-import { OrderState, QueryTime } from '@app/common'
+import { FileService, OrderState, QueryTime } from '@app/common'
 import { Order, OrderDocument } from '@app/database'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
@@ -17,7 +17,8 @@ import {
 export class OrderStateService {
 	constructor(
 		@InjectModel(Order.name)
-		private readonly orderModel: Model<OrderDocument>
+		private readonly orderModel: Model<OrderDocument>,
+		private readonly fileService: FileService
 	) {}
 
 	getAllOrderStates(): OrderStateItemDTO[] {
@@ -120,6 +121,14 @@ export class OrderStateService {
 										options: '$$item.options',
 									},
 								},
+							},
+							shippedEvidence: {
+								$ifNull: [
+									this.fileService.getImageUrlExpression(
+										'$shipper.shippedEvidence'
+									),
+									null,
+								],
 							},
 						},
 					},
