@@ -3,7 +3,9 @@ import {
 	getShipperRoom,
 	getStoreRoom,
 	OrderState,
+	OrderTaskService,
 	ShippingMethod,
+	TaskDuration,
 	WebsocketExceptionsFilter,
 	WsNamespace,
 } from '@app/common'
@@ -27,7 +29,8 @@ export class OrderMemberGateway {
 	constructor(
 		private readonly orderService: OrderService,
 		private readonly wsMemberOrderService: WsOrderService,
-		private readonly connectionProvider: WsConnectionService
+		private readonly connectionProvider: WsConnectionService,
+		private readonly orderTaskService: OrderTaskService
 	) {}
 
 	@HttpServer()
@@ -56,12 +59,28 @@ export class OrderMemberGateway {
 			this.connectionProvider
 				.getShipperNsp()
 				.emit('shipper:new_order', shippingData)
+
+			// Add timeout to cancel order if not have shipper
+			this.orderTaskService.addCancelOrderTimeout(
+				body,
+				() => {
+					this.orderTaskService.cancelTimeoutOrder(body.orderId, () => {
+						this.connectionProvider
+							.getShipperNsp()
+							.emit('shipper:remove_picked_order', body)
+					})
+				},
+				TaskDuration.CANCEL_ORDER
+			)
 		}
 	}
 
 	@HttpServer()
 	@SubscribeMessage<MemberEventNames>('member-server:paid_order')
 	async memberPaidOrder(@MessageBody() body: OrderDataDTO) {
+		// Remove timeout of paid order
+		this.orderTaskService.removeCancelOrderTimeout(body)
+
 		const [orderCommonData, orderStatus] = await Promise.all([
 			this.wsMemberOrderService.getOrderCommonData(body.orderId),
 			this.wsMemberOrderService.getOrderStatus(body.orderId),
@@ -78,6 +97,19 @@ export class OrderMemberGateway {
 			this.connectionProvider
 				.getShipperNsp()
 				.emit('shipper:new_order', shippingData)
+
+			// Add timeout to cancel order if not have shipper
+			this.orderTaskService.addCancelOrderTimeout(
+				body,
+				() => {
+					this.orderTaskService.cancelTimeoutOrder(body.orderId, () => {
+						this.connectionProvider
+							.getShipperNsp()
+							.emit('shipper:remove_picked_order', body)
+					})
+				},
+				TaskDuration.CANCEL_ORDER
+			)
 		}
 	}
 

@@ -185,3 +185,12 @@ export const INIT_DISTANCE = 2000
 export const COST_PER_KM = 5000
 export const MAX_DISTANCE = 10000
 export const MAX_COST = INIT_COST + (MAX_DISTANCE - INIT_DISTANCE) * COST_PER_KM
+
+export enum TaskKey {
+	CANCEL_ORDER_PREFIX = 'CANCEL_ORDER_',
+}
+
+export enum TaskDuration {
+	CANCEL_ORDER = 15, // minute
+	CANCEL_ORDER_NOT_PAID = 10, // minute
+}

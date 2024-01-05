@@ -43,6 +43,7 @@ import { StoreModule } from './store/store.module'
 import { TriggerModule } from './triggers/trigger.module'
 import { VoucherModule } from './voucher/voucher.module'
 import { PaymentModule } from './payment/payment.module'
+import { ScheduleModule } from '@nestjs/schedule'
 
 @Module({
 	imports: [
@@ -68,6 +69,7 @@ import { PaymentModule } from './payment/payment.module'
 				cacheControl: true,
 			},
 		}),
+		ScheduleModule.forRoot(),
 		FileModule,
 		CounterModule,
 		SettingModule,

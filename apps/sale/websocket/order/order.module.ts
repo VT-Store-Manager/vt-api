@@ -1,4 +1,8 @@
-import { GoogleMapModule, SettingModule } from '@app/common'
+import {
+	GoogleMapModule,
+	SettingModule,
+	TaskSchedulerModule,
+} from '@app/common'
 import { Module } from '@nestjs/common'
 import { OrderModule } from '@sale/src/order/order.module'
 import { ShipperModule } from '@sale/src/shipper/shipper.module'
@@ -15,6 +19,7 @@ import { WsOrderService } from './order.service'
 		ShipperModule,
 		GoogleMapModule,
 		SettingModule,
+		TaskSchedulerModule,
 	],
 	providers: [WsOrderService, OrderMemberGateway, OrderShipperGateway],
 })

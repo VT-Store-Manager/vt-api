@@ -4,9 +4,11 @@ import {
 	MemberServerSocketClientService,
 	ObjectIdPipe,
 	OrderState,
+	OrderTaskService,
 	PaymentType,
 	Role,
 	ShippingMethod,
+	TaskDuration,
 } from '@app/common'
 import { BooleanResponseDTO } from '@app/types'
 import {
@@ -37,7 +39,8 @@ export class OrderController {
 	constructor(
 		private readonly orderService: OrderService,
 		private readonly orderStateService: OrderStateService,
-		private readonly socketClient: MemberServerSocketClientService
+		private readonly socketClient: MemberServerSocketClientService,
+		private readonly orderTaskService: OrderTaskService
 	) {}
 
 	@Post('check-voucher')
@@ -104,6 +107,17 @@ export class OrderController {
 					}
 				)
 			}, 60000)
+		}
+		if (createdOrder.payment === PaymentType.MOMO) {
+			this.orderTaskService.addCancelOrderTimeout(
+				{
+					orderId: createdOrder._id.toString(),
+				},
+				() => {
+					this.orderTaskService.cancelTimeoutOrder(createdOrder._id.toString())
+				},
+				TaskDuration.CANCEL_ORDER_NOT_PAID
+			)
 		}
 		return { id: createdOrder._id }
 	}

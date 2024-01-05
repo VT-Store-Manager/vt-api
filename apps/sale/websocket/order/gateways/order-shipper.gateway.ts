@@ -5,6 +5,7 @@ import { CurrentClient, WsAuth } from '@app/authentication'
 import {
 	getStoreRoom,
 	OrderState,
+	OrderTaskService,
 	Role,
 	ShippingMethod,
 	WebsocketExceptionsFilter,
@@ -28,7 +29,8 @@ import { WsOrderService } from '../order.service'
 export class OrderShipperGateway {
 	constructor(
 		private readonly wsOrderService: WsOrderService,
-		private readonly connectionProvider: WsConnectionService
+		private readonly connectionProvider: WsConnectionService,
+		private readonly orderTaskService: OrderTaskService
 	) {}
 
 	@WsAuth(Role.SHIPPER)
@@ -71,6 +73,8 @@ export class OrderShipperGateway {
 						id: body.orderId,
 						shipper: shipperInfo,
 					})
+				// Remove timeout to delete order
+				this.orderTaskService.removeCancelOrderTimeout(body)
 
 				this.wsOrderService.updateShipperIncome(body)
 			} else {

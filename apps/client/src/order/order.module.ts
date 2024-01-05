@@ -4,6 +4,7 @@ import {
 	OrderBuyer,
 	SettingModule,
 	SocketClientModule,
+	TaskSchedulerModule,
 	WsNamespace,
 } from '@app/common'
 import {
@@ -63,6 +64,7 @@ import { OrderService } from './services/order.service'
 		SocketClientModule.register(WsNamespace.MEMBER),
 		MomoModule,
 		GoogleMapModule,
+		TaskSchedulerModule,
 	],
 	controllers: [OrderController, OrderStateController],
 	providers: [OrderService, OrderStateService, MongoSessionService],
