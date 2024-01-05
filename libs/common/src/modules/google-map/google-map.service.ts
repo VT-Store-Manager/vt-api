@@ -68,6 +68,10 @@ export class GoogleMapService {
 			distanceMatrix?.rows?.[0].elements?.[0].distance.value ??
 			getDistance(from, to)
 
+		if (deliveryDistance >= 10000) {
+			return Math.floor(Math.random() * 9000) + 1000
+		}
+
 		return deliveryDistance
 	}
 }

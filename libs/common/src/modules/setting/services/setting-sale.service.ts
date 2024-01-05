@@ -1,6 +1,12 @@
 import { Model } from 'mongoose'
 
-import { SettingType } from '@app/common'
+import {
+	COST_PER_KM,
+	INIT_COST,
+	INIT_DISTANCE,
+	MAX_DISTANCE,
+	SettingType,
+} from '@app/common'
 import { SettingSaleApp, SettingSaleAppDocument } from '@app/database'
 import { Injectable, InternalServerErrorException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
@@ -29,14 +35,12 @@ export class SettingSaleService {
 	}
 
 	calculateShipperIncome(distance: number, _time?: Date) {
-		const initCost = 20000 // vnd
-		const initDistance = 2000 // meter
-		const costPerKm = 5000 // vnd
+		const maxCost = INIT_COST + (MAX_DISTANCE - INIT_DISTANCE) * COST_PER_KM
 
-		if (distance <= initDistance) return initCost
+		if (distance <= INIT_DISTANCE) return INIT_COST
 
 		const additionCost =
-			Math.floor((distance - initDistance) / 1000) * costPerKm
-		return initCost + additionCost
+			Math.floor((distance - INIT_DISTANCE) / 1000) * COST_PER_KM
+		return Math.min(INIT_COST + additionCost, maxCost)
 	}
 }

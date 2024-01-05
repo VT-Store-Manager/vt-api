@@ -179,3 +179,9 @@ export enum MomoResultCode {
 	SUCCEEDED = 0,
 	AUTHORIZED_SUCCESSFULLY = 9000,
 }
+
+export const INIT_COST = 20000
+export const INIT_DISTANCE = 2000
+export const COST_PER_KM = 5000
+export const MAX_DISTANCE = 10000
+export const MAX_COST = INIT_COST + (MAX_DISTANCE - INIT_DISTANCE) * COST_PER_KM

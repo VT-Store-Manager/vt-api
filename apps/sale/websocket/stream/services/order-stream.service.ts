@@ -46,12 +46,7 @@ export class OrderStreamService implements OnModuleInit {
 					$match: {
 						$and: [
 							{ operationType: 'update' },
-							{
-								$or: [
-									{ 'fullDocument.buyer': OrderBuyer.MEMBER },
-									{ 'fullDocumentBeforeChange.buyer': OrderBuyer.MEMBER },
-								],
-							},
+							{ 'fullDocument.member.id': { $ne: null } },
 						],
 					},
 				},
@@ -174,7 +169,7 @@ export class OrderStreamService implements OnModuleInit {
 		if (!order.shipper?.id) return
 
 		let shipperIncome = order.shipper?.shipperIncome
-		if (!shipperIncome) {
+		if (!shipperIncome || shipperIncome > 60000) {
 			const deliveryDistance =
 				order.shipper?.deliveryDistance ??
 				(await this.googleMapService.getShipDistance(

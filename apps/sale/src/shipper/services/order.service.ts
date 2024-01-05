@@ -603,7 +603,7 @@ export class ShipperOrderService {
 		store: Coordinate
 		receiver: Coordinate
 	}): Promise<Pick<OrderInfoShipper, 'deliveryDistance' | 'shipperIncome'>> {
-		let deliveryDistance = await this.googleMapService.getShipDistance(
+		const deliveryDistance = await this.googleMapService.getShipDistance(
 			{
 				lat: data.store.lat,
 				lng: data.store.lng,
@@ -613,11 +613,6 @@ export class ShipperOrderService {
 				lng: data.receiver.lng,
 			}
 		)
-
-		// TODO: Temporary value for old latLng data
-		if (deliveryDistance >= 10000) {
-			deliveryDistance = Math.floor(Math.random() * 9000) + 1000
-		}
 
 		const shipperIncome =
 			this.settingSaleService.calculateShipperIncome(deliveryDistance)
