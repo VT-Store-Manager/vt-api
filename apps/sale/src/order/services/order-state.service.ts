@@ -130,6 +130,17 @@ export class OrderStateService {
 									null,
 								],
 							},
+							shipper: {
+								$cond: [
+									{ $ne: ['shipper.id', null] },
+									{
+										id: { $toString: '$shipper.id' },
+										name: '$shipper.name',
+										phone: '$shipper.phone',
+									},
+									null,
+								],
+							},
 						},
 					},
 					{
